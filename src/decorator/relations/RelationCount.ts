@@ -13,7 +13,7 @@ export function RelationCount<T>(
     queryBuilderFactory?: (
         qb: SelectQueryBuilder<any>,
     ) => SelectQueryBuilder<any>,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().relationCounts.push({
             target: object.constructor,

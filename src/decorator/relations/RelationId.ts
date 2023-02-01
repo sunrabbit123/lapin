@@ -13,7 +13,7 @@ export function RelationId<T>(
     queryBuilderFactory?: (
         qb: SelectQueryBuilder<any>,
     ) => SelectQueryBuilder<any>,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().relationIds.push({
             target: object.constructor,

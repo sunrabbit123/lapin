@@ -12,7 +12,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 export function ManyToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * A many-to-one relation allows creating the type of relation where Entity1 can have a single instance of Entity2, but
@@ -23,7 +23,7 @@ export function ManyToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide?: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * A many-to-one relation allows creating the type of relation where Entity1 can have a single instance of Entity2, but
@@ -34,7 +34,7 @@ export function ManyToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSideOrOptions?: string | ((object: T) => any) | RelationOptions,
     options?: RelationOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     // Normalize parameters.
     let inverseSideProperty: string | ((object: T) => any)
     if (ObjectUtils.isObject(inverseSideOrOptions)) {

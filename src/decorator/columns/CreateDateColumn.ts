@@ -7,7 +7,9 @@ import { ColumnOptions } from "../options/ColumnOptions"
  * Creation date is generated and inserted only once,
  * at the first time when you create an object, the value is inserted into the table, and is never touched again.
  */
-export function CreateDateColumn(options?: ColumnOptions): PropertyDecorator {
+export function CreateDateColumn(
+    options?: ColumnOptions,
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().columns.push({
             target: object.constructor,

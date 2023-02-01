@@ -5,7 +5,7 @@ import { EntityListenerMetadataArgs } from "../../metadata-args/EntityListenerMe
 /**
  * Calls a method on which this decorator is applied before this entity soft removal.
  */
-export function BeforeRecover(): PropertyDecorator {
+export function BeforeRecover(): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().entityListeners.push({
             target: object.constructor,

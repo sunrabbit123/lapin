@@ -11,7 +11,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 export function OneToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * One-to-one relation allows to create direct relation between two entities. Entity1 have only one Entity2.
@@ -21,7 +21,7 @@ export function OneToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide?: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * One-to-one relation allows to create direct relation between two entities. Entity1 have only one Entity2.
@@ -31,7 +31,7 @@ export function OneToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSideOrOptions?: string | ((object: T) => any) | RelationOptions,
     options?: RelationOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     // normalize parameters
     let inverseSideProperty: string | ((object: T) => any)
     if (ObjectUtils.isObject(inverseSideOrOptions)) {

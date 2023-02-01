@@ -137,7 +137,7 @@ export function Column(
         | ColumnType
         | (ColumnOptions & ColumnEmbeddedOptions),
     options?: ColumnOptions & ColumnEmbeddedOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         // normalize parameters
         let type: ColumnType | undefined

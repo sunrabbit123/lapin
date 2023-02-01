@@ -7,21 +7,25 @@ import { JoinColumnOptions } from "../options/JoinColumnOptions"
  * It also can be used on both one-to-one and many-to-one relations to specify custom column name
  * or custom referenced column.
  */
-export function JoinColumn(): PropertyDecorator
+export function JoinColumn(): PropertyDecorator | Function
 
 /**
  * JoinColumn decorator used on one-to-one relations to specify owner side of relationship.
  * It also can be used on both one-to-one and many-to-one relations to specify custom column name
  * or custom referenced column.
  */
-export function JoinColumn(options: JoinColumnOptions): PropertyDecorator
+export function JoinColumn(
+    options: JoinColumnOptions,
+): PropertyDecorator | Function
 
 /**
  * JoinColumn decorator used on one-to-one relations to specify owner side of relationship.
  * It also can be used on both one-to-one and many-to-one relations to specify custom column name
  * or custom referenced column.
  */
-export function JoinColumn(options: JoinColumnOptions[]): PropertyDecorator
+export function JoinColumn(
+    options: JoinColumnOptions[],
+): PropertyDecorator | Function
 
 /**
  * JoinColumn decorator used on one-to-one relations to specify owner side of relationship.
@@ -30,7 +34,7 @@ export function JoinColumn(options: JoinColumnOptions[]): PropertyDecorator
  */
 export function JoinColumn(
     optionsOrOptionsArray?: JoinColumnOptions | JoinColumnOptions[],
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         const options = Array.isArray(optionsOrOptionsArray)
             ? optionsOrOptionsArray

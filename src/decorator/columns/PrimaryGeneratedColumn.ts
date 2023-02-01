@@ -65,7 +65,7 @@ export function PrimaryGeneratedColumn(
         | PrimaryGeneratedColumnNumericOptions
         | PrimaryGeneratedColumnUUIDOptions
         | PrimaryGeneratedColumnIdentityOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     // normalize parameters
     const options: ColumnOptions = {}
     let strategy: "increment" | "uuid" | "rowid" | "identity"
