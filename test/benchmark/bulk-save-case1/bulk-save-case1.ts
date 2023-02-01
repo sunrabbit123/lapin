@@ -8,7 +8,7 @@ import {
 import { Post } from "./entity/Post"
 
 describe("benchmark > bulk-save > case1", () => {
-    let connections: DataSource[]
+    let connections: DataSource[] = [];
     before(
         async () =>
             (connections = await createTestingConnections({
