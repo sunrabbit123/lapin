@@ -28,10 +28,7 @@ jobs:
           node-version: 18
 
       - name: Install Dependencies
-        run: npm install
-
-      - name: Compile Program
-        run: npm run build
+        run: yarn
 
       - name: Test Program
-        run: npm run test
+        run: yarn test
