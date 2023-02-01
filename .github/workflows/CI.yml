@@ -1,17 +1,37 @@
-name: Cancel
-on:
-  pull_request_target:
-    types:
-      - edited
-      - synchronize
+name: CI
+
+on: [push, pull_request]
 
 jobs:
-  cancel:
-    name: "Cancel Previous Runs"
+  check-lint:
+    name: Check fmt with Prettier
     runs-on: ubuntu-latest
-    timeout-minutes: 3
     steps:
-      - uses: styfle/cancel-workflow-action@0.9.1
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
         with:
-          workflow_id: 47043698
-          access_token: ${{ github.token }}
+          node-version: 18
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check Lint
+        run: yarn lint
+
+  check-test:
+    name: Check Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: "./docker-compose.yml"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Test Program
+        run: yarn test
