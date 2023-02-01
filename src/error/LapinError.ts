@@ -1,4 +1,4 @@
-export class lapinError extends Error {
+export class LapinError extends Error {
     get name() {
         return this.constructor.name
     }

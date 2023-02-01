@@ -1,5 +1,5 @@
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when relation has array initialized which is forbidden my ORM.
@@ -7,7 +7,7 @@ import { lapinError } from "./lapinError"
  * @see https://github.com/lapin/lapin/issues/1319
  * @see http://lapin.io/#/relations-faq/avoid-relation-property-initializers
  */
-export class InitializedRelationError extends lapinError {
+export class InitializedRelationError extends LapinError {
     constructor(relation: RelationMetadata) {
         super(
             `Array initializations are not allowed in entity relations. ` +

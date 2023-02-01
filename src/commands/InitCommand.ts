@@ -3,7 +3,7 @@ import * as path from "path"
 import * as yargs from "yargs"
 import chalk from "chalk"
 import { exec } from "child_process"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { PlatformTools } from "../platform/PlatformTools"
 
 /**
@@ -608,7 +608,7 @@ services:
 services:
 `
             case "oracle":
-                throw new lapinError(
+                throw new LapinError(
                     `You cannot initialize a project with docker for Oracle driver yet.`,
                 ) // todo: implement for oracle as well
 

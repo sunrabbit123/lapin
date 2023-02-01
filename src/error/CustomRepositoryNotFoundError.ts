@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown if custom repository was not found.
  */
-export class CustomRepositoryNotFoundError extends lapinError {
+export class CustomRepositoryNotFoundError extends LapinError {
     constructor(repository: any) {
         super(
             `Custom repository ${

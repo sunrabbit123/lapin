@@ -4,7 +4,7 @@ import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
 import { JoinColumnMetadataArgs } from "../metadata-args/JoinColumnMetadataArgs"
 import { DataSource } from "../data-source/DataSource"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -148,7 +148,7 @@ export class RelationJoinColumnBuilder {
                             joinColumn.referencedColumnName,
                     ) // todo: can we also search in relations?
                 if (!referencedColumn)
-                    throw new lapinError(
+                    throw new LapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.inverseEntityMetadata.name}`,
                     )
 

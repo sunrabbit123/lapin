@@ -1,10 +1,10 @@
 import { Migration } from "../migration/Migration"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when the per-migration transaction mode is overriden but the global transaction mode is set to "all".
  */
-export class ForbiddenTransactionModeOverrideError extends lapinError {
+export class ForbiddenTransactionModeOverrideError extends LapinError {
     constructor(migrationsOverridingTransactionMode: Migration[]) {
         const migrationNames = migrationsOverridingTransactionMode.map(
             (migration) => `"${migration.name}"`,

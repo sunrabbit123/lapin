@@ -14,7 +14,7 @@ import { LimitOnUpdateNotSupportedError } from "../error/LimitOnUpdateNotSupport
 import { UpdateValuesMissingError } from "../error/UpdateValuesMissingError"
 import { QueryDeepPartialEntity } from "./QueryPartialEntity"
 import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { EntityPropertyNotFoundError } from "../error/EntityPropertyNotFoundError"
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver"
 import { DriverUtils } from "../driver/DriverUtils"
@@ -434,7 +434,7 @@ export class UpdateQueryBuilder<Entity extends ObjectLiteral>
      */
     whereEntity(entity: Entity | Entity[]): this {
         if (!this.expressionMap.mainAlias!.hasMetadata)
-            throw new lapinError(
+            throw new LapinError(
                 `.whereEntity method can only be used on queries which update real entity table.`,
             )
 
@@ -444,7 +444,7 @@ export class UpdateQueryBuilder<Entity extends ObjectLiteral>
             const entityIdMap =
                 this.expressionMap.mainAlias!.metadata.getEntityIdMap(entity)
             if (!entityIdMap)
-                throw new lapinError(
+                throw new LapinError(
                     `Provided entity does not have ids set, cannot perform operation.`,
                 )
 

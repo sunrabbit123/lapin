@@ -8,7 +8,7 @@
  * A simple dependency graph
  */
 
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Helper for creating a Depth-First-Search on
@@ -31,7 +31,7 @@ function createDFS(edges: any, leavesOnly: any, result: any) {
                 DFS(node)
             } else if (currentPath.indexOf(node) >= 0) {
                 currentPath.push(node)
-                throw new lapinError(
+                throw new LapinError(
                     `Dependency Cycle Found: ${currentPath.join(" -> ")}`,
                 )
             }
@@ -102,7 +102,7 @@ export class DepGraph {
         if (this.hasNode(node)) {
             return this.nodes[node]
         } else {
-            throw new lapinError(`Node does not exist: ${node}`)
+            throw new LapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -113,7 +113,7 @@ export class DepGraph {
         if (this.hasNode(node)) {
             this.nodes[node] = data
         } else {
-            throw new lapinError(`Node does not exist: ${node}`)
+            throw new LapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -123,10 +123,10 @@ export class DepGraph {
      */
     addDependency(from: any, to: any) {
         if (!this.hasNode(from)) {
-            throw new lapinError(`Node does not exist: ${from}`)
+            throw new LapinError(`Node does not exist: ${from}`)
         }
         if (!this.hasNode(to)) {
-            throw new lapinError(`Node does not exist: ${to}`)
+            throw new LapinError(`Node does not exist: ${to}`)
         }
         if (this.outgoingEdges[from].indexOf(to) === -1) {
             this.outgoingEdges[from].push(to)
@@ -176,7 +176,7 @@ export class DepGraph {
             }
             return result
         } else {
-            throw new lapinError(`Node does not exist: ${node}`)
+            throw new LapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -198,7 +198,7 @@ export class DepGraph {
             }
             return result
         } else {
-            throw new lapinError(`Node does not exist: ${node}`)
+            throw new LapinError(`Node does not exist: ${node}`)
         }
     }
 

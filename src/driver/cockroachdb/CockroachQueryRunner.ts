@@ -22,7 +22,7 @@ import { ColumnType } from "../types/ColumnTypes"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 import { VersionUtils } from "../../util/VersionUtils"
@@ -974,7 +974,7 @@ export class CockroachQueryRunner
         const downQueries: Query[] = []
 
         if (column.generationStrategy === "increment") {
-            throw new lapinError(
+            throw new LapinError(
                 `Adding sequential generated columns into existing table is not supported`,
             )
         }
@@ -1178,7 +1178,7 @@ export class CockroachQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1215,7 +1215,7 @@ export class CockroachQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1857,7 +1857,7 @@ export class CockroachQueryRunner
             ) {
                 if (newColumn.isGenerated) {
                     if (newColumn.generationStrategy === "increment") {
-                        throw new lapinError(
+                        throw new LapinError(
                             `Adding sequential generated columns into existing table is not supported`,
                         )
                     } else if (newColumn.generationStrategy === "rowid") {
@@ -2017,7 +2017,7 @@ export class CockroachQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2410,7 +2410,7 @@ export class CockroachQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2486,7 +2486,7 @@ export class CockroachQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2516,7 +2516,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2528,7 +2528,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2540,7 +2540,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2552,7 +2552,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2609,7 +2609,7 @@ export class CockroachQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2691,7 +2691,7 @@ export class CockroachQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -3846,7 +3846,7 @@ export class CockroachQueryRunner
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new lapinError(`Table ${table} has no primary keys.`)
+            throw new LapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

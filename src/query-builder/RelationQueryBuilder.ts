@@ -1,7 +1,7 @@
 import { QueryBuilder } from "./QueryBuilder"
 import { RelationUpdater } from "./RelationUpdater"
 import { RelationRemover } from "./RelationRemover"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { ObjectLiteral } from "../common/ObjectLiteral"
 
@@ -49,12 +49,12 @@ export class RelationQueryBuilder<
 
         if (!this.expressionMap.of)
             // todo: move this check before relation query builder creation?
-            throw new lapinError(
+            throw new LapinError(
                 `Entity whose relation needs to be set is not set. Use .of method to define whose relation you want to set.`,
             )
 
         if (relation.isManyToMany || relation.isOneToMany)
-            throw new lapinError(
+            throw new LapinError(
                 `Set operation is only supported for many-to-one and one-to-one relations. ` +
                     `However given "${relation.propertyPath}" has ${relation.relationType} relation. ` +
                     `Use .add() method instead.`,
@@ -67,7 +67,7 @@ export class RelationQueryBuilder<
             (!ObjectUtils.isObject(value) ||
                 Object.keys(value).length < relation.joinColumns.length)
         )
-            throw new lapinError(
+            throw new LapinError(
                 `Value to be set into the relation must be a map of relation ids, for example: .set({ firstName: "...", lastName: "..." })`,
             )
 
@@ -89,12 +89,12 @@ export class RelationQueryBuilder<
 
         if (!this.expressionMap.of)
             // todo: move this check before relation query builder creation?
-            throw new lapinError(
+            throw new LapinError(
                 `Entity whose relation needs to be set is not set. Use .of method to define whose relation you want to set.`,
             )
 
         if (relation.isManyToOne || relation.isOneToOne)
-            throw new lapinError(
+            throw new LapinError(
                 `Add operation is only supported for many-to-many and one-to-many relations. ` +
                     `However given "${relation.propertyPath}" has ${relation.relationType} relation. ` +
                     `Use .set() method instead.`,
@@ -107,7 +107,7 @@ export class RelationQueryBuilder<
             (!ObjectUtils.isObject(value) ||
                 Object.keys(value).length < relation.joinColumns.length)
         )
-            throw new lapinError(
+            throw new LapinError(
                 `Value to be set into the relation must be a map of relation ids, for example: .set({ firstName: "...", lastName: "..." })`,
             )
 
@@ -129,12 +129,12 @@ export class RelationQueryBuilder<
 
         if (!this.expressionMap.of)
             // todo: move this check before relation query builder creation?
-            throw new lapinError(
+            throw new LapinError(
                 `Entity whose relation needs to be set is not set. Use .of method to define whose relation you want to set.`,
             )
 
         if (relation.isManyToOne || relation.isOneToOne)
-            throw new lapinError(
+            throw new LapinError(
                 `Add operation is only supported for many-to-many and one-to-many relations. ` +
                     `However given "${relation.propertyPath}" has ${relation.relationType} relation. ` +
                     `Use .set(null) method instead.`,
@@ -188,7 +188,7 @@ export class RelationQueryBuilder<
         if (!ObjectUtils.isObject(of)) {
             const metadata = this.expressionMap.mainAlias!.metadata
             if (metadata.hasMultiplePrimaryKeys)
-                throw new lapinError(
+                throw new LapinError(
                     `Cannot load entity because only one primary key was specified, however entity contains multiple primary keys`,
                 )
 

@@ -3,7 +3,7 @@ import { EntityMetadata } from "./EntityMetadata"
 import { RelationMetadata } from "./RelationMetadata"
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
 import { ObjectLiteral } from "../common/ObjectLiteral"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Contains all information about entity's relation count.
@@ -111,7 +111,7 @@ export class RelationIdMetadata {
         const relation =
             this.entityMetadata.findRelationWithPropertyPath(propertyPath)
         if (!relation)
-            throw new lapinError(
+            throw new LapinError(
                 `Cannot find relation ${propertyPath}. Wrong relation specified for @RelationId decorator.`,
             )
 

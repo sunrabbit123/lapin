@@ -1,8 +1,8 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
-export class MissingJoinColumnError extends lapinError {
+export class MissingJoinColumnError extends LapinError {
     constructor(entityMetadata: EntityMetadata, relation: RelationMetadata) {
         super()
 

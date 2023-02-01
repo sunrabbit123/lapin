@@ -23,7 +23,7 @@ import { IsolationLevel } from "../types/IsolationLevel"
 import { MssqlParameter } from "./MssqlParameter"
 import { SqlServerDriver } from "./SqlServerDriver"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryLock } from "../../query-runner/QueryLock"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
@@ -1187,7 +1187,7 @@ export class SqlServerQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1223,7 +1223,7 @@ export class SqlServerQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1850,7 +1850,7 @@ export class SqlServerQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2240,7 +2240,7 @@ export class SqlServerQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2315,7 +2315,7 @@ export class SqlServerQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2345,7 +2345,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2357,7 +2357,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2369,7 +2369,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2381,7 +2381,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2408,7 +2408,7 @@ export class SqlServerQueryRunner
                 (foreignKey) => foreignKey.onDelete !== "NO ACTION",
             )
         )
-            throw new lapinError(
+            throw new LapinError(
                 "SqlServer does not support options in TreeParent.",
             )
 
@@ -2454,7 +2454,7 @@ export class SqlServerQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2524,7 +2524,7 @@ export class SqlServerQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index was not found in table ${table.name}`,
             )
 

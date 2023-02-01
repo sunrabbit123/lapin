@@ -16,7 +16,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 import { TableCheck } from "../../schema-builder/table/TableCheck"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { TransactionAlreadyStartedError, lapinError } from "../../error"
+import { TransactionAlreadyStartedError, LapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 
@@ -73,7 +73,7 @@ export abstract class AbstractSqliteQueryRunner
      */
     async startTransaction(isolationLevel?: IsolationLevel): Promise<void> {
         if (this.driver.transactionSupport === "none")
-            throw new lapinError(
+            throw new LapinError(
                 `Transactions aren't supported by ${this.connection.driver.options.type}.`,
             )
 
@@ -88,7 +88,7 @@ export abstract class AbstractSqliteQueryRunner
             isolationLevel !== "READ UNCOMMITTED" &&
             isolationLevel !== "SERIALIZABLE"
         )
-            throw new lapinError(
+            throw new LapinError(
                 `SQLite only supports SERIALIZABLE and READ UNCOMMITTED isolation`,
             )
 
@@ -170,7 +170,7 @@ export abstract class AbstractSqliteQueryRunner
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        throw new lapinError(`Stream is not supported by sqlite driver.`)
+        throw new LapinError(`Stream is not supported by sqlite driver.`)
     }
 
     /**
@@ -206,7 +206,7 @@ export abstract class AbstractSqliteQueryRunner
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new lapinError(`This driver does not support table schemas`)
+        throw new LapinError(`This driver does not support table schemas`)
     }
 
     /**
@@ -561,7 +561,7 @@ export abstract class AbstractSqliteQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -591,7 +591,7 @@ export abstract class AbstractSqliteQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -730,7 +730,7 @@ export abstract class AbstractSqliteQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -874,7 +874,7 @@ export abstract class AbstractSqliteQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -944,7 +944,7 @@ export abstract class AbstractSqliteQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -978,7 +978,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -988,7 +988,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -998,7 +998,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -1008,7 +1008,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -1054,7 +1054,7 @@ export abstract class AbstractSqliteQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -1128,7 +1128,7 @@ export abstract class AbstractSqliteQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -1725,7 +1725,7 @@ export abstract class AbstractSqliteQueryRunner
         )
         const skipPrimary = primaryColumns.length > 1
         if (skipPrimary && hasAutoIncrement)
-            throw new lapinError(
+            throw new LapinError(
                 `Sqlite does not support AUTOINCREMENT on composite primary key`,
             )
 

@@ -10,7 +10,7 @@ import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { OrmUtils } from "../../util/OrmUtils"
 import { ObjectLiteral } from "../../common/ObjectLiteral"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 
 // This is needed to satisfy the typescript compiler.
 interface Window {
@@ -91,7 +91,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
                     )
                     return this.createDatabaseConnectionWithImport(database)
                 } else if (checkIfFileOrLocalStorageExists) {
-                    throw new lapinError(
+                    throw new LapinError(
                         `File ${fileNameOrLocalStorageOrData} does not exist`,
                     )
                 } else {
@@ -110,7 +110,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
                             fileNameOrLocalStorageOrData,
                         )
                     } else {
-                        throw new lapinError(
+                        throw new LapinError(
                             `localforage is not defined - please import localforage.js into your site`,
                         )
                     }
@@ -127,7 +127,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
                         JSON.parse(localStorageContent),
                     )
                 } else if (checkIfFileOrLocalStorageExists) {
-                    throw new lapinError(
+                    throw new LapinError(
                         `File ${fileNameOrLocalStorageOrData} does not exist`,
                     )
                 } else {
@@ -151,7 +151,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
      */
     async save(location?: string) {
         if (!location && !this.options.location) {
-            throw new lapinError(
+            throw new LapinError(
                 `No location is set, specify a location parameter or add the location option to your configuration`,
             )
         }
@@ -168,7 +168,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
                 const content = Buffer.from(this.databaseConnection.export())
                 await PlatformTools.writeFile(path, content)
             } catch (e) {
-                throw new lapinError(`Could not save database, error: ${e}`)
+                throw new LapinError(`Could not save database, error: ${e}`)
             }
         } else {
             const database: Uint8Array = this.databaseConnection.export()
@@ -181,7 +181,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
                         JSON.stringify(databaseArray),
                     )
                 } else {
-                    throw new lapinError(
+                    throw new LapinError(
                         `localforage is not defined - please import localforage.js into your site`,
                     )
                 }

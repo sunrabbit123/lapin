@@ -12,7 +12,7 @@ import { SelectQuery } from "./SelectQuery"
 import { ColumnMetadata } from "../metadata/ColumnMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
 import { SelectQueryBuilderOption } from "./SelectQueryBuilderOption"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { WhereClause } from "./WhereClause"
 import { UpsertType } from "../driver/types/UpsertType"
 import { CockroachConnectionOptions } from "../driver/cockroachdb/CockroachConnectionOptions"
@@ -444,7 +444,7 @@ export class QueryExpressionMap {
     findAliasByName(aliasName: string): Alias {
         const alias = this.aliases.find((alias) => alias.name === aliasName)
         if (!alias)
-            throw new lapinError(
+            throw new LapinError(
                 `"${aliasName}" alias was not found. Maybe you forgot to join it?`,
             )
 
@@ -466,14 +466,14 @@ export class QueryExpressionMap {
      */
     get relationMetadata(): RelationMetadata {
         if (!this.mainAlias)
-            throw new lapinError(`Entity to work with is not specified!`) // todo: better message
+            throw new LapinError(`Entity to work with is not specified!`) // todo: better message
 
         const relationMetadata =
             this.mainAlias.metadata.findRelationWithPropertyPath(
                 this.relationPropertyPath,
             )
         if (!relationMetadata)
-            throw new lapinError(
+            throw new LapinError(
                 `Relation ${this.relationPropertyPath} was not found in entity ${this.mainAlias.name}`,
             ) // todo: better message
 

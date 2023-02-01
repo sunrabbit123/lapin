@@ -5,7 +5,7 @@ import { ObjectLiteral } from "../common/ObjectLiteral"
 import { QueryRunner } from "../query-runner/QueryRunner"
 import { MssqlParameter } from "../driver/sqlserver/MssqlParameter"
 import { MongoQueryRunner } from "../driver/mongodb/MongoQueryRunner"
-import { ForbiddenTransactionModeOverrideError, lapinError } from "../error"
+import { ForbiddenTransactionModeOverrideError, LapinError } from "../error"
 import { InstanceChecker } from "../util/InstanceChecker"
 
 /**
@@ -226,7 +226,7 @@ export class MigrationExecutor {
 
             // migration is new and not executed. now check if its timestamp is correct
             // if (lastTimeExecutedMigration && migration.timestamp < lastTimeExecutedMigration.timestamp)
-            //     throw new lapinError(`New migration found: ${migration.name}, however this migration's timestamp is not valid. Migration's timestamp should not be older then migrations already executed in the database.`);
+            //     throw new LapinError(`New migration found: ${migration.name}, however this migration's timestamp is not valid. Migration's timestamp should not be older then migrations already executed in the database.`);
 
             // every check is passed means that migration was not run yet and we need to run it
             return true
@@ -424,7 +424,7 @@ export class MigrationExecutor {
 
         // if no migrations found in the database then nothing to revert
         if (!migrationToRevert)
-            throw new lapinError(
+            throw new LapinError(
                 `No migration ${lastTimeExecutedMigration.name} was found in the source code. Make sure you have this migration in your codebase and its included in the connection options.`,
             )
 
@@ -579,7 +579,7 @@ export class MigrationExecutor {
                 10,
             )
             if (!migrationTimestamp || isNaN(migrationTimestamp)) {
-                throw new lapinError(
+                throw new LapinError(
                     `${migrationClassName} migration name is wrong. Migration class name should have a JavaScript timestamp appended.`,
                 )
             }

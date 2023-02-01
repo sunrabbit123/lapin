@@ -1,6 +1,6 @@
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 
-export class EntitySchemaEmbeddedError extends lapinError {
+export class EntitySchemaEmbeddedError extends LapinError {
     static createEntitySchemaIsRequiredException(
         field: string,
     ): EntitySchemaEmbeddedError {

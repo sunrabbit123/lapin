@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when consumer specifies driver type that does not exist or supported.
  */
-export class MissingDriverError extends lapinError {
+export class MissingDriverError extends LapinError {
     constructor(driverType: string, availableDrivers: string[] = []) {
         super(
             `Wrong driver: "${driverType}" given. Supported drivers are: ` +

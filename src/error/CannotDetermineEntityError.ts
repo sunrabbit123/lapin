@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when user tries to save/remove/etc. constructor-less object (object literal) instead of entity.
  */
-export class CannotDetermineEntityError extends lapinError {
+export class CannotDetermineEntityError extends LapinError {
     constructor(operation: string) {
         super(
             `Cannot ${operation}, given value must be instance of entity class, ` +

@@ -19,7 +19,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
 import { ReplicationMode } from "../types/ReplicationMode"
 import { DriverUtils } from "../DriverUtils"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
@@ -312,7 +312,7 @@ export class MongoDriver implements Driver {
         parameters: ObjectLiteral,
         nativeParameters: ObjectLiteral,
     ): [string, any[]] {
-        throw new lapinError(
+        throw new LapinError(
             `This operation is not supported by Mongodb driver.`,
         )
     }
@@ -398,7 +398,7 @@ export class MongoDriver implements Driver {
         precision?: number | null
         scale?: number
     }): string {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }
@@ -407,7 +407,7 @@ export class MongoDriver implements Driver {
      * Normalizes "default" value of the column.
      */
     normalizeDefault(columnMetadata: ColumnMetadata): string | undefined {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }
@@ -416,7 +416,7 @@ export class MongoDriver implements Driver {
      * Normalizes "isUnique" value of the column.
      */
     normalizeIsUnique(column: ColumnMetadata): boolean {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }
@@ -425,7 +425,7 @@ export class MongoDriver implements Driver {
      * Calculates column length taking into account the default length values.
      */
     getColumnLength(column: ColumnMetadata): string {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }
@@ -434,7 +434,7 @@ export class MongoDriver implements Driver {
      * Normalizes "default" value of the column.
      */
     createFullType(column: TableColumn): string {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }
@@ -472,7 +472,7 @@ export class MongoDriver implements Driver {
         tableColumns: TableColumn[],
         columnMetadatas: ColumnMetadata[],
     ): ColumnMetadata[] {
-        throw new lapinError(
+        throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
         )
     }

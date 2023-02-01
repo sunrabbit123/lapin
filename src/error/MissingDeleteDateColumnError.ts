@@ -1,7 +1,7 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
-export class MissingDeleteDateColumnError extends lapinError {
+export class MissingDeleteDateColumnError extends LapinError {
     constructor(entityMetadata: EntityMetadata) {
         super(
             `Entity "${entityMetadata.name}" does not have delete date columns.`,

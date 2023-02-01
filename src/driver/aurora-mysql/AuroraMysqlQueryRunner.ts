@@ -20,7 +20,7 @@ import { ColumnType } from "../types/ColumnTypes"
 import { TableCheck } from "../../schema-builder/table/TableCheck"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 
@@ -219,7 +219,7 @@ export class AuroraMysqlQueryRunner
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        throw new lapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`)
     }
 
     /**
@@ -244,7 +244,7 @@ export class AuroraMysqlQueryRunner
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new lapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`)
     }
 
     /**
@@ -313,7 +313,7 @@ export class AuroraMysqlQueryRunner
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Schema create queries are not supported by MySql driver.`,
         )
     }
@@ -322,7 +322,7 @@ export class AuroraMysqlQueryRunner
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Schema drop queries are not supported by MySql driver.`,
         )
     }
@@ -755,7 +755,7 @@ export class AuroraMysqlQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -789,7 +789,7 @@ export class AuroraMysqlQueryRunner
             ? oldColumnOrName
             : table.columns.find((column) => column.name === oldColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1214,7 +1214,7 @@ export class AuroraMysqlQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -1590,7 +1590,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1602,7 +1602,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1614,7 +1614,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1626,7 +1626,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1638,7 +1638,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        throw new lapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1648,7 +1648,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new lapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1658,7 +1658,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkOrName: TableCheck | string,
     ): Promise<void> {
-        throw new lapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1668,7 +1668,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new lapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1678,7 +1678,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -1688,7 +1688,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -1698,7 +1698,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -1708,7 +1708,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -1762,7 +1762,7 @@ export class AuroraMysqlQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -1832,7 +1832,7 @@ export class AuroraMysqlQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -1877,7 +1877,7 @@ export class AuroraMysqlQueryRunner
             const isDatabaseExist = await this.hasDatabase(dbName)
             if (!isDatabaseExist) return Promise.resolve()
         } else {
-            throw new lapinError(
+            throw new LapinError(
                 `Can not clear database. No database is specified`,
             )
         }

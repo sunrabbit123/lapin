@@ -141,7 +141,7 @@ export class ManyToManySubjectBuilder {
                 // but without entity being inserted we cannot bind it in the relation operation, so we throw an exception here
                 // we decided to remove this error because it brings complications when saving object with non-saved entities
                 // if (!relatedEntitySubject)
-                //     throw new lapinError(`Many-to-many relation "${relation.entityMetadata.name}.${relation.propertyPath}" contains ` +
+                //     throw new LapinError(`Many-to-many relation "${relation.entityMetadata.name}.${relation.propertyPath}" contains ` +
                 //         `entities which do not exist in the database yet, thus they cannot be bind in the database. ` +
                 //         `Please setup cascade insertion or save entities before binding it.`);
                 if (!relatedEntitySubject) return

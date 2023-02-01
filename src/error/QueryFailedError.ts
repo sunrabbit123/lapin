@@ -1,10 +1,10 @@
 import { ObjectUtils } from "../util/ObjectUtils"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when query execution has failed.
  */
-export class QueryFailedError extends lapinError {
+export class QueryFailedError extends LapinError {
     constructor(
         readonly query: string,
         readonly parameters: any[] | undefined,

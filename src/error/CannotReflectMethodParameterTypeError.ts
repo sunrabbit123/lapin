@@ -1,10 +1,10 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when ORM cannot get method parameter's type.
  * Basically, when reflect-metadata is not available or tsconfig is not properly setup.
  */
-export class CannotReflectMethodParameterTypeError extends lapinError {
+export class CannotReflectMethodParameterTypeError extends LapinError {
     constructor(target: Function, methodName: string) {
         super(
             `Cannot get reflected type for a "${methodName}" method's parameter of "${target.name}" class. ` +

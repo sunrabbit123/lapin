@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when required driver's package is not installed.
  */
-export class DriverPackageNotInstalledError extends lapinError {
+export class DriverPackageNotInstalledError extends LapinError {
     constructor(driverName: string, packageName: string) {
         super(
             `${driverName} package has not been found installed. ` +

@@ -1,6 +1,6 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
-export class MetadataAlreadyExistsError extends lapinError {
+export class MetadataAlreadyExistsError extends LapinError {
     constructor(
         metadataType: string,
         constructor: Function,

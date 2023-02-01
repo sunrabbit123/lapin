@@ -10,7 +10,7 @@ import { EntityManager } from "../entity-manager/EntityManager"
 import { TableColumn } from "../schema-builder/table/TableColumn"
 import { Broadcaster } from "../subscriber/Broadcaster"
 import { ReplicationMode } from "../driver/types/ReplicationMode"
-import { lapinError } from "../error/lapinError"
+import { LapinError } from "../error/LapinError"
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { TableForeignKey } from "../schema-builder/table/TableForeignKey"
 import { OrmUtils } from "../util/OrmUtils"
@@ -251,7 +251,7 @@ export abstract class BaseQueryRunner {
             this.loadedViews.push(foundViews[0])
             return foundViews[0]
         } else {
-            throw new lapinError(`View "${viewName}" does not exist.`)
+            throw new LapinError(`View "${viewName}" does not exist.`)
         }
     }
 
@@ -289,7 +289,7 @@ export abstract class BaseQueryRunner {
                 return cachedTable
             }
         } else {
-            throw new lapinError(`Table "${tableName}" does not exist.`)
+            throw new LapinError(`Table "${tableName}" does not exist.`)
         }
     }
 

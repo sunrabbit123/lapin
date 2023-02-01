@@ -5,7 +5,7 @@ import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata"
 import { IndexMetadata } from "../metadata/IndexMetadata"
 import { JoinTableMetadataArgs } from "../metadata-args/JoinTableMetadataArgs"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -309,7 +309,7 @@ export class JunctionEntityMetadataBuilder {
                         column.propertyName === joinColumn.referencedColumnName,
                 )
                 if (!referencedColumn)
-                    throw new lapinError(
+                    throw new LapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.entityMetadata.name}`,
                     )
 
@@ -345,7 +345,7 @@ export class JunctionEntityMetadataBuilder {
                             joinColumn.referencedColumnName,
                     )
                 if (!referencedColumn)
-                    throw new lapinError(
+                    throw new LapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.inverseEntityMetadata.name}`,
                     )
 

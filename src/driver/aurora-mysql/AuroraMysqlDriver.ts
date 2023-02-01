@@ -18,7 +18,7 @@ import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { OrmUtils } from "../../util/OrmUtils"
 import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
@@ -834,7 +834,7 @@ export class AuroraMysqlDriver implements Driver {
                 })
             } else {
                 fail(
-                    new lapinError(
+                    new LapinError(
                         `Connection is not established with mysql database`,
                     ),
                 )

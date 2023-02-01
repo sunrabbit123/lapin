@@ -5,7 +5,7 @@ import { PlatformTools } from "../platform/PlatformTools"
 import { ConnectionOptionsEnvReader } from "./options-reader/ConnectionOptionsEnvReader"
 import { ConnectionOptionsYmlReader } from "./options-reader/ConnectionOptionsYmlReader"
 import { ConnectionOptionsXmlReader } from "./options-reader/ConnectionOptionsXmlReader"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { isAbsolute } from "../util/PathUtils"
 import { importOrRequireFile } from "../util/ImportUtils"
 
@@ -43,7 +43,7 @@ export class ConnectionOptionsReader {
     async all(): Promise<DataSourceOptions[]> {
         const options = await this.load()
         if (!options)
-            throw new lapinError(
+            throw new LapinError(
                 `No connection options were found in any orm configuration files.`,
             )
 
@@ -61,7 +61,7 @@ export class ConnectionOptionsReader {
                 options.name === name || (name === "default" && !options.name),
         )
         if (!targetOptions)
-            throw new lapinError(
+            throw new LapinError(
                 `Cannot find connection ${name} because its not defined in any orm configuration files.`,
             )
 

@@ -6,7 +6,7 @@ import {
     Table,
     TableColumn,
     TableForeignKey,
-    lapinError,
+    LapinError,
 } from "../.."
 import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
 import { ColumnMetadata } from "../../metadata/ColumnMetadata"
@@ -681,7 +681,7 @@ export class SapDriver implements Driver {
      */
     obtainMasterConnection(): Promise<any> {
         if (!this.master) {
-            throw new lapinError("Driver not Connected")
+            throw new LapinError("Driver not Connected")
         }
 
         return this.master.getConnection()

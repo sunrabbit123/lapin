@@ -20,7 +20,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 import { Query } from "../Query"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { SpannerDriver } from "./SpannerDriver"
@@ -351,7 +351,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Checks if database with the given name exist.
      */
     async hasDatabase(database: string): Promise<boolean> {
-        throw new lapinError(
+        throw new LapinError(
             `Check database queries are not supported by Spanner driver.`,
         )
     }
@@ -360,7 +360,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<string> {
-        throw new lapinError(
+        throw new LapinError(
             `Check database queries are not supported by Spanner driver.`,
         )
     }
@@ -379,7 +379,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<string> {
-        throw new lapinError(
+        throw new LapinError(
             `Check schema queries are not supported by Spanner driver.`,
         )
     }
@@ -633,7 +633,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         oldTableOrName: Table | string,
         newTableName: string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Rename table queries are not supported by Spanner driver.`,
         )
     }
@@ -750,7 +750,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? oldTableColumnOrName
                 : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -788,7 +788,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                       (column) => column.name === oldTableColumnOrName,
                   )
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -941,7 +941,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? columnOrName
                 : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -1076,7 +1076,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1088,7 +1088,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1100,7 +1100,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1112,7 +1112,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1172,7 +1172,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? checkOrName
                 : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -1202,7 +1202,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1214,7 +1214,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1226,7 +1226,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1238,7 +1238,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1298,7 +1298,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? foreignKeyOrName
                 : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -1369,7 +1369,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? indexOrName
                 : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 

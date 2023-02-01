@@ -1,8 +1,8 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
-export class UsingJoinColumnOnlyOnOneSideAllowedError extends lapinError {
+export class UsingJoinColumnOnlyOnOneSideAllowedError extends LapinError {
     constructor(entityMetadata: EntityMetadata, relation: RelationMetadata) {
         super(
             `Using JoinColumn is allowed only on one side of the one-to-one relationship. ` +

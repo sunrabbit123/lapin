@@ -16,7 +16,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
 import { ReplicationMode } from "../types/ReplicationMode"
 import { DriverUtils } from "../DriverUtils"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
@@ -892,7 +892,7 @@ export abstract class AbstractSqliteDriver implements Driver {
      * Creates connection with the database.
      */
     protected createDatabaseConnection() {
-        throw new lapinError(
+        throw new LapinError(
             "Do not use AbstractSqlite directly, it has to be used with one of the sqlite drivers",
         )
     }

@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown if custom repository inherits Repository class however entity is not set in @EntityRepository decorator.
  */
-export class CustomRepositoryCannotInheritRepositoryError extends lapinError {
+export class CustomRepositoryCannotInheritRepositoryError extends LapinError {
     constructor(repository: any) {
         super(
             `Custom entity repository ${

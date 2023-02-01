@@ -9,7 +9,7 @@ import { DeferrableType } from "./types/DeferrableType"
 import { OnUpdateType } from "./types/OnUpdateType"
 import { OnDeleteType } from "./types/OnDeleteType"
 import { PropertyTypeFactory } from "./types/PropertyTypeInFunction"
-import { lapinError } from "../error"
+import { LapinError } from "../error"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
 
@@ -397,7 +397,7 @@ export class RelationMetadata {
         )
 
         if (referencedColumns.length > 1)
-            throw new lapinError(
+            throw new LapinError(
                 `Cannot create relation id map for a single value because relation contains multiple referenced columns.`,
             )
 

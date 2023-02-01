@@ -20,7 +20,7 @@ import { ColumnType } from "../types/ColumnTypes"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
@@ -121,7 +121,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             isolationLevel !== "SERIALIZABLE" &&
             isolationLevel !== "READ COMMITTED"
         ) {
-            throw new lapinError(
+            throw new LapinError(
                 `Oracle only supports SERIALIZABLE and READ COMMITTED isolation`,
             )
         }
@@ -444,7 +444,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Schema create queries are not supported by Oracle driver.`,
         )
     }
@@ -453,7 +453,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        throw new lapinError(
+        throw new LapinError(
             `Schema drop queries are not supported by Oracle driver.`,
         )
     }
@@ -1004,7 +1004,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the ${this.escapePath(
                     table,
                 )} table.`,
@@ -1042,7 +1042,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the ${this.escapePath(
                     table,
                 )} table.`,
@@ -1539,7 +1539,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table ${this.escapePath(
                     table,
                 )}`,
@@ -1887,7 +1887,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -1962,7 +1962,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -1992,7 +1992,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new lapinError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2002,7 +2002,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2012,7 +2012,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new lapinError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2022,7 +2022,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new lapinError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2078,7 +2078,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2148,7 +2148,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -2937,7 +2937,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new lapinError(`Table ${table} has no primary keys.`)
+            throw new LapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

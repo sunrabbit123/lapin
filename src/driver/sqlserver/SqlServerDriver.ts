@@ -24,7 +24,7 @@ import { ReplicationMode } from "../types/ReplicationMode"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { InstanceChecker } from "../../util/InstanceChecker"
 import { UpsertType } from "../types/UpsertType.js"
 
@@ -724,7 +724,7 @@ export class SqlServerDriver implements Driver {
      */
     obtainMasterConnection(): Promise<any> {
         if (!this.master) {
-            return Promise.reject(new lapinError("Driver not Connected"))
+            return Promise.reject(new LapinError("Driver not Connected"))
         }
 
         return Promise.resolve(this.master)

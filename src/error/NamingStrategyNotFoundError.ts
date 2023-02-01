@@ -1,9 +1,9 @@
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when consumer tries to use naming strategy that does not exist.
  */
-export class NamingStrategyNotFoundError extends lapinError {
+export class NamingStrategyNotFoundError extends LapinError {
     constructor(strategyName: string | Function, connectionName: string) {
         super()
 

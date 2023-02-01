@@ -1,5 +1,5 @@
 import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryFailedError } from "../../error/QueryFailedError"
 import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
@@ -1145,7 +1145,7 @@ export class PostgresQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1182,7 +1182,7 @@ export class PostgresQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -2264,7 +2264,7 @@ export class PostgresQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new lapinError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2641,7 +2641,7 @@ export class PostgresQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2715,7 +2715,7 @@ export class PostgresQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2792,7 +2792,7 @@ export class PostgresQueryRunner
             ? exclusionOrName
             : table.exclusions.find((c) => c.name === exclusionOrName)
         if (!exclusionConstraint)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied exclusion constraint was not found in table ${table.name}`,
             )
 
@@ -2870,7 +2870,7 @@ export class PostgresQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2979,7 +2979,7 @@ export class PostgresQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -3005,7 +3005,7 @@ export class PostgresQueryRunner
             ? indexOrName
             : view.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new lapinError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in view ${view.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -4312,7 +4312,7 @@ export class PostgresQueryRunner
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new lapinError(`Table ${table} has no primary keys.`)
+            throw new LapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

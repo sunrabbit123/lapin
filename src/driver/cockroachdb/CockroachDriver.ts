@@ -1,6 +1,6 @@
 import { ObjectLiteral } from "../../common/ObjectLiteral"
 import { DataSource } from "../../data-source/DataSource"
-import { lapinError } from "../../error"
+import { LapinError } from "../../error"
 import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError"
 import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
 import { ColumnMetadata } from "../../metadata/ColumnMetadata"
@@ -808,7 +808,7 @@ export class CockroachDriver implements Driver {
      */
     async obtainMasterConnection(): Promise<any> {
         if (!this.master) {
-            throw new lapinError("Driver not Connected")
+            throw new LapinError("Driver not Connected")
         }
 
         return new Promise((ok, fail) => {
@@ -976,7 +976,7 @@ export class CockroachDriver implements Driver {
             return PlatformTools.load("pg-query-stream")
         } catch (e) {
             // todo: better error for browser env
-            throw new lapinError(
+            throw new LapinError(
                 `To use streams you should install pg-query-stream package. Please run npm i pg-query-stream --save command.`,
             )
         }

@@ -3,7 +3,7 @@ import { QueryResultCacheOptions } from "./QueryResultCacheOptions"
 import { PlatformTools } from "../platform/PlatformTools"
 import { DataSource } from "../data-source/DataSource"
 import { QueryRunner } from "../query-runner/QueryRunner"
-import { lapinError } from "../error/lapinError"
+import { LapinError } from "../error/LapinError"
 
 /**
  * Caches query result into Redis database.
@@ -97,7 +97,7 @@ export class RedisQueryResultCache implements QueryResultCache {
                     cacheOptions.options.options,
                 )
             } else {
-                throw new lapinError(
+                throw new LapinError(
                     `options.startupNodes required for ${this.clientType}.`,
                 )
             }
@@ -243,7 +243,7 @@ export class RedisQueryResultCache implements QueryResultCache {
                 return PlatformTools.load(this.clientType)
             }
         } catch (e) {
-            throw new lapinError(
+            throw new LapinError(
                 `Cannot use cache because ${this.clientType} is not installed. Please run "npm i ${this.clientType} --save".`,
             )
         }

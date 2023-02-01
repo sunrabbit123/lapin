@@ -1,10 +1,10 @@
 import { Subject } from "../persistence/Subject"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when same object is scheduled for remove and updation at the same time.
  */
-export class SubjectRemovedAndUpdatedError extends lapinError {
+export class SubjectRemovedAndUpdatedError extends LapinError {
     constructor(subject: Subject) {
         super(
             `Removed entity "${subject.metadata.name}" is also scheduled for update operation. ` +

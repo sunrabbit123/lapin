@@ -1,8 +1,8 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { lapinError } from "./lapinError"
+import { LapinError } from "./LapinError"
 
-export class UsingJoinTableIsNotAllowedError extends lapinError {
+export class UsingJoinTableIsNotAllowedError extends LapinError {
     constructor(entityMetadata: EntityMetadata, relation: RelationMetadata) {
         super(
             `Using JoinTable on ${entityMetadata.name}#${relation.propertyName} is wrong. ` +
