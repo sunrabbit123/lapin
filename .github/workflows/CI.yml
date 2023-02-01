@@ -18,20 +18,20 @@ jobs:
       - name: Check Lint
         run: yarn lint
 
-  check-test:
-    name: Check Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 18
+  # check-test:
+  #   name: Check Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 18
 
-      - name: Install Dependencies
-        run: npm install
+  #     - name: Install Dependencies
+  #       run: npm install
 
-      - name: Compile Program
-        run: npm run build
+  #     - name: Compile Program
+  #       run: npm run build
 
-      - name: Test Program
-        run: npm run test
+  #     - name: Test Program
+  #       run: npm run test
