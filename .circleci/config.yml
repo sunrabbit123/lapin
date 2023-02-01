@@ -4,7 +4,7 @@ orbs:
   codecov: codecov/codecov@1.1.1
 
 commands:
-  create-typeorm-config:
+  create-lapin-config:
     parameters:
       databases:
         type: string
@@ -80,7 +80,7 @@ commands:
 
 jobs:
   lint:
-    working_directory: ~/typeorm
+    working_directory: ~/lapin
     docker:
       - image: circleci/node:12
     steps:
@@ -90,7 +90,7 @@ jobs:
       - run: npm run lint
 
   build:
-    working_directory: ~/typeorm
+    working_directory: ~/lapin
     docker:
       - image: circleci/node:12
     steps:
@@ -99,7 +99,7 @@ jobs:
           cache-key: node12
       - run: npm run compile
       - persist_to_workspace:
-          root: ~/typeorm
+          root: ~/lapin
           paths:
             - build/
 
@@ -111,15 +111,15 @@ jobs:
       node-version:
         type: string
         default: "12"
-    working_directory: ~/typeorm
+    working_directory: ~/lapin
     docker:
       - image: circleci/node:<< parameters.node-version >>
     steps:
       - checkout
       - setup_remote_docker
       - attach_workspace:
-          at: ~/typeorm
-      - create-typeorm-config:
+          at: ~/lapin
+      - create-lapin-config:
           databases: << parameters.databases >>
       - run:
           name: Start all Relevant Services
@@ -129,19 +129,19 @@ jobs:
                 | jq -r '.services | keys | map(select(. | IN($ARGS.positional[]))) | join(" ")' --args << parameters.databases >>
             )
 
-            docker-compose --project-name typeorm --no-ansi up --detach $SERVICES
+            docker-compose --project-name lapin --no-ansi up --detach $SERVICES
       - install-packages:
           cache-key: node<< parameters.node-version >>
       - run:
-          name: Set up TypeORM Test Runner
+          name: Set up lapin Test Runner
           command: |
             docker run \
-              --volume /typeorm \
-              --name typeorm-code \
-              --workdir /typeorm \
+              --volume /lapin \
+              --name lapin-code \
+              --workdir /lapin \
               circleci/node:<< parameters.node-version >> \
-              /bin/bash -c "sudo chmod 777 /typeorm && sudo chown circleci /typeorm"
-            docker cp ./ typeorm-code:/typeorm
+              /bin/bash -c "sudo chmod 777 /lapin && sudo chown circleci /lapin"
+            docker cp ./ lapin-code:/lapin
       - run:
           name: Wait for Services to be Available
           command: |
@@ -158,7 +158,7 @@ jobs:
             echo "Running '$COMMANDS'"
 
             docker run \
-              --network typeorm_default \
+              --network lapin_default \
               --tty \
               ubuntu:trusty \
               timeout 60 sh -c "until ($COMMANDS); do echo \"Waiting for Services to be Available ...\"; sleep 5; done"
@@ -169,16 +169,16 @@ jobs:
           command: |
             docker run \
               --env npm_config_yes='true' \
-              --env LD_LIBRARY_PATH='/typeorm/node_modules/oracledb/instantclient_19_8/:$LD_LIBRARY_PATH' \
-              --volumes-from typeorm-code \
-              --network typeorm_default \
+              --env LD_LIBRARY_PATH='/lapin/node_modules/oracledb/instantclient_19_8/:$LD_LIBRARY_PATH' \
+              --volumes-from lapin-code \
+              --network lapin_default \
               --tty \
-              --workdir /typeorm \
-              --name typeorm-testrunner \
+              --workdir /lapin \
+              --name lapin-testrunner \
               circleci/node:<< parameters.node-version >> \
               npx nyc npm run test-fast
 
-            docker cp typeorm-testrunner:/typeorm/coverage/ ./
+            docker cp lapin-testrunner:/lapin/coverage/ ./
       - run:
           name: Stop all Relevant Services
           command: docker-compose down

@@ -87,10 +87,10 @@ export type WithWidthColumnType =
  * All other regular column types.
  */
 export type SimpleColumnType =
-    | "simple-array" // typeorm-specific, automatically mapped to string
-    // |"string" // typeorm-specific, automatically mapped to varchar depend on platform
-    | "simple-json" // typeorm-specific, automatically mapped to string
-    | "simple-enum" // typeorm-specific, automatically mapped to string
+    | "simple-array" // lapin-specific, automatically mapped to string
+    // |"string" // lapin-specific, automatically mapped to varchar depend on platform
+    | "simple-json" // lapin-specific, automatically mapped to string
+    | "simple-enum" // lapin-specific, automatically mapped to string
 
     // numeric types
     | "int2" // postgres, sqlite, cockroachdb

@@ -32,7 +32,7 @@ export interface BetterSqlite3ConnectionOptions extends BaseDataSourceOptions {
     readonly statementCacheSize?: number
 
     /**
-     * Function to run before a database is used in typeorm.
+     * Function to run before a database is used in lapin.
      * You can set pragmas, register plugins or register
      * functions or aggregates in this function.
      */

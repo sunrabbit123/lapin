@@ -367,7 +367,7 @@ export class OrmUtils {
             return false
 
         // Fix the buffer compare bug.
-        // See: https://github.com/typeorm/typeorm/issues/3654
+        // See: https://github.com/lapin/lapin/issues/3654
         if (
             (typeof x.equals === "function" ||
                 typeof x.equals === "function") &&

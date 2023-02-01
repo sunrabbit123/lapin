@@ -3,7 +3,7 @@ import { EntityMetadata } from "./EntityMetadata"
 import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface"
 import { ColumnMetadata } from "./ColumnMetadata"
 import { UniqueMetadataArgs } from "../metadata-args/UniqueMetadataArgs"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { DeferrableType } from "./types/DeferrableType"
 
 /**
@@ -158,7 +158,7 @@ export class UniqueMetadata {
                         ? '"' + this.givenName + '" '
                         : ""
                     const entityName = this.entityMetadata.targetName
-                    throw new TypeORMError(
+                    throw new LapinError(
                         `Unique constraint ${indexName}contains column that is missing in the entity (${entityName}): ` +
                             propertyName,
                     )

@@ -17,7 +17,7 @@ import { EntityMetadata } from "../metadata/EntityMetadata"
 import { ColumnMetadata } from "../metadata/ColumnMetadata"
 import { FindOperator } from "../find-options/FindOperator"
 import { In } from "../find-options/operator/In"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { WhereClause, WhereClauseCondition } from "./WhereClause"
 import { NotBrackets } from "./NotBrackets"
 import { EntityPropertyNotFoundError } from "../error/EntityPropertyNotFoundError"
@@ -130,7 +130,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
      */
     get alias(): string {
         if (!this.expressionMap.mainAlias)
-            throw new TypeORMError(`Main alias is not set`) // todo: better exception
+            throw new LapinError(`Main alias is not set`) // todo: better exception
 
         return this.expressionMap.mainAlias.name
     }
@@ -393,13 +393,13 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
      */
     setParameter(key: string, value: any): this {
         if (typeof value === "function") {
-            throw new TypeORMError(
+            throw new LapinError(
                 `Function parameter isn't supported in the parameters. Please check "${key}" parameter.`,
             )
         }
 
         if (!key.match(/^([A-Za-z0-9_.]+)$/)) {
-            throw new TypeORMError(
+            throw new LapinError(
                 "QueryBuilder parameter keys may only contain numbers, letters, underscores, or periods.",
             )
         }
@@ -638,7 +638,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
      */
     protected getMainTableName(): string {
         if (!this.expressionMap.mainAlias)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Entity where values should be inserted is not specified. Call "qb.into(entity)" method to specify it.`,
             )
 
@@ -1104,7 +1104,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
                         : cte.queryBuilder.getQuery()
                 if (typeof cte.queryBuilder !== "string") {
                     if (cte.queryBuilder.hasCommonTableExpressions()) {
-                        throw new TypeORMError(
+                        throw new LapinError(
                             `Nested CTEs aren't supported (CTE: ${cte.alias})`,
                         )
                     }
@@ -1112,7 +1112,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
                         !this.connection.driver.cteCapabilities.writable &&
                         !InstanceChecker.isSelectQueryBuilder(cte.queryBuilder)
                     ) {
-                        throw new TypeORMError(
+                        throw new LapinError(
                             `Only select queries are supported in CTEs in ${this.connection.options.type} (CTE: ${cte.alias})`,
                         )
                     }
@@ -1131,7 +1131,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
                             cte.options.columnNames.length !==
                                 cte.queryBuilder.expressionMap.selects.length
                         ) {
-                            throw new TypeORMError(
+                            throw new LapinError(
                                 `cte.options.columnNames length (${cte.options.columnNames.length}) doesn't match subquery select list length ${cte.queryBuilder.expressionMap.selects.length} (CTE: ${cte.alias})`,
                             )
                         }

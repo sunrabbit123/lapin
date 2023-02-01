@@ -5,7 +5,7 @@ import { EntityListenerMetadataArgs } from "../../metadata-args/EntityListenerMe
 /**
  * Calls a method on which this decorator is applied after this entity removal.
  */
-export function AfterRemove(): PropertyDecorator {
+export function AfterRemove(): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().entityListeners.push({
             target: object.constructor,

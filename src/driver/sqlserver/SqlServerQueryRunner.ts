@@ -23,7 +23,7 @@ import { IsolationLevel } from "../types/IsolationLevel"
 import { MssqlParameter } from "./MssqlParameter"
 import { SqlServerDriver } from "./SqlServerDriver"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryLock } from "../../query-runner/QueryLock"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
@@ -124,7 +124,7 @@ export class SqlServerQueryRunner
                 }
             } else {
                 await this.query(
-                    `SAVE TRANSACTION typeorm_${this.transactionDepth}`,
+                    `SAVE TRANSACTION lapin_${this.transactionDepth}`,
                 )
                 ok()
             }
@@ -176,7 +176,7 @@ export class SqlServerQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TRANSACTION typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TRANSACTION lapin_${this.transactionDepth - 1}`,
             )
             this.transactionDepth -= 1
         } else {
@@ -616,7 +616,7 @@ export class SqlServerQueryRunner
                 parsedTableName.schema = await this.getCurrentSchema()
             }
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -625,7 +625,7 @@ export class SqlServerQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -694,7 +694,7 @@ export class SqlServerQueryRunner
                 parsedTableName.schema = await this.getCurrentSchema()
             }
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -702,7 +702,7 @@ export class SqlServerQueryRunner
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -1133,7 +1133,7 @@ export class SqlServerQueryRunner
                 parsedTableName.schema = await this.getCurrentSchema()
             }
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -1142,7 +1142,7 @@ export class SqlServerQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -1187,7 +1187,7 @@ export class SqlServerQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1223,7 +1223,7 @@ export class SqlServerQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1850,7 +1850,7 @@ export class SqlServerQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2002,14 +2002,14 @@ export class SqlServerQueryRunner
                 parsedTableName.schema = await this.getCurrentSchema()
             }
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: parsedTableName.database,
                 schema: parsedTableName.schema,
                 table: parsedTableName.tableName,
@@ -2240,7 +2240,7 @@ export class SqlServerQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2315,7 +2315,7 @@ export class SqlServerQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2345,7 +2345,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2357,7 +2357,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2369,7 +2369,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2381,7 +2381,7 @@ export class SqlServerQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `SqlServer does not support exclusion constraints.`,
         )
     }
@@ -2408,7 +2408,7 @@ export class SqlServerQueryRunner
                 (foreignKey) => foreignKey.onDelete !== "NO ACTION",
             )
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 "SqlServer does not support options in TreeParent.",
             )
 
@@ -2454,7 +2454,7 @@ export class SqlServerQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2524,7 +2524,7 @@ export class SqlServerQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied index was not found in table ${table.name}`,
             )
 
@@ -2685,7 +2685,7 @@ export class SqlServerQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewPaths?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -2723,7 +2723,7 @@ export class SqlServerQueryRunner
             .map((dbName) => {
                 return (
                     `SELECT "T".*, "V"."CHECK_OPTION" FROM ${this.escapePath(
-                        this.getTypeormMetadataTableName(),
+                        this.getlapinMetadataTableName(),
                     )} "t" ` +
                     `INNER JOIN "${dbName}"."INFORMATION_SCHEMA"."VIEWS" "V" ON "V"."TABLE_SCHEMA" = "T"."SCHEMA" AND "v"."TABLE_NAME" = "T"."NAME" WHERE "T"."TYPE" = '${
                         MetadataTableType.VIEW
@@ -3277,7 +3277,7 @@ export class SqlServerQueryRunner
                                         : "VIRTUAL"
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         database: dbTable["TABLE_CATALOG"],
                                         schema: dbTable["TABLE_SCHEMA"],
                                         table: dbTable["TABLE_NAME"],
@@ -3624,7 +3624,7 @@ export class SqlServerQueryRunner
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             database: parsedTableName.database,
             schema: parsedTableName.schema,
@@ -3652,7 +3652,7 @@ export class SqlServerQueryRunner
             parsedTableName.schema = await this.getCurrentSchema()
         }
 
-        return this.deleteTypeormMetadataSql({
+        return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             database: parsedTableName.database,
             schema: parsedTableName.schema,

@@ -4,7 +4,7 @@ import { RelationMetadata } from "../../metadata/RelationMetadata"
 import { QueryExpressionMap } from "../QueryExpressionMap"
 import { SelectQueryBuilder } from "../SelectQueryBuilder"
 import { ObjectUtils } from "../../util/ObjectUtils"
-import { TypeORMError } from "../../error/TypeORMError"
+import { LapinError } from "../../error/LapinError"
 
 export class RelationCountAttribute {
     /**
@@ -56,7 +56,7 @@ export class RelationCountAttribute {
      */
     get parentAlias(): string {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new LapinError(
                 `Given value must be a string representation of alias property`,
             )
 
@@ -72,7 +72,7 @@ export class RelationCountAttribute {
      */
     get relationProperty(): string | undefined {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new LapinError(
                 `Given value is a string representation of alias property`,
             )
 
@@ -91,7 +91,7 @@ export class RelationCountAttribute {
      */
     get relation(): RelationMetadata {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new LapinError(
                 `Given value is a string representation of alias property`,
             )
 
@@ -103,7 +103,7 @@ export class RelationCountAttribute {
                 propertyPath,
             )
         if (!relation)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Relation with property path ${propertyPath} in entity was not found.`,
             )
         return relation
@@ -115,7 +115,7 @@ export class RelationCountAttribute {
      */
     get metadata(): EntityMetadata {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new LapinError(
                 `Given value is a string representation of alias property`,
             )
 

@@ -1,6 +1,6 @@
 import { Subject } from "./Subject"
 import { EntityMetadata } from "../metadata/EntityMetadata"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Orders insert or remove subjects in proper order (using topological sorting)
@@ -186,13 +186,13 @@ export class SubjectTopoligicalSorter {
 
         function visit(node: any, i: number, predecessors: any[]) {
             if (predecessors.indexOf(node) >= 0) {
-                throw new TypeORMError(
+                throw new LapinError(
                     "Cyclic dependency: " + JSON.stringify(node),
                 ) // todo: better error
             }
 
             if (!~nodes.indexOf(node)) {
-                throw new TypeORMError(
+                throw new LapinError(
                     "Found unknown node. Make sure to provided all involved nodes. Unknown node: " +
                         JSON.stringify(node),
                 )

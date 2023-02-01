@@ -7,7 +7,9 @@ import { ColumnOptions } from "../options/ColumnOptions"
  * Every time your entity will be persisted, this number will be increased by one -
  * so you can organize visioning and update strategies of your entity.
  */
-export function VersionColumn(options?: ColumnOptions): PropertyDecorator {
+export function VersionColumn(
+    options?: ColumnOptions,
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().columns.push({
             target: object.constructor,

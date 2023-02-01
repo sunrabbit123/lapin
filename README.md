@@ -1,26 +1,26 @@
 <div align="center">
-  <a href="http://typeorm.io/">
-    <img src="https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png" width="492" height="228">
+  <a href="http://lapin.io/">
+    <img src="https://github.com/lapin/lapin/raw/master/resources/logo_big.png" width="492" height="228">
   </a>
   <br>
   <br>
-	<a href="https://app.circleci.com/pipelines/github/typeorm/typeorm">
-		<img src="https://circleci.com/gh/typeorm/typeorm/tree/master.svg?style=shield">
+	<a href="https://app.circleci.com/pipelines/github/lapin/lapin">
+		<img src="https://circleci.com/gh/lapin/lapin/tree/master.svg?style=shield">
 	</a>
-	<a href="https://badge.fury.io/js/typeorm">
-		<img src="https://badge.fury.io/js/typeorm.svg">
+	<a href="https://badge.fury.io/js/lapin">
+		<img src="https://badge.fury.io/js/lapin.svg">
 	</a>
-    <a href="https://codecov.io/gh/typeorm/typeorm">
-        <img alt="Codecov" src="https://img.shields.io/codecov/c/github/typeorm/typeorm.svg">
+    <a href="https://codecov.io/gh/lapin/lapin">
+        <img alt="Codecov" src="https://img.shields.io/codecov/c/github/lapin/lapin.svg">
     </a>
-	<a href="https://join.slack.com/t/typeorm/shared_invite/zt-uu12ljeb-OH_0086I379fUDApYJHNuw">
+	<a href="https://join.slack.com/t/lapin/shared_invite/zt-uu12ljeb-OH_0086I379fUDApYJHNuw">
 		<img src="https://img.shields.io/badge/chat-on%20slack-blue.svg">
 	</a>
   <br>
   <br>
 </div>
 
-TypeORM is an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping)
+lapin is an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping)
 that can run in NodeJS, Browser, Cordova, PhoneGap, Ionic, React Native, NativeScript, Expo, and Electron platforms
 and can be used with TypeScript and JavaScript (ES5, ES6, ES7, ES8).
 Its goal is to always support the latest JavaScript features and provide additional features
@@ -28,12 +28,12 @@ that help you to develop any kind of application that uses databases - from
 small applications with a few tables to large scale enterprise applications
 with multiple databases.
 
-TypeORM supports both [Active Record](./docs/active-record-data-mapper.md#what-is-the-active-record-pattern) and [Data Mapper](./docs/active-record-data-mapper.md#what-is-the-data-mapper-pattern) patterns,
+lapin supports both [Active Record](./docs/active-record-data-mapper.md#what-is-the-active-record-pattern) and [Data Mapper](./docs/active-record-data-mapper.md#what-is-the-data-mapper-pattern) patterns,
 unlike all other JavaScript ORMs currently in existence,
 which means you can write high quality, loosely coupled, scalable,
 maintainable applications the most productive way.
 
-TypeORM is highly influenced by other ORMs, such as [Hibernate](http://hibernate.org/orm/),
+lapin is highly influenced by other ORMs, such as [Hibernate](http://hibernate.org/orm/),
 [Doctrine](http://www.doctrine-project.org/) and [Entity Framework](https://www.asp.net/entity-framework).
 
 ## Features
@@ -78,10 +78,10 @@ TypeORM is highly influenced by other ORMs, such as [Hibernate](http://hibernate
 
 And more...
 
-With TypeORM your models look like this:
+With lapin your models look like this:
 
 ```typescript
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column } from "lapin"
 
 @Entity()
 export class User {
@@ -125,7 +125,7 @@ await userRepository.remove(timber)
 Alternatively, if you prefer to use the `ActiveRecord` implementation, you can use it as well:
 
 ```typescript
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "lapin"
 
 @Entity()
 export class User extends BaseEntity {
@@ -168,7 +168,7 @@ await timber.remove()
 
 1. Install the npm package:
 
-    `npm install typeorm --save`
+    `npm install lapin --save`
 
 2. You need to install `reflect-metadata` shim:
 
@@ -273,14 +273,14 @@ You may also need to enable `es6` in the `lib` section of compiler options, or i
 
 ## Quick Start
 
-The quickest way to get started with TypeORM is to use its CLI commands to generate a starter project.
-Quick start works only if you are using TypeORM in a NodeJS application.
+The quickest way to get started with lapin is to use its CLI commands to generate a starter project.
+Quick start works only if you are using lapin in a NodeJS application.
 If you are using other platforms, proceed to the [step-by-step guide](#step-by-step-guide).
 
 To create a new project using CLI, run the following command:
 
 ```shell
-npx typeorm init --name MyProject --database postgres
+npx lapin init --name MyProject --database postgres
 ```
 
 Where `name` is the name of your project and `database` is the database you'll use.
@@ -303,7 +303,7 @@ MyProject
 └── tsconfig.json         // TypeScript compiler options
 ```
 
-> You can also run `typeorm init` on an existing node project, but be careful - it may override some files you already have.
+> You can also run `lapin init` on an existing node project, but be careful - it may override some files you already have.
 
 The next step is to install new project dependencies:
 
@@ -344,13 +344,13 @@ You can continue to work with this project and integrate other modules you need 
 creating more entities.
 
 > You can generate an ESM project by running
-> `npx typeorm init --name MyProject --database postgres --module esm` command.
+> `npx lapin init --name MyProject --database postgres --module esm` command.
 
 > You can generate an even more advanced project with express installed by running
-> `npx typeorm init --name MyProject --database mysql --express` command.
+> `npx lapin init --name MyProject --database mysql --express` command.
 
 > You can generate a docker-compose file by running
-> `npx typeorm init --name MyProject --database postgres --docker` command.
+> `npx lapin init --name MyProject --database postgres --docker` command.
 
 ## Step-by-Step Guide
 
@@ -358,12 +358,12 @@ What are you expecting from ORM?
 First of all, you are expecting it will create database tables for you
 and find / insert / update / delete your data without the pain of
 having to write lots of hardly maintainable SQL queries.
-This guide will show you how to set up TypeORM from scratch and make it do what you are expecting from an ORM.
+This guide will show you how to set up lapin from scratch and make it do what you are expecting from an ORM.
 
 ### Create a model
 
 Working with a database starts from creating tables.
-How do you tell TypeORM to create a database table?
+How do you tell lapin to create a database table?
 The answer is - through the models.
 Your models in your app are your database tables.
 
@@ -389,13 +389,13 @@ Not all models, but only those you define as _entities_.
 
 _Entity_ is your model decorated by an `@Entity` decorator.
 A database table will be created for such models.
-You work with entities everywhere in TypeORM.
+You work with entities everywhere in lapin.
 You can load/insert/update/remove and perform other operations with them.
 
 Let's make our `Photo` model an entity:
 
 ```typescript
-import { Entity } from "typeorm"
+import { Entity } from "lapin"
 
 @Entity()
 export class Photo {
@@ -418,7 +418,7 @@ To add database columns, you simply need to decorate an entity's properties you 
 with a `@Column` decorator.
 
 ```typescript
-import { Entity, Column } from "typeorm"
+import { Entity, Column } from "lapin"
 
 @Entity()
 export class Photo {
@@ -457,7 +457,7 @@ This is a requirement and you can't avoid it.
 To make a column a primary key, you need to use the `@PrimaryColumn` decorator.
 
 ```typescript
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import { Entity, Column, PrimaryColumn } from "lapin"
 
 @Entity()
 export class Photo {
@@ -487,7 +487,7 @@ Now, let's say you want your id column to be auto-generated (this is known as au
 To do that, you need to change the `@PrimaryColumn` decorator to a `@PrimaryGeneratedColumn` decorator:
 
 ```typescript
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn } from "lapin"
 
 @Entity()
 export class Photo {
@@ -519,7 +519,7 @@ We don't want all our columns to be limited varchars or integers.
 Let's setup correct data types:
 
 ```typescript
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn } from "lapin"
 
 @Entity()
 export class Photo {
@@ -555,7 +555,7 @@ Now, when our entity is created, let's create `index.ts` file and set up our `Da
 
 ```typescript
 import "reflect-metadata"
-import { DataSource } from "typeorm"
+import { DataSource } from "lapin"
 import { Photo } from "./entity/Photo"
 
 const AppDataSource = new DataSource({
@@ -758,7 +758,7 @@ import {
     PrimaryGeneratedColumn,
     OneToOne,
     JoinColumn,
-} from "typeorm"
+} from "lapin"
 import { Photo } from "./Photo"
 
 @Entity()
@@ -871,7 +871,7 @@ import {
     PrimaryGeneratedColumn,
     OneToOne,
     JoinColumn,
-} from "typeorm"
+} from "lapin"
 import { Photo } from "./Photo"
 
 @Entity()
@@ -885,7 +885,7 @@ export class PhotoMetadata {
 ```
 
 ```typescript
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "lapin"
 import { PhotoMetadata } from "./PhotoMetadata"
 
 @Entity()
@@ -919,7 +919,7 @@ import {
     OneToOne,
     JoinColumn,
     Relation,
-} from "typeorm"
+} from "lapin"
 import { Photo } from "./Photo"
 
 @Entity()
@@ -939,7 +939,7 @@ import {
     PrimaryGeneratedColumn,
     OneToOne,
     Relation,
-} from "typeorm"
+} from "lapin"
 import { PhotoMetadata } from "./PhotoMetadata"
 
 @Entity()
@@ -1056,7 +1056,7 @@ import {
     PrimaryGeneratedColumn,
     OneToMany,
     JoinColumn,
-} from "typeorm"
+} from "lapin"
 import { Photo } from "./Photo"
 
 @Entity()
@@ -1078,7 +1078,7 @@ export class Author {
 Now let's add the owner side of the relation into the Photo entity:
 
 ```typescript
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "lapin"
 import { PhotoMetadata } from "./PhotoMetadata"
 import { Author } from "./Author"
 
@@ -1133,7 +1133,7 @@ import {
     Column,
     ManyToMany,
     JoinTable,
-} from "typeorm"
+} from "lapin"
 
 @Entity()
 export class Album {
@@ -1265,58 +1265,58 @@ Learn more about QueryBuilder [here](./docs/select-query-builder.md).
 
 ## Samples
 
-Take a look at the samples in [sample](https://github.com/typeorm/typeorm/tree/master/sample) for examples of usage.
+Take a look at the samples in [sample](https://github.com/lapin/lapin/tree/master/sample) for examples of usage.
 
 There are a few repositories which you can clone and start with:
 
--   [Example how to use TypeORM with TypeScript](https://github.com/typeorm/typescript-example)
--   [Example how to use TypeORM with JavaScript](https://github.com/typeorm/javascript-example)
--   [Example how to use TypeORM with JavaScript and Babel](https://github.com/typeorm/babel-example)
--   [Example how to use TypeORM with TypeScript and SystemJS in Browser](https://github.com/typeorm/browser-example)
--   [Example how to use TypeORM with TypeScript and React in Browser](https://github.com/ItayGarin/typeorm-react-swc)
--   [Example how to use Express and TypeORM](https://github.com/typeorm/typescript-express-example)
--   [Example how to use Koa and TypeORM](https://github.com/typeorm/typescript-koa-example)
--   [Example how to use TypeORM with MongoDB](https://github.com/typeorm/mongo-typescript-example)
--   [Example how to use TypeORM in a Cordova/PhoneGap app](https://github.com/typeorm/cordova-example)
--   [Example how to use TypeORM with an Ionic app](https://github.com/typeorm/ionic-example)
--   [Example how to use TypeORM with React Native](https://github.com/typeorm/react-native-example)
--   [Example how to use TypeORM with Nativescript-Vue](https://github.com/typeorm/nativescript-vue-typeorm-sample)
--   [Example how to use TypeORM with Nativescript-Angular](https://github.com/betov18x/nativescript-angular-typeorm-example)
--   [Example how to use TypeORM with Electron using JavaScript](https://github.com/typeorm/electron-javascript-example)
--   [Example how to use TypeORM with Electron using TypeScript](https://github.com/typeorm/electron-typescript-example)
+-   [Example how to use lapin with TypeScript](https://github.com/lapin/typescript-example)
+-   [Example how to use lapin with JavaScript](https://github.com/lapin/javascript-example)
+-   [Example how to use lapin with JavaScript and Babel](https://github.com/lapin/babel-example)
+-   [Example how to use lapin with TypeScript and SystemJS in Browser](https://github.com/lapin/browser-example)
+-   [Example how to use lapin with TypeScript and React in Browser](https://github.com/ItayGarin/lapin-react-swc)
+-   [Example how to use Express and lapin](https://github.com/lapin/typescript-express-example)
+-   [Example how to use Koa and lapin](https://github.com/lapin/typescript-koa-example)
+-   [Example how to use lapin with MongoDB](https://github.com/lapin/mongo-typescript-example)
+-   [Example how to use lapin in a Cordova/PhoneGap app](https://github.com/lapin/cordova-example)
+-   [Example how to use lapin with an Ionic app](https://github.com/lapin/ionic-example)
+-   [Example how to use lapin with React Native](https://github.com/lapin/react-native-example)
+-   [Example how to use lapin with Nativescript-Vue](https://github.com/lapin/nativescript-vue-lapin-sample)
+-   [Example how to use lapin with Nativescript-Angular](https://github.com/betov18x/nativescript-angular-lapin-example)
+-   [Example how to use lapin with Electron using JavaScript](https://github.com/lapin/electron-javascript-example)
+-   [Example how to use lapin with Electron using TypeScript](https://github.com/lapin/electron-typescript-example)
 
 ## Extensions
 
-There are several extensions that simplify working with TypeORM and integrating it with other modules:
+There are several extensions that simplify working with lapin and integrating it with other modules:
 
--   [TypeORM + GraphQL framework](https://github.com/vesper-framework/vesper)
--   [TypeORM integration](https://github.com/typeorm/typeorm-typedi-extensions) with [TypeDI](https://github.com/pleerock/typedi)
--   [TypeORM integration](https://github.com/typeorm/typeorm-routing-controllers-extensions) with [routing-controllers](https://github.com/pleerock/routing-controllers)
--   Models generation from existing database - [typeorm-model-generator](https://github.com/Kononnable/typeorm-model-generator)
--   Fixtures loader - [typeorm-fixtures-cli](https://github.com/RobinCK/typeorm-fixtures)
--   ER Diagram generator - [typeorm-uml](https://github.com/eugene-manuilov/typeorm-uml/)
+-   [lapin + GraphQL framework](https://github.com/vesper-framework/vesper)
+-   [lapin integration](https://github.com/lapin/lapin-typedi-extensions) with [TypeDI](https://github.com/pleerock/typedi)
+-   [lapin integration](https://github.com/lapin/lapin-routing-controllers-extensions) with [routing-controllers](https://github.com/pleerock/routing-controllers)
+-   Models generation from existing database - [lapin-model-generator](https://github.com/Kononnable/lapin-model-generator)
+-   Fixtures loader - [lapin-fixtures-cli](https://github.com/RobinCK/lapin-fixtures)
+-   ER Diagram generator - [lapin-uml](https://github.com/eugene-manuilov/lapin-uml/)
 -   another ER Diagram generator - [erdia](https://www.npmjs.com/package/erdia/)
--   Create, drop & seed database - [typeorm-extension](https://github.com/tada5hi/typeorm-extension)
--   Automatically update `data-source.ts` after generating migrations/entities - [typeorm-codebase-sync](https://www.npmjs.com/package/typeorm-codebase-sync)
--   Easy manipulation of `relations` objects - [typeorm-relations](https://npmjs.com/package/typeorm-relations)
--   Automatically generate `relations` based on a GraphQL query - [typeorm-relations-graphql](https://npmjs.com/package/typeorm-relations-graphql)
+-   Create, drop & seed database - [lapin-extension](https://github.com/tada5hi/lapin-extension)
+-   Automatically update `data-source.ts` after generating migrations/entities - [lapin-codebase-sync](https://www.npmjs.com/package/lapin-codebase-sync)
+-   Easy manipulation of `relations` objects - [lapin-relations](https://npmjs.com/package/lapin-relations)
+-   Automatically generate `relations` based on a GraphQL query - [lapin-relations-graphql](https://npmjs.com/package/lapin-relations-graphql)
 
 ## Contributing
 
-Learn about contribution [here](https://github.com/typeorm/typeorm/blob/master/CONTRIBUTING.md) and how to setup your development environment [here](https://github.com/typeorm/typeorm/blob/master/DEVELOPER.md).
+Learn about contribution [here](https://github.com/lapin/lapin/blob/master/CONTRIBUTING.md) and how to setup your development environment [here](https://github.com/lapin/lapin/blob/master/DEVELOPER.md).
 
 This project exists thanks to all the people who contribute:
 
-<a href="https://github.com/typeorm/typeorm/graphs/contributors"><img src="https://opencollective.com/typeorm/contributors.svg?width=890&showBtn=false" /></a>
+<a href="https://github.com/lapin/lapin/graphs/contributors"><img src="https://opencollective.com/lapin/contributors.svg?width=890&showBtn=false" /></a>
 
 ## Sponsors
 
-Open source is hard and time-consuming. If you want to invest in TypeORM's future you can become a sponsor and allow our core team to spend more time on TypeORM's improvements and new features. [Become a sponsor](https://opencollective.com/typeorm)
+Open source is hard and time-consuming. If you want to invest in lapin's future you can become a sponsor and allow our core team to spend more time on lapin's improvements and new features. [Become a sponsor](https://opencollective.com/lapin)
 
-<a href="https://opencollective.com/typeorm" target="_blank"><img src="https://opencollective.com/typeorm/tiers/sponsor.svg?width=890"></a>
+<a href="https://opencollective.com/lapin" target="_blank"><img src="https://opencollective.com/lapin/tiers/sponsor.svg?width=890"></a>
 
 ## Gold Sponsors
 
-Become a gold sponsor and get premium technical support from our core contributors. [Become a gold sponsor](https://opencollective.com/typeorm)
+Become a gold sponsor and get premium technical support from our core contributors. [Become a gold sponsor](https://opencollective.com/lapin)
 
-<a href="https://opencollective.com/typeorm" target="_blank"><img src="https://opencollective.com/typeorm/tiers/gold-sponsor.svg?width=890"></a>
+<a href="https://opencollective.com/lapin" target="_blank"><img src="https://opencollective.com/lapin/tiers/gold-sponsor.svg?width=890"></a>

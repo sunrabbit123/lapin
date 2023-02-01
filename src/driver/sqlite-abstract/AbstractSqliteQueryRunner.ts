@@ -16,7 +16,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 import { TableCheck } from "../../schema-builder/table/TableCheck"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { TransactionAlreadyStartedError, TypeORMError } from "../../error"
+import { TransactionAlreadyStartedError, LapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 
@@ -73,7 +73,7 @@ export abstract class AbstractSqliteQueryRunner
      */
     async startTransaction(isolationLevel?: IsolationLevel): Promise<void> {
         if (this.driver.transactionSupport === "none")
-            throw new TypeORMError(
+            throw new LapinError(
                 `Transactions aren't supported by ${this.connection.driver.options.type}.`,
             )
 
@@ -88,7 +88,7 @@ export abstract class AbstractSqliteQueryRunner
             isolationLevel !== "READ UNCOMMITTED" &&
             isolationLevel !== "SERIALIZABLE"
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `SQLite only supports SERIALIZABLE and READ UNCOMMITTED isolation`,
             )
 
@@ -110,7 +110,7 @@ export abstract class AbstractSqliteQueryRunner
             }
             await this.query("BEGIN TRANSACTION")
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
         this.transactionDepth += 1
 
@@ -128,7 +128,7 @@ export abstract class AbstractSqliteQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `RELEASE SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("COMMIT")
@@ -150,7 +150,7 @@ export abstract class AbstractSqliteQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("ROLLBACK")
@@ -170,7 +170,7 @@ export abstract class AbstractSqliteQueryRunner
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        throw new TypeORMError(`Stream is not supported by sqlite driver.`)
+        throw new LapinError(`Stream is not supported by sqlite driver.`)
     }
 
     /**
@@ -206,7 +206,7 @@ export abstract class AbstractSqliteQueryRunner
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new TypeORMError(`This driver does not support table schemas`)
+        throw new LapinError(`This driver does not support table schemas`)
     }
 
     /**
@@ -317,14 +317,14 @@ export abstract class AbstractSqliteQueryRunner
         )
 
         for (const column of generatedColumns) {
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -375,13 +375,13 @@ export abstract class AbstractSqliteQueryRunner
         )
 
         for (const column of generatedColumns) {
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -561,7 +561,7 @@ export abstract class AbstractSqliteQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -591,7 +591,7 @@ export abstract class AbstractSqliteQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -730,7 +730,7 @@ export abstract class AbstractSqliteQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -874,7 +874,7 @@ export abstract class AbstractSqliteQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -944,7 +944,7 @@ export abstract class AbstractSqliteQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -978,7 +978,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -988,7 +988,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -998,7 +998,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -1008,7 +1008,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`)
     }
 
     /**
@@ -1054,7 +1054,7 @@ export abstract class AbstractSqliteQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -1128,7 +1128,7 @@ export abstract class AbstractSqliteQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -1218,7 +1218,7 @@ export abstract class AbstractSqliteQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -1230,7 +1230,7 @@ export abstract class AbstractSqliteQueryRunner
         const viewNamesString = viewNames
             .map((name) => "'" + name + "'")
             .join(", ")
-        let query = `SELECT "t".* FROM "${this.getTypeormMetadataTableName()}" "t" INNER JOIN "sqlite_master" s ON "s"."name" = "t"."name" AND "s"."type" = 'view' WHERE "t"."type" = '${
+        let query = `SELECT "t".* FROM "${this.getlapinMetadataTableName()}" "t" INNER JOIN "sqlite_master" s ON "s"."name" = "t"."name" AND "s"."type" = 'view' WHERE "t"."type" = '${
             MetadataTableType.VIEW
         }'`
         if (viewNamesString.length > 0)
@@ -1435,7 +1435,7 @@ export abstract class AbstractSqliteQueryRunner
                                 dbColumn["hidden"] === 2 ? "VIRTUAL" : "STORED"
 
                             const asExpressionQuery =
-                                await this.selectTypeormMetadataSql({
+                                await this.selectlapinMetadataSql({
                                     table: table.name,
                                     type: MetadataTableType.GENERATED_COLUMN,
                                     name: tableColumn.name,
@@ -1725,7 +1725,7 @@ export abstract class AbstractSqliteQueryRunner
         )
         const skipPrimary = primaryColumns.length > 1
         if (skipPrimary && hasAutoIncrement)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Sqlite does not support AUTOINCREMENT on composite primary key`,
             )
 
@@ -1892,7 +1892,7 @@ export abstract class AbstractSqliteQueryRunner
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             name: view.name,
             value: expression,
@@ -1916,7 +1916,7 @@ export abstract class AbstractSqliteQueryRunner
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
             : viewOrPath
-        return this.deleteTypeormMetadataSql({
+        return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             name: viewName,
         })
@@ -2107,14 +2107,14 @@ export abstract class AbstractSqliteQueryRunner
             downQueries.push(this.dropIndexSql(index))
         })
 
-        // update generated columns in "typeorm_metadata" table
+        // update generated columns in "lapin_metadata" table
         // Step 1: clear data for removed generated columns
         oldTable.columns
             .filter((column) => {
                 const newTableColumn = newTable.columns.find(
                     (c) => c.name === column.name,
                 )
-                // we should delete record from "typeorm_metadata" if generated column was removed
+                // we should delete record from "lapin_metadata" if generated column was removed
                 // or it was changed to non-generated
                 return (
                     column.generatedType &&
@@ -2125,13 +2125,13 @@ export abstract class AbstractSqliteQueryRunner
                 )
             })
             .forEach((column) => {
-                const deleteQuery = this.deleteTypeormMetadataSql({
+                const deleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
                 })
 
-                const insertQuery = this.insertTypeormMetadataSql({
+                const insertQuery = this.insertlapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
@@ -2151,14 +2151,14 @@ export abstract class AbstractSqliteQueryRunner
                     !oldTable.columns.some((c) => c.name === column.name),
             )
             .forEach((column) => {
-                const insertQuery = this.insertTypeormMetadataSql({
+                const insertQuery = this.insertlapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
                     value: column.asExpression,
                 })
 
-                const deleteQuery = this.deleteTypeormMetadataSql({
+                const deleteQuery = this.deletelapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
@@ -2183,13 +2183,13 @@ export abstract class AbstractSqliteQueryRunner
                 if (!oldColumn) return
 
                 // update expression
-                const deleteQuery = this.deleteTypeormMetadataSql({
+                const deleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: oldColumn.name,
                 })
 
-                const insertQuery = this.insertTypeormMetadataSql({
+                const insertQuery = this.insertlapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
@@ -2200,14 +2200,14 @@ export abstract class AbstractSqliteQueryRunner
                 upQueries.push(insertQuery)
 
                 // revert update
-                const revertInsertQuery = this.insertTypeormMetadataSql({
+                const revertInsertQuery = this.insertlapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: oldColumn.name,
                     value: oldColumn.asExpression,
                 })
 
-                const revertDeleteQuery = this.deleteTypeormMetadataSql({
+                const revertDeleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,

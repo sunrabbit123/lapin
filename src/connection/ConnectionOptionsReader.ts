@@ -5,7 +5,7 @@ import { PlatformTools } from "../platform/PlatformTools"
 import { ConnectionOptionsEnvReader } from "./options-reader/ConnectionOptionsEnvReader"
 import { ConnectionOptionsYmlReader } from "./options-reader/ConnectionOptionsYmlReader"
 import { ConnectionOptionsXmlReader } from "./options-reader/ConnectionOptionsXmlReader"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { isAbsolute } from "../util/PathUtils"
 import { importOrRequireFile } from "../util/ImportUtils"
 
@@ -43,7 +43,7 @@ export class ConnectionOptionsReader {
     async all(): Promise<DataSourceOptions[]> {
         const options = await this.load()
         if (!options)
-            throw new TypeORMError(
+            throw new LapinError(
                 `No connection options were found in any orm configuration files.`,
             )
 
@@ -61,7 +61,7 @@ export class ConnectionOptionsReader {
                 options.name === name || (name === "default" && !options.name),
         )
         if (!targetOptions)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Cannot find connection ${name} because its not defined in any orm configuration files.`,
             )
 
@@ -69,7 +69,7 @@ export class ConnectionOptionsReader {
     }
 
     /**
-     * Checks if there is a TypeORM configuration file.
+     * Checks if there is a lapin configuration file.
      */
     async has(name: string): Promise<boolean> {
         const allOptions = await this.load()
@@ -140,8 +140,8 @@ export class ConnectionOptionsReader {
 
         // try to find connection options from any of available sources of configuration
         if (
-            PlatformTools.getEnvVariable("TYPEORM_CONNECTION") ||
-            PlatformTools.getEnvVariable("TYPEORM_URL")
+            PlatformTools.getEnvVariable("lapin_CONNECTION") ||
+            PlatformTools.getEnvVariable("lapin_URL")
         ) {
             connectionOptions = await new ConnectionOptionsEnvReader().read()
         } else if (

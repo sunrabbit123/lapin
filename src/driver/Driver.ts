@@ -18,7 +18,7 @@ import { UpsertType } from "./types/UpsertType"
 export type ReturningType = "insert" | "update" | "delete"
 
 /**
- * Driver organizes TypeORM communication with specific database management system.
+ * Driver organizes lapin communication with specific database management system.
  */
 export interface Driver {
     /**

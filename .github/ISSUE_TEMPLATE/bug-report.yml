@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |2-
-          Have a question?  This is the TypeORM issue tracker – and not the right place for general support or questions. Instead, check the ["Support" Documentation](  https://github.com/typeorm/typeorm/blob/master/docs/support.md
+          Have a question?  This is the lapin issue tracker – and not the right place for general support or questions. Instead, check the ["Support" Documentation](  https://github.com/lapin/lapin/blob/master/docs/support.md
         ) on the best places to ask questions!
   - type: input
     id: description
@@ -37,7 +37,7 @@ body:
       label: Steps to reproduce
       description: >-
         Your bug will be investigated much faster if we can run your code and it
-        doesn't have dependencies other than TypeORM. Issues without
+        doesn't have dependencies other than lapin. Issues without
         reproduction steps or code examples may be closed as not actionable.
       placeholder: >-
         Please try to provide a Minimal, Complete, and Verifiable example.
@@ -57,7 +57,7 @@ body:
         | Operating System    |          |
         | Node.js version     | x.y.zzz  |
         | Typescript version  | x.y.zzz  |
-        | TypeORM version     | x.y.zzz  |
+        | lapin version     | x.y.zzz  |
     validations:
       required: true
   - type: textarea

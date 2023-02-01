@@ -2,7 +2,7 @@ import { RedisQueryResultCache } from "./RedisQueryResultCache"
 import { DbQueryResultCache } from "./DbQueryResultCache"
 import { QueryResultCache } from "./QueryResultCache"
 import { DataSource } from "../data-source/DataSource"
-import { TypeORMError } from "../error/TypeORMError"
+import { LapinError } from "../error/LapinError"
 
 /**
  * Caches query result into Redis database.
@@ -23,7 +23,7 @@ export class QueryResultCacheFactory {
      */
     create(): QueryResultCache {
         if (!this.connection.options.cache)
-            throw new TypeORMError(
+            throw new LapinError(
                 `To use cache you need to enable it in connection options by setting cache: true or providing some caching options. Example: { host: ..., username: ..., cache: true }`,
             )
 

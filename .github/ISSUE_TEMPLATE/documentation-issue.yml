@@ -7,9 +7,9 @@ body:
   - type: markdown
     attributes:
       value: >-
-        Have a question?  This is the TypeORM issue tracker - and not the right
+        Have a question?  This is the lapin issue tracker - and not the right
         place for general support or questions.  Instead, check the [“Support"
-        Documentation](https://github.com/typeorm/typeorm/blob/master/docs/support.md
+        Documentation](https://github.com/lapin/lapin/blob/master/docs/support.md
 
         ) on the best places to ask questions!
   - type: textarea

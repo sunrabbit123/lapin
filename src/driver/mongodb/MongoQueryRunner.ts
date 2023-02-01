@@ -46,7 +46,7 @@ import { TableUnique } from "../../schema-builder/table/TableUnique"
 import { Broadcaster } from "../../subscriber/Broadcaster"
 import { TableCheck } from "../../schema-builder/table/TableCheck"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { ReplicationMode } from "../types/ReplicationMode"
 
 /**
@@ -636,7 +636,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Executes a given SQL query.
      */
     query(query: string, parameters?: any[]): Promise<any> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Executing SQL query is not supported by MongoDB driver.`,
         )
     }
@@ -650,7 +650,7 @@ export class MongoQueryRunner implements QueryRunner {
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Stream is not supported by MongoDB driver. Use watch instead.`,
         )
     }
@@ -684,7 +684,7 @@ export class MongoQueryRunner implements QueryRunner {
 
     async delete(collectionName: string, conditions: ObjectLiteral|ObjectLiteral[]|string, maybeParameters?: any[]): Promise<any> { // todo: fix any
         if (typeof conditions === "string")
-            throw new TypeORMError(`String condition is not supported by MongoDB driver.`);
+            throw new LapinError(`String condition is not supported by MongoDB driver.`);
 
         await this.databaseConnection
             .collection(collectionName)
@@ -695,7 +695,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Returns all available database names including system databases.
      */
     async getDatabases(): Promise<string[]> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -705,7 +705,7 @@ export class MongoQueryRunner implements QueryRunner {
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -714,7 +714,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads given table's data from the database.
      */
     async getTable(collectionName: string): Promise<Table | undefined> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -723,7 +723,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads all tables (with given names) from the database and creates a Table from them.
      */
     async getTables(collectionNames: string[]): Promise<Table[]> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -732,7 +732,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads given views's data from the database.
      */
     async getView(collectionName: string): Promise<View | undefined> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -741,7 +741,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads all views (with given names) from the database and creates a Table from them.
      */
     async getViews(collectionNames: string[]): Promise<View[]> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -754,7 +754,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Checks if database with the given name exist.
      */
     async hasDatabase(database: string): Promise<boolean> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check database queries are not supported by MongoDB driver.`,
         )
     }
@@ -763,7 +763,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<undefined> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check database queries are not supported by MongoDB driver.`,
         )
     }
@@ -772,7 +772,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
         )
     }
@@ -781,7 +781,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<undefined> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
         )
     }
@@ -790,7 +790,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Checks if table with the given name exist in the database.
      */
     async hasTable(collectionName: string): Promise<boolean> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
         )
     }
@@ -802,7 +802,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columnName: string,
     ): Promise<boolean> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -811,7 +811,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Creates a database if it's not created.
      */
     async createDatabase(database: string): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Database create queries are not supported by MongoDB driver.`,
         )
     }
@@ -820,7 +820,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops database.
      */
     async dropDatabase(database: string, ifExist?: boolean): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Database drop queries are not supported by MongoDB driver.`,
         )
     }
@@ -832,7 +832,7 @@ export class MongoQueryRunner implements QueryRunner {
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema create queries are not supported by MongoDB driver.`,
         )
     }
@@ -841,7 +841,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema drop queries are not supported by MongoDB driver.`,
         )
     }
@@ -850,7 +850,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Creates a new table from the given table and columns inside it.
      */
     async createTable(table: Table): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -859,7 +859,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops the table.
      */
     async dropTable(tableName: Table | string): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -868,7 +868,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Creates a new view.
      */
     async createView(view: View): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -877,7 +877,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops the view.
      */
     async dropView(target: View | string): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -889,7 +889,7 @@ export class MongoQueryRunner implements QueryRunner {
         oldTableOrName: Table | string,
         newTableOrName: Table | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -901,7 +901,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         column: TableColumn,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -913,7 +913,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columns: TableColumn[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -926,7 +926,7 @@ export class MongoQueryRunner implements QueryRunner {
         oldTableColumnOrName: TableColumn | string,
         newTableColumnOrName: TableColumn | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -939,7 +939,7 @@ export class MongoQueryRunner implements QueryRunner {
         oldTableColumnOrName: TableColumn | string,
         newColumn: TableColumn,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -951,7 +951,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         changedColumns: { newColumn: TableColumn; oldColumn: TableColumn }[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -963,7 +963,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columnOrName: TableColumn | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -975,7 +975,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columns: TableColumn[] | string[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -987,7 +987,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columnNames: string[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -999,7 +999,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         columns: TableColumn[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1008,7 +1008,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops a primary key.
      */
     async dropPrimaryKey(tableOrName: Table | string): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1020,7 +1020,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1032,7 +1032,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1044,7 +1044,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1056,7 +1056,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1068,7 +1068,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1080,7 +1080,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1092,7 +1092,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkOrName: TableCheck | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1104,7 +1104,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1116,7 +1116,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1128,7 +1128,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1140,7 +1140,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1152,7 +1152,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1164,7 +1164,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         foreignKey: TableForeignKey,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1176,7 +1176,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         foreignKeys: TableForeignKey[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1188,7 +1188,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         foreignKey: TableForeignKey,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1200,7 +1200,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         foreignKeys: TableForeignKey[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1212,7 +1212,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         index: TableIndex,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1224,7 +1224,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         indices: TableIndex[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1233,7 +1233,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Drops an index from the table.
      */
     async dropIndex(collectionName: string, indexName: string): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1245,7 +1245,7 @@ export class MongoQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         indices: TableIndex[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
         )
     }
@@ -1265,7 +1265,7 @@ export class MongoQueryRunner implements QueryRunner {
      * You can get memorized sql using getMemorySql() method.
      */
     enableSqlMemory(): void {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }
@@ -1277,7 +1277,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Previously memorized sql will be flushed.
      */
     disableSqlMemory(): void {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }
@@ -1286,7 +1286,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Flushes all memorized sqls.
      */
     clearSqlMemory(): void {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }
@@ -1295,7 +1295,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Gets sql stored in the memory. Parameters in the sql are already replaced.
      */
     getMemorySql(): SqlInMemory {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }
@@ -1304,7 +1304,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Executes up sql queries.
      */
     async executeMemoryUpSql(): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }
@@ -1313,7 +1313,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Executes down sql queries.
      */
     async executeMemoryDownSql(): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
         )
     }

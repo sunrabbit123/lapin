@@ -3,7 +3,7 @@ import { QueryRunner } from "../query-runner/QueryRunner"
 import { Logger } from "./Logger"
 
 /**
- * Performs logging of the events in TypeORM.
+ * Performs logging of the events in lapin.
  * This version of logger uses console to log events and does not use syntax highlighting.
  */
 export class SimpleConsoleLogger implements Logger {

@@ -10,7 +10,7 @@ export function TreeChildren(options?: {
     cascade?:
         | boolean
         | ("insert" | "update" | "remove" | "soft-remove" | "recover")[]
-}): PropertyDecorator {
+}): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         if (!options) options = {} as RelationOptions
 

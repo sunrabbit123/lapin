@@ -1,8 +1,8 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { TypeORMError } from "./TypeORMError"
+import { LapinError } from "./LapinError"
 
-export class UsingJoinTableOnlyOnOneSideAllowedError extends TypeORMError {
+export class UsingJoinTableOnlyOnOneSideAllowedError extends LapinError {
     constructor(entityMetadata: EntityMetadata, relation: RelationMetadata) {
         super(
             `Using JoinTable is allowed only on one side of the many-to-many relationship. ` +

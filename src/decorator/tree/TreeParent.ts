@@ -9,7 +9,7 @@ import { RelationOptions } from "../options/RelationOptions"
  */
 export function TreeParent(options?: {
     onDelete?: OnDeleteType
-}): PropertyDecorator {
+}): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         if (!options) options = {} as RelationOptions
 

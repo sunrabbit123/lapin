@@ -6,7 +6,9 @@ import { VirtualColumnOptions } from "../options/VirtualColumnOptions"
 /**
  * VirtualColumn decorator is used to mark a specific class property as a Virtual column.
  */
-export function VirtualColumn(options: VirtualColumnOptions): PropertyDecorator
+export function VirtualColumn(
+    options: VirtualColumnOptions,
+): PropertyDecorator | Function
 
 /**
  * VirtualColumn decorator is used to mark a specific class property as a Virtual column.
@@ -14,7 +16,7 @@ export function VirtualColumn(options: VirtualColumnOptions): PropertyDecorator
 export function VirtualColumn(
     typeOrOptions: ColumnType,
     options: VirtualColumnOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * VirtualColumn decorator is used to mark a specific class property as a Virtual column.
@@ -22,7 +24,7 @@ export function VirtualColumn(
 export function VirtualColumn(
     typeOrOptions?: ColumnType | VirtualColumnOptions,
     options?: VirtualColumnOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         // normalize parameters
         let type: ColumnType | undefined

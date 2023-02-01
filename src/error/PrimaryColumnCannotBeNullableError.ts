@@ -1,6 +1,6 @@
-import { TypeORMError } from "./TypeORMError"
+import { LapinError } from "./LapinError"
 
-export class PrimaryColumnCannotBeNullableError extends TypeORMError {
+export class PrimaryColumnCannotBeNullableError extends LapinError {
     constructor(object: Object, propertyName: string) {
         super(
             `Primary column ${

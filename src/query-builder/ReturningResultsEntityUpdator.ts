@@ -4,7 +4,7 @@ import { QueryExpressionMap } from "./QueryExpressionMap"
 import { ColumnMetadata } from "../metadata/ColumnMetadata"
 import { UpdateResult } from "./result/UpdateResult"
 import { InsertResult } from "./result/InsertResult"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Updates entity with returning results in the entity insert and update operations.
@@ -85,7 +85,7 @@ export class ReturningResultsEntityUpdator {
                                 entity,
                             )
                         if (!entityId)
-                            throw new TypeORMError(
+                            throw new LapinError(
                                 `Cannot update entity because entity id is not set in the entity.`,
                             )
 
@@ -214,7 +214,7 @@ export class ReturningResultsEntityUpdator {
                 // effectively drops the `where` clause entirely and the first record will be returned -
                 // not what we want at all.
                 if (!entityId)
-                    throw new TypeORMError(
+                    throw new LapinError(
                         `Cannot update entity because entity id is not set in the entity.`,
                     )
 

@@ -7,13 +7,15 @@ import { JoinTableOptions } from "../options/JoinTableOptions"
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
  * Its also used to set a custom junction table's name, column names and referenced columns.
  */
-export function JoinTable(): PropertyDecorator
+export function JoinTable(): PropertyDecorator | Function
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
  * Its also used to set a custom junction table's name, column names and referenced columns.
  */
-export function JoinTable(options: JoinTableOptions): PropertyDecorator
+export function JoinTable(
+    options: JoinTableOptions,
+): PropertyDecorator | Function
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
@@ -21,7 +23,7 @@ export function JoinTable(options: JoinTableOptions): PropertyDecorator
  */
 export function JoinTable(
     options: JoinTableMultipleColumnsOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
@@ -29,7 +31,7 @@ export function JoinTable(
  */
 export function JoinTable(
     options?: JoinTableOptions | JoinTableMultipleColumnsOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         options =
             options ||

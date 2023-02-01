@@ -1,6 +1,6 @@
 import { getMetadataArgsStorage } from "../globals"
 import { CheckMetadataArgs } from "../metadata-args/CheckMetadataArgs"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Creates a database check.
@@ -31,7 +31,7 @@ export function Check(
     const name = maybeExpression ? nameOrExpression : undefined
     const expression = maybeExpression ? maybeExpression : nameOrExpression
 
-    if (!expression) throw new TypeORMError(`Check expression is required`)
+    if (!expression) throw new LapinError(`Check expression is required`)
 
     return function (
         clsOrObject: Function | Object,

@@ -6,7 +6,9 @@ import { ColumnOptions } from "../options/ColumnOptions"
  * This column will store an update date of the updated object.
  * This date is being updated each time you persist the object.
  */
-export function UpdateDateColumn(options?: ColumnOptions): PropertyDecorator {
+export function UpdateDateColumn(
+    options?: ColumnOptions,
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         getMetadataArgsStorage().columns.push({
             target: object.constructor,

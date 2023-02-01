@@ -30,7 +30,7 @@ import { SelectQueryBuilderOption } from "./SelectQueryBuilderOption"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { DriverUtils } from "../driver/DriverUtils"
 import { EntityNotFoundError } from "../error/EntityNotFoundError"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { FindManyOptions } from "../find-options/FindManyOptions"
 import { FindOptionsSelect } from "../find-options/FindOptionsSelect"
 import { RelationMetadata } from "../metadata/RelationMetadata"
@@ -1376,7 +1376,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
         nulls?: "NULLS FIRST" | "NULLS LAST",
     ): this {
         if (order !== undefined && order !== "ASC" && order !== "DESC")
-            throw new TypeORMError(
+            throw new LapinError(
                 `SelectQueryBuilder.addOrderBy "order" can accept only "ASC" and "DESC" values.`,
             )
         if (
@@ -1384,7 +1384,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             nulls !== "NULLS FIRST" &&
             nulls !== "NULLS LAST"
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `SelectQueryBuilder.addOrderBy "nulls" can accept only "NULLS FIRST" and "NULLS LAST" values.`,
             )
 
@@ -1415,7 +1415,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
         nulls?: "NULLS FIRST" | "NULLS LAST",
     ): this {
         if (order !== undefined && order !== "ASC" && order !== "DESC")
-            throw new TypeORMError(
+            throw new LapinError(
                 `SelectQueryBuilder.addOrderBy "order" can accept only "ASC" and "DESC" values.`,
             )
         if (
@@ -1423,7 +1423,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             nulls !== "NULLS FIRST" &&
             nulls !== "NULLS LAST"
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `SelectQueryBuilder.addOrderBy "nulls" can accept only "NULLS FIRST" and "NULLS LAST" values.`,
             )
 
@@ -1447,7 +1447,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             this.expressionMap.limit !== undefined &&
             isNaN(this.expressionMap.limit)
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `Provided "limit" value is not a number. Please provide a numeric value.`,
             )
 
@@ -1466,7 +1466,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             this.expressionMap.offset !== undefined &&
             isNaN(this.expressionMap.offset)
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `Provided "offset" value is not a number. Please provide a numeric value.`,
             )
 
@@ -1482,7 +1482,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             this.expressionMap.take !== undefined &&
             isNaN(this.expressionMap.take)
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `Provided "take" value is not a number. Please provide a numeric value.`,
             )
 
@@ -1498,7 +1498,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
             this.expressionMap.skip !== undefined &&
             isNaN(this.expressionMap.skip)
         )
-            throw new TypeORMError(
+            throw new LapinError(
                 `Provided "skip" value is not a number. Please provide a numeric value.`,
             )
 
@@ -2080,7 +2080,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      */
     protected createSelectExpression() {
         if (!this.expressionMap.mainAlias)
-            throw new TypeORMError(
+            throw new LapinError(
                 "Cannot build query because main alias is not set (call qb#from method)",
             )
 
@@ -2606,12 +2606,12 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
                     driver.options.type === "cockroachdb"
                 )
             ) {
-                throw new TypeORMError(
+                throw new LapinError(
                     "Lock tables not supported in selected driver",
                 )
             }
             if (this.expressionMap.lockTables.length < 1) {
-                throw new TypeORMError("lockTables cannot be an empty array")
+                throw new LapinError("lockTables cannot be an empty array")
             }
             lockTablesClause = " OF " + this.expressionMap.lockTables.join(", ")
         }
@@ -3256,7 +3256,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
                                       )
                                   })
                               if (!tableAlias) {
-                                  throw new TypeORMError(
+                                  throw new LapinError(
                                       `"${table}" is not part of this query`,
                                   )
                               }
@@ -3318,7 +3318,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
         queryRunner: QueryRunner,
     ): Promise<{ entities: Entity[]; raw: any[] }> {
         if (!this.expressionMap.mainAlias)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Alias is not set. Use "from" method to set an alias.`,
             )
 

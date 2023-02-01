@@ -121,7 +121,7 @@ export class FindOptionsUtils {
             qb.select([]);
             options.select.forEach(select => {
                 if (!metadata.hasColumnWithPropertyPath(`${select}`))
-                    throw new TypeORMError(`${select} column was not found in the ${metadata.name} entity.`);
+                    throw new LapinError(`${select} column was not found in the ${metadata.name} entity.`);
 
                 const columns = metadata.findColumnsWithPropertyPath(`${select}`);
 
@@ -190,7 +190,7 @@ export class FindOptionsUtils {
                         return alias.metadata.tableNameWithoutPrefix === table;
                     });
                     if (!tableAlias) {
-                        throw new TypeORMError(`"${table}" is not part of this query`);
+                        throw new LapinError(`"${table}" is not part of this query`);
                     }
                     return qb.escape(tableAlias.name);
                 }) : undefined;

@@ -24,7 +24,7 @@ export interface AuroraMysqlConnectionOptions
 
     /**
      * The driver object
-     * This defaults to require("typeorm-aurora-data-api-driver")
+     * This defaults to require("lapin-aurora-data-api-driver")
      */
     readonly driver?: any
 

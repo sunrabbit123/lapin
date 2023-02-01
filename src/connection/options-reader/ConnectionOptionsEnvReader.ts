@@ -5,7 +5,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 /**
  * Reads connection options from environment variables.
  * Environment variables can have only a single connection.
- * Its strongly required to define TYPEORM_CONNECTION env variable.
+ * Its strongly required to define lapin_CONNECTION env variable.
  *
  * @deprecated
  */
@@ -21,65 +21,65 @@ export class ConnectionOptionsEnvReader {
         return [
             {
                 type:
-                    PlatformTools.getEnvVariable("TYPEORM_CONNECTION") ||
-                    (PlatformTools.getEnvVariable("TYPEORM_URL")
-                        ? PlatformTools.getEnvVariable("TYPEORM_URL").split(
+                    PlatformTools.getEnvVariable("lapin_CONNECTION") ||
+                    (PlatformTools.getEnvVariable("lapin_URL")
+                        ? PlatformTools.getEnvVariable("lapin_URL").split(
                               "://",
                           )[0]
                         : undefined),
-                url: PlatformTools.getEnvVariable("TYPEORM_URL"),
-                host: PlatformTools.getEnvVariable("TYPEORM_HOST"),
+                url: PlatformTools.getEnvVariable("lapin_URL"),
+                host: PlatformTools.getEnvVariable("lapin_HOST"),
                 port: this.stringToNumber(
-                    PlatformTools.getEnvVariable("TYPEORM_PORT"),
+                    PlatformTools.getEnvVariable("lapin_PORT"),
                 ),
-                username: PlatformTools.getEnvVariable("TYPEORM_USERNAME"),
-                password: PlatformTools.getEnvVariable("TYPEORM_PASSWORD"),
-                database: PlatformTools.getEnvVariable("TYPEORM_DATABASE"),
-                sid: PlatformTools.getEnvVariable("TYPEORM_SID"),
-                schema: PlatformTools.getEnvVariable("TYPEORM_SCHEMA"),
-                extra: PlatformTools.getEnvVariable("TYPEORM_DRIVER_EXTRA")
+                username: PlatformTools.getEnvVariable("lapin_USERNAME"),
+                password: PlatformTools.getEnvVariable("lapin_PASSWORD"),
+                database: PlatformTools.getEnvVariable("lapin_DATABASE"),
+                sid: PlatformTools.getEnvVariable("lapin_SID"),
+                schema: PlatformTools.getEnvVariable("lapin_SCHEMA"),
+                extra: PlatformTools.getEnvVariable("lapin_DRIVER_EXTRA")
                     ? JSON.parse(
-                          PlatformTools.getEnvVariable("TYPEORM_DRIVER_EXTRA"),
+                          PlatformTools.getEnvVariable("lapin_DRIVER_EXTRA"),
                       )
                     : undefined,
                 synchronize: OrmUtils.toBoolean(
-                    PlatformTools.getEnvVariable("TYPEORM_SYNCHRONIZE"),
+                    PlatformTools.getEnvVariable("lapin_SYNCHRONIZE"),
                 ),
                 dropSchema: OrmUtils.toBoolean(
-                    PlatformTools.getEnvVariable("TYPEORM_DROP_SCHEMA"),
+                    PlatformTools.getEnvVariable("lapin_DROP_SCHEMA"),
                 ),
                 migrationsRun: OrmUtils.toBoolean(
-                    PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS_RUN"),
+                    PlatformTools.getEnvVariable("lapin_MIGRATIONS_RUN"),
                 ),
                 entities: this.stringToArray(
-                    PlatformTools.getEnvVariable("TYPEORM_ENTITIES"),
+                    PlatformTools.getEnvVariable("lapin_ENTITIES"),
                 ),
                 migrations: this.stringToArray(
-                    PlatformTools.getEnvVariable("TYPEORM_MIGRATIONS"),
+                    PlatformTools.getEnvVariable("lapin_MIGRATIONS"),
                 ),
                 migrationsTableName: PlatformTools.getEnvVariable(
-                    "TYPEORM_MIGRATIONS_TABLE_NAME",
+                    "lapin_MIGRATIONS_TABLE_NAME",
                 ),
                 metadataTableName: PlatformTools.getEnvVariable(
-                    "TYPEORM_METADATA_TABLE_NAME",
+                    "lapin_METADATA_TABLE_NAME",
                 ),
                 subscribers: this.stringToArray(
-                    PlatformTools.getEnvVariable("TYPEORM_SUBSCRIBERS"),
+                    PlatformTools.getEnvVariable("lapin_SUBSCRIBERS"),
                 ),
                 logging: this.transformLogging(
-                    PlatformTools.getEnvVariable("TYPEORM_LOGGING"),
+                    PlatformTools.getEnvVariable("lapin_LOGGING"),
                 ),
-                logger: PlatformTools.getEnvVariable("TYPEORM_LOGGER"),
+                logger: PlatformTools.getEnvVariable("lapin_LOGGER"),
                 entityPrefix: PlatformTools.getEnvVariable(
-                    "TYPEORM_ENTITY_PREFIX",
+                    "lapin_ENTITY_PREFIX",
                 ),
                 maxQueryExecutionTime: PlatformTools.getEnvVariable(
-                    "TYPEORM_MAX_QUERY_EXECUTION_TIME",
+                    "lapin_MAX_QUERY_EXECUTION_TIME",
                 ),
-                debug: PlatformTools.getEnvVariable("TYPEORM_DEBUG"),
+                debug: PlatformTools.getEnvVariable("lapin_DEBUG"),
                 cache: this.transformCaching(),
                 uuidExtension: PlatformTools.getEnvVariable(
-                    "TYPEORM_UUID_EXTENSION",
+                    "lapin_UUID_EXTENSION",
                 ),
             },
         ]
@@ -104,7 +104,7 @@ export class ConnectionOptionsEnvReader {
      * Transforms caching option into real caching value option requires.
      */
     protected transformCaching(): boolean | object | undefined {
-        const caching = PlatformTools.getEnvVariable("TYPEORM_CACHE")
+        const caching = PlatformTools.getEnvVariable("lapin_CACHE")
         if (caching === "true" || caching === "TRUE" || caching === "1")
             return true
         if (caching === "false" || caching === "FALSE" || caching === "0")
@@ -116,16 +116,16 @@ export class ConnectionOptionsEnvReader {
         )
             return {
                 type: caching,
-                options: PlatformTools.getEnvVariable("TYPEORM_CACHE_OPTIONS")
+                options: PlatformTools.getEnvVariable("lapin_CACHE_OPTIONS")
                     ? JSON.parse(
-                          PlatformTools.getEnvVariable("TYPEORM_CACHE_OPTIONS"),
+                          PlatformTools.getEnvVariable("lapin_CACHE_OPTIONS"),
                       )
                     : undefined,
                 alwaysEnabled: PlatformTools.getEnvVariable(
-                    "TYPEORM_CACHE_ALWAYS_ENABLED",
+                    "lapin_CACHE_ALWAYS_ENABLED",
                 ),
                 duration: parseInt(
-                    PlatformTools.getEnvVariable("TYPEORM_CACHE_DURATION"),
+                    PlatformTools.getEnvVariable("lapin_CACHE_DURATION"),
                 ),
             }
 

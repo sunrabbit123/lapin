@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when consumer tries to release entity manager that does not use single database connection.
  */
-export class NoNeedToReleaseEntityManagerError extends TypeORMError {
+export class NoNeedToReleaseEntityManagerError extends LapinError {
     constructor() {
         super(
             `Entity manager is not using single database connection and cannot be released. ` +

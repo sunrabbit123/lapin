@@ -1,6 +1,6 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { ObjectUtils } from "../util/ObjectUtils"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 
 /**
  */
@@ -40,7 +40,7 @@ export class Alias {
 
     get metadata(): EntityMetadata {
         if (!this._metadata)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Cannot get entity metadata for the given alias "${this.name}"`,
             )
 

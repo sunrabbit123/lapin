@@ -10,7 +10,7 @@ import { EntityManager } from "../entity-manager/EntityManager"
 import { TableColumn } from "../schema-builder/table/TableColumn"
 import { Broadcaster } from "../subscriber/Broadcaster"
 import { ReplicationMode } from "../driver/types/ReplicationMode"
-import { TypeORMError } from "../error/TypeORMError"
+import { LapinError } from "../error/LapinError"
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { TableForeignKey } from "../schema-builder/table/TableForeignKey"
 import { OrmUtils } from "../util/OrmUtils"
@@ -251,7 +251,7 @@ export abstract class BaseQueryRunner {
             this.loadedViews.push(foundViews[0])
             return foundViews[0]
         } else {
-            throw new TypeORMError(`View "${viewName}" does not exist.`)
+            throw new LapinError(`View "${viewName}" does not exist.`)
         }
     }
 
@@ -289,7 +289,7 @@ export abstract class BaseQueryRunner {
                 return cachedTable
             }
         } else {
-            throw new TypeORMError(`Table "${tableName}" does not exist.`)
+            throw new LapinError(`Table "${tableName}" does not exist.`)
         }
     }
 
@@ -335,7 +335,7 @@ export abstract class BaseQueryRunner {
         )
     }
 
-    protected getTypeormMetadataTableName(): string {
+    protected getlapinMetadataTableName(): string {
         const options = <
             SqlServerConnectionOptions | PostgresConnectionOptions
         >this.connection.driver.options
@@ -347,9 +347,9 @@ export abstract class BaseQueryRunner {
     }
 
     /**
-     * Generates SQL query to select record from typeorm metadata table.
+     * Generates SQL query to select record from lapin metadata table.
      */
-    protected selectTypeormMetadataSql({
+    protected selectlapinMetadataSql({
         database,
         schema,
         table,
@@ -365,7 +365,7 @@ export abstract class BaseQueryRunner {
         const qb = this.connection.createQueryBuilder()
         const selectQb = qb
             .select()
-            .from(this.getTypeormMetadataTableName(), "t")
+            .from(this.getlapinMetadataTableName(), "t")
             .where(`${qb.escape("type")} = :type`, { type })
             .andWhere(`${qb.escape("name")} = :name`, { name })
 
@@ -388,9 +388,9 @@ export abstract class BaseQueryRunner {
     }
 
     /**
-     * Generates SQL query to insert a record into typeorm metadata table.
+     * Generates SQL query to insert a record into lapin metadata table.
      */
-    protected insertTypeormMetadataSql({
+    protected insertlapinMetadataSql({
         database,
         schema,
         table,
@@ -408,7 +408,7 @@ export abstract class BaseQueryRunner {
         const [query, parameters] = this.connection
             .createQueryBuilder()
             .insert()
-            .into(this.getTypeormMetadataTableName())
+            .into(this.getlapinMetadataTableName())
             .values({
                 database: database,
                 schema: schema,
@@ -423,9 +423,9 @@ export abstract class BaseQueryRunner {
     }
 
     /**
-     * Generates SQL query to delete a record from typeorm metadata table.
+     * Generates SQL query to delete a record from lapin metadata table.
      */
-    protected deleteTypeormMetadataSql({
+    protected deletelapinMetadataSql({
         database,
         schema,
         table,
@@ -441,7 +441,7 @@ export abstract class BaseQueryRunner {
         const qb = this.connection.createQueryBuilder()
         const deleteQb = qb
             .delete()
-            .from(this.getTypeormMetadataTableName())
+            .from(this.getlapinMetadataTableName())
             .where(`${qb.escape("type")} = :type`, { type })
             .andWhere(`${qb.escape("name")} = :name`, { name })
 

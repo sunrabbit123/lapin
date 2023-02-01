@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown if some required driver's option is not set.
  */
-export class DriverOptionNotSetError extends TypeORMError {
+export class DriverOptionNotSetError extends LapinError {
     constructor(optionName: string) {
         super(
             `Driver option (${optionName}) is not set. ` +

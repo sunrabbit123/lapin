@@ -56,7 +56,7 @@ export interface BaseDataSourceOptions {
     readonly migrationsTransactionMode?: "all" | "none" | "each"
 
     /**
-     * Typeorm metadata table name, in case of different name from "typeorm_metadata".
+     * lapin metadata table name, in case of different name from "lapin_metadata".
      * Accepts single string name.
      */
     readonly metadataTableName?: string

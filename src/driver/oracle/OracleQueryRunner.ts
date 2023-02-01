@@ -20,7 +20,7 @@ import { ColumnType } from "../types/ColumnTypes"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
@@ -121,7 +121,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             isolationLevel !== "SERIALIZABLE" &&
             isolationLevel !== "READ COMMITTED"
         ) {
-            throw new TypeORMError(
+            throw new LapinError(
                 `Oracle only supports SERIALIZABLE and READ COMMITTED isolation`,
             )
         }
@@ -139,7 +139,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
                 "SET TRANSACTION ISOLATION LEVEL " + isolationLevel,
             )
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
         this.transactionDepth += 1
 
@@ -175,7 +175,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("ROLLBACK")
@@ -444,7 +444,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema create queries are not supported by Oracle driver.`,
         )
     }
@@ -453,7 +453,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Schema drop queries are not supported by Oracle driver.`,
         )
     }
@@ -504,14 +504,14 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         for (const column of generatedColumns) {
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -571,13 +571,13 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         for (const column of generatedColumns) {
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -954,14 +954,14 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         }
 
         if (column.generatedType && column.asExpression) {
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -1004,7 +1004,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the ${this.escapePath(
                     table,
                 )} table.`,
@@ -1042,7 +1042,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the ${this.escapePath(
                     table,
                 )} table.`,
@@ -1539,7 +1539,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table ${this.escapePath(
                     table,
                 )}`,
@@ -1674,12 +1674,12 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         if (column.generatedType && column.asExpression) {
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -1887,7 +1887,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -1962,7 +1962,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -1992,7 +1992,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2002,7 +2002,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2012,7 +2012,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2022,7 +2022,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`Oracle does not support exclusion constraints.`)
+        throw new LapinError(`Oracle does not support exclusion constraints.`)
     }
 
     /**
@@ -2078,7 +2078,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2148,7 +2148,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -2230,7 +2230,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -2255,7 +2255,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         let query =
             `SELECT "T".* FROM ${this.escapePath(
-                this.getTypeormMetadataTableName(),
+                this.getlapinMetadataTableName(),
             )} "T" ` +
             `INNER JOIN "USER_OBJECTS" "O" ON "O"."OBJECT_NAME" = "T"."name" AND "O"."OBJECT_TYPE" IN ( 'MATERIALIZED VIEW', 'VIEW' ) ` +
             `WHERE "T"."type" IN ('${MetadataTableType.MATERIALIZED_VIEW}', '${MetadataTableType.VIEW}')`
@@ -2567,7 +2567,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 tableColumn.generatedType = "VIRTUAL"
 
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         table: dbTable["TABLE_NAME"],
                                         type: MetadataTableType.GENERATED_COLUMN,
                                         name: tableColumn.name,
@@ -2857,7 +2857,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? MetadataTableType.MATERIALIZED_VIEW
             : MetadataTableType.VIEW
         const { schema, tableName } = this.driver.parseTableName(view)
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: type,
             name: tableName,
             schema: schema,
@@ -2882,7 +2882,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
         const type = view.materialized
             ? MetadataTableType.MATERIALIZED_VIEW
             : MetadataTableType.VIEW
-        return this.deleteTypeormMetadataSql({ type, name: view.name })
+        return this.deletelapinMetadataSql({ type, name: view.name })
     }
 
     /**
@@ -2937,7 +2937,7 @@ export class OracleQueryRunner extends BaseQueryRunner implements QueryRunner {
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new TypeORMError(`Table ${table} has no primary keys.`)
+            throw new LapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

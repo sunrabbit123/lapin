@@ -20,7 +20,7 @@ import { OrmUtils } from "../../util/OrmUtils"
 import { Query } from "../Query"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { SpannerDriver } from "./SpannerDriver"
@@ -351,7 +351,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Checks if database with the given name exist.
      */
     async hasDatabase(database: string): Promise<boolean> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check database queries are not supported by Spanner driver.`,
         )
     }
@@ -360,7 +360,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<string> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check database queries are not supported by Spanner driver.`,
         )
     }
@@ -379,7 +379,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<string> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Check schema queries are not supported by Spanner driver.`,
         )
     }
@@ -513,14 +513,14 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         for (const column of generatedColumns) {
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -577,13 +577,13 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         for (const column of generatedColumns) {
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -633,7 +633,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         oldTableOrName: Table | string,
         newTableName: string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Rename table queries are not supported by Spanner driver.`,
         )
     }
@@ -698,14 +698,14 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         }
 
         if (column.generatedType && column.asExpression) {
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -750,7 +750,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? oldTableColumnOrName
                 : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -788,7 +788,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                       (column) => column.name === oldTableColumnOrName,
                   )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -941,7 +941,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? columnOrName
                 : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -996,12 +996,12 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         )
 
         if (column.generatedType && column.asExpression) {
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
@@ -1076,7 +1076,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1088,7 +1088,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1100,7 +1100,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1112,7 +1112,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1172,7 +1172,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? checkOrName
                 : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -1202,7 +1202,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1214,7 +1214,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1226,7 +1226,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1238,7 +1238,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new LapinError(
             `Spanner does not support exclusion constraints.`,
         )
     }
@@ -1298,7 +1298,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? foreignKeyOrName
                 : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -1369,7 +1369,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ? indexOrName
                 : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -1514,7 +1514,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        // const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        // const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         // if (!hasTable) {
         //     return []
         // }
@@ -1529,7 +1529,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         //
         // const query =
         //     `SELECT \`T\`.*, \`V\`.\`VIEW_DEFINITION\` FROM ${this.escapePath(
-        //         this.getTypeormMetadataTableName(),
+        //         this.getlapinMetadataTableName(),
         //     )} \`T\` ` +
         //     `INNER JOIN \`INFORMATION_SCHEMA\`.\`VIEWS\` \`V\` ON \`V\`.\`TABLE_NAME\` = \`T\`.\`NAME\` ` +
         //     `WHERE \`T\`.\`TYPE\` = '${MetadataTableType.VIEW}' ${
@@ -1736,7 +1736,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
 
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         table: dbTable["TABLE_NAME"],
                                         type: MetadataTableType.GENERATED_COLUMN,
                                         name: tableColumn.name,
@@ -2006,7 +2006,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type,
             schema,
             name,
@@ -2033,7 +2033,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         const type = view.materialized
             ? MetadataTableType.MATERIALIZED_VIEW
             : MetadataTableType.VIEW
-        return this.deleteTypeormMetadataSql({ type, schema, name })
+        return this.deletelapinMetadataSql({ type, schema, name })
     }
 
     /**

@@ -18,7 +18,7 @@ import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { OrmUtils } from "../../util/OrmUtils"
 import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
@@ -765,7 +765,7 @@ export class AuroraMysqlDriver implements Driver {
         if (column.length) return column.length.toString()
 
         /**
-         * fix https://github.com/typeorm/typeorm/issues/1139
+         * fix https://github.com/lapin/lapin/issues/1139
          */
         if (column.generationStrategy === "uuid") return "36"
 
@@ -834,7 +834,7 @@ export class AuroraMysqlDriver implements Driver {
                 })
             } else {
                 fail(
-                    new TypeORMError(
+                    new LapinError(
                         `Connection is not established with mysql database`,
                     ),
                 )
@@ -1012,10 +1012,10 @@ export class AuroraMysqlDriver implements Driver {
     protected loadDependencies(): void {
         const DataApiDriver =
             this.options.driver ||
-            PlatformTools.load("typeorm-aurora-data-api-driver")
+            PlatformTools.load("lapin-aurora-data-api-driver")
         this.DataApiDriver = DataApiDriver
 
-        // Driver uses rollup for publishing, which has issues when using typeorm in combination with webpack
+        // Driver uses rollup for publishing, which has issues when using lapin in combination with webpack
         // See https://github.com/webpack/webpack/issues/4742#issuecomment-295556787
         this.DataApiDriver = this.DataApiDriver.default || this.DataApiDriver
     }

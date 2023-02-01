@@ -1,7 +1,7 @@
 import * as fs from "fs"
 import * as path from "path"
 import mkdirp from "mkdirp"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { DataSource } from "../data-source"
 import { InstanceChecker } from "../util/InstanceChecker"
 import { importOrRequireFile } from "../util/ImportUtils"
@@ -104,7 +104,7 @@ export class CommandUtils {
             timestampOptionArgument &&
             (isNaN(timestampOptionArgument) || timestampOptionArgument < 0)
         ) {
-            throw new TypeORMError(
+            throw new LapinError(
                 `timestamp option should be a non-negative number. received: ${timestampOptionArgument}`,
             )
         }

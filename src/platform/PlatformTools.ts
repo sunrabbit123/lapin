@@ -30,7 +30,7 @@ export class PlatformTools {
      */
     static load(name: string): any {
         // if name is not absolute or relative, then try to load package from the node_modules of the directory we are currently in
-        // this is useful when we are using typeorm package globally installed and it accesses drivers
+        // this is useful when we are using lapin package globally installed and it accesses drivers
         // that are not installed globally
 
         try {
@@ -84,8 +84,8 @@ export class PlatformTools {
                 case "pg-query-stream":
                     return require("pg-query-stream")
 
-                case "typeorm-aurora-data-api-driver":
-                    return require("typeorm-aurora-data-api-driver")
+                case "lapin-aurora-data-api-driver":
+                    return require("lapin-aurora-data-api-driver")
 
                 /**
                  * redis

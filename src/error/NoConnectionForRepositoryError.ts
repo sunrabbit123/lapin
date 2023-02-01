@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { LapinError } from "./LapinError"
 
 /**
  * Thrown when consumer tries to access repository before connection is established.
  */
-export class NoConnectionForRepositoryError extends TypeORMError {
+export class NoConnectionForRepositoryError extends LapinError {
     constructor(connectionName: string) {
         super(
             `Cannot get a Repository for "${connectionName} connection, because connection with the database ` +

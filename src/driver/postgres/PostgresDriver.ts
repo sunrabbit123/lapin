@@ -22,7 +22,7 @@ import { PostgresConnectionCredentialsOptions } from "./PostgresConnectionCreden
 import { PostgresConnectionOptions } from "./PostgresConnectionOptions"
 import { PostgresQueryRunner } from "./PostgresQueryRunner"
 import { DriverUtils } from "../DriverUtils"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
@@ -999,9 +999,7 @@ export class PostgresDriver implements Driver {
         }
 
         if (columnMetadata.isArray && Array.isArray(defaultValue)) {
-            return `'{${defaultValue
-                .map((val: string) => `${val}`)
-                .join(",")}}'`
+            return `'{${defaultValue.map((val) => `${val}`).join(",")}}'`
         }
 
         if (
@@ -1155,7 +1153,7 @@ export class PostgresDriver implements Driver {
      */
     async obtainMasterConnection(): Promise<[any, Function]> {
         if (!this.master) {
-            throw new TypeORMError("Driver not Connected")
+            throw new LapinError("Driver not Connected")
         }
 
         return new Promise((ok, fail) => {
@@ -1414,7 +1412,7 @@ export class PostgresDriver implements Driver {
             return PlatformTools.load("pg-query-stream")
         } catch (e) {
             // todo: better error for browser env
-            throw new TypeORMError(
+            throw new LapinError(
                 `To use streams you should install pg-query-stream package. Please run npm i pg-query-stream --save command.`,
             )
         }

@@ -12,7 +12,7 @@ export function OneToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         if (!options) options = {} as RelationOptions
 

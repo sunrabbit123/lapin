@@ -1,6 +1,6 @@
 import { getMetadataArgsStorage } from "../globals"
 import { ExclusionMetadataArgs } from "../metadata-args/ExclusionMetadataArgs"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 
 /**
  * Creates a database exclusion.
@@ -33,7 +33,7 @@ export function Exclusion(
     const name = maybeExpression ? nameOrExpression : undefined
     const expression = maybeExpression ? maybeExpression : nameOrExpression
 
-    if (!expression) throw new TypeORMError(`Exclusion expression is required`)
+    if (!expression) throw new LapinError(`Exclusion expression is required`)
 
     return function (
         clsOrObject: Function | Object,

@@ -24,7 +24,7 @@ import { ReplicationMode } from "../types/ReplicationMode"
 import { Table } from "../../schema-builder/table/Table"
 import { View } from "../../schema-builder/view/View"
 import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { TypeORMError } from "../../error"
+import { LapinError } from "../../error"
 import { InstanceChecker } from "../../util/InstanceChecker"
 import { UpsertType } from "../types/UpsertType.js"
 
@@ -724,7 +724,7 @@ export class SqlServerDriver implements Driver {
      */
     obtainMasterConnection(): Promise<any> {
         if (!this.master) {
-            return Promise.reject(new TypeORMError("Driver not Connected"))
+            return Promise.reject(new LapinError("Driver not Connected"))
         }
 
         return Promise.resolve(this.master)
@@ -1039,7 +1039,7 @@ export class SqlServerDriver implements Driver {
     }
 
     protected lowerDefaultValueIfNecessary(value: string | undefined) {
-        // SqlServer saves function calls in default value as lowercase https://github.com/typeorm/typeorm/issues/2733
+        // SqlServer saves function calls in default value as lowercase https://github.com/lapin/lapin/issues/2733
         if (!value) {
             return value
         }

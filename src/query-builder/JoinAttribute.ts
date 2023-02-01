@@ -5,7 +5,7 @@ import { QueryBuilderUtils } from "./QueryBuilderUtils"
 import { QueryExpressionMap } from "./QueryExpressionMap"
 import { Alias } from "./Alias"
 import { ObjectUtils } from "../util/ObjectUtils"
-import { TypeORMError } from "../error"
+import { LapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -177,7 +177,7 @@ export class JoinAttribute {
                     }
                 }
 
-                throw new TypeORMError(
+                throw new LapinError(
                     `Relation with property path ${this.relationPropertyPath} in entity was not found.`,
                 )
             }
@@ -219,7 +219,7 @@ export class JoinAttribute {
      */
     get junctionAlias(): string {
         if (!this.relation)
-            throw new TypeORMError(
+            throw new LapinError(
                 `Cannot get junction table for join without relation.`,
             )
 

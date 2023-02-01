@@ -164,7 +164,7 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
     protected loadDependencies(): void {
         const driver =
             this.options.driver ||
-            PlatformTools.load("typeorm-aurora-data-api-driver")
+            PlatformTools.load("lapin-aurora-data-api-driver")
         const { pg } = driver
 
         this.DataApiDriver = pg

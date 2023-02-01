@@ -12,7 +12,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 export function ManyToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * Many-to-many is a type of relationship when Entity1 can have multiple instances of Entity2, and Entity2 can have
@@ -23,7 +23,7 @@ export function ManyToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide?: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator
+): PropertyDecorator | Function
 
 /**
  * Many-to-many is a type of relationship when Entity1 can have multiple instances of Entity2, and Entity2 can have
@@ -34,7 +34,7 @@ export function ManyToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSideOrOptions?: string | ((object: T) => any) | RelationOptions,
     options?: RelationOptions,
-): PropertyDecorator {
+): PropertyDecorator | Function {
     // normalize parameters
     let inverseSideProperty: string | ((object: T) => any)
     if (ObjectUtils.isObject(inverseSideOrOptions)) {
