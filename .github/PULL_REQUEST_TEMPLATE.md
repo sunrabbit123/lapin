@@ -6,7 +6,7 @@
 
   If unsure about something.. just do as best as you're able,
   or reach out through our community support channels!
-  https://github.com/lapin/lapin/blob/master/docs/support.md
+  https://github.com/sunrabbit123/lapin/blob/master/docs/support.md
 -->
 
 ### Description of change
@@ -25,7 +25,6 @@
   close it.
 -->
 
-
 ### Pull-Request Checklist
 
 <!--
@@ -34,13 +33,13 @@
   If an item is not applicable, you can add "N/A" to the end.
 -->
 
-- [ ] Code is up-to-date with the `master` branch
-- [ ] `npm run format` to apply prettier formatting
-- [ ] `npm run test` passes with this change
-- [ ] This pull request links relevant issues as `Fixes #0000`
-- [ ] There are new or updated unit tests validating the change
-- [ ] Documentation has been updated to reflect this change
-- [ ] The new commits follow conventions explained in [CONTRIBUTING.md](https://github.com/lapin/lapin/blob/master/CONTRIBUTING.md)
+-   [ ] Code is up-to-date with the `master` branch
+-   [ ] `npm run format` to apply prettier formatting
+-   [ ] `npm run test` passes with this change
+-   [ ] This pull request links relevant issues as `Fixes #0000`
+-   [ ] There are new or updated unit tests validating the change
+-   [ ] Documentation has been updated to reflect this change
+-   [ ] The new commits follow conventions explained in [CONTRIBUTING.md](https://github.com/sunrabbit123/lapin/blob/master/CONTRIBUTING.md)
 
 <!--
   🎉 Thank you for contributing and making lapin even better!
