@@ -17,7 +17,7 @@ services:
     image: "mariadb:10.8.4"
     container_name: "lapin-mariadb"
     ports:
-      - "3307:3306"
+      - "3307:3307"
     environment:
       MYSQL_ROOT_PASSWORD: "admin"
       MYSQL_USER: "test"

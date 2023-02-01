@@ -10,7 +10,7 @@ import {
 import { Post } from "./entity/Post"
 
 describe("column kinds > create date column", () => {
-    let connections: DataSource[]
+    let connections: DataSource[] = []
     before(
         async () =>
             (connections = await createTestingConnections({
