@@ -1,16 +1,15 @@
 {
-  "name": "typeorm",
-  "private": true,
-  "version": "0.3.11",
+  "name": "lapin",
+  "version": "0.0.1",
   "description": "Data-Mapper ORM for TypeScript, ES7, ES6, ES5. Supports MySQL, PostgreSQL, MariaDB, SQLite, MS SQL Server, Oracle, MongoDB databases.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "readmeFilename": "README.md",
   "author": {
-    "name": "Umed Khudoiberdiev",
-    "email": "pleerock.me@gmail.com"
+    "name": "sunrabbit123",
+    "email": "qudwls185@naver.com"
   },
   "engines": {
-    "node": ">= 12.9.0"
+    "node": ">= 18.13.0"
   },
   "exports": {
     ".": {
@@ -64,12 +63,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/typeorm/typeorm.git"
+    "url": "https://github.com/sunrabbit123/lapin.git"
   },
   "bugs": {
-    "url": "https://github.com/typeorm/typeorm/issues"
+    "url": "https://github.com/sunrabbit123/lapin/issues"
   },
-  "homepage": "https://typeorm.io",
   "tags": [
     "orm",
     "typescript",
@@ -249,12 +247,6 @@
     "typeorm": "./cli.js",
     "typeorm-ts-node-commonjs": "./cli-ts-node-commonjs.js",
     "typeorm-ts-node-esm": "./cli-ts-node-esm.js"
-  },
-  "funding": "https://opencollective.com/typeorm",
-  "collective": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/typeorm",
-    "logo": "https://opencollective.com/opencollective/logo.txt"
   },
   "nyc": {
     "all": true,
