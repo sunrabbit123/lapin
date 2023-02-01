@@ -18,7 +18,7 @@ import { EntityListenerMetadata } from "../metadata/EntityListenerMetadata"
 import { UniqueMetadata } from "../metadata/UniqueMetadata"
 import { CheckMetadata } from "../metadata/CheckMetadata"
 import { ExclusionMetadata } from "../metadata/ExclusionMetadata"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -1086,7 +1086,7 @@ export class EntityMetadataBuilder {
                             m.givenTableName === relation.type)),
             )
             if (!inverseEntityMetadata)
-                throw new TypeORMError(
+                throw new lapinError(
                     "Entity metadata for " +
                         entityMetadata.name +
                         "#" +

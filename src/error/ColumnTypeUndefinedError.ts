@@ -1,10 +1,10 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when ORM cannot get column's type automatically.
  * Basically, when reflect-metadata is not available or tsconfig is not properly setup.
  */
-export class ColumnTypeUndefinedError extends TypeORMError {
+export class ColumnTypeUndefinedError extends lapinError {
     constructor(object: Object, propertyName: string) {
         super(
             `Column type for ${object.constructor.name}#${propertyName} is not defined and cannot be guessed. ` +

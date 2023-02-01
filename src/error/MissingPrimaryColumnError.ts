@@ -1,7 +1,7 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
-export class MissingPrimaryColumnError extends TypeORMError {
+export class MissingPrimaryColumnError extends lapinError {
     constructor(entityMetadata: EntityMetadata) {
         super(
             `Entity "${entityMetadata.name}" does not have a primary column. Primary column is required to ` +

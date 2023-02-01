@@ -153,7 +153,7 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
             )
         }
 
-        // function to run before a database is used in typeorm.
+        // function to run before a database is used in lapin.
         if (typeof prepareDatabase === "function") {
             prepareDatabase(databaseConnection)
         }

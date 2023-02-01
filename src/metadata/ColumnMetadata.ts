@@ -242,14 +242,14 @@ export class ColumnMetadata {
     /**
      * Indicates if column is a virtual property. Virtual properties are not mapped to the entity.
      * This property is used in tandem the virtual column decorator.
-     * @See https://typeorm.io/decorator-reference#virtualcolumn for more details.
+     * @See https://lapin.io/decorator-reference#virtualcolumn for more details.
      */
     isVirtualProperty: boolean = false
 
     /**
      * Query to be used to populate the column data. This query is used when generating the relational db script.
      * The query function is called with the current entities alias either defined by the Entity Decorator or automatically
-     * @See https://typeorm.io/decorator-reference#virtualcolumn for more details.
+     * @See https://lapin.io/decorator-reference#virtualcolumn for more details.
      */
     query?: (alias: string) => string
 
@@ -683,7 +683,7 @@ export class ColumnMetadata {
              * Object.getOwnPropertyDescriptor checks if the relation is lazy, in which case value is a Promise
              * DO NOT use `entity[
                 this.relationMetadata.propertyName] instanceof Promise`, which will invoke property getter and make unwanted DB request
-             * refer: https://github.com/typeorm/typeorm/pull/8676#issuecomment-1049906331
+             * refer: https://github.com/lapin/lapin/pull/8676#issuecomment-1049906331
              */
             if (
                 this.relationMetadata &&

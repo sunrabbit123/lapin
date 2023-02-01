@@ -1,6 +1,6 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
-export class MetadataWithSuchNameAlreadyExistsError extends TypeORMError {
+export class MetadataWithSuchNameAlreadyExistsError extends lapinError {
     constructor(metadataType: string, name: string) {
         super(
             metadataType +

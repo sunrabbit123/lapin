@@ -4,18 +4,18 @@ import { QueryRunner } from "../query-runner/QueryRunner"
 import { PlatformTools } from "../platform/PlatformTools"
 
 /**
- * Performs logging of the events in TypeORM via debug library.
+ * Performs logging of the events in lapin via debug library.
  */
 export class DebugLogger implements Logger {
-    private debugQueryLog = debug("typeorm:query:log")
-    private debugQueryError = debug("typeorm:query:error")
-    private debugQuerySlow = debug("typeorm:query:slow")
-    private debugSchemaBuild = debug("typeorm:schema")
-    private debugMigration = debug("typeorm:migration")
+    private debugQueryLog = debug("lapin:query:log")
+    private debugQueryError = debug("lapin:query:error")
+    private debugQuerySlow = debug("lapin:query:slow")
+    private debugSchemaBuild = debug("lapin:schema")
+    private debugMigration = debug("lapin:migration")
 
-    private debugLog = debug("typeorm:log")
-    private debugInfo = debug("typeorm:info")
-    private debugWarn = debug("typeorm:warn")
+    private debugLog = debug("lapin:log")
+    private debugInfo = debug("lapin:info")
+    private debugWarn = debug("lapin:warn")
 
     /**
      * Logs query and parameters used in it.

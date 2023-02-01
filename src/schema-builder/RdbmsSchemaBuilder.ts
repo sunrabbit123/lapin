@@ -119,7 +119,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
     }
 
     /**
-     * Create the typeorm_metadata table if necessary.
+     * Create the lapin_metadata table if necessary.
      */
     async createMetadataTableIfNecessary(
         queryRunner: QueryRunner,
@@ -128,7 +128,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             this.viewEntityToSyncMetadatas.length > 0 ||
             this.hasGeneratedColumns()
         ) {
-            await this.createTypeormMetadataTable(queryRunner)
+            await this.createlapinMetadataTable(queryRunner)
         }
     }
 
@@ -1313,26 +1313,26 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
     }
 
     /**
-     * Creates typeorm service table for storing user defined Views and generate columns.
+     * Creates lapin service table for storing user defined Views and generate columns.
      */
-    protected async createTypeormMetadataTable(queryRunner: QueryRunner) {
+    protected async createlapinMetadataTable(queryRunner: QueryRunner) {
         const schema = this.currentSchema
         const database = this.currentDatabase
-        const typeormMetadataTable = this.connection.driver.buildTableName(
+        const lapinMetadataTable = this.connection.driver.buildTableName(
             this.connection.metadataTableName,
             schema,
             database,
         )
 
         // Spanner requires at least one primary key in a table.
-        // Since we don't have unique column in "typeorm_metadata" table
+        // Since we don't have unique column in "lapin_metadata" table
         // and we should avoid breaking changes, we mark all columns as primary for Spanner driver.
         const isPrimary = this.connection.driver.options.type === "spanner"
         await queryRunner.createTable(
             new Table({
                 database: database,
                 schema: schema,
-                name: typeormMetadataTable,
+                name: lapinMetadataTable,
                 columns: [
                     {
                         name: "type",

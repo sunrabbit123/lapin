@@ -110,7 +110,7 @@ export class AuroraPostgresQueryRunner
         if (this.transactionDepth === 0) {
             await this.client.startTransaction()
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
         this.transactionDepth += 1
 
@@ -128,7 +128,7 @@ export class AuroraPostgresQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `RELEASE SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.client.commitTransaction()
@@ -150,7 +150,7 @@ export class AuroraPostgresQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.client.rollbackTransaction()

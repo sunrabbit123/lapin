@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when relations specified in the find options were not found in the entities.
  */
-export class FindRelationsNotFoundError extends TypeORMError {
+export class FindRelationsNotFoundError extends lapinError {
     constructor(notFoundRelations: string[]) {
         super()
 

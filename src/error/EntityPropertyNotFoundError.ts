@@ -1,10 +1,10 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 import { EntityMetadata } from "../metadata/EntityMetadata"
 
 /**
  * Thrown when specified entity property was not found.
  */
-export class EntityPropertyNotFoundError extends TypeORMError {
+export class EntityPropertyNotFoundError extends lapinError {
     constructor(propertyPath: string, metadata: EntityMetadata) {
         super(propertyPath)
         Object.setPrototypeOf(this, EntityPropertyNotFoundError.prototype)

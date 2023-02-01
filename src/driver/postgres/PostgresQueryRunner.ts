@@ -1,5 +1,5 @@
 import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { TypeORMError } from "../../error"
+import { lapinError } from "../../error"
 import { QueryFailedError } from "../../error/QueryFailedError"
 import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
@@ -180,7 +180,7 @@ export class PostgresQueryRunner
                 )
             }
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
         this.transactionDepth += 1
 
@@ -198,7 +198,7 @@ export class PostgresQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `RELEASE SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("COMMIT")
@@ -220,7 +220,7 @@ export class PostgresQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("ROLLBACK")
@@ -523,7 +523,7 @@ export class PostgresQueryRunner
             const tableName = tableNameWithSchema[1]
             const schema = tableNameWithSchema[0]
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -532,7 +532,7 @@ export class PostgresQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -620,7 +620,7 @@ export class PostgresQueryRunner
             const tableName = tableNameWithSchema[1]
             const schema = tableNameWithSchema[0]
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -628,7 +628,7 @@ export class PostgresQueryRunner
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -1073,7 +1073,7 @@ export class PostgresQueryRunner
             const tableName = tableNameWithSchema[1]
             const schema = tableNameWithSchema[0]
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -1082,7 +1082,7 @@ export class PostgresQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -1145,7 +1145,7 @@ export class PostgresQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1182,7 +1182,7 @@ export class PostgresQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -2185,7 +2185,7 @@ export class PostgresQueryRunner
                         ),
                     )
                     upQueries.push(
-                        this.deleteTypeormMetadataSql({
+                        this.deletelapinMetadataSql({
                             database: this.driver.database,
                             schema,
                             table: tableName,
@@ -2195,7 +2195,7 @@ export class PostgresQueryRunner
                     )
                     // However, we can't copy it back on downgrade. It needs to regenerate.
                     downQueries.push(
-                        this.insertTypeormMetadataSql({
+                        this.insertlapinMetadataSql({
                             database: this.driver.database,
                             schema,
                             table: tableName,
@@ -2222,7 +2222,7 @@ export class PostgresQueryRunner
                         ),
                     )
                     // downQueries.push(
-                    //     this.deleteTypeormMetadataSql({
+                    //     this.deletelapinMetadataSql({
                     //         database: this.driver.database,
                     //         schema,
                     //         table: tableName,
@@ -2264,7 +2264,7 @@ export class PostgresQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2424,14 +2424,14 @@ export class PostgresQueryRunner
             ).split(".")
             const tableName = tableNameWithSchema[1]
             const schema = tableNameWithSchema[0]
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 database: this.driver.database,
                 schema,
                 table: tableName,
@@ -2641,7 +2641,7 @@ export class PostgresQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2715,7 +2715,7 @@ export class PostgresQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2792,7 +2792,7 @@ export class PostgresQueryRunner
             ? exclusionOrName
             : table.exclusions.find((c) => c.name === exclusionOrName)
         if (!exclusionConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied exclusion constraint was not found in table ${table.name}`,
             )
 
@@ -2870,7 +2870,7 @@ export class PostgresQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2979,7 +2979,7 @@ export class PostgresQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -3005,7 +3005,7 @@ export class PostgresQueryRunner
             ? indexOrName
             : view.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied index ${indexOrName} was not found in view ${view.name}`,
             )
         // old index may be passed without name. In this case we generate index name manually.
@@ -3120,7 +3120,7 @@ export class PostgresQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
 
         if (!hasTable) return []
 
@@ -3175,7 +3175,7 @@ export class PostgresQueryRunner
 
         const query =
             `SELECT "t".* FROM ${this.escapePath(
-                this.getTypeormMetadataTableName(),
+                this.getlapinMetadataTableName(),
             )} "t" ` +
             `INNER JOIN "pg_catalog"."pg_class" "c" ON "c"."relname" = "t"."name" ` +
             `INNER JOIN "pg_namespace" "n" ON "n"."oid" = "c"."relnamespace" AND "n"."nspname" = "t"."schema" ` +
@@ -3734,7 +3734,7 @@ export class PostgresQueryRunner
                                 tableColumn.generatedType = "STORED"
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         database: currentDatabase,
                                         schema: dbTable["table_schema"],
                                         table: dbTable["table_name"],
@@ -4138,7 +4138,7 @@ export class PostgresQueryRunner
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type,
             schema,
             name,
@@ -4171,7 +4171,7 @@ export class PostgresQueryRunner
         const type = view.materialized
             ? MetadataTableType.MATERIALIZED_VIEW
             : MetadataTableType.VIEW
-        return this.deleteTypeormMetadataSql({ type, schema, name })
+        return this.deletelapinMetadataSql({ type, schema, name })
     }
 
     /**
@@ -4312,7 +4312,7 @@ export class PostgresQueryRunner
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new TypeORMError(`Table ${table} has no primary keys.`)
+            throw new lapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

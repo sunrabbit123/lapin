@@ -1,12 +1,12 @@
 <!--
-  😀 Wonderful!  Thank you for opening a pull request for TypeORM.
+  😀 Wonderful!  Thank you for opening a pull request for lapin.
 
   Please fill in the information below to expedite the review
   and (hopefully) merge of your change.
 
   If unsure about something.. just do as best as you're able,
   or reach out through our community support channels!
-  https://github.com/typeorm/typeorm/blob/master/docs/support.md
+  https://github.com/lapin/lapin/blob/master/docs/support.md
 -->
 
 ### Description of change
@@ -40,8 +40,8 @@
 - [ ] This pull request links relevant issues as `Fixes #0000`
 - [ ] There are new or updated unit tests validating the change
 - [ ] Documentation has been updated to reflect this change
-- [ ] The new commits follow conventions explained in [CONTRIBUTING.md](https://github.com/typeorm/typeorm/blob/master/CONTRIBUTING.md)
+- [ ] The new commits follow conventions explained in [CONTRIBUTING.md](https://github.com/lapin/lapin/blob/master/CONTRIBUTING.md)
 
 <!--
-  🎉 Thank you for contributing and making TypeORM even better!
+  🎉 Thank you for contributing and making lapin even better!
 -->

@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when user tries to build SELECT query using OFFSET without LIMIT applied but database does not support it.
  */
-export class OffsetWithoutLimitNotSupportedError extends TypeORMError {
+export class OffsetWithoutLimitNotSupportedError extends lapinError {
     constructor() {
         super(
             `RDBMS does not support OFFSET without LIMIT in SELECT statements. You must use limit in ` +

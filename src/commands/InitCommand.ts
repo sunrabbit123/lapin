@@ -3,16 +3,16 @@ import * as path from "path"
 import * as yargs from "yargs"
 import chalk from "chalk"
 import { exec } from "child_process"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { PlatformTools } from "../platform/PlatformTools"
 
 /**
- * Generates a new project with TypeORM.
+ * Generates a new project with lapin.
  */
 export class InitCommand implements yargs.CommandModule {
     command = "init"
     describe =
-        "Generates initial TypeORM project structure. " +
+        "Generates initial lapin project structure. " +
         "If name specified then creates files inside directory called as name. " +
         "If its not specified then creates files inside current directory."
 
@@ -242,7 +242,7 @@ sid: "xe.oracle.docker",`
                 break
         }
         return `import "reflect-metadata"
-import { DataSource } from "typeorm"
+import { DataSource } from "lapin"
 import { User } from "./entity/User${isEsm ? ".js" : ""}"
 
 export const AppDataSource = new DataSource({
@@ -317,7 +317,7 @@ temp/`
             database === "mongodb"
                 ? "ObjectIdColumn, ObjectID"
                 : "PrimaryGeneratedColumn"
-        }, Column } from "typeorm"
+        }, Column } from "lapin"
 
 @Entity()
 export class User {
@@ -529,9 +529,9 @@ AppDataSource.initialize().then(async () => {
     ): string {
         return JSON.stringify(
             {
-                name: projectName || "typeorm-sample",
+                name: projectName || "lapin-sample",
                 version: "0.0.1",
-                description: "Awesome project developed with TypeORM.",
+                description: "Awesome project developed with lapin.",
                 type: projectIsEsm ? "module" : "commonjs",
                 devDependencies: {},
                 dependencies: {},
@@ -608,7 +608,7 @@ services:
 services:
 `
             case "oracle":
-                throw new TypeORMError(
+                throw new lapinError(
                     `You cannot initialize a project with docker for Oracle driver yet.`,
                 ) // todo: implement for oracle as well
 
@@ -631,7 +631,7 @@ services:
 
   mongodb:
     image: "mongo:5.0.12"
-    container_name: "typeorm-mongodb"
+    container_name: "lapin-mongodb"
     ports:
       - "27017:27017"
 
@@ -655,7 +655,7 @@ services:
      * Gets contents of the new readme.md file.
      */
     protected static getReadmeTemplate(options: { docker: boolean }): string {
-        let template = `# Awesome Project Build with TypeORM
+        let template = `# Awesome Project Build with lapin
 
 Steps to run this project:
 
@@ -695,7 +695,7 @@ Steps to run this project:
 
         if (!packageJson.dependencies) packageJson.dependencies = {}
         Object.assign(packageJson.dependencies, {
-            typeorm: require("../package.json").version,
+            lapin: require("../package.json").version,
             "reflect-metadata": "^0.1.13",
         })
 
@@ -738,12 +738,12 @@ Steps to run this project:
         if (projectIsEsm)
             Object.assign(packageJson.scripts, {
                 start: /*(docker ? "docker-compose up && " : "") + */ "node --loader ts-node/esm src/index.ts",
-                typeorm: "typeorm-ts-node-esm",
+                lapin: "lapin-ts-node-esm",
             })
         else
             Object.assign(packageJson.scripts, {
                 start: /*(docker ? "docker-compose up && " : "") + */ "ts-node src/index.ts",
-                typeorm: "typeorm-ts-node-commonjs",
+                lapin: "lapin-ts-node-commonjs",
             })
 
         return JSON.stringify(packageJson, undefined, 3)

@@ -5,7 +5,7 @@ import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver"
 import { DriverUtils } from "../driver/DriverUtils"
 import { MysqlDriver } from "../driver/mysql/MysqlDriver"
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { InsertValuesMissingError } from "../error/InsertValuesMissingError"
 import { ReturningStatementNotSupportedError } from "../error/ReturningStatementNotSupportedError"
 import { ColumnMetadata } from "../metadata/ColumnMetadata"
@@ -508,7 +508,7 @@ export class InsertQueryBuilder<
                                 this.connection.driver,
                             )
                         ) {
-                            throw new TypeORMError(
+                            throw new lapinError(
                                 `indexPredicate option is not supported by the current database driver`,
                             )
                         }
@@ -599,7 +599,7 @@ export class InsertQueryBuilder<
                 }
             } else {
                 if (this.expressionMap.onUpdate) {
-                    throw new TypeORMError(
+                    throw new lapinError(
                         `onUpdate is not supported by the current database driver`,
                     )
                 }

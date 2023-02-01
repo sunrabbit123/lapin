@@ -4,7 +4,7 @@ import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata"
 import { RelationMetadata } from "../metadata/RelationMetadata"
 import { JoinColumnMetadataArgs } from "../metadata-args/JoinColumnMetadataArgs"
 import { DataSource } from "../data-source/DataSource"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -148,7 +148,7 @@ export class RelationJoinColumnBuilder {
                             joinColumn.referencedColumnName,
                     ) // todo: can we also search in relations?
                 if (!referencedColumn)
-                    throw new TypeORMError(
+                    throw new lapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.inverseEntityMetadata.name}`,
                     )
 
@@ -212,7 +212,7 @@ export class RelationJoinColumnBuilder {
                                     "uuid" ||
                                     referencedColumn.type === "uuid")
                                     ? "36"
-                                    : referencedColumn.length, // fix https://github.com/typeorm/typeorm/issues/3604
+                                    : referencedColumn.length, // fix https://github.com/lapin/lapin/issues/3604
                             width: referencedColumn.width,
                             charset: referencedColumn.charset,
                             collation: referencedColumn.collation,

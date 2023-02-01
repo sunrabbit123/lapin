@@ -1,4 +1,4 @@
-export class TypeORMError extends Error {
+export class lapinError extends Error {
     get name() {
         return this.constructor.name
     }

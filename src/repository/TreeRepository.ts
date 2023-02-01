@@ -1,6 +1,6 @@
 import { ObjectLiteral } from "../common/ObjectLiteral"
 import { DriverUtils } from "../driver/DriverUtils"
-import { TypeORMError } from "../error/TypeORMError"
+import { lapinError } from "../error/lapinError"
 import { FindOptionsUtils } from "../find-options/FindOptionsUtils"
 import { FindTreeOptions } from "../find-options/FindTreeOptions"
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
@@ -231,7 +231,7 @@ export class TreeRepository<
             })
         }
 
-        throw new TypeORMError(`Supported only in tree entities`)
+        throw new lapinError(`Supported only in tree entities`)
     }
 
     /**
@@ -405,7 +405,7 @@ export class TreeRepository<
             })
         }
 
-        throw new TypeORMError(`Supported only in tree entities`)
+        throw new lapinError(`Supported only in tree entities`)
     }
 
     /**

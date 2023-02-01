@@ -5,7 +5,7 @@ import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata"
 import { IndexMetadata } from "../metadata/IndexMetadata"
 import { JoinTableMetadataArgs } from "../metadata-args/JoinTableMetadataArgs"
 import { RelationMetadata } from "../metadata/RelationMetadata"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /**
@@ -105,7 +105,7 @@ export class JunctionEntityMetadataBuilder {
                             (referencedColumn.generationStrategy === "uuid" ||
                                 referencedColumn.type === "uuid")
                                 ? "36"
-                                : referencedColumn.length, // fix https://github.com/typeorm/typeorm/issues/3604
+                                : referencedColumn.length, // fix https://github.com/lapin/lapin/issues/3604
                         width: referencedColumn.width,
                         type: referencedColumn.type,
                         precision: referencedColumn.precision,
@@ -170,8 +170,8 @@ export class JunctionEntityMetadataBuilder {
                                     "uuid" ||
                                     inverseReferencedColumn.type === "uuid")
                                     ? "36"
-                                    : inverseReferencedColumn.length, // fix https://github.com/typeorm/typeorm/issues/3604
-                            width: inverseReferencedColumn.width, // fix https://github.com/typeorm/typeorm/issues/6442
+                                    : inverseReferencedColumn.length, // fix https://github.com/lapin/lapin/issues/3604
+                            width: inverseReferencedColumn.width, // fix https://github.com/lapin/lapin/issues/6442
                             type: inverseReferencedColumn.type,
                             precision: inverseReferencedColumn.precision,
                             scale: inverseReferencedColumn.scale,
@@ -309,7 +309,7 @@ export class JunctionEntityMetadataBuilder {
                         column.propertyName === joinColumn.referencedColumnName,
                 )
                 if (!referencedColumn)
-                    throw new TypeORMError(
+                    throw new lapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.entityMetadata.name}`,
                     )
 
@@ -345,7 +345,7 @@ export class JunctionEntityMetadataBuilder {
                             joinColumn.referencedColumnName,
                     )
                 if (!referencedColumn)
-                    throw new TypeORMError(
+                    throw new lapinError(
                         `Referenced column ${joinColumn.referencedColumnName} was not found in entity ${relation.inverseEntityMetadata.name}`,
                     )
 

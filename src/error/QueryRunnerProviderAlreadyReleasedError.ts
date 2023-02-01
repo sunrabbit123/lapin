@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when consumer tries to use query runner from query runner provider after it was released.
  */
-export class QueryRunnerProviderAlreadyReleasedError extends TypeORMError {
+export class QueryRunnerProviderAlreadyReleasedError extends lapinError {
     constructor() {
         super(
             `Database connection provided by a query runner was already ` +

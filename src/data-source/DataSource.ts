@@ -35,7 +35,7 @@ import { RelationLoader } from "../query-builder/RelationLoader"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { IsolationLevel } from "../driver/types/IsolationLevel"
 import { ReplicationMode } from "../driver/types/ReplicationMode"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { RelationIdLoader } from "../query-builder/RelationIdLoader"
 import { DriverUtils } from "../driver/DriverUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
@@ -140,7 +140,7 @@ export class DataSource {
         this.manager = this.createEntityManager()
         this.namingStrategy =
             options.namingStrategy || new DefaultNamingStrategy()
-        this.metadataTableName = options.metadataTableName || "typeorm_metadata"
+        this.metadataTableName = options.metadataTableName || "lapin_metadata"
         this.queryResultCache = options.cache
             ? new QueryResultCacheFactory(this).create()
             : undefined
@@ -170,7 +170,7 @@ export class DataSource {
      */
     get mongoManager(): MongoEntityManager {
         if (!InstanceChecker.isMongoEntityManager(this.manager))
-            throw new TypeORMError(
+            throw new lapinError(
                 `MongoEntityManager is only available for MongoDB databases.`,
             )
 
@@ -184,7 +184,7 @@ export class DataSource {
      */
     get sqljsManager(): SqljsEntityManager {
         if (!InstanceChecker.isSqljsEntityManager(this.manager))
-            throw new TypeORMError(
+            throw new lapinError(
                 `SqljsEntityManager is only available for Sqljs databases.`,
             )
 
@@ -467,7 +467,7 @@ export class DataSource {
         target: EntityTarget<Entity>,
     ): MongoRepository<Entity> {
         if (!(this.driver.options.type === "mongodb"))
-            throw new TypeORMError(
+            throw new lapinError(
                 `You can use getMongoRepository only for MongoDB connections.`,
             )
 
@@ -515,7 +515,7 @@ export class DataSource {
         queryRunner?: QueryRunner,
     ): Promise<any> {
         if (InstanceChecker.isMongoEntityManager(this.manager))
-            throw new TypeORMError(`Queries aren't supported by MongoDB.`)
+            throw new lapinError(`Queries aren't supported by MongoDB.`)
 
         if (queryRunner && queryRunner.isReleased)
             throw new QueryRunnerProviderAlreadyReleasedError()
@@ -552,7 +552,7 @@ export class DataSource {
         queryRunner?: QueryRunner,
     ): SelectQueryBuilder<Entity> {
         if (InstanceChecker.isMongoEntityManager(this.manager))
-            throw new TypeORMError(`Query Builder is not supported by MongoDB.`)
+            throw new lapinError(`Query Builder is not supported by MongoDB.`)
 
         if (alias) {
             alias = DriverUtils.buildAlias(this.driver, alias)
@@ -599,11 +599,11 @@ export class DataSource {
                 relationPropertyPath,
             )
         if (!relationMetadata)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Relation "${relationPropertyPath}" was not found in ${entityTarget} entity.`,
             )
         if (!relationMetadata.isManyToMany)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Relation "${entityTarget}#${relationPropertyPath}" does not have a many-to-many relationship.` +
                     `You can use this method only on many-to-many relations.`,
             )

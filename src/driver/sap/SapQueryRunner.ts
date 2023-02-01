@@ -21,7 +21,7 @@ import { Query } from "../Query"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { SapDriver } from "./SapDriver"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { QueryFailedError, TypeORMError } from "../../error"
+import { QueryFailedError, lapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 import { QueryLock } from "../../query-runner/QueryLock"
 import { MetadataTableType } from "../types/MetadataTableType"
@@ -295,7 +295,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        throw new TypeORMError(`Stream is not supported by SAP driver.`)
+        throw new lapinError(`Stream is not supported by SAP driver.`)
     }
 
     /**
@@ -1011,7 +1011,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1047,7 +1047,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1517,7 +1517,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2036,7 +2036,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -2048,7 +2048,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -2060,7 +2060,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -2072,7 +2072,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -2129,7 +2129,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2159,7 +2159,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support exclusion constraints.`,
         )
     }
@@ -2171,7 +2171,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support exclusion constraints.`,
         )
     }
@@ -2183,7 +2183,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support exclusion constraints.`,
         )
     }
@@ -2195,7 +2195,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `SAP HANA does not support exclusion constraints.`,
         )
     }
@@ -2253,7 +2253,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2323,7 +2323,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -2411,7 +2411,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -2437,7 +2437,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             .join(" OR ")
 
         const query = `SELECT "t".* FROM ${this.escapePath(
-            this.getTypeormMetadataTableName(),
+            this.getlapinMetadataTableName(),
         )} "t" WHERE "t"."type" = '${MetadataTableType.VIEW}' ${
             viewsCondition ? `AND (${viewsCondition})` : ""
         }`
@@ -3062,7 +3062,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: schema,
             name: name,
@@ -3089,7 +3089,7 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
             schema = await this.getCurrentSchema()
         }
 
-        return this.deleteTypeormMetadataSql({
+        return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema,
             name,

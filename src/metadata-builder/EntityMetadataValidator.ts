@@ -7,7 +7,7 @@ import { DataTypeNotSupportedError } from "../error/DataTypeNotSupportedError"
 import { ColumnType } from "../driver/types/ColumnTypes"
 import { NoConnectionOptionError } from "../error/NoConnectionOptionError"
 import { InitializedRelationError } from "../error/InitializedRelationError"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 
 /// todo: add check if there are multiple tables with the same name
@@ -67,7 +67,7 @@ export class EntityMetadataValidator {
                     columnMetadatas[0].primaryKeyConstraintName,
             )
             if (!areConstraintNamesEqual) {
-                throw new TypeORMError(
+                throw new lapinError(
                     `Entity ${entityMetadata.name} has multiple primary columns with different constraint names. Constraint names should be the equal.`,
                 )
             }
@@ -80,12 +80,12 @@ export class EntityMetadataValidator {
             entityMetadata.tableType === "entity-child"
         ) {
             if (!entityMetadata.discriminatorColumn)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Entity ${entityMetadata.name} using single-table inheritance, it should also have a discriminator column. Did you forget to put discriminator column options?`,
                 )
 
             if (typeof entityMetadata.discriminatorValue === "undefined")
-                throw new TypeORMError(
+                throw new lapinError(
                     `Entity ${entityMetadata.name} has an undefined discriminator value. Discriminator value should be defined.`,
                 )
 
@@ -107,7 +107,7 @@ export class EntityMetadataValidator {
                     )
                 })
             if (sameDiscriminatorValueEntityMetadata)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Entities ${entityMetadata.name} and ${sameDiscriminatorValueEntityMetadata.name} have the same discriminator values. Make sure they are different while using the @ChildEntity decorator.`,
                 )
         }
@@ -117,7 +117,7 @@ export class EntityMetadataValidator {
                 relationCount.relation.isManyToOne ||
                 relationCount.relation.isOneToOne
             )
-                throw new TypeORMError(
+                throw new lapinError(
                     `Relation count can not be implemented on ManyToOne or OneToOne relations.`,
                 )
         })
@@ -144,7 +144,7 @@ export class EntityMetadataValidator {
                             normalizedColumn,
                         ) === -1
                     )
-                        throw new TypeORMError(
+                        throw new lapinError(
                             `Column ${column.propertyName} of Entity ${entityMetadata.name} does not support length property.`,
                         )
                     if (
@@ -152,7 +152,7 @@ export class EntityMetadataValidator {
                         !column.enum &&
                         !column.enumName
                     )
-                        throw new TypeORMError(
+                        throw new lapinError(
                             `Column "${column.propertyName}" of Entity "${entityMetadata.name}" is defined as enum, but missing "enum" or "enumName" properties.`,
                         )
                 })
@@ -167,7 +167,7 @@ export class EntityMetadataValidator {
                     column.isGenerated && column.generationStrategy !== "uuid",
             )
             if (generatedColumns.length > 1)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Error in ${entityMetadata.name} entity. There can be only one auto-increment column in MySql table.`,
                 )
         }
@@ -188,7 +188,7 @@ export class EntityMetadataValidator {
                 (column) => column.charset,
             )
             if (charsetColumns.length > 1)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Character set specifying is not supported in Sql Server`,
                 )
         }
@@ -202,7 +202,7 @@ export class EntityMetadataValidator {
                         column.generatedType === "VIRTUAL"),
             )
             if (virtualColumn)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Column "${virtualColumn.propertyName}" of Entity "${entityMetadata.name}" is defined as VIRTUAL, but Postgres supports only STORED generated columns.`,
                 )
         }
@@ -252,7 +252,7 @@ export class EntityMetadataValidator {
 
                 // check if join column really has referenced column
                 if (relation.joinColumn && !relation.joinColumn.referencedColumn)
-                    throw new TypeORMError(`Join column does not have referenced column set`);
+                    throw new lapinError(`Join column does not have referenced column set`);
 
             }
 
@@ -271,7 +271,7 @@ export class EntityMetadataValidator {
             // todo: with message like: "Inverse side is specified only on one side of the relationship. Specify on other side too to prevent confusion".
             // todo: add validation if there two entities with the same target, and show error message with description of the problem (maybe file was renamed/moved but left in output directory)
             // todo: check if there are multiple columns on the same column applied.
-            // todo: check column type if is missing in relational databases (throw new TypeORMError(`Column type of ${type} cannot be determined.`);)
+            // todo: check column type if is missing in relational databases (throw new lapinError(`Column type of ${type} cannot be determined.`);)
             // todo: include driver-specific checks. for example in mongodb empty prefixes are not allowed
             // todo: if multiple columns with same name - throw exception, including cases when columns are in embeds with same prefixes or without prefix at all
             // todo: if multiple primary key used, at least one of them must be unique or @Index decorator must be set on entity
@@ -285,7 +285,7 @@ export class EntityMetadataValidator {
                 relation.inverseRelation &&
                 relation.inverseRelation!.isCascadeRemove
             if (isCircularCascadeRemove)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Relation ${entityMetadata.name}#${
                         relation.propertyName
                     } and ${relation.inverseRelation!.entityMetadata.name}#${
@@ -335,7 +335,7 @@ export class EntityMetadataValidator {
                     relation.inverseRelation &&
                     relation.inverseRelation.isEager
                 )
-                    throw new TypeORMError(
+                    throw new lapinError(
                         `Circular eager relations are disallowed. ` +
                             `${entityMetadata.targetName}#${relation.propertyPath} contains "eager: true", and its inverse side ` +
                             `${relation.inverseEntityMetadata.targetName}#${relation.inverseRelation.propertyPath} contains "eager: true" as well.` +

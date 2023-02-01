@@ -22,7 +22,7 @@ import { ColumnType } from "../types/ColumnTypes"
 import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { lapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 import { VersionUtils } from "../../util/VersionUtils"
@@ -157,7 +157,7 @@ export class CockroachQueryRunner
                 )
             }
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
 
         this.transactionDepth += 1
@@ -177,7 +177,7 @@ export class CockroachQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `RELEASE SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
             this.transactionDepth -= 1
         } else {
@@ -213,7 +213,7 @@ export class CockroachQueryRunner
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             this.storeQueries = false
@@ -580,7 +580,7 @@ export class CockroachQueryRunner
                 schema = currentSchema
             }
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -588,7 +588,7 @@ export class CockroachQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -676,14 +676,14 @@ export class CockroachQueryRunner
                 schema = currentSchema
             }
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -974,7 +974,7 @@ export class CockroachQueryRunner
         const downQueries: Query[] = []
 
         if (column.generationStrategy === "increment") {
-            throw new TypeORMError(
+            throw new lapinError(
                 `Adding sequential generated columns into existing table is not supported`,
             )
         }
@@ -1067,7 +1067,7 @@ export class CockroachQueryRunner
             if (!schema) {
                 schema = currentSchema
             }
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -1075,7 +1075,7 @@ export class CockroachQueryRunner
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -1178,7 +1178,7 @@ export class CockroachQueryRunner
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1215,7 +1215,7 @@ export class CockroachQueryRunner
                   (column) => column.name === oldTableColumnOrName,
               )
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1857,7 +1857,7 @@ export class CockroachQueryRunner
             ) {
                 if (newColumn.isGenerated) {
                     if (newColumn.generationStrategy === "increment") {
-                        throw new TypeORMError(
+                        throw new lapinError(
                             `Adding sequential generated columns into existing table is not supported`,
                         )
                     } else if (newColumn.generationStrategy === "rowid") {
@@ -2017,7 +2017,7 @@ export class CockroachQueryRunner
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -2176,13 +2176,13 @@ export class CockroachQueryRunner
             if (!schema) {
                 schema = currentSchema
             }
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: schema,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -2410,7 +2410,7 @@ export class CockroachQueryRunner
             ? uniqueOrName
             : table.uniques.find((u) => u.name === uniqueOrName)
         if (!uniqueConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
             )
 
@@ -2486,7 +2486,7 @@ export class CockroachQueryRunner
             ? checkOrName
             : table.checks.find((c) => c.name === checkOrName)
         if (!checkConstraint)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
             )
 
@@ -2516,7 +2516,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2528,7 +2528,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2540,7 +2540,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2552,7 +2552,7 @@ export class CockroachQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `CockroachDB does not support exclusion constraints.`,
         )
     }
@@ -2609,7 +2609,7 @@ export class CockroachQueryRunner
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2691,7 +2691,7 @@ export class CockroachQueryRunner
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -2793,7 +2793,7 @@ export class CockroachQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -2818,7 +2818,7 @@ export class CockroachQueryRunner
 
         const query =
             `SELECT "t".*, "v"."check_option" FROM ${this.escapePath(
-                this.getTypeormMetadataTableName(),
+                this.getlapinMetadataTableName(),
             )} "t" ` +
             `INNER JOIN "information_schema"."views" "v" ON "v"."table_schema" = "t"."schema" AND "v"."table_name" = "t"."name" WHERE "t"."type" = '${
                 MetadataTableType.VIEW
@@ -3283,7 +3283,7 @@ export class CockroachQueryRunner
                                         : "VIRTUAL"
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         schema: dbTable["table_schema"],
                                         table: dbTable["table_name"],
                                         type: MetadataTableType.GENERATED_COLUMN,
@@ -3688,7 +3688,7 @@ export class CockroachQueryRunner
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: schema,
             name: name,
@@ -3717,7 +3717,7 @@ export class CockroachQueryRunner
             schema = currentSchema
         }
 
-        return this.deleteTypeormMetadataSql({
+        return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema,
             name,
@@ -3846,7 +3846,7 @@ export class CockroachQueryRunner
      */
     protected dropPrimaryKeySql(table: Table): Query {
         if (!table.primaryColumns.length)
-            throw new TypeORMError(`Table ${table} has no primary keys.`)
+            throw new lapinError(`Table ${table} has no primary keys.`)
 
         const columnNames = table.primaryColumns.map((column) => column.name)
         const constraintName = table.primaryColumns[0].primaryKeyConstraintName

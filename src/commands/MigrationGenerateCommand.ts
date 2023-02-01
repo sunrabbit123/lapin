@@ -141,7 +141,7 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                 } else {
                     console.log(
                         chalk.yellow(
-                            `No changes in database schema were found - cannot generate a migration. To create a new empty migration use "typeorm migration:create" command`,
+                            `No changes in database schema were found - cannot generate a migration. To create a new empty migration use "lapin migration:create" command`,
                         ),
                     )
                     process.exit(1)
@@ -230,7 +230,7 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
     ): string {
         const migrationName = `${camelCase(name, true)}${timestamp}`
 
-        return `import { MigrationInterface, QueryRunner } from "typeorm";
+        return `import { MigrationInterface, QueryRunner } from "lapin";
 
 export class ${migrationName} implements MigrationInterface {
     name = '${migrationName}'
@@ -260,7 +260,7 @@ ${downSqls.join(`
     ): string {
         const migrationName = `${camelCase(name, true)}${timestamp}`
 
-        return `const { MigrationInterface, QueryRunner } = require("typeorm");
+        return `const { MigrationInterface, QueryRunner } = require("lapin");
 
 module.exports = class ${migrationName} {
     name = '${migrationName}'

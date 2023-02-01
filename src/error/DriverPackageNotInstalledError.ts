@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when required driver's package is not installed.
  */
-export class DriverPackageNotInstalledError extends TypeORMError {
+export class DriverPackageNotInstalledError extends lapinError {
     constructor(driverName: string, packageName: string) {
         super(
             `${driverName} package has not been found installed. ` +

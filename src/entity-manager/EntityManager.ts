@@ -19,7 +19,7 @@ import {
     CustomRepositoryCannotInheritRepositoryError,
     CustomRepositoryNotFoundError,
     TreeRepositoryNotSupportedError,
-    TypeORMError,
+    lapinError,
 } from "../error"
 import { AbstractRepository } from "../repository/AbstractRepository"
 import { QueryRunner } from "../query-runner/QueryRunner"
@@ -134,7 +134,7 @@ export class EntityManager {
                 : runInTransactionParam
 
         if (!runInTransaction) {
-            throw new TypeORMError(
+            throw new lapinError(
                 `Transaction method requires callback in second parameter if isolation level is supplied.`,
             )
         }
@@ -764,7 +764,7 @@ export class EntityManager {
             (Array.isArray(criteria) && criteria.length === 0)
         ) {
             return Promise.reject(
-                new TypeORMError(
+                new lapinError(
                     `Empty criteria(s) are not allowed for the update method.`,
                 ),
             )
@@ -818,7 +818,7 @@ export class EntityManager {
             (Array.isArray(criteria) && criteria.length === 0)
         ) {
             return Promise.reject(
-                new TypeORMError(
+                new lapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
             )
@@ -872,7 +872,7 @@ export class EntityManager {
             (Array.isArray(criteria) && criteria.length === 0)
         ) {
             return Promise.reject(
-                new TypeORMError(
+                new lapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
             )
@@ -926,7 +926,7 @@ export class EntityManager {
             (Array.isArray(criteria) && criteria.length === 0)
         ) {
             return Promise.reject(
-                new TypeORMError(
+                new lapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
             )
@@ -1241,12 +1241,12 @@ export class EntityManager {
         const metadata = this.connection.getMetadata(entityClass)
         const column = metadata.findColumnWithPropertyPath(propertyPath)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
             )
 
         if (isNaN(Number(value)))
-            throw new TypeORMError(`Value "${value}" is not a number.`)
+            throw new lapinError(`Value "${value}" is not a number.`)
 
         // convert possible embeded path "social.likes" into object { social: { like: () => value } }
         const values: QueryDeepPartialEntity<Entity> = propertyPath
@@ -1278,12 +1278,12 @@ export class EntityManager {
         const metadata = this.connection.getMetadata(entityClass)
         const column = metadata.findColumnWithPropertyPath(propertyPath)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
             )
 
         if (isNaN(Number(value)))
-            throw new TypeORMError(`Value "${value}" is not a number.`)
+            throw new lapinError(`Value "${value}" is not a number.`)
 
         // convert possible embeded path "social.likes" into object { social: { like: () => value } }
         const values: QueryDeepPartialEntity<Entity> = propertyPath

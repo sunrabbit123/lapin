@@ -58,8 +58,8 @@ export class Gulpfile {
             "./src/**/*.ts",
             "!./src/commands/*.ts",
             "!./src/cli.ts",
-            "!./src/typeorm.ts",
-            "!./src/typeorm-model-shim.ts"
+            "!./src/lapin.ts",
+            "!./src/lapin-model-shim.ts"
         ])
         .pipe(gulp.dest("./build/browser/src"));
     }
@@ -125,7 +125,7 @@ export class Gulpfile {
     packagePack() {
         return gulp.src("package.json", { read: false })
             .pipe(shell([
-                "cd ./build/package && npm pack && mv -f typeorm-*.tgz .."
+                "cd ./build/package && npm pack && mv -f lapin-*.tgz .."
             ]));
     }
 
@@ -181,10 +181,10 @@ export class Gulpfile {
         const cjsKeys = Object.keys(cjsIndex).filter(key => key !== "default" && !key.startsWith("__"));
 
         const indexMjsContent =
-            'import TypeORM from "./index.js";\n' +
-            `const {\n    ${cjsKeys.join(",\n    ")}\n} = TypeORM;\n` +
+            'import lapin from "./index.js";\n' +
+            `const {\n    ${cjsKeys.join(",\n    ")}\n} = lapin;\n` +
             `export {\n    ${cjsKeys.join(",\n    ")}\n};\n` +
-            'export default TypeORM;\n';
+            'export default lapin;\n';
 
         fs.writeFileSync(`${buildDir}/index.mjs`, indexMjsContent, "utf8");
     }
@@ -231,11 +231,11 @@ export class Gulpfile {
     }
 
     /**
-     * Copies shims to use typeorm in different environment and conditions file into package.
+     * Copies shims to use lapin in different environment and conditions file into package.
      */
     @Task()
     packageCopyShims() {
-        return gulp.src(["./extra/typeorm-model-shim.js", "./extra/typeorm-class-transformer-shim.js"])
+        return gulp.src(["./extra/lapin-model-shim.js", "./extra/lapin-class-transformer-shim.js"])
             .pipe(gulp.dest("./build/package"));
     }
 

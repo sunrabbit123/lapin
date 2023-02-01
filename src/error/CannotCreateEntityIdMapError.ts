@@ -1,12 +1,12 @@
 import { EntityMetadata } from "../metadata/EntityMetadata"
 import { ObjectLiteral } from "../common/ObjectLiteral"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when user tries to create entity id map from the mixed id value,
  * but id value is a single value when entity requires multiple values.
  */
-export class CannotCreateEntityIdMapError extends TypeORMError {
+export class CannotCreateEntityIdMapError extends lapinError {
     constructor(metadata: EntityMetadata, id: any) {
         super()
 

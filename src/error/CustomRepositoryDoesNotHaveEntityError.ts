@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown if custom repositories that extend AbstractRepository classes does not have managed entity.
  */
-export class CustomRepositoryDoesNotHaveEntityError extends TypeORMError {
+export class CustomRepositoryDoesNotHaveEntityError extends lapinError {
     constructor(repository: any) {
         super(
             `Custom repository ${

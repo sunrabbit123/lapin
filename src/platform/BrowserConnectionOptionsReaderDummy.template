@@ -1,7 +1,7 @@
 /**
  * Dummy class for replacement via `package.json` in browser builds.
  *
- * If we don't include these functions typeorm will throw an error on runtime
+ * If we don't include these functions lapin will throw an error on runtime
  * as well as during webpack builds.
  */
 export class ConnectionOptionsEnvReader {
@@ -13,7 +13,7 @@ export class ConnectionOptionsEnvReader {
 /**
  * Dummy class for replacement via `package.json` in browser builds.
  *
- * If we don't include these functions typeorm will throw an error on runtime
+ * If we don't include these functions lapin will throw an error on runtime
  * as well as during webpack builds.
  */
 export class ConnectionOptionsXmlReader {
@@ -25,7 +25,7 @@ export class ConnectionOptionsXmlReader {
 /**
  * Dummy class for replacement via `package.json` in browser builds.
  *
- * If we don't include these functions typeorm will throw an error on runtime
+ * If we don't include these functions lapin will throw an error on runtime
  * as well as during webpack builds.
  */
 export class ConnectionOptionsYmlReader {
@@ -37,7 +37,7 @@ export class ConnectionOptionsYmlReader {
 /**
  * Dummy class for replacement via `package.json` in browser builds.
  *
- * If we don't include these functions typeorm will throw an error on runtime
+ * If we don't include these functions lapin will throw an error on runtime
  * as well as during webpack builds.
  */
 export class ConnectionOptionsReader {

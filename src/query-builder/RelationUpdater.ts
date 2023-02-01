@@ -1,7 +1,7 @@
 import { QueryBuilder } from "./QueryBuilder"
 import { ObjectLiteral } from "../common/ObjectLiteral"
 import { QueryExpressionMap } from "./QueryExpressionMap"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { ObjectUtils } from "../util/ObjectUtils"
 
 /**
@@ -98,7 +98,7 @@ export class RelationUpdater {
                 .execute()
         } else if (relation.isOneToOneNotOwner || relation.isOneToMany) {
             if (Array.isArray(this.expressionMap.of))
-                throw new TypeORMError(
+                throw new lapinError(
                     `You cannot update relations of multiple entities with the same related object. Provide a single entity into .of method.`,
                 )
 

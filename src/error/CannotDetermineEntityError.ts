@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when user tries to save/remove/etc. constructor-less object (object literal) instead of entity.
  */
-export class CannotDetermineEntityError extends TypeORMError {
+export class CannotDetermineEntityError extends lapinError {
     constructor(operation: string) {
         super(
             `Cannot ${operation}, given value must be instance of entity class, ` +

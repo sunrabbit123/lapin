@@ -1,13 +1,13 @@
 // this "shim" can be used on the frontend to prevent from errors on undefined
 // decorators in the models, when you are sharing same models across backend and frontend.
-// to use this shim simply configure your systemjs/webpack configuration to use this file instead of typeorm module.
+// to use this shim simply configure your systemjs/webpack configuration to use this file instead of lapin module.
 
 // for system.js this resolved this way:
 // System.config({
 //     ...
 //     packages: {
-//         "typeorm": {
-//             main: "typeorm-model-shim.js",
+//         "lapin": {
+//             main: "lapin-model-shim.js",
 //             defaultExtension: "js"
 //         }
 //     }
@@ -16,7 +16,7 @@
 // for webpack this is resolved this way:
 // resolve: { // see: https://webpack.js.org/configuration/resolve/
 //     alias: {
-//         typeorm: path.resolve(__dirname, "../node_modules/typeorm/typeorm-model-shim")
+//         lapin: path.resolve(__dirname, "../node_modules/lapin/lapin-model-shim")
 //     }
 // }
 

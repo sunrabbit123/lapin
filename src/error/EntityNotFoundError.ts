@@ -1,12 +1,12 @@
 import { EntityTarget } from "../common/EntityTarget"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
 
 /**
  * Thrown when no result could be found in methods which are not allowed to return undefined or an empty set.
  */
-export class EntityNotFoundError extends TypeORMError {
+export class EntityNotFoundError extends lapinError {
     constructor(entityClass: EntityTarget<any>, criteria: any) {
         super()
 

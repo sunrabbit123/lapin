@@ -1,14 +1,14 @@
 /**
  * This source code is from https://github.com/jriecken/dependency-graph
  * Just added "any" types here, wrapper everything into exported class.
- * We cant use a package itself because we want to package "everything-in-it" for the frontend users of TypeORM.
+ * We cant use a package itself because we want to package "everything-in-it" for the frontend users of lapin.
  */
 
 /**
  * A simple dependency graph
  */
 
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 
 /**
  * Helper for creating a Depth-First-Search on
@@ -31,7 +31,7 @@ function createDFS(edges: any, leavesOnly: any, result: any) {
                 DFS(node)
             } else if (currentPath.indexOf(node) >= 0) {
                 currentPath.push(node)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Dependency Cycle Found: ${currentPath.join(" -> ")}`,
                 )
             }
@@ -102,7 +102,7 @@ export class DepGraph {
         if (this.hasNode(node)) {
             return this.nodes[node]
         } else {
-            throw new TypeORMError(`Node does not exist: ${node}`)
+            throw new lapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -113,7 +113,7 @@ export class DepGraph {
         if (this.hasNode(node)) {
             this.nodes[node] = data
         } else {
-            throw new TypeORMError(`Node does not exist: ${node}`)
+            throw new lapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -123,10 +123,10 @@ export class DepGraph {
      */
     addDependency(from: any, to: any) {
         if (!this.hasNode(from)) {
-            throw new TypeORMError(`Node does not exist: ${from}`)
+            throw new lapinError(`Node does not exist: ${from}`)
         }
         if (!this.hasNode(to)) {
-            throw new TypeORMError(`Node does not exist: ${to}`)
+            throw new lapinError(`Node does not exist: ${to}`)
         }
         if (this.outgoingEdges[from].indexOf(to) === -1) {
             this.outgoingEdges[from].push(to)
@@ -176,7 +176,7 @@ export class DepGraph {
             }
             return result
         } else {
-            throw new TypeORMError(`Node does not exist: ${node}`)
+            throw new lapinError(`Node does not exist: ${node}`)
         }
     }
 
@@ -198,7 +198,7 @@ export class DepGraph {
             }
             return result
         } else {
-            throw new TypeORMError(`Node does not exist: ${node}`)
+            throw new lapinError(`Node does not exist: ${node}`)
         }
     }
 

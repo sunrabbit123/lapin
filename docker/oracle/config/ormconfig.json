@@ -3,14 +3,14 @@
     "skip": false,
     "name": "oracle",
     "type": "oracle",
-    "host": "typeorm-oracle",
+    "host": "lapin-oracle",
     "username": "system",
     "password": "oracle",
     "port": 1521,
     "sid": "XE",
     "logging": false,
     "extra": {
-      "connectString": "typeorm-oracle:1521/XE"
+      "connectString": "lapin-oracle:1521/XE"
     }
   }
 ]

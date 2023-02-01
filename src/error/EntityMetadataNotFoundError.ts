@@ -1,9 +1,9 @@
 import { EntityTarget } from "../common/EntityTarget"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
 
-export class EntityMetadataNotFoundError extends TypeORMError {
+export class EntityMetadataNotFoundError extends lapinError {
     constructor(target: EntityTarget<any>) {
         super()
 

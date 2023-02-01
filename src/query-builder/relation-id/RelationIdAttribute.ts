@@ -4,7 +4,7 @@ import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { QueryExpressionMap } from "../QueryExpressionMap"
 import { SelectQueryBuilder } from "../SelectQueryBuilder"
 import { ObjectUtils } from "../../util/ObjectUtils"
-import { TypeORMError } from "../../error/TypeORMError"
+import { lapinError } from "../../error/lapinError"
 
 /**
  * Stores all join relation id attributes which will be used to build a JOIN query.
@@ -68,7 +68,7 @@ export class RelationIdAttribute {
      */
     get parentAlias(): string {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new lapinError(
                 `Given value must be a string representation of alias property`,
             )
 
@@ -84,7 +84,7 @@ export class RelationIdAttribute {
      */
     get relationPropertyPath(): string {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new lapinError(
                 `Given value must be a string representation of alias property`,
             )
 
@@ -98,7 +98,7 @@ export class RelationIdAttribute {
      */
     get relation(): RelationMetadata {
         if (!QueryBuilderUtils.isAliasProperty(this.relationName))
-            throw new TypeORMError(
+            throw new lapinError(
                 `Given value must be a string representation of alias property`,
             )
 
@@ -110,7 +110,7 @@ export class RelationIdAttribute {
                 this.relationPropertyPath!,
             )
         if (!relation)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Relation with property path ${this.relationPropertyPath} in entity was not found.`,
             )
         return relation

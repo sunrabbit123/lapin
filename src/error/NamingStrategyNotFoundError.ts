@@ -1,9 +1,9 @@
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
 /**
  * Thrown when consumer tries to use naming strategy that does not exist.
  */
-export class NamingStrategyNotFoundError extends TypeORMError {
+export class NamingStrategyNotFoundError extends lapinError {
     constructor(strategyName: string | Function, connectionName: string) {
         super()
 

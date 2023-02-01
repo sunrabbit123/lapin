@@ -108,7 +108,7 @@ export class NativescriptDriver extends AbstractSqliteDriver {
                 (err: Error, db: any): any => {
                     if (err) return fail(err)
 
-                    // use object mode to work with TypeORM
+                    // use object mode to work with lapin
                     db.resultType(this.sqlite.RESULTSASOBJECT)
 
                     // we need to enable foreign keys in sqlite to make sure all foreign key related features

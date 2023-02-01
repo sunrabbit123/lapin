@@ -3,12 +3,12 @@ Lapin
 ORIGIN SOFTWARE NOTICES AND INFORMATION
 Do Not Translate or Localize
 
-1. typeorm/typeorm version 0.3.11 (https://github.com/typeorm/typeorm)
+1. lapin/lapin version 0.3.11 (https://github.com/lapin/lapin)
 ----------------------------------------------------------------
 
 The MIT License
 
-Copyright (c) 2015-2022 TypeORM. http://typeorm.github.io
+Copyright (c) 2015-2022 lapin. http://lapin.github.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

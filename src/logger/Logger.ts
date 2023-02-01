@@ -1,7 +1,7 @@
 import { QueryRunner } from "../query-runner/QueryRunner"
 
 /**
- * Performs logging of the events in TypeORM.
+ * Performs logging of the events in lapin.
  */
 export interface Logger {
     /**

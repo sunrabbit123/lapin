@@ -5,7 +5,7 @@ import { Logger } from "./Logger"
 import { PlatformTools } from "../platform/PlatformTools"
 
 /**
- * Performs logging of the events in TypeORM.
+ * Performs logging of the events in lapin.
  * This version of logger logs everything into ormlogs.log file.
  */
 export class FileLogger implements Logger {

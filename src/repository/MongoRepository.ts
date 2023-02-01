@@ -35,7 +35,7 @@ import {
 import { MongoEntityManager } from "../entity-manager/MongoEntityManager"
 import { QueryRunner } from "../query-runner/QueryRunner"
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { TypeORMError } from "../error/TypeORMError"
+import { lapinError } from "../error/lapinError"
 import { MongoFindOneOptions } from "../find-options/mongodb/MongoFindOneOptions"
 import { FindOneOptions } from "../find-options/FindOneOptions"
 
@@ -63,7 +63,7 @@ export class MongoRepository<
      * Calling this method will return an error.
      */
     query(query: string, parameters?: any[]): Promise<any> {
-        throw new TypeORMError(`Queries aren't supported by MongoDB.`)
+        throw new lapinError(`Queries aren't supported by MongoDB.`)
     }
 
     /**
@@ -74,7 +74,7 @@ export class MongoRepository<
         alias: string,
         queryRunner?: QueryRunner,
     ): SelectQueryBuilder<Entity> {
-        throw new TypeORMError(`Query Builder is not supported by MongoDB.`)
+        throw new lapinError(`Query Builder is not supported by MongoDB.`)
     }
 
     /**

@@ -38,7 +38,7 @@ export type FindOptionsSelect<Entity> = {
 
 /**
  * Property paths (column names) to be selected by "find" defined as string.
- * Old selection mechanism in TypeORM.
+ * Old selection mechanism in lapin.
  *
  * @deprecated will be removed in the next version, use FindOptionsSelect type notation instead
  */

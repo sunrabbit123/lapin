@@ -23,7 +23,7 @@ import { IsolationLevel } from "../types/IsolationLevel"
 import { TableExclusion } from "../../schema-builder/table/TableExclusion"
 import { VersionUtils } from "../../util/VersionUtils"
 import { ReplicationMode } from "../types/ReplicationMode"
-import { TypeORMError } from "../../error"
+import { lapinError } from "../../error"
 import { MetadataTableType } from "../types/MetadataTableType"
 import { InstanceChecker } from "../../util/InstanceChecker"
 
@@ -125,7 +125,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             }
             await this.query("START TRANSACTION")
         } else {
-            await this.query(`SAVEPOINT typeorm_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
         }
         this.transactionDepth += 1
 
@@ -143,7 +143,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `RELEASE SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("COMMIT")
@@ -165,7 +165,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         if (this.transactionDepth > 1) {
             await this.query(
-                `ROLLBACK TO SAVEPOINT typeorm_${this.transactionDepth - 1}`,
+                `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
             )
         } else {
             await this.query("ROLLBACK")
@@ -290,7 +290,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        throw new TypeORMError(`MySql driver does not support table schemas`)
+        throw new lapinError(`MySql driver does not support table schemas`)
     }
 
     /**
@@ -315,7 +315,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new TypeORMError(`MySql driver does not support table schemas`)
+        throw new lapinError(`MySql driver does not support table schemas`)
     }
 
     /**
@@ -384,7 +384,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `Schema create queries are not supported by MySql driver.`,
         )
     }
@@ -393,7 +393,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `Schema drop queries are not supported by MySql driver.`,
         )
     }
@@ -440,7 +440,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         for (const column of generatedColumns) {
             const currentDatabase = await this.getCurrentDatabase()
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -448,7 +448,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -504,14 +504,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         for (const column of generatedColumns) {
             const currentDatabase = await this.getCurrentDatabase()
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
 
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -836,7 +836,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         if (column.generatedType && column.asExpression) {
             const currentDatabase = await this.getCurrentDatabase()
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -844,7 +844,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 value: column.asExpression,
             })
 
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -928,7 +928,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? oldTableColumnOrName
             : table.columns.find((c) => c.name === oldTableColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -962,7 +962,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? oldColumnOrName
             : table.columns.find((column) => column.name === oldColumnOrName)
         if (!oldColumn)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${oldColumnOrName}" was not found in the "${table.name}" table.`,
             )
 
@@ -1168,16 +1168,16 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 )
 
                 if (oldColumn.generatedType && !newColumn.generatedType) {
-                    // if column changed from generated to non-generated, delete record from typeorm metadata
+                    // if column changed from generated to non-generated, delete record from lapin metadata
 
                     const currentDatabase = await this.getCurrentDatabase()
-                    const deleteQuery = this.deleteTypeormMetadataSql({
+                    const deleteQuery = this.deletelapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: oldColumn.name,
                     })
-                    const insertQuery = this.insertTypeormMetadataSql({
+                    const insertQuery = this.insertlapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
@@ -1191,17 +1191,17 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     !oldColumn.generatedType &&
                     newColumn.generatedType
                 ) {
-                    // if column changed from non-generated to generated, insert record into typeorm metadata
+                    // if column changed from non-generated to generated, insert record into lapin metadata
 
                     const currentDatabase = await this.getCurrentDatabase()
-                    const insertQuery = this.insertTypeormMetadataSql({
+                    const insertQuery = this.insertlapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: newColumn.name,
                         value: newColumn.asExpression,
                     })
-                    const deleteQuery = this.deleteTypeormMetadataSql({
+                    const deleteQuery = this.deletelapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
@@ -1211,11 +1211,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     upQueries.push(insertQuery)
                     downQueries.push(deleteQuery)
                 } else if (oldColumn.asExpression !== newColumn.asExpression) {
-                    // if only expression changed, just update it in typeorm_metadata table
+                    // if only expression changed, just update it in lapin_metadata table
                     const currentDatabase = await this.getCurrentDatabase()
                     const updateQuery = this.connection
                         .createQueryBuilder()
-                        .update(this.getTypeormMetadataTableName())
+                        .update(this.getlapinMetadataTableName())
                         .set({ value: newColumn.asExpression })
                         .where("`type` = :type", {
                             type: MetadataTableType.GENERATED_COLUMN,
@@ -1229,7 +1229,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
                     const revertUpdateQuery = this.connection
                         .createQueryBuilder()
-                        .update(this.getTypeormMetadataTableName())
+                        .update(this.getlapinMetadataTableName())
                         .set({ value: oldColumn.asExpression })
                         .where("`type` = :type", {
                             type: MetadataTableType.GENERATED_COLUMN,
@@ -1499,7 +1499,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? columnOrName
             : table.findColumnByName(columnOrName)
         if (!column)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
             )
 
@@ -1688,13 +1688,13 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         if (column.generatedType && column.asExpression) {
             const currentDatabase = await this.getCurrentDatabase()
-            const deleteQuery = this.deleteTypeormMetadataSql({
+            const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
             })
-            const insertQuery = this.insertTypeormMetadataSql({
+            const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
@@ -1895,7 +1895,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1907,7 +1907,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1919,7 +1919,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueOrName: TableUnique | string,
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1931,7 +1931,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         uniqueConstraints: TableUnique[],
     ): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
         )
     }
@@ -1943,7 +1943,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support check constraints.`)
+        throw new lapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1953,7 +1953,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support check constraints.`)
+        throw new lapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1963,7 +1963,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkOrName: TableCheck | string,
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support check constraints.`)
+        throw new lapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1973,7 +1973,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support check constraints.`)
+        throw new lapinError(`MySql does not support check constraints.`)
     }
 
     /**
@@ -1983,7 +1983,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support exclusion constraints.`)
+        throw new lapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -1993,7 +1993,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support exclusion constraints.`)
+        throw new lapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -2003,7 +2003,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support exclusion constraints.`)
+        throw new lapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -2013,7 +2013,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new TypeORMError(`MySql does not support exclusion constraints.`)
+        throw new lapinError(`MySql does not support exclusion constraints.`)
     }
 
     /**
@@ -2069,7 +2069,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? foreignKeyOrName
             : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
         if (!foreignKey)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
             )
 
@@ -2139,7 +2139,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             ? indexOrName
             : table.indices.find((i) => i.name === indexOrName)
         if (!index)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
             )
 
@@ -2184,7 +2184,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             const isDatabaseExist = await this.hasDatabase(dbName)
             if (!isDatabaseExist) return Promise.resolve()
         } else {
-            throw new TypeORMError(
+            throw new lapinError(
                 `Can not clear database. No database is specified`,
             )
         }
@@ -2229,7 +2229,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getTypeormMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
         if (!hasTable) {
             return []
         }
@@ -2254,7 +2254,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
         const query =
             `SELECT \`t\`.*, \`v\`.\`check_option\` FROM ${this.escapePath(
-                this.getTypeormMetadataTableName(),
+                this.getlapinMetadataTableName(),
             )} \`t\` ` +
             `INNER JOIN \`information_schema\`.\`views\` \`v\` ON \`v\`.\`table_schema\` = \`t\`.\`schema\` AND \`v\`.\`table_name\` = \`t\`.\`name\` WHERE \`t\`.\`type\` = '${
                 MetadataTableType.VIEW
@@ -2564,7 +2564,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 dbColumn["DATA_TYPE"].toLowerCase()
 
                             // since mysql 8.0, "geometrycollection" returned as "geomcollection"
-                            // typeorm still use "geometrycollection"
+                            // lapin still use "geometrycollection"
                             if (tableColumn.type === "geomcollection") {
                                 tableColumn.type = "geometrycollection"
                             }
@@ -2646,7 +2646,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
-                                    await this.selectTypeormMetadataSql({
+                                    await this.selectlapinMetadataSql({
                                         schema: dbTable["TABLE_SCHEMA"],
                                         table: dbTable["TABLE_NAME"],
                                         type: MetadataTableType.GENERATED_COLUMN,
@@ -3052,7 +3052,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             typeof view.expression === "string"
                 ? view.expression.trim()
                 : view.expression(this.connection).getQuery()
-        return this.insertTypeormMetadataSql({
+        return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: view.name,
@@ -3077,7 +3077,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
             : viewOrPath
-        return this.deleteTypeormMetadataSql({
+        return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: viewName,

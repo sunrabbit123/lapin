@@ -26,14 +26,14 @@ export function getMetadataArgsStorage(): MetadataArgsStorage {
     // useContainer method with his own container implementation, that entity will be registered in the
     // old old container (default one post probably) and consumer will his entity.
     // calling useContainer before he imports any entity (or any other) is not always convenient.
-    // another reason is that when we run migrations typeorm is being called from a global package
-    // and it may load entities which register decorators in typeorm of local package
+    // another reason is that when we run migrations lapin is being called from a global package
+    // and it may load entities which register decorators in lapin of local package
     // this leads to impossibility of usage of entities in migrations and cli related operations
     const globalScope = PlatformTools.getGlobalVariable()
-    if (!globalScope.typeormMetadataArgsStorage)
-        globalScope.typeormMetadataArgsStorage = new MetadataArgsStorage()
+    if (!globalScope.lapinMetadataArgsStorage)
+        globalScope.lapinMetadataArgsStorage = new MetadataArgsStorage()
 
-    return globalScope.typeormMetadataArgsStorage
+    return globalScope.lapinMetadataArgsStorage
 }
 
 /**

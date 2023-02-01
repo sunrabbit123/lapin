@@ -1,15 +1,15 @@
-// this "shim" can be used on the frontend to make class-transformer to work with typeorm models automatically
+// this "shim" can be used on the frontend to make class-transformer to work with lapin models automatically
 // without having to put @Type decorator on properties that already have type information inside relational decorators.
 // if "reflect-metadata" is imported, you can also leave out the @Type decorator for Date or other types.
 // using this shim you can share same models across backend and frontend more easily.
-// to use this shim simply configure your systemjs/webpack configuration to use this file instead of typeorm module.
+// to use this shim simply configure your systemjs/webpack configuration to use this file instead of lapin module.
 
 // for system.js this resolved this way:
 // System.config({
 //     ...
 //     packages: {
-//         "typeorm": {
-//             main: "typeorm-class-transformer-shim.js",
+//         "lapin": {
+//             main: "lapin-class-transformer-shim.js",
 //             defaultExtension: "js"
 //         }
 //     }
@@ -18,7 +18,7 @@
 // for webpack this is resolved this way:
 // resolve: { // see: http://webpack.github.io/docs/configuration.html#resolve
 //     alias: {
-//         typeorm: path.resolve(__dirname, "../node_modules/typeorm/typeorm-class-transformer-shim")
+//         lapin: path.resolve(__dirname, "../node_modules/lapin/lapin-class-transformer-shim")
 //     }
 // }
 

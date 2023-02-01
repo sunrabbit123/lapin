@@ -8,7 +8,7 @@ import { DataSource } from "../data-source/DataSource"
 import { EntityListenerMetadata } from "./EntityListenerMetadata"
 import { IndexMetadata } from "./IndexMetadata"
 import { UniqueMetadata } from "./UniqueMetadata"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 
 /**
  * Contains all information about entity's embedded property.
@@ -253,7 +253,7 @@ export class EmbeddedMetadata {
             return [this.customPrefix]
         }
 
-        throw new TypeORMError(
+        throw new lapinError(
             `Invalid prefix option given for ${this.entityMetadata.targetName}#${this.propertyName}`,
         )
     }

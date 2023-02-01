@@ -1,7 +1,7 @@
 import { Driver } from "../driver/Driver"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 
-export class TreeRepositoryNotSupportedError extends TypeORMError {
+export class TreeRepositoryNotSupportedError extends lapinError {
     constructor(driver: Driver) {
         super(
             `Tree repositories are not supported in ${driver.options.type} driver.`,

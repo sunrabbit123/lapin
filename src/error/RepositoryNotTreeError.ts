@@ -1,12 +1,12 @@
 import { EntityTarget } from "../common/EntityTarget"
-import { TypeORMError } from "./TypeORMError"
+import { lapinError } from "./lapinError"
 import { ObjectUtils } from "../util/ObjectUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
 
 /**
  * Thrown when repository for the given class is not found.
  */
-export class RepositoryNotTreeError extends TypeORMError {
+export class RepositoryNotTreeError extends lapinError {
     constructor(entityClass: EntityTarget<any>) {
         super()
 

@@ -1,6 +1,6 @@
-# Building and Testing TypeORM
+# Building and Testing lapin
 
-This document describes how to set up your development environment and run TypeORM test cases.
+This document describes how to set up your development environment and run lapin test cases.
 
 * [Prerequisite Software](#prerequisite-software)
 * [Getting the Sources](#getting-the-sources)
@@ -8,12 +8,12 @@ This document describes how to set up your development environment and run TypeO
 * [Building](#building)
 * [Running Tests Locally](#running-tests-locally)
 
-See the [contribution guidelines](https://github.com/typeorm/typeorm/blob/master/CONTRIBUTING.md)
-if you'd like to contribute to TypeORM.
+See the [contribution guidelines](https://github.com/lapin/lapin/blob/master/CONTRIBUTING.md)
+if you'd like to contribute to lapin.
 
 ## Prerequisite Software
 
-Before you can build and test TypeORM, you must install and configure the
+Before you can build and test lapin, you must install and configure the
 following products on your development machine:
 
 * [Git](http://git-scm.com) and/or the **GitHub app** (for [Mac](http://mac.github.com) or
@@ -28,30 +28,30 @@ following products on your development machine:
 * [Oracle](https://www.oracle.com/database/index.html) is required to run tests on this platform
 * [Microsoft SQL Server](https://www.microsoft.com/en-us/cloud-platform/sql-server) is required to run tests on this platform
 * For MySQL, MariaDB and Postgres you can use [docker](https://www.docker.com/) instead (docker configuration is
- [here](https://github.com/typeorm/typeorm/blob/master/docker-compose.yml))
+ [here](https://github.com/lapin/lapin/blob/master/docker-compose.yml))
 
 ## Getting the Sources
 
 Fork and clone the repository:
 
 1. Login to your GitHub account or create one by following the instructions given [here](https://github.com/signup/free).
-2. [Fork](http://help.github.com/forking) the [main TypeORM repository](https://github.com/typeorm/typeorm).
-3. Clone your fork of the TypeORM repository and define an `upstream` remote pointing back to
-   the TypeORM repository that you forked in the first place.
+2. [Fork](http://help.github.com/forking) the [main lapin repository](https://github.com/lapin/lapin).
+3. Clone your fork of the lapin repository and define an `upstream` remote pointing back to
+   the lapin repository that you forked in the first place.
 
 ```shell
 # Clone your GitHub repository:
-git clone git@github.com:<github username>/typeorm.git
+git clone git@github.com:<github username>/lapin.git
 
-# Go to the TypeORM directory:
-cd typeorm
+# Go to the lapin directory:
+cd lapin
 
-# Add the main TypeORM repository as an upstream remote to your repository:
-git remote add upstream https://github.com/typeorm/typeorm.git
+# Add the main lapin repository as an upstream remote to your repository:
+git remote add upstream https://github.com/lapin/lapin.git
 ```
 ## Installing NPM Modules
 
-Install all TypeORM dependencies by running this command:
+Install all lapin dependencies by running this command:
 
 ```shell
 npm install
@@ -71,24 +71,24 @@ cp ormconfig.json.dist ormconfig.json
 
 ## Building
 
-To build a distribution package of TypeORM run:
+To build a distribution package of lapin run:
 
 ```shell
 npm run package
 ```
 
 This command will generate you a distribution package in the `build/package` directory.
-You can link (or simply copy/paste) this directory into your project and test TypeORM there
-(but make sure to keep all node_modules required by TypeORM).
+You can link (or simply copy/paste) this directory into your project and test lapin there
+(but make sure to keep all node_modules required by lapin).
 
-To build the distribution package of TypeORM packed into a `.tgz`, run:
+To build the distribution package of lapin packed into a `.tgz`, run:
 
 ```shell
 npm run pack
 ```
 
-This command will generate you a distribution package tar in the `build` directory (`build/typeorm-x.x.x.tgz`).
-You can copy this tar into your project and run `npm install ./typeorm-x.x.x.tgz` to bundle your build of TypeORM in your project.
+This command will generate you a distribution package tar in the `build` directory (`build/lapin-x.x.x.tgz`).
+You can copy this tar into your project and run `npm install ./lapin-x.x.x.tgz` to bundle your build of lapin in your project.
 
 ## Running Tests Locally
 
@@ -180,7 +180,7 @@ in the root of the project. Once all images are fetched and run you can run test
 In order to run tests on Oracle XE locally, we need to start 2 docker containers:
 
 - a container with Oracle XE database
-- a container with typeorm and its tests
+- a container with lapin and its tests
 
 #### 1. Booting Oracle XE database
 
@@ -194,7 +194,7 @@ It will start an oracle instance only.
 The instance will be run in background,
 therefore, we need to stop it later on.
 
-#### 2. Booting typeorm for Oracle
+#### 2. Booting lapin for Oracle
 
 Execute in shell the next command:
 
@@ -202,7 +202,7 @@ Execute in shell the next command:
 docker-compose -f docker-compose.oracle.yml up
 ```
 
-it will start a nodejs instance which builds typeorm and executes unit tests.
+it will start a nodejs instance which builds lapin and executes unit tests.
 The instance exits after the run.
 
 #### 3. Shutting down Oracle XE database

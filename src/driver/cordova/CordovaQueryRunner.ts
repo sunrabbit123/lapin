@@ -4,7 +4,7 @@ import { QueryFailedError } from "../../error/QueryFailedError"
 import { AbstractSqliteQueryRunner } from "../sqlite-abstract/AbstractSqliteQueryRunner"
 import { CordovaDriver } from "./CordovaDriver"
 import { Broadcaster } from "../../subscriber/Broadcaster"
-import { TypeORMError } from "../../error"
+import { lapinError } from "../../error"
 import { QueryResult } from "../../query-runner/QueryResult"
 
 /**
@@ -150,7 +150,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
      * Would start a transaction but this driver does not support transactions.
      */
     async startTransaction(): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             "Transactions are not supported by the Cordova driver",
         )
     }
@@ -159,7 +159,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
      * Would start a transaction but this driver does not support transactions.
      */
     async commitTransaction(): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             "Transactions are not supported by the Cordova driver",
         )
     }
@@ -168,7 +168,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
      * Would start a transaction but this driver does not support transactions.
      */
     async rollbackTransaction(): Promise<void> {
-        throw new TypeORMError(
+        throw new lapinError(
             "Transactions are not supported by the Cordova driver",
         )
     }

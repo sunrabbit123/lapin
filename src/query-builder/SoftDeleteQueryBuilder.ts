@@ -12,7 +12,7 @@ import { OrderByCondition } from "../find-options/OrderByCondition"
 import { LimitOnUpdateNotSupportedError } from "../error/LimitOnUpdateNotSupportedError"
 import { MissingDeleteDateColumnError } from "../error/MissingDeleteDateColumnError"
 import { UpdateValuesMissingError } from "../error/UpdateValuesMissingError"
-import { TypeORMError } from "../error"
+import { lapinError } from "../error"
 import { DriverUtils } from "../driver/DriverUtils"
 import { InstanceChecker } from "../util/InstanceChecker"
 
@@ -403,7 +403,7 @@ export class SoftDeleteQueryBuilder<Entity extends ObjectLiteral>
      */
     whereEntity(entity: Entity | Entity[]): this {
         if (!this.expressionMap.mainAlias!.hasMetadata)
-            throw new TypeORMError(
+            throw new lapinError(
                 `.whereEntity method can only be used on queries which update real entity table.`,
             )
 
@@ -413,7 +413,7 @@ export class SoftDeleteQueryBuilder<Entity extends ObjectLiteral>
             const entityIdMap =
                 this.expressionMap.mainAlias!.metadata.getEntityIdMap(entity)
             if (!entityIdMap)
-                throw new TypeORMError(
+                throw new lapinError(
                     `Provided entity does not have ids set, cannot perform operation.`,
                 )
 
@@ -446,7 +446,7 @@ export class SoftDeleteQueryBuilder<Entity extends ObjectLiteral>
             ? this.expressionMap.mainAlias!.metadata
             : undefined
         if (!metadata)
-            throw new TypeORMError(
+            throw new lapinError(
                 `Cannot get entity metadata for the given alias "${this.expressionMap.mainAlias}"`,
             )
         if (!metadata.deleteDateColumn) {
@@ -470,7 +470,7 @@ export class SoftDeleteQueryBuilder<Entity extends ObjectLiteral>
                 )
                 break
             default:
-                throw new TypeORMError(
+                throw new lapinError(
                     `The queryType must be "soft-delete" or "restore"`,
                 )
         }

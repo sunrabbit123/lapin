@@ -38,7 +38,7 @@ export type FindOptionsRelations<Entity> = {
 
 /**
  * Relation names to be selected by "relation" defined as string.
- * Old relation mechanism in TypeORM.
+ * Old relation mechanism in lapin.
  *
  * @deprecated will be removed in the next version, use FindOptionsRelation type notation instead
  */
