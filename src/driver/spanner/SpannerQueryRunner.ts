@@ -1202,9 +1202,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new LapinError(
-            `Spanner does not support exclusion constraints.`,
-        )
+        throw new LapinError(`Spanner does not support exclusion constraints.`)
     }
 
     /**
@@ -1214,9 +1212,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(
-            `Spanner does not support exclusion constraints.`,
-        )
+        throw new LapinError(`Spanner does not support exclusion constraints.`)
     }
 
     /**
@@ -1226,9 +1222,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new LapinError(
-            `Spanner does not support exclusion constraints.`,
-        )
+        throw new LapinError(`Spanner does not support exclusion constraints.`)
     }
 
     /**
@@ -1238,9 +1232,7 @@ export class SpannerQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(
-            `Spanner does not support exclusion constraints.`,
-        )
+        throw new LapinError(`Spanner does not support exclusion constraints.`)
     }
 
     /**

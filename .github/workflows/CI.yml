@@ -1,0 +1,33 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  check-lint:
+    name: Check fmt with Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check Lint
+        run: yarn lint
+
+  check-test:
+    name: Check Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile Program
+        run: npm run build
+
+      - name: Test Program
+        run: npm run test

@@ -16,11 +16,10 @@ export type QueryDeepPartialEntity<T> = _QueryDeepPartialEntity<
 
 type _QueryDeepPartialEntity<T> =
     | {
-          [P in keyof T]?:
-              | T[P] extends Array<infer U>
-                    ? Array<_QueryDeepPartialEntity<U>>
-                    : T[P] extends ReadonlyArray<infer U>
-                    ? ReadonlyArray<_QueryDeepPartialEntity<U>>
-                    : _QueryDeepPartialEntity<T[P]>
+          [P in keyof T]?: T[P] extends Array<infer U>
+              ? Array<_QueryDeepPartialEntity<U>>
+              : T[P] extends ReadonlyArray<infer U>
+              ? ReadonlyArray<_QueryDeepPartialEntity<U>>
+              : _QueryDeepPartialEntity<T[P]>
       }
     | (() => string)
