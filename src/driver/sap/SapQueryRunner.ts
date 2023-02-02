@@ -189,9 +189,9 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
         useStructuredResult = false,
     ): Promise<any> {
         if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
-
+        console.log(this.lock);
         const release = await this.lock.acquire();
-
+        console.log(release);
         let statement: any;
         const result = new QueryResult();
 
@@ -350,9 +350,11 @@ export class SapQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Returns current schema.
      */
     async getCurrentSchema(): Promise<string> {
+        console.log(1);
         const currentSchemaQuery = await this.query(
             `SELECT CURRENT_SCHEMA AS "schema_name" FROM "SYS"."DUMMY"`,
         );
+        console.log(2);
         return currentSchemaQuery[0]["schema_name"];
     }
 

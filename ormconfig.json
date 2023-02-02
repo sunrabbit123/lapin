@@ -98,7 +98,11 @@
     "username": "SYSTEM",
     "password": "MySuperHanaPwd123!",
     "database": "HXE",
-    "logging": false
+    "logging": false,
+    "pool" : {
+      "requestTimeout" : 20000,
+      "max" : 50
+    }
   },
   {
     "skip": false,

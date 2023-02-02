@@ -382,7 +382,6 @@ export async function createTestingConnections(
     options?: TestingOptions,
 ): Promise<DataSource[]> {
     const dataSourceOptions = setupTestingConnections(options);
-    console.log(dataSourceOptions);
     const dataSources: DataSource[] = [];
     for (let options of dataSourceOptions) {
         const dataSource = createDataSource(options);
