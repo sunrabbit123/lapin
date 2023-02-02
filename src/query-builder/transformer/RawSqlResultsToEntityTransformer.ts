@@ -224,7 +224,7 @@ export class RawSqlResultsToEntityTransformer {
                         alias.name,
                         column.databaseName,
                     )
-                ]
+                ] ?? rawResults[0][column.databaseName]
             if (value === undefined || column.isVirtual) return
 
             // if user does not selected the whole entity or he used partial selection and does not select this particular column
@@ -234,7 +234,9 @@ export class RawSqlResultsToEntityTransformer {
                     (select) =>
                         select.selection === alias.name ||
                         select.selection ===
-                            alias.name + "." + column.propertyPath,
+                            alias.name + "." + column.propertyPath || 
+                        select.selection === "*" ||
+                        select.selection === `${alias.name}.*
                 )
             )
                 return
