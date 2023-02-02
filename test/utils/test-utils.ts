@@ -11,11 +11,11 @@ import {
     NamingStrategyInterface,
     QueryRunner,
     Table,
-} from "../../src"
-import { QueryResultCache } from "../../src/cache/QueryResultCache"
-import path from "path"
-import { ObjectUtils } from "../../src/util/ObjectUtils"
-import { EntitySubscriberMetadataArgs } from "../../src/metadata-args/EntitySubscriberMetadataArgs"
+} from "../../src";
+import { QueryResultCache } from "../../src/cache/QueryResultCache";
+import path from "path";
+import { ObjectUtils } from "../../src/util/ObjectUtils";
+import { EntitySubscriberMetadataArgs } from "../../src/metadata-args/EntitySubscriberMetadataArgs";
 
 /**
  * Interface in which data is stored in ormconfig.json of the project.
@@ -24,13 +24,13 @@ export type TestingConnectionOptions = DataSourceOptions & {
     /**
      * Indicates if this connection should be skipped.
      */
-    skip?: boolean
+    skip?: boolean;
 
     /**
      * If set to true then tests for this driver wont run until implicitly defined "enabledDrivers" section.
      */
-    disabledIfNotEnabledImplicitly?: boolean
-}
+    disabledIfNotEnabledImplicitly?: boolean;
+};
 
 /**
  * Options used to create a connection for testing purposes.
@@ -40,65 +40,65 @@ export interface TestingOptions {
      * Dirname of the test directory.
      * If specified, entities will be loaded from that directory.
      */
-    __dirname?: string
+    __dirname?: string;
 
     /**
      * Connection name to be overridden.
      * This can be used to create multiple connections with single connection configuration.
      */
-    name?: string
+    name?: string;
 
     /**
      * List of enabled drivers for the given test suite.
      */
-    enabledDrivers?: DatabaseType[]
+    enabledDrivers?: DatabaseType[];
 
     /**
      * Entities needs to be included in the connection for the given test suite.
      */
-    entities?: (string | Function | EntitySchema<any>)[]
+    entities?: (string | Function | EntitySchema<any>)[];
 
     /**
      * Migrations needs to be included in connection for the given test suite.
      */
-    migrations?: (string | Function)[]
+    migrations?: (string | Function)[];
 
     /**
      * Subscribers needs to be included in the connection for the given test suite.
      */
-    subscribers?: (string | Function)[]
+    subscribers?: (string | Function)[];
 
     /**
      * Indicates if schema sync should be performed or not.
      */
-    schemaCreate?: boolean
+    schemaCreate?: boolean;
 
     /**
      * Indicates if schema should be dropped on connection setup.
      */
-    dropSchema?: boolean
+    dropSchema?: boolean;
 
     /**
      * Enables or disables logging.
      */
-    logging?: boolean
+    logging?: boolean;
 
     /**
      * Schema name used for postgres driver.
      */
-    schema?: string
+    schema?: string;
 
     /**
      * Naming strategy defines how auto-generated names for such things like table name, or table column gonna be
      * generated.
      */
-    namingStrategy?: NamingStrategyInterface
+    namingStrategy?: NamingStrategyInterface;
 
     /**
      * Typeorm metadata table name, in case of different name from "typeorm_metadata".
      * Accepts single string name.
      */
-    metadataTableName?: string
+    metadataTableName?: string;
 
     /**
      * Schema name used for postgres driver.
@@ -117,36 +117,36 @@ export interface TestingOptions {
                   | "database"
                   | "redis"
                   | "ioredis"
-                  | "ioredis/cluster" // todo: add mongodb and other cache providers as well in the future
+                  | "ioredis/cluster"; // todo: add mongodb and other cache providers as well in the future
 
               /**
                * Factory function for custom cache providers that implement QueryResultCache.
                */
-              readonly provider?: (connection: DataSource) => QueryResultCache
+              readonly provider?: (connection: DataSource) => QueryResultCache;
 
               /**
                * Used to provide mongodb / redis connection options.
                */
-              options?: any
+              options?: any;
 
               /**
                * If set to true then queries (using find methods and QueryBuilder's methods) will always be cached.
                */
-              alwaysEnabled?: boolean
+              alwaysEnabled?: boolean;
 
               /**
                * Time in milliseconds in which cache will expire.
                * This can be setup per-query.
                * Default value is 1000 which is equivalent to 1 second.
                */
-              duration?: number
-          }
+              duration?: number;
+          };
 
     /**
      * Options that may be specific to a driver.
      * They are passed down to the enabled drivers.
      */
-    driverSpecific?: Object
+    driverSpecific?: Object;
 
     /**
      * Factory to create a logger for each test connection.
@@ -156,9 +156,9 @@ export interface TestingOptions {
         | "simple-console"
         | "file"
         | "debug"
-        | Logger
+        | Logger;
 
-    relationLoadStrategy?: "join" | "query"
+    relationLoadStrategy?: "join" | "query";
 }
 
 /**
@@ -181,10 +181,10 @@ export function setupSingleTestingConnection(
         namingStrategy: options.namingStrategy
             ? options.namingStrategy
             : undefined,
-    })
-    if (!testingConnections.length) return undefined
+    });
+    if (!testingConnections.length) return undefined;
 
-    return testingConnections[0]
+    return testingConnections[0];
 }
 
 /**
@@ -195,22 +195,22 @@ function getOrmFilepath(): string {
         try {
             // first checks build/compiled
             // useful for docker containers in order to provide a custom config
-            return require.resolve(__dirname + "/../../ormconfig.json")
+            return require.resolve(__dirname + "/../../ormconfig.json");
         } catch (err) {
             // fallbacks to the root config
-            return require.resolve(__dirname + "/../../../../ormconfig.json")
+            return require.resolve(__dirname + "/../../../../ormconfig.json");
         }
     } catch (err) {
         throw new Error(
             `Cannot find ormconfig.json file in the root of the project. To run tests please create ormconfig.json file` +
                 ` in the root of the project (near ormconfig.json.dist, you need to copy ormconfig.json.dist into ormconfig.json` +
                 ` and change all database settings to match your local environment settings).`,
-        )
+        );
     }
 }
 
 export function getTypeOrmConfig(): TestingConnectionOptions[] {
-    return require(getOrmFilepath())
+    return require(getOrmFilepath());
 }
 
 /**
@@ -220,16 +220,16 @@ export function getTypeOrmConfig(): TestingConnectionOptions[] {
 export function setupTestingConnections(
     options?: TestingOptions,
 ): DataSourceOptions[] {
-    const ormConfigConnectionOptionsArray = getTypeOrmConfig()
+    const ormConfigConnectionOptionsArray = getTypeOrmConfig();
 
     if (!ormConfigConnectionOptionsArray.length)
         throw new Error(
             `No connections setup in ormconfig.json file. Please create configurations for each database type to run tests.`,
-        )
+        );
 
     return ormConfigConnectionOptionsArray
         .filter((connectionOptions) => {
-            if (connectionOptions.skip === true) return false
+            if (connectionOptions.skip === true) return false;
 
             if (
                 options &&
@@ -239,12 +239,12 @@ export function setupTestingConnections(
                 return (
                     options.enabledDrivers.indexOf(connectionOptions.type!) !==
                     -1
-                ) // ! is temporary
+                ); // ! is temporary
 
             if (connectionOptions.disabledIfNotEnabledImplicitly === true)
-                return false
+                return false;
 
-            return true
+            return true;
         })
         .map((connectionOptions) => {
             let newOptions: any = Object.assign(
@@ -269,41 +269,43 @@ export function setupTestingConnections(
                             : false,
                     cache: options ? options.cache : undefined,
                 },
-            )
+            );
             if (options && options.driverSpecific)
                 newOptions = Object.assign(
                     {},
                     options.driverSpecific,
                     newOptions,
-                )
+                );
             if (options && options.schemaCreate)
-                newOptions.synchronize = options.schemaCreate
-            if (options && options.schema) newOptions.schema = options.schema
+                newOptions.synchronize = options.schemaCreate;
+            if (options && options.schema) newOptions.schema = options.schema;
             if (options && options.logging !== undefined)
-                newOptions.logging = options.logging
+                newOptions.logging = options.logging;
             if (options && options.createLogger !== undefined)
-                newOptions.logger = options.createLogger()
+                newOptions.logger = options.createLogger();
             if (options && options.__dirname)
-                newOptions.entities = [options.__dirname + "/entity/*{.js,.ts}"]
+                newOptions.entities = [
+                    options.__dirname + "/entity/*{.js,.ts}",
+                ];
             if (options && options.__dirname)
                 newOptions.migrations = [
                     options.__dirname + "/migration/*{.js,.ts}",
-                ]
+                ];
             if (options && options.namingStrategy)
-                newOptions.namingStrategy = options.namingStrategy
+                newOptions.namingStrategy = options.namingStrategy;
             if (options && options.metadataTableName)
-                newOptions.metadataTableName = options.metadataTableName
+                newOptions.metadataTableName = options.metadataTableName;
             if (options && options.relationLoadStrategy)
-                newOptions.relationLoadStrategy = options.relationLoadStrategy
+                newOptions.relationLoadStrategy = options.relationLoadStrategy;
 
-            newOptions.baseDirectory = path.dirname(getOrmFilepath())
+            newOptions.baseDirectory = path.dirname(getOrmFilepath());
 
-            return newOptions
-        })
+            return newOptions;
+        });
 }
 
 class GeneratedColumnReplacerSubscriber implements EntitySubscriberInterface {
-    static globalIncrementValues: { [entityName: string]: number } = {}
+    static globalIncrementValues: { [entityName: string]: number } = {};
     beforeInsert(event: InsertEvent<any>): Promise<any> | void {
         event.metadata.columns.map((column) => {
             if (column.generationStrategy === "increment") {
@@ -314,23 +316,23 @@ class GeneratedColumnReplacerSubscriber implements EntitySubscriberInterface {
                 ) {
                     GeneratedColumnReplacerSubscriber.globalIncrementValues[
                         event.metadata.tableName
-                    ] = 0
+                    ] = 0;
                 }
                 GeneratedColumnReplacerSubscriber.globalIncrementValues[
                     event.metadata.tableName
-                ] += 1
+                ] += 1;
 
                 column.setEntityValue(
                     event.entity,
                     GeneratedColumnReplacerSubscriber.globalIncrementValues[
                         event.metadata.tableName
                     ],
-                )
+                );
             } else if (
                 (column.isCreateDate || column.isUpdateDate) &&
                 !column.getEntityValue(event.entity)
             ) {
-                column.setEntityValue(event.entity, new Date())
+                column.setEntityValue(event.entity, new Date());
             } else if (
                 !column.isCreateDate &&
                 !column.isUpdateDate &&
@@ -338,38 +340,38 @@ class GeneratedColumnReplacerSubscriber implements EntitySubscriberInterface {
                 column.default !== undefined &&
                 column.getEntityValue(event.entity) === undefined
             ) {
-                column.setEntityValue(event.entity, column.default)
+                column.setEntityValue(event.entity, column.default);
             }
-        })
+        });
     }
 }
 getMetadataArgsStorage().entitySubscribers.push({
     target: GeneratedColumnReplacerSubscriber,
-} as EntitySubscriberMetadataArgs)
+} as EntitySubscriberMetadataArgs);
 
 export function createDataSource(options: DataSourceOptions): DataSource {
     if (options.type === "spanner") {
-        process.env.SPANNER_EMULATOR_HOST = "localhost:9010"
+        process.env.SPANNER_EMULATOR_HOST = "localhost:9010";
         // process.env.GOOGLE_APPLICATION_CREDENTIALS =
         //     "/Users/messer/Documents/google/typeorm-spanner-3b57e071cbf0.json"
         if (Array.isArray(options.subscribers)) {
             options.subscribers.push(
                 GeneratedColumnReplacerSubscriber as Function,
-            )
+            );
         } else if (ObjectUtils.isObject(options.subscribers)) {
             options.subscribers["GeneratedColumnReplacer"] =
-                GeneratedColumnReplacerSubscriber
+                GeneratedColumnReplacerSubscriber;
         } else {
             options = {
                 ...options,
                 subscribers: {
                     GeneratedColumnReplacer: GeneratedColumnReplacerSubscriber,
                 },
-            }
+            };
         }
     }
 
-    return new DataSource(options)
+    return new DataSource(options);
 }
 
 /**
@@ -379,100 +381,101 @@ export function createDataSource(options: DataSourceOptions): DataSource {
 export async function createTestingConnections(
     options?: TestingOptions,
 ): Promise<DataSource[]> {
-    const dataSourceOptions = setupTestingConnections(options)
-    const dataSources: DataSource[] = []
+    const dataSourceOptions = setupTestingConnections(options);
+    console.log(dataSourceOptions);
+    const dataSources: DataSource[] = [];
     for (let options of dataSourceOptions) {
-        const dataSource = createDataSource(options)
-        await dataSource.initialize()
-        dataSources.push(dataSource)
+        const dataSource = createDataSource(options);
+        await dataSource.initialize();
+        dataSources.push(dataSource);
     }
 
     await Promise.all(
         dataSources.map(async (connection) => {
             // create new databases
-            const databases: string[] = []
+            const databases: string[] = [];
             connection.entityMetadatas.forEach((metadata) => {
                 if (
                     metadata.database &&
                     databases.indexOf(metadata.database) === -1
                 )
-                    databases.push(metadata.database)
-            })
+                    databases.push(metadata.database);
+            });
 
-            const queryRunner = connection.createQueryRunner()
+            const queryRunner = connection.createQueryRunner();
 
             for (const database of databases) {
-                await queryRunner.createDatabase(database, true)
+                await queryRunner.createDatabase(database, true);
             }
 
             if (connection.driver.options.type === "cockroachdb") {
                 await queryRunner.query(
                     `ALTER RANGE default CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `ALTER DATABASE system CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `ALTER TABLE system.public.jobs CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `ALTER RANGE meta CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `ALTER RANGE system CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `ALTER RANGE liveness CONFIGURE ZONE USING num_replicas = 1, gc.ttlseconds = 60;`,
-                )
+                );
                 await queryRunner.query(
                     `SET CLUSTER SETTING jobs.retention_time = '180s';`,
-                )
+                );
                 await queryRunner.query(
                     `SET CLUSTER SETTING kv.range_merge.queue_interval = '200ms'`,
-                )
+                );
                 await queryRunner.query(
                     `SET CLUSTER SETTING kv.raft_log.disable_synchronization_unsafe = 'true'`,
-                )
+                );
                 await queryRunner.query(
                     `SET CLUSTER SETTING sql.defaults.experimental_temporary_tables.enabled = 'true';`,
-                )
+                );
             }
 
             // create new schemas
-            const schemaPaths: Set<string> = new Set()
+            const schemaPaths: Set<string> = new Set();
             connection.entityMetadatas
                 .filter((entityMetadata) => !!entityMetadata.schema)
                 .forEach((entityMetadata) => {
-                    let schema = entityMetadata.schema!
+                    let schema = entityMetadata.schema!;
 
                     if (entityMetadata.database) {
-                        schema = `${entityMetadata.database}.${schema}`
+                        schema = `${entityMetadata.database}.${schema}`;
                     }
 
-                    schemaPaths.add(schema)
-                })
+                    schemaPaths.add(schema);
+                });
 
             const schema = connection.driver.options?.hasOwnProperty("schema")
                 ? (connection.driver.options as any).schema
-                : undefined
+                : undefined;
 
             if (schema) {
-                schemaPaths.add(schema)
+                schemaPaths.add(schema);
             }
 
             for (const schemaPath of schemaPaths) {
                 try {
-                    await queryRunner.createSchema(schemaPath, true)
+                    await queryRunner.createSchema(schemaPath, true);
                 } catch (e) {
                     // Do nothing
                 }
             }
 
-            await queryRunner.release()
+            await queryRunner.release();
         }),
-    )
+    );
 
-    return dataSources
+    return dataSources;
 }
 
 /**
@@ -485,37 +488,39 @@ export function closeTestingConnections(connections: DataSource[]) {
                 ? connection.close()
                 : undefined,
         ),
-    )
+    );
 }
 
 /**
  * Reloads all databases for all given connections.
  */
 export function reloadTestingDatabases(connections: DataSource[]) {
-    GeneratedColumnReplacerSubscriber.globalIncrementValues = {}
+    GeneratedColumnReplacerSubscriber.globalIncrementValues = {};
     return Promise.all(
         connections.map((connection) => connection.synchronize(true)),
-    )
+    );
 }
 
 /**
  * Generates random text array with custom length.
  */
 export function generateRandomText(length: number): string {
-    let text = ""
+    let text = "";
     const characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (let i = 0; i <= length; i++)
-        text += characters.charAt(Math.floor(Math.random() * characters.length))
+        text += characters.charAt(
+            Math.floor(Math.random() * characters.length),
+        );
 
-    return text
+    return text;
 }
 
 export function sleep(ms: number): Promise<void> {
     return new Promise<void>((ok) => {
-        setTimeout(ok, ms)
-    })
+        setTimeout(ok, ms);
+    });
 }
 
 /**
@@ -525,13 +530,13 @@ export async function createTypeormMetadataTable(
     driver: Driver,
     queryRunner: QueryRunner,
 ) {
-    const schema = driver.schema
-    const database = driver.database
+    const schema = driver.schema;
+    const database = driver.database;
     const typeormMetadataTable = driver.buildTableName(
         "typeorm_metadata",
         schema,
         database,
-    )
+    );
 
     await queryRunner.createTable(
         new Table({
@@ -584,5 +589,5 @@ export async function createTypeormMetadataTable(
             ],
         }),
         true,
-    )
+    );
 }
