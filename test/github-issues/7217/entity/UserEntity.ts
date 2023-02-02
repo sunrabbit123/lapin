@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 export enum UserRole {
     PLAYER = "PLAYER",
@@ -11,7 +11,7 @@ export enum UserRole {
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column({
         type: "enum",
@@ -19,5 +19,5 @@ export class User {
         array: true,
         default: [UserRole.PLAYER],
     })
-    roles: UserRole[]
+    roles: UserRole[];
 }

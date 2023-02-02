@@ -4,21 +4,21 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Category } from "./Category"
+} from "../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column("text")
-    text: string
+    text: string;
 
     @ManyToMany((type) => Category)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 }

@@ -1,15 +1,15 @@
-import { Column } from "../../../src/index"
+import { Column } from "../../../src/index";
 
 export class Counters {
     @Column()
-    raiting: number
+    raiting: number;
 
     @Column()
-    stars: number
+    stars: number;
 
     @Column()
-    commentCount: number
+    commentCount: number;
 
     @Column()
-    metadata: string
+    metadata: string;
 }

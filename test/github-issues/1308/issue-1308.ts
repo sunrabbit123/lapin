@@ -2,14 +2,14 @@ import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { EntitySchema } from "../../../src"
-import { Author, AuthorSchema } from "./entity/Author"
-import { Post, PostSchema } from "./entity/Post"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { EntitySchema } from "../../../src";
+import { Author, AuthorSchema } from "./entity/Author";
+import { Post, PostSchema } from "./entity/Post";
 
 describe("github issues > #1308 Raw Postgresql Update query result is always an empty array", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -25,39 +25,39 @@ describe("github issues > #1308 Raw Postgresql Update query result is always an 
                     "aurora-mysql",
                 ],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     async function prepareData(connection: DataSource) {
-        const author = new Author()
-        author.id = 1
-        author.name = "Jane Doe"
-        await connection.manager.save(author)
+        const author = new Author();
+        author.id = 1;
+        author.name = "Jane Doe";
+        await connection.manager.save(author);
     }
 
     it("Update query returns the number of affected rows", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection)
+                await prepareData(connection);
 
                 const result1 = await connection
                     .createQueryBuilder()
                     .update(Author)
                     .set({ name: "John Doe" })
                     .where("name = :name", { name: "Jonas Doe" })
-                    .execute()
+                    .execute();
 
-                result1.affected!.should.be.eql(0)
+                result1.affected!.should.be.eql(0);
 
                 const result2 = await connection
                     .createQueryBuilder()
                     .update(Author)
                     .set({ name: "John Doe" })
                     .where("name = :name", { name: "Jane Doe" })
-                    .execute()
+                    .execute();
 
-                result2.affected!.should.be.eql(1)
+                result2.affected!.should.be.eql(1);
             }),
-        ))
-})
+        ));
+});

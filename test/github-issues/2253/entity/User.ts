@@ -4,20 +4,20 @@ import {
     Entity,
     PrimaryColumn,
     TableInheritance,
-} from "../../../../src"
+} from "../../../../src";
 
 @TableInheritance({ column: "type" })
 @Entity()
 export class User {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    type: string
+    type: string;
 }
 
 @ChildEntity("sub")
 export class SubUser extends User {
     @Column()
-    anotherColumn: number
+    anotherColumn: number;
 }

@@ -3,20 +3,20 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Photo } from "./Photo"
+} from "../../../../src";
+import { Photo } from "./Photo";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Column("decimal", { precision: 9, scale: 6 })
-    height: number
+    height: number;
 
     @OneToMany((_type) => Photo, (type) => type.user, { cascade: true })
-    photos: Photo[]
+    photos: Photo[];
 }

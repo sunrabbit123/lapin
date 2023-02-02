@@ -1,12 +1,12 @@
-import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions"
-import { Author } from "./Author"
+import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions";
+import { Author } from "./Author";
 
 export class Post {
-    id: number
+    id: number;
 
-    title: string
+    title: string;
 
-    author: Author
+    author: Author;
 }
 
 export const PostSchema: EntitySchemaOptions<Post> = {
@@ -32,4 +32,4 @@ export const PostSchema: EntitySchemaOptions<Post> = {
             eager: true,
         },
     },
-}
+};

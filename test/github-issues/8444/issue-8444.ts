@@ -1,11 +1,11 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     closeTestingConnections,
     createTestingConnections,
-} from "../../utils/test-utils"
-import { StrictlyInitializedEntity } from "./entity/StrictlyInitializedEntity"
-import { DataSource } from "../../../src/data-source/DataSource"
+} from "../../utils/test-utils";
+import { StrictlyInitializedEntity } from "./entity/StrictlyInitializedEntity";
+import { DataSource } from "../../../src/data-source/DataSource";
 
 describe("github issues > #8444 entitySkipConstructor not working", () => {
     describe("without entitySkipConstructor", () => {
@@ -20,18 +20,18 @@ describe("github issues > #8444 entitySkipConstructor not working", () => {
                     entities: [StrictlyInitializedEntity],
                     schemaCreate: true,
                     dropSchema: true,
-                })
+                });
             }
 
             await expect(
                 bootstrapWithoutEntitySkipConstructor(),
-            ).to.be.rejectedWith("someColumn cannot be undefined")
-        })
-    })
+            ).to.be.rejectedWith("someColumn cannot be undefined");
+        });
+    });
 
     describe("with entitySkipConstructor", () => {
-        let connections: DataSource[] = []
-        afterEach(() => closeTestingConnections(connections))
+        let connections: DataSource[] = [];
+        afterEach(() => closeTestingConnections(connections));
 
         it("createTestingConnections should succeed", async () => {
             connections = await createTestingConnections({
@@ -41,7 +41,7 @@ describe("github issues > #8444 entitySkipConstructor not working", () => {
                 entities: [StrictlyInitializedEntity],
                 schemaCreate: true,
                 dropSchema: true,
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

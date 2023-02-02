@@ -3,13 +3,13 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     ObjectLiteral,
-} from "../../../../src/index"
+} from "../../../../src/index";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column("hstore", { hstoreType: "object" })
-    hstoreObj: ObjectLiteral
+    hstoreObj: ObjectLiteral;
 }

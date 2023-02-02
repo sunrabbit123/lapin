@@ -1,9 +1,9 @@
-import { Column } from "../../../../src/decorator/columns/Column"
+import { Column } from "../../../../src/decorator/columns/Column";
 
 export class Contact {
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    email: string
+    email: string;
 }

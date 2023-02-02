@@ -1,4 +1,4 @@
-import { Column, Entity, Index, PrimaryColumn } from "../../../../src"
+import { Column, Entity, Index, PrimaryColumn } from "../../../../src";
 
 enum ExternalUserProvider {
     A = "A",
@@ -15,7 +15,7 @@ export class TestEntity {
         enum: ExternalUserProvider,
     })
     @Index()
-    public provider!: ExternalUserProvider
+    public provider!: ExternalUserProvider;
 
     @Column({
         type: "enum",
@@ -23,5 +23,5 @@ export class TestEntity {
         enum: ExternalUserProvider,
         array: true,
     })
-    public provider2!: ExternalUserProvider
+    public provider2!: ExternalUserProvider;
 }

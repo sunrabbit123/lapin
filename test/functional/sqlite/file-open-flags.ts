@@ -1,15 +1,15 @@
-import "reflect-metadata"
-import { expect } from "chai"
-import { DataSource } from "../../../src/data-source/DataSource"
+import "reflect-metadata";
+import { expect } from "chai";
+import { DataSource } from "../../../src/data-source/DataSource";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-const sqlite3 = require("sqlite3")
+} from "../../utils/test-utils";
+const sqlite3 = require("sqlite3");
 
 describe("sqlite driver > file open flags", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -24,17 +24,17 @@ describe("sqlite driver > file open flags", () => {
                         sqlite3.OPEN_CREATE,
                 },
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should open a DB with flags as expected", () =>
         Promise.all(
             connections.map(async (connection) => {
                 // if we come this far, test was successful as a connection was established
-                const result = await connection.query("PRAGMA journal_mode")
+                const result = await connection.query("PRAGMA journal_mode");
 
-                expect(result).to.eql([{ journal_mode: "wal" }])
+                expect(result).to.eql([{ journal_mode: "wal" }]);
             }),
-        ))
-})
+        ));
+});

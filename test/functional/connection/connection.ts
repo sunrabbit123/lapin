@@ -1,59 +1,59 @@
-import "reflect-metadata"
-import "../../utils/test-setup"
-import { expect } from "chai"
-import { Post } from "./entity/Post"
-import { Guest as GuestV1 } from "./entity/v1/Guest"
-import { Comment as CommentV1 } from "./entity/v1/Comment"
-import { Guest as GuestV2 } from "./entity/v2/Guest"
-import { Comment as CommentV2 } from "./entity/v2/Comment"
-import { View } from "./entity/View"
-import { Category } from "./entity/Category"
+import "reflect-metadata";
+import "../../utils/test-setup";
+import { expect } from "chai";
+import { Post } from "./entity/Post";
+import { Guest as GuestV1 } from "./entity/v1/Guest";
+import { Comment as CommentV1 } from "./entity/v1/Comment";
+import { Guest as GuestV2 } from "./entity/v2/Guest";
+import { Comment as CommentV2 } from "./entity/v2/Comment";
+import { View } from "./entity/View";
+import { Category } from "./entity/Category";
 import {
     closeTestingConnections,
     createTestingConnections,
     setupSingleTestingConnection,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { Repository } from "../../../src/repository/Repository"
-import { TreeRepository } from "../../../src/repository/TreeRepository"
-import { NoConnectionForRepositoryError } from "../../../src/error/NoConnectionForRepositoryError"
-import { EntityManager } from "../../../src/entity-manager/EntityManager"
-import { CannotGetEntityManagerNotConnectedError } from "../../../src/error/CannotGetEntityManagerNotConnectedError"
-import { PostgresConnectionOptions } from "../../../src/driver/postgres/PostgresConnectionOptions"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { Repository } from "../../../src/repository/Repository";
+import { TreeRepository } from "../../../src/repository/TreeRepository";
+import { NoConnectionForRepositoryError } from "../../../src/error/NoConnectionForRepositoryError";
+import { EntityManager } from "../../../src/entity-manager/EntityManager";
+import { CannotGetEntityManagerNotConnectedError } from "../../../src/error/CannotGetEntityManagerNotConnectedError";
+import { PostgresConnectionOptions } from "../../../src/driver/postgres/PostgresConnectionOptions";
 
 describe("Connection", () => {
     // const resourceDir = __dirname + "/../../../../../test/functional/connection/";
 
     describe("before connection is established", function () {
-        let dataSource: DataSource
+        let dataSource: DataSource;
         before(async () => {
             const options = setupSingleTestingConnection("mysql", {
                 name: "default",
                 entities: [],
-            })
-            if (!options) return
+            });
+            if (!options) return;
 
-            dataSource = new DataSource(options)
-        })
+            dataSource = new DataSource(options);
+        });
         after(() => {
             if (dataSource && dataSource.isInitialized)
-                return dataSource.destroy()
+                return dataSource.destroy();
 
-            return Promise.resolve()
-        })
+            return Promise.resolve();
+        });
 
         it("connection.isConnected should be false", () => {
-            if (!dataSource) return
+            if (!dataSource) return;
 
-            dataSource.isInitialized.should.be.false
-        })
+            dataSource.isInitialized.should.be.false;
+        });
 
         it.skip("entity manager and reactive entity manager should not be accessible", () => {
             expect(() => dataSource.manager).to.throw(
                 CannotGetEntityManagerNotConnectedError,
-            )
+            );
             // expect(() => connection.reactiveEntityManager).to.throw(CannotGetEntityManagerNotConnectedError);
-        })
+        });
 
         // todo: they aren't promises anymore
         /*it("import entities, entity schemas, subscribers and naming strategies should work", () => {
@@ -70,33 +70,33 @@ describe("Connection", () => {
          });*/
 
         it("should not be able to close", () => {
-            if (!dataSource) return
-            return dataSource.close().should.be.rejected // CannotCloseNotConnectedError
-        })
+            if (!dataSource) return;
+            return dataSource.close().should.be.rejected; // CannotCloseNotConnectedError
+        });
 
         it("should not be able to sync a schema", () => {
-            if (!dataSource) return
-            return dataSource.synchronize().should.be.rejected // CannotCloseNotConnectedError
-        })
+            if (!dataSource) return;
+            return dataSource.synchronize().should.be.rejected; // CannotCloseNotConnectedError
+        });
 
         it.skip("should not be able to use repositories", () => {
-            if (!dataSource) return
+            if (!dataSource) return;
 
             expect(() => dataSource.getRepository(Post)).to.throw(
                 NoConnectionForRepositoryError,
-            )
+            );
             expect(() => dataSource.getTreeRepository(Category)).to.throw(
                 NoConnectionForRepositoryError,
-            )
+            );
             // expect(() => connection.getReactiveRepository(Post)).to.throw(NoConnectionForRepositoryError);
             // expect(() => connection.getReactiveTreeRepository(Category)).to.throw(NoConnectionForRepositoryError);
-        })
+        });
 
         it("should be able to connect", () => {
-            if (!dataSource) return
-            return dataSource.connect().should.be.fulfilled
-        })
-    })
+            if (!dataSource) return;
+            return dataSource.connect().should.be.fulfilled;
+        });
+    });
 
     describe.skip("establishing connection", function () {
         it("should throw DriverOptionNotSetError when extra.socketPath and host is missing", function () {
@@ -108,75 +108,75 @@ describe("Connection", () => {
                     database: "test",
                     entities: [],
                     dropSchema: false,
-                })
-            }).to.throw(Error)
-        })
-    })
+                });
+            }).to.throw(Error);
+        });
+    });
 
     describe("after connection is established successfully", function () {
-        let connections: DataSource[]
+        let connections: DataSource[];
         beforeEach(() =>
             createTestingConnections({
                 entities: [Post, Category],
                 schemaCreate: true,
                 dropSchema: true,
             }).then((all) => (connections = all)),
-        )
-        afterEach(() => closeTestingConnections(connections))
+        );
+        afterEach(() => closeTestingConnections(connections));
 
         it("connection.isConnected should be true", () =>
             connections.forEach((connection) => {
-                connection.isInitialized.should.be.true
-            }))
+                connection.isInitialized.should.be.true;
+            }));
 
         it("entity manager and reactive entity manager should be accessible", () =>
             connections.forEach((connection) => {
-                expect(connection.manager).to.be.instanceOf(EntityManager)
+                expect(connection.manager).to.be.instanceOf(EntityManager);
                 // expect(connection.reactiveEntityManager).to.be.instanceOf(ReactiveEntityManager);
-            }))
+            }));
 
         it("should not be able to connect again", () =>
             connections.forEach((connection) => {
-                return connection.connect().should.be.rejected // CannotConnectAlreadyConnectedError
-            }))
+                return connection.connect().should.be.rejected; // CannotConnectAlreadyConnectedError
+            }));
 
         it("should be able to close a connection", async () =>
             Promise.all(
                 connections.map((connection) => {
-                    return connection.close()
+                    return connection.close();
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("working with repositories after connection is established successfully", function () {
-        let connections: DataSource[]
+        let connections: DataSource[];
         before(() =>
             createTestingConnections({
                 entities: [Post, Category],
                 schemaCreate: true,
                 dropSchema: true,
             }).then((all) => (connections = all)),
-        )
-        after(() => closeTestingConnections(connections))
+        );
+        after(() => closeTestingConnections(connections));
 
         it("should be able to get simple entity repository", () =>
             connections.forEach((connection) => {
-                connection.getRepository(Post).should.be.instanceOf(Repository)
+                connection.getRepository(Post).should.be.instanceOf(Repository);
                 connection
                     .getRepository(Post)
-                    .should.not.be.instanceOf(TreeRepository)
-                connection.getRepository(Post).target.should.be.eql(Post)
-            }))
+                    .should.not.be.instanceOf(TreeRepository);
+                connection.getRepository(Post).target.should.be.eql(Post);
+            }));
 
         it("should be able to get tree entity repository", () =>
             connections.forEach((connection) => {
                 connection
                     .getTreeRepository(Category)
-                    .should.be.instanceOf(TreeRepository)
+                    .should.be.instanceOf(TreeRepository);
                 connection
                     .getTreeRepository(Category)
-                    .target.should.be.eql(Category)
-            }))
+                    .target.should.be.eql(Category);
+            }));
 
         // it("should be able to get simple entity reactive repository", () => connections.forEach(connection => {
         //     connection.getReactiveRepository(Post).should.be.instanceOf(ReactiveRepository);
@@ -200,109 +200,109 @@ describe("Connection", () => {
         //     // expect(() => connection.getReactiveRepository("SomeEntity")).to.throw(RepositoryNotFoundError);
         //     // expect(() => connection.getReactiveTreeRepository("SomeEntity")).to.throw(RepositoryNotFoundError);
         // }));
-    })
+    });
 
     describe("generate a schema when connection.synchronize is called", function () {
-        let connections: DataSource[]
+        let connections: DataSource[];
         before(() =>
             createTestingConnections({
                 entities: [Post],
                 schemaCreate: true,
                 dropSchema: true,
             }).then((all) => (connections = all)),
-        )
-        after(() => closeTestingConnections(connections))
+        );
+        after(() => closeTestingConnections(connections));
 
         it("database should be empty after schema is synced with dropDatabase flag", () =>
             Promise.all(
                 connections.map(async (connection) => {
-                    const postRepository = connection.getRepository(Post)
-                    const post = new Post()
-                    post.title = "new post"
-                    await postRepository.save(post)
+                    const postRepository = connection.getRepository(Post);
+                    const post = new Post();
+                    post.title = "new post";
+                    await postRepository.save(post);
                     const loadedPost = await postRepository.findOneBy({
                         id: post.id,
-                    })
-                    expect(loadedPost).to.be.eql(post)
-                    await connection.synchronize(true)
+                    });
+                    expect(loadedPost).to.be.eql(post);
+                    await connection.synchronize(true);
                     const againLoadedPost = await postRepository.findOneBy({
                         id: post.id,
-                    })
-                    expect(againLoadedPost).to.be.null
+                    });
+                    expect(againLoadedPost).to.be.null;
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("log a schema when connection.logSyncSchema is called", function () {
-        let connections: DataSource[]
+        let connections: DataSource[];
         before(
             async () =>
                 (connections = await createTestingConnections({
                     entities: [Post],
                 })),
-        )
-        after(() => closeTestingConnections(connections))
+        );
+        after(() => closeTestingConnections(connections));
 
         it("should return sql log properly", () =>
             Promise.all(
                 connections.map(async (connection) => {
-                    await connection.driver.createSchemaBuilder().log()
+                    await connection.driver.createSchemaBuilder().log();
                     // console.log(sql);
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("after connection is closed successfully", function () {
         // open a close connections
-        let connections: DataSource[] = []
+        let connections: DataSource[] = [];
         before(() =>
             createTestingConnections({
                 entities: [Post],
                 schemaCreate: true,
                 dropSchema: true,
             }).then((all) => {
-                connections = all
+                connections = all;
                 return Promise.all(
                     connections.map((connection) => connection.close()),
-                )
+                );
             }),
-        )
+        );
 
         it("should not be able to close already closed connection", () =>
             connections.forEach((connection) => {
-                return connection.close().should.be.rejected // CannotCloseNotConnectedError
-            }))
+                return connection.close().should.be.rejected; // CannotCloseNotConnectedError
+            }));
 
         it("connection.isConnected should be false", () =>
             connections.forEach((connection) => {
-                connection.isInitialized.should.be.false
-            }))
-    })
+                connection.isInitialized.should.be.false;
+            }));
+    });
 
     describe("skip schema generation when synchronize option is set to false", function () {
-        let connections: DataSource[]
+        let connections: DataSource[];
         beforeEach(() =>
             createTestingConnections({
                 entities: [View],
                 dropSchema: true,
             }).then((all) => (connections = all)),
-        )
-        afterEach(() => closeTestingConnections(connections))
+        );
+        afterEach(() => closeTestingConnections(connections));
         it("database should be empty after schema sync", () =>
             Promise.all(
                 connections.map(async (connection) => {
-                    await connection.synchronize(true)
-                    const queryRunner = connection.createQueryRunner()
-                    let schema = await queryRunner.getTables(["view"])
-                    await queryRunner.release()
+                    await connection.synchronize(true);
+                    const queryRunner = connection.createQueryRunner();
+                    let schema = await queryRunner.getTables(["view"]);
+                    await queryRunner.release();
                     expect(schema.some((table) => table.name === "view")).to.be
-                        .false
+                        .false;
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("different names of the same content of the schema", () => {
-        let connections: DataSource[]
+        let connections: DataSource[];
         beforeEach(async () => {
             const connections1 = await createTestingConnections({
                 name: "test",
@@ -310,21 +310,21 @@ describe("Connection", () => {
                 entities: [CommentV1, GuestV1],
                 schema: "test-schema",
                 dropSchema: true,
-            })
+            });
             const connections2 = await createTestingConnections({
                 name: "another",
                 enabledDrivers: ["postgres"],
                 entities: [CommentV1, GuestV1],
                 schema: "another-schema",
                 dropSchema: true,
-            })
-            connections = [...connections1, ...connections2]
-        })
-        after(() => closeTestingConnections(connections))
+            });
+            connections = [...connections1, ...connections2];
+        });
+        after(() => closeTestingConnections(connections));
 
         it("should not interfere with each other", async () => {
-            await Promise.all(connections.map((c) => c.synchronize()))
-            await closeTestingConnections(connections)
+            await Promise.all(connections.map((c) => c.synchronize()));
+            await closeTestingConnections(connections);
             const connections1 = await createTestingConnections({
                 name: "test",
                 enabledDrivers: ["postgres"],
@@ -332,7 +332,7 @@ describe("Connection", () => {
                 schema: "test-schema",
                 dropSchema: false,
                 schemaCreate: true,
-            })
+            });
             const connections2 = await createTestingConnections({
                 name: "another",
                 enabledDrivers: ["postgres"],
@@ -340,13 +340,13 @@ describe("Connection", () => {
                 schema: "another-schema",
                 dropSchema: false,
                 schemaCreate: true,
-            })
-            connections = [...connections1, ...connections2]
-        })
-    })
+            });
+            connections = [...connections1, ...connections2];
+        });
+    });
 
     describe("can change postgres default schema name", () => {
-        let connections: DataSource[]
+        let connections: DataSource[];
         beforeEach(async () => {
             const connections1 = await createTestingConnections({
                 name: "test",
@@ -354,41 +354,41 @@ describe("Connection", () => {
                 entities: [CommentV1, GuestV1],
                 schema: "test-schema",
                 dropSchema: true,
-            })
+            });
             const connections2 = await createTestingConnections({
                 name: "another",
                 enabledDrivers: ["postgres"],
                 entities: [CommentV1, GuestV1],
                 schema: "another-schema",
                 dropSchema: true,
-            })
-            connections = [...connections1, ...connections2]
-        })
-        afterEach(() => closeTestingConnections(connections))
+            });
+            connections = [...connections1, ...connections2];
+        });
+        afterEach(() => closeTestingConnections(connections));
 
         it("schema name can be set", () => {
             return Promise.all(
                 connections.map(async (connection) => {
-                    await connection.synchronize(true)
+                    await connection.synchronize(true);
                     const schemaName = (
                         connection.options as PostgresConnectionOptions
-                    ).schema
-                    const comment = new CommentV1()
-                    comment.title = "Change SchemaName"
-                    comment.context = `To ${schemaName}`
+                    ).schema;
+                    const comment = new CommentV1();
+                    comment.title = "Change SchemaName";
+                    comment.context = `To ${schemaName}`;
 
-                    const commentRepo = connection.getRepository(CommentV1)
-                    await commentRepo.save(comment)
+                    const commentRepo = connection.getRepository(CommentV1);
+                    await commentRepo.save(comment);
 
-                    const queryRunner = connection.createQueryRunner()
+                    const queryRunner = connection.createQueryRunner();
                     const rows = await queryRunner.query(
                         `select * from "${schemaName}"."comment" where id = $1`,
                         [comment.id],
-                    )
-                    await queryRunner.release()
-                    expect(rows[0]["context"]).to.be.eq(comment.context)
+                    );
+                    await queryRunner.release();
+                    expect(rows[0]["context"]).to.be.eq(comment.context);
                 }),
-            )
-        })
-    })
-})
+            );
+        });
+    });
+});

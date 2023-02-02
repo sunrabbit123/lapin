@@ -1,10 +1,10 @@
-import { EntitySchema } from "../../../../src"
-import { User } from "./UserEntity"
+import { EntitySchema } from "../../../../src";
+import { User } from "./UserEntity";
 
 export type Team = {
-    id: number
-    users: User[]
-}
+    id: number;
+    users: User[];
+};
 
 export const TeamEntity = new EntitySchema<Team>({
     name: "team",
@@ -23,4 +23,4 @@ export const TeamEntity = new EntitySchema<Team>({
             inverseSide: "teams",
         },
     },
-})
+});

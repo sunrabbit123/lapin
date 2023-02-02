@@ -3,17 +3,17 @@ import {
     Entity,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Person } from "./Person"
+} from "../../../../src";
+import { Person } from "./Person";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column("uuid")
-    personId: string
+    personId: string;
 
     @OneToOne(() => Person, { cascade: true, onDelete: "CASCADE" })
-    person: Person
+    person: Person;
 }

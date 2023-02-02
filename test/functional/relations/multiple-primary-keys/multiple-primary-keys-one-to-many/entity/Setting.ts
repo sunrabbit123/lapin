@@ -4,31 +4,31 @@ import {
     Entity,
     ManyToOne,
     PrimaryColumn,
-} from "../../../../../../src"
-import { User } from "./User"
+} from "../../../../../../src";
+import { User } from "./User";
 
 @Entity()
 export class Setting extends BaseEntity {
     @PrimaryColumn()
-    assetId?: number
+    assetId?: number;
 
     @ManyToOne("User", "settings", {
         cascade: false,
         orphanedRowAction: "delete",
         nullable: false,
     })
-    asset?: User
+    asset?: User;
 
     @PrimaryColumn()
-    name: string
+    name: string;
 
     @Column({ nullable: true })
-    value: string
+    value: string;
 
     constructor(id: number, name: string, value: string) {
-        super()
-        this.assetId = id
-        this.name = name
-        this.value = value
+        super();
+        this.assetId = id;
+        this.name = name;
+        this.value = value;
     }
 }

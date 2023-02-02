@@ -1,15 +1,15 @@
-import { Column, Entity, PrimaryColumn } from "../../../../../src"
+import { Column, Entity, PrimaryColumn } from "../../../../../src";
 
-export type WithType<T> = T & { type: "Post" }
+export type WithType<T> = T & { type: "Post" };
 
 @Entity()
 export class Post {
     @PrimaryColumn({ type: Number })
-    id: number & { type: "Post" }
+    id: number & { type: "Post" };
 
     @Column({ type: String })
-    title: string & { type: "Post" }
+    title: string & { type: "Post" };
 
     @Column({ type: Boolean })
-    isEdited: boolean & { type: "Post" }
+    isEdited: boolean & { type: "Post" };
 }

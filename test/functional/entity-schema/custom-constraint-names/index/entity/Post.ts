@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../../src"
+import { EntitySchema } from "../../../../../../src";
 
 export const PostSchema = new EntitySchema<any>({
     name: "post",
@@ -25,4 +25,4 @@ export const PostSchema = new EntitySchema<any>({
             columns: ["header"],
         },
     ],
-})
+});

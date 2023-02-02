@@ -1,14 +1,14 @@
-import { DataSource } from "../../../src"
+import { DataSource } from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { Car } from "./entity/Car"
-import { Plane } from "./entity/Plane"
+} from "../../utils/test-utils";
+import { Car } from "./entity/Car";
+import { Plane } from "./entity/Plane";
 
 describe("github issues > #2800 - Can't override embedded entities in STI implementation", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
 
     before(
         async () =>
@@ -17,11 +17,11 @@ describe("github issues > #2800 - Can't override embedded entities in STI implem
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
+    );
 
-    beforeEach(() => reloadTestingDatabases(connections))
+    beforeEach(() => reloadTestingDatabases(connections));
 
-    after(() => closeTestingConnections(connections))
+    after(() => closeTestingConnections(connections));
 
     it("should be able to save entity with embedded entities overriding", () =>
         Promise.all(
@@ -34,7 +34,7 @@ describe("github issues > #2800 - Can't override embedded entities in STI implem
                             torque: 42,
                         },
                     }),
-                )
+                );
                 await connection.manager.save(
                     Plane,
                     connection.manager.create(Plane, {
@@ -43,7 +43,7 @@ describe("github issues > #2800 - Can't override embedded entities in STI implem
                             boop: 42,
                         },
                     }),
-                )
+                );
             }),
-        ))
-})
+        ));
+});

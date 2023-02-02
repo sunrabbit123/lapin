@@ -1,13 +1,13 @@
-import { Entity, PrimaryColumn, Column } from "../../../../src"
+import { Entity, PrimaryColumn, Column } from "../../../../src";
 
 @Entity()
 export class User {
     @PrimaryColumn()
-    name: string
+    name: string;
 
     @PrimaryColumn()
-    email: string
+    email: string;
 
     @Column()
-    age: number
+    age: number;
 }

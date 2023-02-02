@@ -1,6 +1,6 @@
-import { LoggerOptions } from "./LoggerOptions"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { Logger } from "./Logger"
+import { LoggerOptions } from "./LoggerOptions";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { Logger } from "./Logger";
 
 /**
  * Performs logging of the events in lapin.
@@ -31,8 +31,8 @@ export class SimpleConsoleLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
-            console.log("query" + ": " + sql)
+                    : "");
+            console.log("query" + ": " + sql);
         }
     }
 
@@ -55,9 +55,9 @@ export class SimpleConsoleLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
-            console.log(`query failed: ` + sql)
-            console.log(`error:`, error)
+                    : "");
+            console.log(`query failed: ` + sql);
+            console.log(`error:`, error);
         }
     }
 
@@ -74,9 +74,9 @@ export class SimpleConsoleLogger implements Logger {
             query +
             (parameters && parameters.length
                 ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                : "")
-        console.log(`query is slow: ` + sql)
-        console.log(`execution time: ` + time)
+                : "");
+        console.log(`query is slow: ` + sql);
+        console.log(`execution time: ` + time);
     }
 
     /**
@@ -88,7 +88,7 @@ export class SimpleConsoleLogger implements Logger {
             (Array.isArray(this.options) &&
                 this.options.indexOf("schema") !== -1)
         ) {
-            console.log(message)
+            console.log(message);
         }
     }
 
@@ -96,7 +96,7 @@ export class SimpleConsoleLogger implements Logger {
      * Logs events from the migrations run process.
      */
     logMigration(message: string, queryRunner?: QueryRunner) {
-        console.log(message)
+        console.log(message);
     }
 
     /**
@@ -115,24 +115,24 @@ export class SimpleConsoleLogger implements Logger {
                     (Array.isArray(this.options) &&
                         this.options.indexOf("log") !== -1)
                 )
-                    console.log(message)
-                break
+                    console.log(message);
+                break;
             case "info":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("info") !== -1)
                 )
-                    console.info(message)
-                break
+                    console.info(message);
+                break;
             case "warn":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("warn") !== -1)
                 )
-                    console.warn(message)
-                break
+                    console.warn(message);
+                break;
         }
     }
 
@@ -146,10 +146,10 @@ export class SimpleConsoleLogger implements Logger {
      */
     protected stringifyParams(parameters: any[]) {
         try {
-            return JSON.stringify(parameters)
+            return JSON.stringify(parameters);
         } catch (error) {
             // most probably circular objects in parameters
-            return parameters
+            return parameters;
         }
     }
 }

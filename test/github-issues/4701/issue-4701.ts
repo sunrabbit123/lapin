@@ -1,14 +1,14 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
 
 describe("github issues > #4701 Duplicate migrations are executed.", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -17,9 +17,9 @@ describe("github issues > #4701 Duplicate migrations are executed.", () => {
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should throw error if there're duplicate migrations", () =>
         Promise.all(
@@ -27,7 +27,7 @@ describe("github issues > #4701 Duplicate migrations are executed.", () => {
                 await expect(connection.runMigrations()).to.be.rejectedWith(
                     Error,
                     "Duplicate migrations: ExampleMigrationOne1567759789051",
-                )
+                );
             }),
-        ))
-})
+        ));
+});

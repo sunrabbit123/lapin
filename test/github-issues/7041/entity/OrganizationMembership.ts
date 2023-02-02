@@ -4,24 +4,24 @@ import {
     Entity,
     ManyToOne,
     PrimaryColumn,
-} from "../../../../src"
-import { User } from "./User"
-import { Organization } from "./Organization"
+} from "../../../../src";
+import { User } from "./User";
+import { Organization } from "./Organization";
 
 @Entity()
 export class OrganizationMembership extends BaseEntity {
     @PrimaryColumn()
-    userId: string
+    userId: string;
 
     @PrimaryColumn()
-    organizationId: string
+    organizationId: string;
 
     @ManyToOne(() => User, (user) => user.membership)
-    user: User
+    user: User;
 
     @ManyToOne(() => Organization, (organization) => organization.membership)
-    organization: Organization
+    organization: Organization;
 
     @Column()
-    accessLevel: string
+    accessLevel: string;
 }

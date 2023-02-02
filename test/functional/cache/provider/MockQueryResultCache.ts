@@ -1,12 +1,12 @@
-import { ObjectLiteral } from "../../../../src/common/ObjectLiteral"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { PostgresConnectionOptions } from "../../../../src/driver/postgres/PostgresConnectionOptions"
-import { MssqlParameter } from "../../../../src/driver/sqlserver/MssqlParameter"
-import { SqlServerConnectionOptions } from "../../../../src/driver/sqlserver/SqlServerConnectionOptions"
-import { QueryRunner } from "../../../../src/query-runner/QueryRunner"
-import { Table } from "../../../../src/schema-builder/table/Table"
-import { QueryResultCache } from "../../../../src/cache/QueryResultCache"
-import { QueryResultCacheOptions } from "../../../../src/cache/QueryResultCacheOptions"
+import { ObjectLiteral } from "../../../../src/common/ObjectLiteral";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { PostgresConnectionOptions } from "../../../../src/driver/postgres/PostgresConnectionOptions";
+import { MssqlParameter } from "../../../../src/driver/sqlserver/MssqlParameter";
+import { SqlServerConnectionOptions } from "../../../../src/driver/sqlserver/SqlServerConnectionOptions";
+import { QueryRunner } from "../../../../src/query-runner/QueryRunner";
+import { Table } from "../../../../src/schema-builder/table/Table";
+import { QueryResultCache } from "../../../../src/cache/QueryResultCache";
+import { QueryResultCacheOptions } from "../../../../src/cache/QueryResultCacheOptions";
 
 /**
  * Caches query result into current database, into separate table called "mock-query-result-cache".
@@ -16,7 +16,7 @@ export class MockQueryResultCache implements QueryResultCache {
     // Private properties
     // -------------------------------------------------------------------------
 
-    private queryResultCacheTable: string
+    private queryResultCacheTable: string;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -25,19 +25,19 @@ export class MockQueryResultCache implements QueryResultCache {
     constructor(protected connection: DataSource) {
         const options = <
             SqlServerConnectionOptions | PostgresConnectionOptions
-        >this.connection.driver.options
+        >this.connection.driver.options;
         const cacheOptions =
             typeof this.connection.options.cache === "object"
                 ? this.connection.options.cache
-                : {}
+                : {};
         const cacheTableName =
-            cacheOptions.tableName || "mock-query-result-cache"
+            cacheOptions.tableName || "mock-query-result-cache";
 
         this.queryResultCacheTable = this.connection.driver.buildTableName(
             cacheTableName,
             options.schema,
             options.database,
-        )
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -58,12 +58,12 @@ export class MockQueryResultCache implements QueryResultCache {
      * Creates table for storing cache if it does not exist yet.
      */
     async synchronize(queryRunner?: QueryRunner): Promise<void> {
-        queryRunner = this.getQueryRunner(queryRunner)
-        const driver = this.connection.driver
+        queryRunner = this.getQueryRunner(queryRunner);
+        const driver = this.connection.driver;
         const tableExist = await queryRunner.hasTable(
             this.queryResultCacheTable,
-        ) // todo: table name should be configurable
-        if (tableExist) return
+        ); // todo: table name should be configurable
+        if (tableExist) return;
 
         await queryRunner.createTable(
             new Table({
@@ -119,7 +119,7 @@ export class MockQueryResultCache implements QueryResultCache {
                     },
                 ],
             }),
-        )
+        );
     }
 
     /**
@@ -131,11 +131,11 @@ export class MockQueryResultCache implements QueryResultCache {
         options: QueryResultCacheOptions,
         queryRunner?: QueryRunner,
     ): Promise<QueryResultCacheOptions | undefined> {
-        queryRunner = this.getQueryRunner(queryRunner)
+        queryRunner = this.getQueryRunner(queryRunner);
         const qb = this.connection
             .createQueryBuilder(queryRunner)
             .select()
-            .from(this.queryResultCacheTable, "cache")
+            .from(this.queryResultCacheTable, "cache");
 
         if (options.identifier) {
             return qb
@@ -150,7 +150,7 @@ export class MockQueryResultCache implements QueryResultCache {
                             ? new MssqlParameter(options.identifier, "nvarchar")
                             : options.identifier,
                 })
-                .getRawOne()
+                .getRawOne();
         } else if (options.query) {
             if (this.connection.driver.options.type === "oracle") {
                 return qb
@@ -160,7 +160,7 @@ export class MockQueryResultCache implements QueryResultCache {
                         )}, :query) = 0`,
                         { query: options.query },
                     )
-                    .getRawOne()
+                    .getRawOne();
             }
 
             return qb
@@ -171,10 +171,10 @@ export class MockQueryResultCache implements QueryResultCache {
                             ? new MssqlParameter(options.query, "nvarchar")
                             : options.query,
                 })
-                .getRawOne()
+                .getRawOne();
         }
 
-        return Promise.resolve(undefined)
+        return Promise.resolve(undefined);
     }
 
     /**
@@ -184,14 +184,14 @@ export class MockQueryResultCache implements QueryResultCache {
         const duration =
             typeof savedCache.duration === "string"
                 ? parseInt(savedCache.duration)
-                : savedCache.duration
+                : savedCache.duration;
         return (
             (typeof savedCache.time === "string"
                 ? parseInt(savedCache.time as any)
                 : savedCache.time)! +
                 duration <
             new Date().getTime()
-        )
+        );
     }
 
     /**
@@ -202,9 +202,9 @@ export class MockQueryResultCache implements QueryResultCache {
         savedCache: QueryResultCacheOptions | undefined,
         queryRunner?: QueryRunner,
     ): Promise<void> {
-        queryRunner = this.getQueryRunner(queryRunner)
+        queryRunner = this.getQueryRunner(queryRunner);
 
-        let insertedValues: ObjectLiteral = options
+        let insertedValues: ObjectLiteral = options;
         if (this.connection.driver.options.type === "mssql") {
             // todo: bad abstraction, re-implement this part, probably better if we create an entity metadata for cache table
             insertedValues = {
@@ -213,7 +213,7 @@ export class MockQueryResultCache implements QueryResultCache {
                 duration: new MssqlParameter(options.duration, "int"),
                 query: new MssqlParameter(options.query, "nvarchar"),
                 result: new MssqlParameter(options.result, "nvarchar"),
-            }
+            };
         }
 
         if (savedCache && savedCache.identifier) {
@@ -221,30 +221,30 @@ export class MockQueryResultCache implements QueryResultCache {
             const qb = queryRunner.manager
                 .createQueryBuilder()
                 .update(this.queryResultCacheTable)
-                .set(insertedValues)
+                .set(insertedValues);
 
             qb.where(`${qb.escape("identifier")} = :condition`, {
                 condition: insertedValues.identifier,
-            })
-            await qb.execute()
+            });
+            await qb.execute();
         } else if (savedCache && savedCache.query) {
             // if exist then update
             const qb = queryRunner.manager
                 .createQueryBuilder()
                 .update(this.queryResultCacheTable)
-                .set(insertedValues)
+                .set(insertedValues);
 
             if (this.connection.driver.options.type === "oracle") {
                 qb.where(`dbms_lob.compare("query", :condition) = 0`, {
                     condition: insertedValues.query,
-                })
+                });
             } else {
                 qb.where(`${qb.escape("query")} = :condition`, {
                     condition: insertedValues.query,
-                })
+                });
             }
 
-            await qb.execute()
+            await qb.execute();
         } else {
             // otherwise insert
             await queryRunner.manager
@@ -252,7 +252,7 @@ export class MockQueryResultCache implements QueryResultCache {
                 .insert()
                 .into(this.queryResultCacheTable)
                 .values(insertedValues)
-                .execute()
+                .execute();
         }
     }
 
@@ -262,7 +262,7 @@ export class MockQueryResultCache implements QueryResultCache {
     async clear(queryRunner: QueryRunner): Promise<void> {
         return this.getQueryRunner(queryRunner).clearTable(
             this.queryResultCacheTable,
-        )
+        );
     }
 
     /**
@@ -277,16 +277,16 @@ export class MockQueryResultCache implements QueryResultCache {
                 const qb =
                     this.getQueryRunner(
                         queryRunner,
-                    ).manager.createQueryBuilder()
+                    ).manager.createQueryBuilder();
                 return qb
                     .delete()
                     .from(this.queryResultCacheTable)
                     .where(`${qb.escape("identifier")} = :identifier`, {
                         identifier,
                     })
-                    .execute()
+                    .execute();
             }),
-        )
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -299,8 +299,8 @@ export class MockQueryResultCache implements QueryResultCache {
     protected getQueryRunner(
         queryRunner: QueryRunner | undefined,
     ): QueryRunner {
-        if (queryRunner) return queryRunner
+        if (queryRunner) return queryRunner;
 
-        return this.connection.createQueryRunner()
+        return this.connection.createQueryRunner();
     }
 }

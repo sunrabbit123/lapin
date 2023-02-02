@@ -1,19 +1,19 @@
-import { EntitySubscriberInterface } from "./EntitySubscriberInterface"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { BroadcasterResult } from "./BroadcasterResult"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { RelationMetadata } from "../metadata/RelationMetadata"
-import { ObjectUtils } from "../util/ObjectUtils"
+import { EntitySubscriberInterface } from "./EntitySubscriberInterface";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { BroadcasterResult } from "./BroadcasterResult";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { RelationMetadata } from "../metadata/RelationMetadata";
+import { ObjectUtils } from "../util/ObjectUtils";
 
 interface BroadcasterEvents {
-    BeforeTransactionCommit: () => void
-    AfterTransactionCommit: () => void
-    BeforeTransactionStart: () => void
-    AfterTransactionStart: () => void
-    BeforeTransactionRollback: () => void
-    AfterTransactionRollback: () => void
+    BeforeTransactionCommit: () => void;
+    AfterTransactionCommit: () => void;
+    BeforeTransactionStart: () => void;
+    AfterTransactionStart: () => void;
+    BeforeTransactionRollback: () => void;
+    AfterTransactionRollback: () => void;
 
     BeforeUpdate: (
         metadata: EntityMetadata,
@@ -21,58 +21,58 @@ interface BroadcasterEvents {
         databaseEntity?: ObjectLiteral,
         updatedColumns?: ColumnMetadata[],
         updatedRelations?: RelationMetadata[],
-    ) => void
+    ) => void;
     AfterUpdate: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
         updatedColumns?: ColumnMetadata[],
         updatedRelations?: RelationMetadata[],
-    ) => void
+    ) => void;
 
     BeforeInsert: (
         metadata: EntityMetadata,
         entity: ObjectLiteral | undefined,
-    ) => void
+    ) => void;
     AfterInsert: (
         metadata: EntityMetadata,
         entity: ObjectLiteral | undefined,
-    ) => void
+    ) => void;
 
     BeforeRemove: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
     AfterRemove: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
 
     BeforeSoftRemove: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
     AfterSoftRemove: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
 
     BeforeRecover: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
     AfterRecover: (
         metadata: EntityMetadata,
         entity?: ObjectLiteral,
         databaseEntity?: ObjectLiteral,
-    ) => void
+    ) => void;
 
-    Load: (metadata: EntityMetadata, entities: ObjectLiteral[]) => void
+    Load: (metadata: EntityMetadata, entities: ObjectLiteral[]) => void;
 }
 
 /**
@@ -93,15 +93,15 @@ export class Broadcaster {
         event: U,
         ...args: Parameters<BroadcasterEvents[U]>
     ): Promise<void> {
-        const result = new BroadcasterResult()
+        const result = new BroadcasterResult();
 
-        const broadcastFunction = this[`broadcast${event}Event` as keyof this]
+        const broadcastFunction = this[`broadcast${event}Event` as keyof this];
 
         if (typeof broadcastFunction === "function") {
-            ;(broadcastFunction as any).call(this, result, ...args)
+            (broadcastFunction as any).call(this, result, ...args);
         }
 
-        await result.wait()
+        await result.wait();
     }
 
     /**
@@ -120,12 +120,12 @@ export class Broadcaster {
         if (entity && metadata.beforeInsertListeners.length) {
             metadata.beforeInsertListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -140,12 +140,12 @@ export class Broadcaster {
                         manager: this.queryRunner.manager,
                         entity: entity,
                         metadata: metadata,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -169,12 +169,12 @@ export class Broadcaster {
         if (entity && metadata.beforeUpdateListeners.length) {
             metadata.beforeUpdateListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -192,12 +192,12 @@ export class Broadcaster {
                         databaseEntity: databaseEntity,
                         updatedColumns: updatedColumns || [],
                         updatedRelations: updatedRelations || [],
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -218,12 +218,12 @@ export class Broadcaster {
         if (entity && metadata.beforeRemoveListeners.length) {
             metadata.beforeRemoveListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -240,12 +240,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -266,12 +266,12 @@ export class Broadcaster {
         if (entity && metadata.beforeSoftRemoveListeners.length) {
             metadata.beforeSoftRemoveListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -288,12 +288,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -314,12 +314,12 @@ export class Broadcaster {
         if (entity && metadata.beforeRecoverListeners.length) {
             metadata.beforeRecoverListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -336,12 +336,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -361,12 +361,12 @@ export class Broadcaster {
         if (entity && metadata.afterInsertListeners.length) {
             metadata.afterInsertListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -381,12 +381,12 @@ export class Broadcaster {
                         manager: this.queryRunner.manager,
                         entity: entity,
                         metadata: metadata,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -401,12 +401,12 @@ export class Broadcaster {
                         connection: this.queryRunner.connection,
                         queryRunner: this.queryRunner,
                         manager: this.queryRunner.manager,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -421,12 +421,12 @@ export class Broadcaster {
                         connection: this.queryRunner.connection,
                         queryRunner: this.queryRunner,
                         manager: this.queryRunner.manager,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -441,12 +441,12 @@ export class Broadcaster {
                         connection: this.queryRunner.connection,
                         queryRunner: this.queryRunner,
                         manager: this.queryRunner.manager,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -461,12 +461,12 @@ export class Broadcaster {
                         connection: this.queryRunner.connection,
                         queryRunner: this.queryRunner,
                         manager: this.queryRunner.manager,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -482,12 +482,12 @@ export class Broadcaster {
                             connection: this.queryRunner.connection,
                             queryRunner: this.queryRunner,
                             manager: this.queryRunner.manager,
-                        })
+                        });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -504,12 +504,12 @@ export class Broadcaster {
                             queryRunner: this.queryRunner,
                             manager: this.queryRunner.manager,
                         },
-                    )
+                    );
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -532,12 +532,12 @@ export class Broadcaster {
         if (entity && metadata.afterUpdateListeners.length) {
             metadata.afterUpdateListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -555,12 +555,12 @@ export class Broadcaster {
                         databaseEntity: databaseEntity,
                         updatedColumns: updatedColumns || [],
                         updatedRelations: updatedRelations || [],
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -581,12 +581,12 @@ export class Broadcaster {
         if (entity && metadata.afterRemoveListeners.length) {
             metadata.afterRemoveListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -603,12 +603,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -629,12 +629,12 @@ export class Broadcaster {
         if (entity && metadata.afterSoftRemoveListeners.length) {
             metadata.afterSoftRemoveListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -651,12 +651,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -677,12 +677,12 @@ export class Broadcaster {
         if (entity && metadata.afterRecoverListeners.length) {
             metadata.afterRecoverListeners.forEach((listener) => {
                 if (listener.isAllowed(entity)) {
-                    const executionResult = listener.execute(entity)
+                    const executionResult = listener.execute(entity);
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
 
         if (this.queryRunner.connection.subscribers.length) {
@@ -699,12 +699,12 @@ export class Broadcaster {
                         metadata: metadata,
                         databaseEntity: databaseEntity,
                         entityId: metadata.getEntityIdMixedMap(databaseEntity),
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
+                        result.promises.push(executionResult);
+                    result.count++;
                 }
-            })
+            });
         }
     }
 
@@ -716,7 +716,7 @@ export class Broadcaster {
         metadata: EntityMetadata,
         entities: ObjectLiteral[],
     ): void {
-        return this.broadcastLoadEvent(result, metadata, entities)
+        return this.broadcastLoadEvent(result, metadata, entities);
     }
 
     /**
@@ -738,7 +738,7 @@ export class Broadcaster {
                 (subscriber) =>
                     this.isAllowedSubscriber(subscriber, metadata.target) &&
                     subscriber.afterLoad,
-            )
+            );
 
         if (
             metadata.relations.length ||
@@ -748,7 +748,7 @@ export class Broadcaster {
             // todo: check why need this?
             const nonPromiseEntities = entities.filter(
                 (entity) => !(entity instanceof Promise),
-            )
+            );
 
             // collect load events for all children entities that were loaded with the main entity
             if (metadata.relations.length) {
@@ -759,30 +759,30 @@ export class Broadcaster {
                             relation.isLazy &&
                             !entity.hasOwnProperty(relation.propertyName)
                         )
-                            return
+                            return;
 
-                        const value = relation.getEntityValue(entity)
+                        const value = relation.getEntityValue(entity);
                         if (ObjectUtils.isObject(value))
                             this.broadcastLoadEvent(
                                 result,
                                 relation.inverseEntityMetadata,
                                 Array.isArray(value) ? value : [value],
-                            )
-                    })
-                })
+                            );
+                    });
+                });
             }
 
             if (metadata.afterLoadListeners.length) {
                 metadata.afterLoadListeners.forEach((listener) => {
                     nonPromiseEntities.forEach((entity) => {
                         if (listener.isAllowed(entity)) {
-                            const executionResult = listener.execute(entity)
+                            const executionResult = listener.execute(entity);
                             if (executionResult instanceof Promise)
-                                result.promises.push(executionResult)
-                            result.count++
+                                result.promises.push(executionResult);
+                            result.count++;
                         }
-                    })
-                })
+                    });
+                });
             }
 
             fittingSubscribers.forEach((subscriber) => {
@@ -793,12 +793,12 @@ export class Broadcaster {
                         connection: this.queryRunner.connection,
                         queryRunner: this.queryRunner,
                         manager: this.queryRunner.manager,
-                    })
+                    });
                     if (executionResult instanceof Promise)
-                        result.promises.push(executionResult)
-                    result.count++
-                })
-            })
+                        result.promises.push(executionResult);
+                    result.count++;
+                });
+            });
         }
     }
 
@@ -820,6 +820,6 @@ export class Broadcaster {
             subscriber.listenTo() === Object ||
             subscriber.listenTo() === target ||
             subscriber.listenTo().isPrototypeOf(target)
-        )
+        );
     }
 }

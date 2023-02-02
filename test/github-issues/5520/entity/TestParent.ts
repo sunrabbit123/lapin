@@ -3,8 +3,8 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { TestChild } from "./TestChild"
+} from "../../../../src";
+import { TestChild } from "./TestChild";
 
 @Entity()
 export class TestParent {
@@ -14,7 +14,7 @@ export class TestParent {
         cascade: true,
     })
     @JoinColumn()
-    public child: TestChild
+    public child: TestChild;
     @PrimaryGeneratedColumn("uuid")
-    public uuid: string
+    public uuid: string;
 }

@@ -3,18 +3,18 @@ import {
     Entity,
     Index,
     PrimaryGeneratedColumn,
-} from "../../../../../../src"
+} from "../../../../../../src";
 
 @Entity()
 @Index("IDX_NAME", ["name"])
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Index("IDX_HEADER")
     @Column()
-    header: string
+    header: string;
 }

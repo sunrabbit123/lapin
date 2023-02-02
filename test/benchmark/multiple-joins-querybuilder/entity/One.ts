@@ -1,73 +1,73 @@
-import { Entity } from "../../../../src/decorator/entity/Entity"
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn"
-import { Column } from "../../../../src/decorator/columns/Column"
-import { OneToOne } from "../../../../src"
-import { Two } from "./Two"
-import { Three } from "./Three"
-import { Four } from "./Four"
-import { Five } from "./Five"
-import { Six } from "./Six"
-import { Seven } from "./Seven"
-import { Eight } from "./Eight"
-import { Nine } from "./Nine"
-import { Ten } from "./Ten"
+import { Entity } from "../../../../src/decorator/entity/Entity";
+import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
+import { Column } from "../../../../src/decorator/columns/Column";
+import { OneToOne } from "../../../../src";
+import { Two } from "./Two";
+import { Three } from "./Three";
+import { Four } from "./Four";
+import { Five } from "./Five";
+import { Six } from "./Six";
+import { Seven } from "./Seven";
+import { Eight } from "./Eight";
+import { Nine } from "./Nine";
+import { Ten } from "./Ten";
 
 @Entity()
 export class One {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @OneToOne((type) => Two, (two) => two.one)
-    two: Two
+    two: Two;
 
     @OneToOne((type) => Three, (three) => three.one)
-    three: Three
+    three: Three;
 
     @OneToOne((type) => Four, (four) => four.one)
-    four: Four
+    four: Four;
 
     @OneToOne((type) => Five, (five) => five.one)
-    five: Five
+    five: Five;
 
     @OneToOne((type) => Six, (six) => six.one)
-    six: Six
+    six: Six;
 
     @OneToOne((type) => Seven, (seven) => seven.one)
-    seven: Seven
+    seven: Seven;
 
     @OneToOne((type) => Eight, (eight) => eight.one)
-    eight: Eight
+    eight: Eight;
 
     @OneToOne((type) => Nine, (nine) => nine.one)
-    nine: Nine
+    nine: Nine;
 
     @OneToOne((type) => Ten, (ten) => ten.one)
-    ten: Ten
+    ten: Ten;
 
     @Column({ type: "text" })
-    aaaaa: string
+    aaaaa: string;
 
     @Column({ type: "text" })
-    bbbbb: string
+    bbbbb: string;
 
     @Column({ type: "text" })
-    ccccc: string
+    ccccc: string;
 
     @Column({ type: "text" })
-    ddddd: string
+    ddddd: string;
 
     @Column({ type: "text" })
-    eeeee: string
+    eeeee: string;
 
     @Column({ type: "text" })
-    fffff: string
+    fffff: string;
 
     @Column({ type: "text" })
-    ggggg: string
+    ggggg: string;
 
     @Column({ type: "text" })
-    hhhhh: string
+    hhhhh: string;
 
     @Column({ type: "text" })
-    iiiii: string
+    iiiii: string;
 }

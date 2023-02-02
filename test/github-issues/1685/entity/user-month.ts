@@ -4,31 +4,31 @@ import {
     ManyToOne,
     BeforeInsert,
     JoinColumn,
-} from "../../../../src"
-import { Month } from "./month"
-import { User } from "./user"
+} from "../../../../src";
+import { Month } from "./month";
+import { User } from "./user";
 
 @Entity()
 export class UserMonth {
     @PrimaryColumn()
-    public yearNo: number
+    public yearNo: number;
 
     @PrimaryColumn()
-    public monthNo: number
+    public monthNo: number;
 
     @PrimaryColumn()
-    public username: string
+    public username: string;
 
     @ManyToOne((type) => Month, (month) => month.userMonth)
     @JoinColumn([
         { name: "yearNo", referencedColumnName: "yearNo" },
         { name: "monthNo", referencedColumnName: "monthNo" },
     ])
-    public month: Month
+    public month: Month;
 
     @ManyToOne((type) => User, (user) => user.username)
     @JoinColumn({ name: "username", referencedColumnName: "username" })
-    public user: User
+    public user: User;
 
     @BeforeInsert()
     workaround() {

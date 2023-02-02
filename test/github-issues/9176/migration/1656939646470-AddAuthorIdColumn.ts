@@ -3,7 +3,7 @@ import {
     QueryRunner,
     TableColumn,
     TableForeignKey,
-} from "../../../../src"
+} from "../../../../src";
 
 export class AddAuthorIdColumn1656939646470 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -13,7 +13,7 @@ export class AddAuthorIdColumn1656939646470 implements MigrationInterface {
                 name: "authorId",
                 type: "integer",
             }),
-        )
+        );
         await queryRunner.createForeignKey(
             "post",
             new TableForeignKey({
@@ -21,7 +21,7 @@ export class AddAuthorIdColumn1656939646470 implements MigrationInterface {
                 referencedTableName: "author",
                 referencedColumnNames: ["id"],
             }),
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -32,7 +32,7 @@ export class AddAuthorIdColumn1656939646470 implements MigrationInterface {
                 referencedTableName: "author",
                 referencedColumnNames: ["id"],
             }),
-        )
-        await queryRunner.dropColumn("post", "authorId")
+        );
+        await queryRunner.dropColumn("post", "authorId");
     }
 }

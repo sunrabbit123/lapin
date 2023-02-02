@@ -3,16 +3,16 @@ import {
     CreateDateColumn,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id?: number
+    id?: number;
 
     @Column()
-    title: string
+    title: string;
 
     @CreateDateColumn()
-    readonly createdAt?: Date
+    readonly createdAt?: Date;
 }

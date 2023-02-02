@@ -1,7 +1,7 @@
-import { QueryBuilder } from "./QueryBuilder"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { QueryExpressionMap } from "./QueryExpressionMap"
-import { ObjectUtils } from "../util/ObjectUtils"
+import { QueryBuilder } from "./QueryBuilder";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { QueryExpressionMap } from "./QueryExpressionMap";
+import { ObjectUtils } from "../util/ObjectUtils";
 
 /**
  * Allows to work with entity relations and perform specific operations with those relations.
@@ -26,7 +26,7 @@ export class RelationRemover {
      * Performs remove operation on a relation.
      */
     async remove(value: any | any[]): Promise<void> {
-        const relation = this.expressionMap.relationMetadata
+        const relation = this.expressionMap.relationMetadata;
 
         if (relation.isOneToMany) {
             // if (this.expressionMap.of instanceof Array)
@@ -35,16 +35,16 @@ export class RelationRemover {
             // DELETE FROM post WHERE post.categoryId = of AND post.id = id
             const ofs = Array.isArray(this.expressionMap.of)
                 ? this.expressionMap.of
-                : [this.expressionMap.of]
-            const values = Array.isArray(value) ? value : [value]
+                : [this.expressionMap.of];
+            const values = Array.isArray(value) ? value : [value];
 
-            const updateSet: ObjectLiteral = {}
+            const updateSet: ObjectLiteral = {};
             relation.inverseRelation!.joinColumns.forEach((column) => {
-                updateSet[column.propertyName] = null
-            })
+                updateSet[column.propertyName] = null;
+            });
 
-            const parameters: ObjectLiteral = {}
-            const conditions: string[] = []
+            const parameters: ObjectLiteral = {};
+            const conditions: string[] = [];
             ofs.forEach((of, ofIndex) => {
                 conditions.push(
                     ...values.map((value, valueIndex) => {
@@ -57,14 +57,14 @@ export class RelationRemover {
                                         "_" +
                                         valueIndex +
                                         "_" +
-                                        columnIndex
+                                        columnIndex;
                                     parameters[parameterName] =
                                         ObjectUtils.isObject(of)
                                             ? column.referencedColumn!.getEntityValue(
                                                   of,
                                               )
-                                            : of
-                                    return `${column.propertyPath} = :${parameterName}`
+                                            : of;
+                                    return `${column.propertyPath} = :${parameterName}`;
                                 },
                             ),
                             ...relation.inverseRelation!.entityMetadata.primaryColumns.map(
@@ -75,22 +75,22 @@ export class RelationRemover {
                                         "_" +
                                         valueIndex +
                                         "_" +
-                                        columnIndex
+                                        columnIndex;
                                     parameters[parameterName] =
                                         ObjectUtils.isObject(value)
                                             ? column.getEntityValue(value)
-                                            : value
-                                    return `${column.propertyPath} = :${parameterName}`
+                                            : value;
+                                    return `${column.propertyPath} = :${parameterName}`;
                                 },
                             ),
-                        ].join(" AND ")
+                        ].join(" AND ");
                     }),
-                )
-            })
+                );
+            });
             const condition = conditions
                 .map((str) => "(" + str + ")")
-                .join(" OR ")
-            if (!condition) return
+                .join(" OR ");
+            if (!condition) return;
 
             await this.queryBuilder
                 .createQueryBuilder()
@@ -98,20 +98,22 @@ export class RelationRemover {
                 .set(updateSet)
                 .where(condition)
                 .setParameters(parameters)
-                .execute()
+                .execute();
         } else {
             // many to many
 
-            const junctionMetadata = relation.junctionEntityMetadata!
+            const junctionMetadata = relation.junctionEntityMetadata!;
             const ofs = Array.isArray(this.expressionMap.of)
                 ? this.expressionMap.of
-                : [this.expressionMap.of]
-            const values = Array.isArray(value) ? value : [value]
-            const firstColumnValues = relation.isManyToManyOwner ? ofs : values
-            const secondColumnValues = relation.isManyToManyOwner ? values : ofs
+                : [this.expressionMap.of];
+            const values = Array.isArray(value) ? value : [value];
+            const firstColumnValues = relation.isManyToManyOwner ? ofs : values;
+            const secondColumnValues = relation.isManyToManyOwner
+                ? values
+                : ofs;
 
-            const parameters: ObjectLiteral = {}
-            const conditions: string[] = []
+            const parameters: ObjectLiteral = {};
+            const conditions: string[] = [];
             firstColumnValues.forEach((firstColumnVal, firstColumnValIndex) => {
                 conditions.push(
                     ...secondColumnValues.map(
@@ -125,14 +127,14 @@ export class RelationRemover {
                                             "_" +
                                             secondColumnValIndex +
                                             "_" +
-                                            columnIndex
+                                            columnIndex;
                                         parameters[parameterName] =
                                             ObjectUtils.isObject(firstColumnVal)
                                                 ? column.referencedColumn!.getEntityValue(
                                                       firstColumnVal,
                                                   )
-                                                : firstColumnVal
-                                        return `${column.databaseName} = :${parameterName}`
+                                                : firstColumnVal;
+                                        return `${column.databaseName} = :${parameterName}`;
                                     },
                                 ),
                                 ...junctionMetadata.inverseColumns.map(
@@ -143,7 +145,7 @@ export class RelationRemover {
                                             "_" +
                                             secondColumnValIndex +
                                             "_" +
-                                            columnIndex
+                                            columnIndex;
                                         parameters[parameterName] =
                                             ObjectUtils.isObject(
                                                 secondColumnVal,
@@ -151,18 +153,18 @@ export class RelationRemover {
                                                 ? column.referencedColumn!.getEntityValue(
                                                       secondColumnVal,
                                                   )
-                                                : secondColumnVal
-                                        return `${column.databaseName} = :${parameterName}`
+                                                : secondColumnVal;
+                                        return `${column.databaseName} = :${parameterName}`;
                                     },
                                 ),
-                            ].join(" AND ")
+                            ].join(" AND ");
                         },
                     ),
-                )
-            })
+                );
+            });
             const condition = conditions
                 .map((str) => "(" + str + ")")
-                .join(" OR ")
+                .join(" OR ");
 
             await this.queryBuilder
                 .createQueryBuilder()
@@ -170,7 +172,7 @@ export class RelationRemover {
                 .from(junctionMetadata.tableName)
                 .where(condition)
                 .setParameters(parameters)
-                .execute()
+                .execute();
         }
     }
 }

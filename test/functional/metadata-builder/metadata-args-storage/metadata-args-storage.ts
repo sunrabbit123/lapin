@@ -1,14 +1,14 @@
-import "reflect-metadata"
-import { Post } from "./entity/Post"
-import { ContentModule } from "./entity/ContentModule"
-import { Unit } from "./entity/Unit"
-import { MetadataUtils } from "../../../../src/metadata-builder/MetadataUtils"
+import "reflect-metadata";
+import { Post } from "./entity/Post";
+import { ContentModule } from "./entity/ContentModule";
+import { Unit } from "./entity/Unit";
+import { MetadataUtils } from "../../../../src/metadata-builder/MetadataUtils";
 
 describe("metadata builder > MetadataArgsUtils", () => {
     it("getInheritanceTree", () => {
-        const inheritanceTree = MetadataUtils.getInheritanceTree(Post)
-        inheritanceTree.should.be.eql([Post, ContentModule, Unit])
-    })
+        const inheritanceTree = MetadataUtils.getInheritanceTree(Post);
+        inheritanceTree.should.be.eql([Post, ContentModule, Unit]);
+    });
 
     it("filterByTargetClasses", () => {
         MetadataUtils.filterByTarget(
@@ -23,7 +23,7 @@ describe("metadata builder > MetadataArgsUtils", () => {
                 { target: Unit },
             ],
             [Post, Unit],
-        ).should.be.eql([{ target: Post }, { target: Unit }])
+        ).should.be.eql([{ target: Post }, { target: Unit }]);
 
         MetadataUtils.filterByTarget(
             [
@@ -36,7 +36,7 @@ describe("metadata builder > MetadataArgsUtils", () => {
                 { target: Unit },
             ],
             [Post, Unit],
-        ).should.be.eql([{ target: Unit }])
+        ).should.be.eql([{ target: Unit }]);
 
         MetadataUtils.filterByTarget(
             [
@@ -54,12 +54,12 @@ describe("metadata builder > MetadataArgsUtils", () => {
             { target: ContentModule },
             { target: Post },
             { target: Unit },
-        ])
+        ]);
 
         MetadataUtils.filterByTarget(
             [],
             [Post, Unit, ContentModule],
-        ).should.be.eql([])
+        ).should.be.eql([]);
 
         MetadataUtils.filterByTarget([
             {},
@@ -79,6 +79,6 @@ describe("metadata builder > MetadataArgsUtils", () => {
             { target: ContentModule },
             { target: Post },
             { target: Unit },
-        ])
-    })
-})
+        ]);
+    });
+});

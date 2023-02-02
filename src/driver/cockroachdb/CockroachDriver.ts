@@ -1,33 +1,33 @@
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { DataSource } from "../../data-source/DataSource"
-import { LapinError } from "../../error"
-import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError"
-import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
-import { ColumnMetadata } from "../../metadata/ColumnMetadata"
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { RdbmsSchemaBuilder } from "../../schema-builder/RdbmsSchemaBuilder"
-import { Table } from "../../schema-builder/table/Table"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { View } from "../../schema-builder/view/View"
-import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
-import { DateUtils } from "../../util/DateUtils"
-import { InstanceChecker } from "../../util/InstanceChecker"
-import { ObjectUtils } from "../../util/ObjectUtils"
-import { OrmUtils } from "../../util/OrmUtils"
-import { Driver } from "../Driver"
-import { DriverUtils } from "../DriverUtils"
-import { ColumnType } from "../types/ColumnTypes"
-import { CteCapabilities } from "../types/CteCapabilities"
-import { DataTypeDefaults } from "../types/DataTypeDefaults"
-import { MappedColumnTypes } from "../types/MappedColumnTypes"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { UpsertType } from "../types/UpsertType"
-import { CockroachConnectionCredentialsOptions } from "./CockroachConnectionCredentialsOptions"
-import { CockroachConnectionOptions } from "./CockroachConnectionOptions"
-import { CockroachQueryRunner } from "./CockroachQueryRunner"
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { DataSource } from "../../data-source/DataSource";
+import { LapinError } from "../../error";
+import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError";
+import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
+import { ColumnMetadata } from "../../metadata/ColumnMetadata";
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { RdbmsSchemaBuilder } from "../../schema-builder/RdbmsSchemaBuilder";
+import { Table } from "../../schema-builder/table/Table";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { View } from "../../schema-builder/view/View";
+import { ApplyValueTransformers } from "../../util/ApplyValueTransformers";
+import { DateUtils } from "../../util/DateUtils";
+import { InstanceChecker } from "../../util/InstanceChecker";
+import { ObjectUtils } from "../../util/ObjectUtils";
+import { OrmUtils } from "../../util/OrmUtils";
+import { Driver } from "../Driver";
+import { DriverUtils } from "../DriverUtils";
+import { ColumnType } from "../types/ColumnTypes";
+import { CteCapabilities } from "../types/CteCapabilities";
+import { DataTypeDefaults } from "../types/DataTypeDefaults";
+import { MappedColumnTypes } from "../types/MappedColumnTypes";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { UpsertType } from "../types/UpsertType";
+import { CockroachConnectionCredentialsOptions } from "./CockroachConnectionCredentialsOptions";
+import { CockroachConnectionOptions } from "./CockroachConnectionOptions";
+import { CockroachQueryRunner } from "./CockroachQueryRunner";
 
 /**
  * Organizes communication with Cockroach DBMS.
@@ -40,28 +40,28 @@ export class CockroachDriver implements Driver {
     /**
      * Connection used by driver.
      */
-    connection: DataSource
+    connection: DataSource;
 
     /**
      * Cockroach underlying library.
      */
-    postgres: any
+    postgres: any;
 
     /**
      * Pool for master database.
      */
-    master: any
+    master: any;
 
     /**
      * Pool for slave databases.
      * Used in replication.
      */
-    slaves: any[] = []
+    slaves: any[] = [];
 
     /**
      * We store all created query runners because we need to release them.
      */
-    connectedQueryRunners: QueryRunner[] = []
+    connectedQueryRunners: QueryRunner[] = [];
 
     // -------------------------------------------------------------------------
     // Public Implemented Properties
@@ -70,17 +70,17 @@ export class CockroachDriver implements Driver {
     /**
      * Connection options.
      */
-    options: CockroachConnectionOptions
+    options: CockroachConnectionOptions;
 
     /**
      * Database name used to perform all write queries.
      */
-    database?: string
+    database?: string;
 
     /**
      * Schema name used to perform all write queries.
      */
-    schema?: string
+    schema?: string;
 
     /**
      * Schema that's used internally by Postgres for object resolution.
@@ -90,22 +90,22 @@ export class CockroachDriver implements Driver {
      *
      * In most cases this will be `public`.
      */
-    searchSchema?: string
+    searchSchema?: string;
 
     /**
      * Indicates if replication is enabled.
      */
-    isReplicated: boolean = false
+    isReplicated: boolean = false;
 
     /**
      * Indicates if tree tables are supported by this driver.
      */
-    treeSupport = true
+    treeSupport = true;
 
     /**
      * Represent transaction support by this driver
      */
-    transactionSupport = "nested" as const
+    transactionSupport = "nested" as const;
 
     /**
      * Gets list of supported column data types by a driver.
@@ -157,7 +157,7 @@ export class CockroachDriver implements Driver {
         "json",
         "jsonb",
         "uuid",
-    ]
+    ];
 
     /**
      * Returns type of upsert supported by driver if any
@@ -165,12 +165,12 @@ export class CockroachDriver implements Driver {
     supportedUpsertTypes: UpsertType[] = [
         "on-conflict-do-update",
         "primary-key",
-    ]
+    ];
 
     /**
      * Gets list of spatial column data types.
      */
-    spatialTypes: ColumnType[] = ["geometry", "geography"]
+    spatialTypes: ColumnType[] = ["geometry", "geography"];
 
     /**
      * Gets list of column data types that support length by a driver.
@@ -182,17 +182,17 @@ export class CockroachDriver implements Driver {
         "character",
         "char",
         "string",
-    ]
+    ];
 
     /**
      * Gets list of column data types that support precision by a driver.
      */
-    withPrecisionColumnTypes: ColumnType[] = ["numeric", "decimal", "dec"]
+    withPrecisionColumnTypes: ColumnType[] = ["numeric", "decimal", "dec"];
 
     /**
      * Gets list of column data types that support scale by a driver.
      */
-    withScaleColumnTypes: ColumnType[] = ["numeric", "decimal", "dec"]
+    withScaleColumnTypes: ColumnType[] = ["numeric", "decimal", "dec"];
 
     /**
      * Orm has special columns and we need to know what database column types should be for those types.
@@ -222,7 +222,7 @@ export class CockroachDriver implements Driver {
         metadataTable: "varchar",
         metadataName: "varchar",
         metadataValue: "string",
-    }
+    };
 
     /**
      * Default values of length, precision and scale depends on column data type.
@@ -230,39 +230,39 @@ export class CockroachDriver implements Driver {
      */
     dataTypeDefaults: DataTypeDefaults = {
         char: { length: 1 },
-    }
+    };
 
     /**
      * No documentation specifying a maximum length for identifiers could be found
      * for CockroarchDb.
      */
-    maxAliasLength?: number
+    maxAliasLength?: number;
 
     cteCapabilities: CteCapabilities = {
         enabled: true,
         writable: true,
         materializedHint: true,
         requiresRecursiveHint: true,
-    }
+    };
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        this.connection = connection
-        this.options = connection.options as CockroachConnectionOptions
-        this.isReplicated = this.options.replication ? true : false
+        this.connection = connection;
+        this.options = connection.options as CockroachConnectionOptions;
+        this.isReplicated = this.options.replication ? true : false;
 
         // load postgres package
-        this.loadDependencies()
+        this.loadDependencies();
 
         this.database = DriverUtils.buildDriverOptions(
             this.options.replication
                 ? this.options.replication.master
                 : this.options,
-        ).database
-        this.schema = DriverUtils.buildDriverOptions(this.options).schema
+        ).database;
+        this.schema = DriverUtils.buildDriverOptions(this.options).schema;
 
         // ObjectUtils.assign(this.options, DriverUtils.buildDriverOptions(connection.options)); // todo: do it better way
         // validate options to make sure everything is set
@@ -288,33 +288,33 @@ export class CockroachDriver implements Driver {
         if (this.options.replication) {
             this.slaves = await Promise.all(
                 this.options.replication.slaves.map((slave) => {
-                    return this.createPool(this.options, slave)
+                    return this.createPool(this.options, slave);
                 }),
-            )
+            );
             this.master = await this.createPool(
                 this.options,
                 this.options.replication.master,
-            )
+            );
         } else {
-            this.master = await this.createPool(this.options, this.options)
+            this.master = await this.createPool(this.options, this.options);
         }
 
         if (!this.database || !this.searchSchema) {
-            const queryRunner = await this.createQueryRunner("master")
+            const queryRunner = await this.createQueryRunner("master");
 
             if (!this.database) {
-                this.database = await queryRunner.getCurrentDatabase()
+                this.database = await queryRunner.getCurrentDatabase();
             }
 
             if (!this.searchSchema) {
-                this.searchSchema = await queryRunner.getCurrentSchema()
+                this.searchSchema = await queryRunner.getCurrentSchema();
             }
 
-            await queryRunner.release()
+            await queryRunner.release();
         }
 
         if (!this.schema) {
-            this.schema = this.searchSchema
+            this.schema = this.searchSchema;
         }
     }
 
@@ -326,15 +326,15 @@ export class CockroachDriver implements Driver {
         if (this.options.timeTravelQueries) {
             await this.connection.query(
                 `SET default_transaction_use_follower_reads = 'on';`,
-            )
+            );
         }
 
         // enable experimental alter column type support (we need it to alter enum types)
         await this.connection.query(
             "SET enable_experimental_alter_column_type_general = true",
-        )
+        );
 
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -342,26 +342,26 @@ export class CockroachDriver implements Driver {
      */
     async disconnect(): Promise<void> {
         if (!this.master)
-            return Promise.reject(new ConnectionIsNotSetError("cockroachdb"))
+            return Promise.reject(new ConnectionIsNotSetError("cockroachdb"));
 
-        await this.closePool(this.master)
-        await Promise.all(this.slaves.map((slave) => this.closePool(slave)))
-        this.master = undefined
-        this.slaves = []
+        await this.closePool(this.master);
+        await Promise.all(this.slaves.map((slave) => this.closePool(slave)));
+        this.master = undefined;
+        this.slaves = [];
     }
 
     /**
      * Creates a schema builder used to build and sync a schema.
      */
     createSchemaBuilder() {
-        return new RdbmsSchemaBuilder(this.connection)
+        return new RdbmsSchemaBuilder(this.connection);
     }
 
     /**
      * Creates a query runner used to execute database queries.
      */
     createQueryRunner(mode: ReplicationMode) {
-        return new CockroachQueryRunner(this, mode)
+        return new CockroachQueryRunner(this, mode);
     }
 
     /**
@@ -372,16 +372,16 @@ export class CockroachDriver implements Driver {
             value = ApplyValueTransformers.transformTo(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        if (value === null || value === undefined) return value
+        if (value === null || value === undefined) return value;
 
         if (columnMetadata.type === Boolean) {
-            return value === true ? 1 : 0
+            return value === true ? 1 : 0;
         } else if (columnMetadata.type === "date") {
-            return DateUtils.mixedDateToDateString(value)
+            return DateUtils.mixedDateToDateString(value);
         } else if (columnMetadata.type === "time") {
-            return DateUtils.mixedDateToTimeString(value)
+            return DateUtils.mixedDateToTimeString(value);
         } else if (
             columnMetadata.type === "datetime" ||
             columnMetadata.type === Date ||
@@ -390,20 +390,20 @@ export class CockroachDriver implements Driver {
             columnMetadata.type === "timestamp with time zone" ||
             columnMetadata.type === "timestamp without time zone"
         ) {
-            return DateUtils.mixedDateToDate(value)
+            return DateUtils.mixedDateToDate(value);
         } else if (
             ["json", "jsonb", ...this.spatialTypes].indexOf(
                 columnMetadata.type,
             ) >= 0
         ) {
-            return JSON.stringify(value)
+            return JSON.stringify(value);
         } else if (columnMetadata.type === "simple-array") {
-            return DateUtils.simpleArrayToString(value)
+            return DateUtils.simpleArrayToString(value);
         } else if (columnMetadata.type === "simple-json") {
-            return DateUtils.simpleJsonToString(value)
+            return DateUtils.simpleJsonToString(value);
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -416,7 +416,7 @@ export class CockroachDriver implements Driver {
                       columnMetadata.transformer,
                       value,
                   )
-                : value
+                : value;
 
         // unique_rowid() generates bigint value and should not be converted to number
         if (
@@ -426,9 +426,9 @@ export class CockroachDriver implements Driver {
                 !columnMetadata.isArray) ||
             columnMetadata.generationStrategy === "increment"
         ) {
-            value = parseInt(value)
+            value = parseInt(value);
         } else if (columnMetadata.type === Boolean) {
-            value = value ? true : false
+            value = value ? true : false;
         } else if (
             columnMetadata.type === "datetime" ||
             columnMetadata.type === Date ||
@@ -437,22 +437,22 @@ export class CockroachDriver implements Driver {
             columnMetadata.type === "timestamp with time zone" ||
             columnMetadata.type === "timestamp without time zone"
         ) {
-            value = DateUtils.normalizeHydratedDate(value)
+            value = DateUtils.normalizeHydratedDate(value);
         } else if (columnMetadata.type === "date") {
-            value = DateUtils.mixedDateToDateString(value)
+            value = DateUtils.mixedDateToDateString(value);
         } else if (columnMetadata.type === "time") {
-            value = DateUtils.mixedTimeToString(value)
+            value = DateUtils.mixedTimeToString(value);
         } else if (columnMetadata.type === "simple-array") {
-            value = DateUtils.stringToSimpleArray(value)
+            value = DateUtils.stringToSimpleArray(value);
         } else if (columnMetadata.type === "simple-json") {
-            value = DateUtils.stringToSimpleJson(value)
+            value = DateUtils.stringToSimpleJson(value);
         } else if (
             columnMetadata.type === "enum" ||
             columnMetadata.type === "simple-enum"
         ) {
             if (columnMetadata.isArray) {
-                if (value === "{}") return []
-                if (Array.isArray(value)) return value
+                if (value === "{}") return [];
+                if (Array.isArray(value)) return value;
 
                 // manually convert enum array to array of values (pg does not support, see https://github.com/brianc/node-pg-types/issues/56)
                 value = (value as string)
@@ -461,27 +461,27 @@ export class CockroachDriver implements Driver {
                     .map((val) => {
                         // replace double quotes from the beginning and from the end
                         if (val.startsWith(`"`) && val.endsWith(`"`))
-                            val = val.slice(1, -1)
+                            val = val.slice(1, -1);
                         // replace double escaped backslash to single escaped e.g. \\\\ -> \\
-                        val = val.replace(/(\\\\)/g, "\\")
+                        val = val.replace(/(\\\\)/g, "\\");
                         // replace escaped double quotes to non-escaped e.g. \"asd\" -> "asd"
-                        return val.replace(/(\\")/g, '"')
-                    })
+                        return val.replace(/(\\")/g, '"');
+                    });
 
                 // convert to number if that exists in possible enum options
                 value = value.map((val: string) => {
                     return !isNaN(+val) &&
                         columnMetadata.enum!.indexOf(parseInt(val)) >= 0
                         ? parseInt(val)
-                        : val
-                })
+                        : val;
+                });
             } else {
                 // convert to number if that exists in possible enum options
                 value =
                     !isNaN(+value) &&
                     columnMetadata.enum!.indexOf(parseInt(value)) >= 0
                         ? parseInt(value)
-                        : value
+                        : value;
             }
         }
 
@@ -489,9 +489,9 @@ export class CockroachDriver implements Driver {
             value = ApplyValueTransformers.transformFrom(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        return value
+        return value;
     }
 
     /**
@@ -505,47 +505,47 @@ export class CockroachDriver implements Driver {
     ): [string, any[]] {
         const escapedParameters: any[] = Object.keys(nativeParameters).map(
             (key) => nativeParameters[key],
-        )
+        );
         if (!parameters || !Object.keys(parameters).length)
-            return [sql, escapedParameters]
+            return [sql, escapedParameters];
 
         sql = sql.replace(
             /:(\.\.\.)?([A-Za-z0-9_.]+)/g,
             (full, isArray: string, key: string): string => {
                 if (!parameters.hasOwnProperty(key)) {
-                    return full
+                    return full;
                 }
 
-                let value: any = parameters[key]
+                let value: any = parameters[key];
 
                 if (isArray) {
                     return value
                         .map((v: any) => {
-                            escapedParameters.push(v)
+                            escapedParameters.push(v);
                             return this.createParameter(
                                 key,
                                 escapedParameters.length - 1,
-                            )
+                            );
                         })
-                        .join(", ")
+                        .join(", ");
                 }
 
                 if (typeof value === "function") {
-                    return value()
+                    return value();
                 }
 
-                escapedParameters.push(value)
-                return this.createParameter(key, escapedParameters.length - 1)
+                escapedParameters.push(value);
+                return this.createParameter(key, escapedParameters.length - 1);
             },
-        ) // todo: make replace only in value statements, otherwise problems
-        return [sql, escapedParameters]
+        ); // todo: make replace only in value statements, otherwise problems
+        return [sql, escapedParameters];
     }
 
     /**
      * Escapes a column name.
      */
     escape(columnName: string): string {
-        return '"' + columnName + '"'
+        return '"' + columnName + '"';
     }
 
     /**
@@ -553,13 +553,13 @@ export class CockroachDriver implements Driver {
      * E.g. myDB.mySchema.myTable
      */
     buildTableName(tableName: string, schema?: string): string {
-        let tablePath = [tableName]
+        let tablePath = [tableName];
 
         if (schema) {
-            tablePath.unshift(schema)
+            tablePath.unshift(schema);
         }
 
-        return tablePath.join(".")
+        return tablePath.join(".");
     }
 
     /**
@@ -568,23 +568,23 @@ export class CockroachDriver implements Driver {
     parseTableName(
         target: EntityMetadata | Table | View | TableForeignKey | string,
     ): { database?: string; schema?: string; tableName: string } {
-        const driverDatabase = this.database
-        const driverSchema = this.schema
+        const driverDatabase = this.database;
+        const driverSchema = this.schema;
 
         if (InstanceChecker.isTable(target) || InstanceChecker.isView(target)) {
             // name is sometimes a path
-            const parsed = this.parseTableName(target.name)
+            const parsed = this.parseTableName(target.name);
 
             return {
                 database: target.database || parsed.database || driverDatabase,
                 schema: target.schema || parsed.schema || driverSchema,
                 tableName: parsed.tableName,
-            }
+            };
         }
 
         if (InstanceChecker.isTableForeignKey(target)) {
             // referencedTableName is sometimes a path
-            const parsed = this.parseTableName(target.referencedTableName)
+            const parsed = this.parseTableName(target.referencedTableName);
 
             return {
                 database:
@@ -594,7 +594,7 @@ export class CockroachDriver implements Driver {
                 schema:
                     target.referencedSchema || parsed.schema || driverSchema,
                 tableName: parsed.tableName,
-            }
+            };
         }
 
         if (InstanceChecker.isEntityMetadata(target)) {
@@ -604,29 +604,29 @@ export class CockroachDriver implements Driver {
                 database: target.database || driverDatabase,
                 schema: target.schema || driverSchema,
                 tableName: target.tableName,
-            }
+            };
         }
 
-        const parts = target.split(".")
+        const parts = target.split(".");
 
         return {
             database: driverDatabase,
             schema: (parts.length > 1 ? parts[0] : undefined) || driverSchema,
             tableName: parts.length > 1 ? parts[1] : parts[0],
-        }
+        };
     }
 
     /**
      * Creates a database type from a given column metadata.
      */
     normalizeType(column: {
-        type?: ColumnType
-        length?: number | string
-        precision?: number | null
-        scale?: number
-        isArray?: boolean
-        isGenerated?: boolean
-        generationStrategy?: "increment" | "uuid" | "rowid"
+        type?: ColumnType;
+        length?: number | string;
+        precision?: number | null;
+        scale?: number;
+        isArray?: boolean;
+        isGenerated?: boolean;
+        generationStrategy?: "increment" | "uuid" | "rowid";
     }): string {
         if (
             column.type === Number ||
@@ -635,51 +635,51 @@ export class CockroachDriver implements Driver {
             column.type === "bigint" ||
             column.type === "int64"
         ) {
-            return "int8"
+            return "int8";
         } else if (
             column.type === String ||
             column.type === "character varying" ||
             column.type === "char varying"
         ) {
-            return "varchar"
+            return "varchar";
         } else if (
             column.type === Date ||
             column.type === "timestamp without time zone"
         ) {
-            return "timestamp"
+            return "timestamp";
         } else if (column.type === "timestamp with time zone") {
-            return "timestamptz"
+            return "timestamptz";
         } else if (column.type === "time without time zone") {
-            return "time"
+            return "time";
         } else if (column.type === Boolean || column.type === "boolean") {
-            return "bool"
+            return "bool";
         } else if (
             column.type === "simple-array" ||
             column.type === "simple-json" ||
             column.type === "text"
         ) {
-            return "string"
+            return "string";
         } else if (column.type === "bytea" || column.type === "blob") {
-            return "bytes"
+            return "bytes";
         } else if (column.type === "smallint") {
-            return "int2"
+            return "int2";
         } else if (column.type === "numeric" || column.type === "dec") {
-            return "decimal"
+            return "decimal";
         } else if (
             column.type === "double precision" ||
             column.type === "float"
         ) {
-            return "float8"
+            return "float8";
         } else if (column.type === "real") {
-            return "float4"
+            return "float4";
         } else if (column.type === "character") {
-            return "char"
+            return "char";
         } else if (column.type === "simple-enum") {
-            return "enum"
+            return "enum";
         } else if (column.type === "json") {
-            return "jsonb"
+            return "jsonb";
         } else {
-            return (column.type as string) || ""
+            return (column.type as string) || "";
         }
     }
 
@@ -687,67 +687,67 @@ export class CockroachDriver implements Driver {
      * Normalizes "default" value of the column.
      */
     normalizeDefault(columnMetadata: ColumnMetadata): string | undefined {
-        const defaultValue = columnMetadata.default
+        const defaultValue = columnMetadata.default;
 
         if (
             (columnMetadata.type === "enum" ||
                 columnMetadata.type === "simple-enum") &&
             defaultValue !== undefined
         ) {
-            if (defaultValue === null) return "NULL"
+            if (defaultValue === null) return "NULL";
             if (columnMetadata.isArray) {
-                const enumName = this.buildEnumName(columnMetadata)
-                let arrayValue = defaultValue
+                const enumName = this.buildEnumName(columnMetadata);
+                let arrayValue = defaultValue;
                 if (typeof defaultValue === "string") {
-                    if (defaultValue === "{}") return `ARRAY[]::${enumName}[]`
+                    if (defaultValue === "{}") return `ARRAY[]::${enumName}[]`;
                     arrayValue = defaultValue
                         .replace("{", "")
                         .replace("}", "")
-                        .split(",")
+                        .split(",");
                 }
                 if (Array.isArray(arrayValue)) {
                     const expr = `ARRAY[${arrayValue
                         .map((it) => `'${it}'`)
-                        .join(",")}]`
-                    return `${expr}::${enumName}[]`
+                        .join(",")}]`;
+                    return `${expr}::${enumName}[]`;
                 }
             } else {
-                return `'${defaultValue}'`
+                return `'${defaultValue}'`;
             }
         } else if (typeof defaultValue === "number") {
-            return `(${defaultValue})`
+            return `(${defaultValue})`;
         }
 
         if (typeof defaultValue === "boolean") {
-            return defaultValue ? "true" : "false"
+            return defaultValue ? "true" : "false";
         }
 
         if (typeof defaultValue === "function") {
-            const value = defaultValue()
+            const value = defaultValue();
             if (value.toUpperCase() === "CURRENT_TIMESTAMP") {
-                return "current_timestamp()"
+                return "current_timestamp()";
             } else if (value.toUpperCase() === "CURRENT_DATE") {
-                return "current_date()"
+                return "current_date()";
             }
-            return value
+            return value;
         }
 
         if (typeof defaultValue === "string") {
             const arrayCast = columnMetadata.isArray
                 ? `::${columnMetadata.type}[]`
-                : ""
-            return `'${defaultValue}'${arrayCast}`
+                : "";
+            return `'${defaultValue}'${arrayCast}`;
         }
 
         if (ObjectUtils.isObject(defaultValue) && defaultValue !== null) {
-            return `'${JSON.stringify(defaultValue)}'`
+            return `'${JSON.stringify(defaultValue)}'`;
         }
 
         if (defaultValue === undefined || defaultValue === null) {
-            return undefined
+            return undefined;
         }
 
-        return `${defaultValue}`
+        return `${defaultValue}`;
     }
 
     /**
@@ -756,49 +756,49 @@ export class CockroachDriver implements Driver {
     normalizeIsUnique(column: ColumnMetadata): boolean {
         return column.entityMetadata.uniques.some(
             (uq) => uq.columns.length === 1 && uq.columns[0] === column,
-        )
+        );
     }
 
     /**
      * Returns default column lengths, which is required on column creation.
      */
     getColumnLength(column: ColumnMetadata): string {
-        return column.length ? column.length.toString() : ""
+        return column.length ? column.length.toString() : "";
     }
 
     /**
      * Creates column type definition including length, precision and scale
      */
     createFullType(column: TableColumn): string {
-        let type = column.type
+        let type = column.type;
 
         if (column.length) {
-            type += "(" + column.length + ")"
+            type += "(" + column.length + ")";
         } else if (
             column.precision !== null &&
             column.precision !== undefined &&
             column.scale !== null &&
             column.scale !== undefined
         ) {
-            type += "(" + column.precision + "," + column.scale + ")"
+            type += "(" + column.precision + "," + column.scale + ")";
         } else if (
             column.precision !== null &&
             column.precision !== undefined
         ) {
-            type += "(" + column.precision + ")"
+            type += "(" + column.precision + ")";
         } else if (this.spatialTypes.indexOf(column.type as ColumnType) >= 0) {
             if (column.spatialFeatureType != null && column.srid != null) {
-                type = `${column.type}(${column.spatialFeatureType},${column.srid})`
+                type = `${column.type}(${column.spatialFeatureType},${column.srid})`;
             } else if (column.spatialFeatureType != null) {
-                type = `${column.type}(${column.spatialFeatureType})`
+                type = `${column.type}(${column.spatialFeatureType})`;
             } else {
-                type = column.type
+                type = column.type;
             }
         }
 
-        if (column.isArray) type += " array"
+        if (column.isArray) type += " array";
 
-        return type
+        return type;
     }
 
     /**
@@ -808,14 +808,14 @@ export class CockroachDriver implements Driver {
      */
     async obtainMasterConnection(): Promise<any> {
         if (!this.master) {
-            throw new LapinError("Driver not Connected")
+            throw new LapinError("Driver not Connected");
         }
 
         return new Promise((ok, fail) => {
             this.master.connect((err: any, connection: any, release: any) => {
-                err ? fail(err) : ok([connection, release])
-            })
-        })
+                err ? fail(err) : ok([connection, release]);
+            });
+        });
     }
 
     /**
@@ -824,17 +824,17 @@ export class CockroachDriver implements Driver {
      * If replication is not setup then returns master (default) connection's database connection.
      */
     async obtainSlaveConnection(): Promise<any> {
-        if (!this.slaves.length) return this.obtainMasterConnection()
+        if (!this.slaves.length) return this.obtainMasterConnection();
 
-        const random = Math.floor(Math.random() * this.slaves.length)
+        const random = Math.floor(Math.random() * this.slaves.length);
 
         return new Promise((ok, fail) => {
             this.slaves[random].connect(
                 (err: any, connection: any, release: any) => {
-                    err ? fail(err) : ok([connection, release])
+                    err ? fail(err) : ok([connection, release]);
                 },
-            )
-        })
+            );
+        });
     }
 
     /**
@@ -843,20 +843,20 @@ export class CockroachDriver implements Driver {
      * todo: slow. optimize Object.keys(), OrmUtils.mergeDeep and column.createValueMap parts
      */
     createGeneratedMap(metadata: EntityMetadata, insertResult: ObjectLiteral) {
-        if (!insertResult) return undefined
+        if (!insertResult) return undefined;
 
         return Object.keys(insertResult).reduce((map, key) => {
-            const column = metadata.findColumnWithDatabaseName(key)
+            const column = metadata.findColumnWithDatabaseName(key);
             if (column) {
                 OrmUtils.mergeDeep(
                     map,
                     column.createValueMap(
                         this.prepareHydratedValue(insertResult[key], column),
                     ),
-                )
+                );
             }
-            return map
-        }, {} as ObjectLiteral)
+            return map;
+        }, {} as ObjectLiteral);
     }
 
     /**
@@ -870,8 +870,8 @@ export class CockroachDriver implements Driver {
         return columnMetadatas.filter((columnMetadata) => {
             const tableColumn = tableColumns.find(
                 (c) => c.name === columnMetadata.databaseName,
-            )
-            if (!tableColumn) return false // we don't need new columns, we only need exist and changed
+            );
+            if (!tableColumn) return false; // we don't need new columns, we only need exist and changed
 
             // console.log("table:", columnMetadata.entityMetadata.tableName);
             // console.log("name:", tableColumn.name, columnMetadata.databaseName);
@@ -921,47 +921,47 @@ export class CockroachDriver implements Driver {
                 (tableColumn.spatialFeatureType || "").toLowerCase() !==
                     (columnMetadata.spatialFeatureType || "").toLowerCase() ||
                 tableColumn.srid !== columnMetadata.srid
-            )
-        })
+            );
+        });
     }
 
     private lowerDefaultValueIfNecessary(value: string | undefined) {
         if (!value) {
-            return value
+            return value;
         }
         return value
             .split(`'`)
             .map((v, i) => {
-                return i % 2 === 1 ? v : v.toLowerCase()
+                return i % 2 === 1 ? v : v.toLowerCase();
             })
-            .join(`'`)
+            .join(`'`);
     }
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */
     isReturningSqlSupported(): boolean {
-        return true
+        return true;
     }
 
     /**
      * Returns true if driver supports uuid values generation on its own.
      */
     isUUIDGenerationSupported(): boolean {
-        return true
+        return true;
     }
 
     /**
      * Returns true if driver supports fulltext indices.
      */
     isFullTextColumnTypeSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Creates an escaped parameter.
      */
     createParameter(parameterName: string, index: number): string {
-        return "$" + (index + 1)
+        return "$" + (index + 1);
     }
 
     // -------------------------------------------------------------------------
@@ -973,12 +973,12 @@ export class CockroachDriver implements Driver {
      */
     loadStreamDependency() {
         try {
-            return PlatformTools.load("pg-query-stream")
+            return PlatformTools.load("pg-query-stream");
         } catch (e) {
             // todo: better error for browser env
             throw new LapinError(
                 `To use streams you should install pg-query-stream package. Please run npm i pg-query-stream --save command.`,
-            )
+            );
         }
     }
 
@@ -991,17 +991,18 @@ export class CockroachDriver implements Driver {
      */
     protected loadDependencies(): void {
         try {
-            const postgres = this.options.driver || PlatformTools.load("pg")
-            this.postgres = postgres
+            const postgres = this.options.driver || PlatformTools.load("pg");
+            this.postgres = postgres;
             try {
                 const pgNative =
-                    this.options.nativeDriver || PlatformTools.load("pg-native")
+                    this.options.nativeDriver ||
+                    PlatformTools.load("pg-native");
                 if (pgNative && this.postgres.native)
-                    this.postgres = this.postgres.native
+                    this.postgres = this.postgres.native;
             } catch (e) {}
         } catch (e) {
             // todo: better error for browser env
-            throw new DriverPackageNotInstalledError("Postgres", "pg")
+            throw new DriverPackageNotInstalledError("Postgres", "pg");
         }
     }
 
@@ -1016,7 +1017,7 @@ export class CockroachDriver implements Driver {
             {},
             credentials,
             DriverUtils.buildDriverOptions(credentials),
-        ) // todo: do it better way
+        ); // todo: do it better way
 
         // build connection options for the driver
         const connectionOptions = Object.assign(
@@ -1032,30 +1033,30 @@ export class CockroachDriver implements Driver {
                 max: options.poolSize,
             },
             options.extra || {},
-        )
+        );
 
         // create a connection pool
-        const pool = new this.postgres.Pool(connectionOptions)
-        const { logger } = this.connection
+        const pool = new this.postgres.Pool(connectionOptions);
+        const { logger } = this.connection;
 
         const poolErrorHandler =
             options.poolErrorHandler ||
             ((error: any) =>
-                logger.log("warn", `Postgres pool raised an error. ${error}`))
+                logger.log("warn", `Postgres pool raised an error. ${error}`));
 
         /*
           Attaching an error handler to pool errors is essential, as, otherwise, errors raised will go unhandled and
           cause the hosting app to crash.
          */
-        pool.on("error", poolErrorHandler)
+        pool.on("error", poolErrorHandler);
 
         return new Promise((ok, fail) => {
             pool.connect((err: any, connection: any, release: Function) => {
-                if (err) return fail(err)
-                release()
-                ok(pool)
-            })
-        })
+                if (err) return fail(err);
+                release();
+                ok(pool);
+            });
+        });
     }
 
     /**
@@ -1066,37 +1067,39 @@ export class CockroachDriver implements Driver {
             this.connectedQueryRunners.map((queryRunner) =>
                 queryRunner.release(),
             ),
-        )
+        );
         return new Promise<void>((ok, fail) => {
-            pool.end((err: any) => (err ? fail(err) : ok()))
-        })
+            pool.end((err: any) => (err ? fail(err) : ok()));
+        });
     }
 
     /**
      * Escapes a given comment.
      */
     protected escapeComment(comment?: string) {
-        if (!comment) return comment
+        if (!comment) return comment;
 
-        comment = comment.replace(/'/g, "''").replace(/\u0000/g, "") // Null bytes aren't allowed in comments
+        comment = comment.replace(/'/g, "''").replace(/\u0000/g, ""); // Null bytes aren't allowed in comments
 
-        return comment
+        return comment;
     }
 
     /**
      * Builds ENUM type name from given table and column.
      */
     protected buildEnumName(column: ColumnMetadata): string {
-        const { schema, tableName } = this.parseTableName(column.entityMetadata)
+        const { schema, tableName } = this.parseTableName(
+            column.entityMetadata,
+        );
         let enumName = column.enumName
             ? column.enumName
-            : `${tableName}_${column.databaseName.toLowerCase()}_enum`
-        if (schema) enumName = `${schema}.${enumName}`
+            : `${tableName}_${column.databaseName.toLowerCase()}_enum`;
+        if (schema) enumName = `${schema}.${enumName}`;
         return enumName
             .split(".")
             .map((i) => {
-                return `"${i}"`
+                return `"${i}"`;
             })
-            .join(".")
+            .join(".");
     }
 }

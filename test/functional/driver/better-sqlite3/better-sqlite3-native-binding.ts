@@ -1,21 +1,21 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { expect } from "chai"
-import { join } from "path"
-import { DataSource } from "../../../../src"
-import { BetterSqlite3ConnectionOptions } from "../../../../src/driver/better-sqlite3/BetterSqlite3ConnectionOptions"
+} from "../../../utils/test-utils";
+import { expect } from "chai";
+import { join } from "path";
+import { DataSource } from "../../../../src";
+import { BetterSqlite3ConnectionOptions } from "../../../../src/driver/better-sqlite3/BetterSqlite3ConnectionOptions";
 
 const pathToBetterSqliteNode = join(
     __dirname,
     "../../../../../../node_modules/better-sqlite3/build/Release/better_sqlite3.node",
-)
+);
 
 describe("option nativeBinding for better-sqlite3", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -25,9 +25,9 @@ describe("option nativeBinding for better-sqlite3", () => {
                     nativeBinding: pathToBetterSqliteNode,
                 },
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should use a the path set in nativeBindings to the node file", () =>
         Promise.all(
@@ -37,7 +37,7 @@ describe("option nativeBinding for better-sqlite3", () => {
                         connection.driver
                             .options as BetterSqlite3ConnectionOptions
                     ).nativeBinding,
-                ).to.be.eql(pathToBetterSqliteNode)
+                ).to.be.eql(pathToBetterSqliteNode);
             }),
-        ))
-})
+        ));
+});

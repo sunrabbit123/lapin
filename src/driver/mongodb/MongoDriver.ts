@@ -1,30 +1,30 @@
-import { Driver } from "../Driver"
-import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError"
-import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
-import { CteCapabilities } from "../types/CteCapabilities"
-import { MongoQueryRunner } from "./MongoQueryRunner"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { ColumnMetadata } from "../../metadata/ColumnMetadata"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { DataSource } from "../../data-source/DataSource"
-import { MongoConnectionOptions } from "./MongoConnectionOptions"
-import { MappedColumnTypes } from "../types/MappedColumnTypes"
-import { ColumnType } from "../types/ColumnTypes"
-import { MongoSchemaBuilder } from "../../schema-builder/MongoSchemaBuilder"
-import { DataTypeDefaults } from "../types/DataTypeDefaults"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { DataSourceOptions } from "../../data-source/DataSourceOptions"
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { ObjectUtils } from "../../util/ObjectUtils"
-import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { DriverUtils } from "../DriverUtils"
-import { LapinError } from "../../error"
-import { Table } from "../../schema-builder/table/Table"
-import { View } from "../../schema-builder/view/View"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { InstanceChecker } from "../../util/InstanceChecker"
-import { UpsertType } from "../types/UpsertType.js"
+import { Driver } from "../Driver";
+import { ConnectionIsNotSetError } from "../../error/ConnectionIsNotSetError";
+import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
+import { CteCapabilities } from "../types/CteCapabilities";
+import { MongoQueryRunner } from "./MongoQueryRunner";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { ColumnMetadata } from "../../metadata/ColumnMetadata";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { DataSource } from "../../data-source/DataSource";
+import { MongoConnectionOptions } from "./MongoConnectionOptions";
+import { MappedColumnTypes } from "../types/MappedColumnTypes";
+import { ColumnType } from "../types/ColumnTypes";
+import { MongoSchemaBuilder } from "../../schema-builder/MongoSchemaBuilder";
+import { DataTypeDefaults } from "../types/DataTypeDefaults";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { DataSourceOptions } from "../../data-source/DataSourceOptions";
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { ObjectUtils } from "../../util/ObjectUtils";
+import { ApplyValueTransformers } from "../../util/ApplyValueTransformers";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { DriverUtils } from "../DriverUtils";
+import { LapinError } from "../../error";
+import { Table } from "../../schema-builder/table/Table";
+import { View } from "../../schema-builder/view/View";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { InstanceChecker } from "../../util/InstanceChecker";
+import { UpsertType } from "../types/UpsertType.js";
 
 /**
  * Organizes communication with MongoDB.
@@ -37,13 +37,13 @@ export class MongoDriver implements Driver {
     /**
      * Underlying mongodb library.
      */
-    mongodb: any
+    mongodb: any;
 
     /**
      * Mongodb does not require to dynamically create query runner each time,
      * because it does not have a regular connection pool as RDBMS systems have.
      */
-    queryRunner?: MongoQueryRunner
+    queryRunner?: MongoQueryRunner;
 
     // -------------------------------------------------------------------------
     // Public Implemented Properties
@@ -52,57 +52,57 @@ export class MongoDriver implements Driver {
     /**
      * Connection options.
      */
-    options: MongoConnectionOptions
+    options: MongoConnectionOptions;
 
     /**
      * Master database used to perform all write queries.
      */
-    database?: string
+    database?: string;
 
     /**
      * Indicates if replication is enabled.
      */
-    isReplicated: boolean = false
+    isReplicated: boolean = false;
 
     /**
      * Indicates if tree tables are supported by this driver.
      */
-    treeSupport = false
+    treeSupport = false;
 
     /**
      * Represent transaction support by this driver
      */
-    transactionSupport = "none" as const
+    transactionSupport = "none" as const;
 
     /**
      * Mongodb does not need to have column types because they are not used in schema sync.
      */
-    supportedDataTypes: ColumnType[] = []
+    supportedDataTypes: ColumnType[] = [];
 
     /**
      * Returns type of upsert supported by driver if any
      */
-    supportedUpsertTypes: UpsertType[]
+    supportedUpsertTypes: UpsertType[];
 
     /**
      * Gets list of spatial column data types.
      */
-    spatialTypes: ColumnType[] = []
+    spatialTypes: ColumnType[] = [];
 
     /**
      * Gets list of column data types that support length by a driver.
      */
-    withLengthColumnTypes: ColumnType[] = []
+    withLengthColumnTypes: ColumnType[] = [];
 
     /**
      * Gets list of column data types that support precision by a driver.
      */
-    withPrecisionColumnTypes: ColumnType[] = []
+    withPrecisionColumnTypes: ColumnType[] = [];
 
     /**
      * Gets list of column data types that support scale by a driver.
      */
-    withScaleColumnTypes: ColumnType[] = []
+    withScaleColumnTypes: ColumnType[] = [];
 
     /**
      * Mongodb does not need to have a strong defined mapped column types because they are not used in schema sync.
@@ -131,19 +131,19 @@ export class MongoDriver implements Driver {
         metadataTable: "int",
         metadataName: "int",
         metadataValue: "int",
-    }
+    };
 
     /**
      * Default values of length, precision and scale depends on column data type.
      * Used in the cases when length/precision/scale is not specified by user.
      */
-    dataTypeDefaults: DataTypeDefaults
+    dataTypeDefaults: DataTypeDefaults;
 
     /**
      * No documentation specifying a maximum length for identifiers could be found
      * for MongoDB.
      */
-    maxAliasLength?: number
+    maxAliasLength?: number;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -217,28 +217,28 @@ export class MongoDriver implements Driver {
         "useUnifiedTopology",
         "autoEncryption",
         "retryWrites",
-    ]
+    ];
 
     cteCapabilities: CteCapabilities = {
         enabled: false,
-    }
+    };
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(protected connection: DataSource) {
-        this.options = connection.options as MongoConnectionOptions
+        this.options = connection.options as MongoConnectionOptions;
 
         // validate options to make sure everything is correct and driver will be able to establish connection
-        this.validateOptions(connection.options)
+        this.validateOptions(connection.options);
 
         // load mongodb package
-        this.loadDependencies()
+        this.loadDependencies();
 
         this.database = DriverUtils.buildMongoDBDriverOptions(
             this.options,
-        ).database
+        ).database;
     }
 
     // -------------------------------------------------------------------------
@@ -250,29 +250,29 @@ export class MongoDriver implements Driver {
      */
     connect(): Promise<void> {
         return new Promise<void>((ok, fail) => {
-            const options = DriverUtils.buildMongoDBDriverOptions(this.options)
+            const options = DriverUtils.buildMongoDBDriverOptions(this.options);
 
             this.mongodb.MongoClient.connect(
                 this.buildConnectionUrl(options),
                 this.buildConnectionOptions(options),
                 (err: any, client: any) => {
-                    if (err) return fail(err)
+                    if (err) return fail(err);
 
                     this.queryRunner = new MongoQueryRunner(
                         this.connection,
                         client,
-                    )
+                    );
                     ObjectUtils.assign(this.queryRunner, {
                         manager: this.connection.manager,
-                    })
-                    ok()
+                    });
+                    ok();
                 },
-            )
-        })
+            );
+        });
     }
 
     afterConnect(): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -281,26 +281,26 @@ export class MongoDriver implements Driver {
     async disconnect(): Promise<void> {
         return new Promise<void>((ok, fail) => {
             if (!this.queryRunner)
-                return fail(new ConnectionIsNotSetError("mongodb"))
+                return fail(new ConnectionIsNotSetError("mongodb"));
 
-            const handler = (err: any) => (err ? fail(err) : ok())
-            this.queryRunner.databaseConnection.close(handler)
-            this.queryRunner = undefined
-        })
+            const handler = (err: any) => (err ? fail(err) : ok());
+            this.queryRunner.databaseConnection.close(handler);
+            this.queryRunner = undefined;
+        });
     }
 
     /**
      * Creates a schema builder used to build and sync a schema.
      */
     createSchemaBuilder() {
-        return new MongoSchemaBuilder(this.connection)
+        return new MongoSchemaBuilder(this.connection);
     }
 
     /**
      * Creates a query runner used to execute database queries.
      */
     createQueryRunner(mode: ReplicationMode) {
-        return this.queryRunner!
+        return this.queryRunner!;
     }
 
     /**
@@ -314,14 +314,14 @@ export class MongoDriver implements Driver {
     ): [string, any[]] {
         throw new LapinError(
             `This operation is not supported by Mongodb driver.`,
-        )
+        );
     }
 
     /**
      * Escapes a column name.
      */
     escape(columnName: string): string {
-        return columnName
+        return columnName;
     }
 
     /**
@@ -333,7 +333,7 @@ export class MongoDriver implements Driver {
         schema?: string,
         database?: string,
     ): string {
-        return tableName
+        return tableName;
     }
 
     /**
@@ -345,24 +345,24 @@ export class MongoDriver implements Driver {
         if (InstanceChecker.isEntityMetadata(target)) {
             return {
                 tableName: target.tableName,
-            }
+            };
         }
 
         if (InstanceChecker.isTable(target) || InstanceChecker.isView(target)) {
             return {
                 tableName: target.name,
-            }
+            };
         }
 
         if (InstanceChecker.isTableForeignKey(target)) {
             return {
                 tableName: target.referencedTableName,
-            }
+            };
         }
 
         return {
             tableName: target,
-        }
+        };
     }
 
     /**
@@ -373,8 +373,8 @@ export class MongoDriver implements Driver {
             value = ApplyValueTransformers.transformTo(
                 columnMetadata.transformer,
                 value,
-            )
-        return value
+            );
+        return value;
     }
 
     /**
@@ -385,22 +385,22 @@ export class MongoDriver implements Driver {
             value = ApplyValueTransformers.transformFrom(
                 columnMetadata.transformer,
                 value,
-            )
-        return value
+            );
+        return value;
     }
 
     /**
      * Creates a database type from a given column metadata.
      */
     normalizeType(column: {
-        type?: ColumnType
-        length?: number | string
-        precision?: number | null
-        scale?: number
+        type?: ColumnType;
+        length?: number | string;
+        precision?: number | null;
+        scale?: number;
     }): string {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
@@ -409,7 +409,7 @@ export class MongoDriver implements Driver {
     normalizeDefault(columnMetadata: ColumnMetadata): string | undefined {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
@@ -418,7 +418,7 @@ export class MongoDriver implements Driver {
     normalizeIsUnique(column: ColumnMetadata): boolean {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
@@ -427,7 +427,7 @@ export class MongoDriver implements Driver {
     getColumnLength(column: ColumnMetadata): string {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
@@ -436,7 +436,7 @@ export class MongoDriver implements Driver {
     createFullType(column: TableColumn): string {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
@@ -445,7 +445,7 @@ export class MongoDriver implements Driver {
      * If replication is not setup then returns default connection's database connection.
      */
     obtainMasterConnection(): Promise<any> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -454,14 +454,14 @@ export class MongoDriver implements Driver {
      * If replication is not setup then returns master (default) connection's database connection.
      */
     obtainSlaveConnection(): Promise<any> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
      * Creates generated map of values generated or returned by database after INSERT query.
      */
     createGeneratedMap(metadata: EntityMetadata, insertedId: any) {
-        return metadata.objectIdColumn!.createValueMap(insertedId)
+        return metadata.objectIdColumn!.createValueMap(insertedId);
     }
 
     /**
@@ -474,35 +474,35 @@ export class MongoDriver implements Driver {
     ): ColumnMetadata[] {
         throw new LapinError(
             `MongoDB is schema-less, not supported by this driver.`,
-        )
+        );
     }
 
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */
     isReturningSqlSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Returns true if driver supports uuid values generation on its own.
      */
     isUUIDGenerationSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Returns true if driver supports fulltext indices.
      */
     isFullTextColumnTypeSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Creates an escaped parameter.
      */
     createParameter(parameterName: string, index: number): string {
-        return ""
+        return "";
     }
 
     // -------------------------------------------------------------------------
@@ -525,10 +525,11 @@ export class MongoDriver implements Driver {
      */
     protected loadDependencies(): any {
         try {
-            const mongodb = this.options.driver || PlatformTools.load("mongodb")
-            this.mongodb = mongodb
+            const mongodb =
+                this.options.driver || PlatformTools.load("mongodb");
+            this.mongodb = mongodb;
         } catch (e) {
-            throw new DriverPackageNotInstalledError("MongoDB", "mongodb")
+            throw new DriverPackageNotInstalledError("MongoDB", "mongodb");
         }
     }
 
@@ -536,16 +537,18 @@ export class MongoDriver implements Driver {
      * Builds connection url that is passed to underlying driver to perform connection to the mongodb database.
      */
     protected buildConnectionUrl(options: { [key: string]: any }): string {
-        const schemaUrlPart = options.type.toLowerCase()
+        const schemaUrlPart = options.type.toLowerCase();
         const credentialsUrlPart =
             options.username && options.password
                 ? `${options.username}:${options.password}@`
-                : ""
+                : "";
 
         const portUrlPart =
-            schemaUrlPart === "mongodb+srv" ? "" : `:${options.port || "27017"}`
+            schemaUrlPart === "mongodb+srv"
+                ? ""
+                : `:${options.port || "27017"}`;
 
-        let connectionString: string
+        let connectionString: string;
         if (options.replicaSet) {
             connectionString = `${schemaUrlPart}://${credentialsUrlPart}${
                 options.hostReplicaSet ||
@@ -553,34 +556,34 @@ export class MongoDriver implements Driver {
                 "127.0.0.1" + portUrlPart
             }/${options.database || ""}?replicaSet=${options.replicaSet}${
                 options.tls ? "&tls=true" : ""
-            }`
+            }`;
         } else {
             connectionString = `${schemaUrlPart}://${credentialsUrlPart}${
                 options.host || "127.0.0.1"
             }${portUrlPart}/${options.database || ""}${
                 options.tls ? "?tls=true" : ""
-            }`
+            }`;
         }
 
-        return connectionString
+        return connectionString;
     }
 
     /**
      * Build connection options from MongoConnectionOptions
      */
     protected buildConnectionOptions(options: { [key: string]: any }): any {
-        const mongoOptions: any = {}
+        const mongoOptions: any = {};
 
         for (let index = 0; index < this.validOptionNames.length; index++) {
-            const optionName = this.validOptionNames[index]
+            const optionName = this.validOptionNames[index];
 
             if (options.extra && optionName in options.extra) {
-                mongoOptions[optionName] = options.extra[optionName]
+                mongoOptions[optionName] = options.extra[optionName];
             } else if (optionName in options) {
-                mongoOptions[optionName] = options[optionName]
+                mongoOptions[optionName] = options[optionName];
             }
         }
 
-        return mongoOptions
+        return mongoOptions;
     }
 }

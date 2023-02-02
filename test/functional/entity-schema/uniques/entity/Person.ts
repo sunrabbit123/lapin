@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../src/index"
+import { EntitySchema } from "../../../../../src/index";
 
 export const PersonSchema = new EntitySchema<any>({
     name: "Person",
@@ -24,4 +24,4 @@ export const PersonSchema = new EntitySchema<any>({
             columns: ["FirstName", "LastName"],
         },
     ],
-})
+});

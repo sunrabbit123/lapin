@@ -5,29 +5,29 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
-} from "../../../../src"
-import { UserMeta } from "./UserMeta"
+} from "../../../../src";
+import { UserMeta } from "./UserMeta";
 
 @Entity()
 @Unique(["firstName"])
 @Unique(["id", "firstName"])
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column()
-    age: number
+    age: number;
 
     @Column({ nullable: false })
-    userMetaId: number
+    userMetaId: number;
 
     @OneToOne(() => UserMeta)
     @JoinColumn({ name: "userMetaId", referencedColumnName: "id" })
-    userMeta: UserMeta
+    userMeta: UserMeta;
 }

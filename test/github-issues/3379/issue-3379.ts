@@ -1,40 +1,40 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource, Table } from "../../../src"
-import { DriverUtils } from "../../../src/driver/DriverUtils"
+} from "../../utils/test-utils";
+import { DataSource, Table } from "../../../src";
+import { DriverUtils } from "../../../src/driver/DriverUtils";
 
 describe("github issues > #3379 Migration will keep create and drop indexes if index name is the same across tables", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should not recreate indices", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
 
-                let postTableName: string = "post"
+                let postTableName: string = "post";
 
                 if (connection.driver.options.type === "mssql") {
-                    postTableName = "testDB.testSchema.post"
-                    await queryRunner.createDatabase("testDB", true)
-                    await queryRunner.createSchema("testDB.testSchema", true)
+                    postTableName = "testDB.testSchema.post";
+                    await queryRunner.createDatabase("testDB", true);
+                    await queryRunner.createSchema("testDB.testSchema", true);
                 } else if (connection.driver.options.type === "postgres") {
-                    postTableName = "testSchema.post"
-                    await queryRunner.createSchema("testSchema", true)
+                    postTableName = "testSchema.post";
+                    await queryRunner.createSchema("testSchema", true);
                 } else if (DriverUtils.isMySQLFamily(connection.driver)) {
-                    postTableName = "testDB.post"
-                    await queryRunner.createDatabase("testDB", true)
+                    postTableName = "testDB.post";
+                    await queryRunner.createDatabase("testDB", true);
                 }
 
                 await queryRunner.createTable(
@@ -62,7 +62,7 @@ describe("github issues > #3379 Migration will keep create and drop indexes if i
                         ],
                     }),
                     true,
-                )
+                );
 
                 // Only MySQL and SQLServer allows non unique index names
                 if (
@@ -90,15 +90,15 @@ describe("github issues > #3379 Migration will keep create and drop indexes if i
                             ],
                         }),
                         true,
-                    )
+                    );
                 }
 
-                await queryRunner.release()
+                await queryRunner.release();
 
                 const sqlInMemory = await connection.driver
                     .createSchemaBuilder()
-                    .log()
-                sqlInMemory.upQueries.length.should.be.equal(0)
+                    .log();
+                sqlInMemory.upQueries.length.should.be.equal(0);
             }),
-        ))
-})
+        ));
+});

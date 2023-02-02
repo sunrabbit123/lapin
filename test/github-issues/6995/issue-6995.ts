@@ -1,13 +1,13 @@
-import "reflect-metadata"
-import { DataSource } from "../../../src"
+import "reflect-metadata";
+import { DataSource } from "../../../src";
 import {
     createTestingConnections,
     closeTestingConnections,
-} from "../../utils/test-utils"
-import { DefaultUpdateDate } from "./entity/default-update-date"
+} from "../../utils/test-utils";
+import { DefaultUpdateDate } from "./entity/default-update-date";
 
 describe("github issues > #6995 Generating migrations for UpdateDateColumn should generate on update clause", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -17,18 +17,18 @@ describe("github issues > #6995 Generating migrations for UpdateDateColumn shoul
                 dropSchema: true,
                 entities: [DefaultUpdateDate],
             })),
-    )
-    after(() => closeTestingConnections(connections))
+    );
+    after(() => closeTestingConnections(connections));
 
     it("should create migration with default ON UPDATE clause", () =>
         Promise.all(
             connections.map(async (connection) => {
                 const sqlInMemory = await connection.driver
                     .createSchemaBuilder()
-                    .log()
+                    .log();
                 sqlInMemory.upQueries
                     .filter((i) => i.query.includes("ON UPDATE"))
-                    .length.should.be.greaterThan(0)
+                    .length.should.be.greaterThan(0);
             }),
-        ))
-})
+        ));
+});

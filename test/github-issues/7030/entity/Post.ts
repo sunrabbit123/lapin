@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class Post {
@@ -6,7 +6,7 @@ export class Post {
         type: "integer",
         name: "id",
     })
-    oldId: number
+    oldId: number;
 
     @Column({
         nullable: false,
@@ -14,5 +14,5 @@ export class Post {
         length: 38,
         name: "new_id",
     })
-    id: string
+    id: string;
 }

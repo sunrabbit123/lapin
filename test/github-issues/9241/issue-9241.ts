@@ -1,17 +1,17 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource, DeepPartial } from "../../../src"
+} from "../../utils/test-utils";
+import { DataSource, DeepPartial } from "../../../src";
 
-import { Employee } from "./entity/Employee"
-import { Photo } from "./entity/Photo"
+import { Employee } from "./entity/Employee";
+import { Photo } from "./entity/Photo";
 
 describe("github issues > #9241 Incorrect insert order when cascade inserting parent inherited relations", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -20,18 +20,18 @@ describe("github issues > #9241 Incorrect insert order when cascade inserting pa
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should save entities properly", async () => {
         for (const connection of connections) {
             const photos: DeepPartial<Photo>[] = [
                 { name: "Photo 1" },
                 { name: "Photo 2" },
-            ]
+            ];
 
-            await connection.getRepository(Photo).save(photos)
+            await connection.getRepository(Photo).save(photos);
 
             const employee: DeepPartial<Employee> = {
                 name: "test name",
@@ -46,13 +46,13 @@ describe("github issues > #9241 Incorrect insert order when cascade inserting pa
                         isProfilePhoto: false,
                     },
                 ],
-            }
+            };
 
-            const employeeRepository = connection.getRepository(Employee)
-            const createdEmployee = employeeRepository.create(employee)
+            const employeeRepository = connection.getRepository(Employee);
+            const createdEmployee = employeeRepository.create(employee);
 
             await expect(employeeRepository.save(createdEmployee)).to.eventually
-                .be.fulfilled
+                .be.fulfilled;
         }
-    })
-})
+    });
+});

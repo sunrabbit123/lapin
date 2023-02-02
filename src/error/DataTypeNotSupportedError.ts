@@ -1,7 +1,7 @@
-import { ColumnType } from "../driver/types/ColumnTypes"
-import { DatabaseType } from "../driver/types/DatabaseType"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { LapinError } from "./LapinError"
+import { ColumnType } from "../driver/types/ColumnTypes";
+import { DatabaseType } from "../driver/types/DatabaseType";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { LapinError } from "./LapinError";
 
 export class DataTypeNotSupportedError extends LapinError {
     constructor(
@@ -9,10 +9,10 @@ export class DataTypeNotSupportedError extends LapinError {
         dataType: ColumnType,
         database?: DatabaseType,
     ) {
-        super()
+        super();
 
         const type =
-            typeof dataType === "string" ? dataType : (<any>dataType).name
-        this.message = `Data type "${type}" in "${column.entityMetadata.targetName}.${column.propertyName}" is not supported by "${database}" database.`
+            typeof dataType === "string" ? dataType : (<any>dataType).name;
+        this.message = `Data type "${type}" in "${column.entityMetadata.targetName}.${column.propertyName}" is not supported by "${database}" database.`;
     }
 }

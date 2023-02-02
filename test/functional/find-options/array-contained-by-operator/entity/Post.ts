@@ -1,8 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src";
 
 export type PostCategory = {
-    name: string
-}
+    name: string;
+};
 
 export enum PostStatus {
     draft = "draft",
@@ -13,21 +13,21 @@ export enum PostStatus {
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column({
         type: "varchar",
         array: true,
     })
-    authors: string[]
+    authors: string[];
 
     @Column({
         type: "enum",
         enum: PostStatus,
         array: true,
     })
-    statuses: PostStatus[]
+    statuses: PostStatus[];
 }

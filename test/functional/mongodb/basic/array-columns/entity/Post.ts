@@ -1,32 +1,32 @@
-import { Entity } from "../../../../../../src/decorator/entity/Entity"
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { ObjectIdColumn } from "../../../../../../src/decorator/columns/ObjectIdColumn"
-import { Counters } from "./Counters"
-import { ObjectID } from "../../../../../../src/driver/mongodb/typings"
+import { Entity } from "../../../../../../src/decorator/entity/Entity";
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { ObjectIdColumn } from "../../../../../../src/decorator/columns/ObjectIdColumn";
+import { Counters } from "./Counters";
+import { ObjectID } from "../../../../../../src/driver/mongodb/typings";
 
 @Entity()
 export class Post {
     @ObjectIdColumn()
-    id: ObjectID
+    id: ObjectID;
 
     @Column()
-    title: string
+    title: string;
 
     @Column((type) => Counters)
-    counters: Counters[]
+    counters: Counters[];
 
     @Column()
-    names: string[]
+    names: string[];
 
     @Column()
-    numbers: number[]
+    numbers: number[];
 
     @Column()
-    booleans: boolean[]
+    booleans: boolean[];
 
     @Column((type) => Counters, { array: true })
-    other1: Counters[]
+    other1: Counters[];
 
     @Column((type) => Counters, { array: true })
-    other2: Counters[]
+    other2: Counters[];
 }

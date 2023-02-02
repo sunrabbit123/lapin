@@ -3,16 +3,16 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from "../../../../../src"
+} from "../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @UpdateDateColumn()
-    updatedAt: Date
+    updatedAt: Date;
 }

@@ -1,15 +1,15 @@
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { BeforeInsert } from "../../../../../../src"
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BeforeInsert } from "../../../../../../src";
 
 export class Tags {
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    used?: number
+    used?: number;
 
     @BeforeInsert()
     beforeInsert() {
-        this.used = 100
+        this.used = 100;
     }
 }

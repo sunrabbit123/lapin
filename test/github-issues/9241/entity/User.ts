@@ -4,21 +4,21 @@ import {
     OneToMany,
     Column,
     TableInheritance,
-} from "../../../../src"
+} from "../../../../src";
 
-import { UserPhoto } from "./UserPhoto"
+import { UserPhoto } from "./UserPhoto";
 
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "type" } })
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany(() => UserPhoto, (userPhoto) => userPhoto.user, {
         cascade: true,
     })
-    userPhotos: UserPhoto[]
+    userPhotos: UserPhoto[];
 }

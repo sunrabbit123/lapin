@@ -3,13 +3,13 @@ import {
     Entity,
     ObjectID,
     ObjectIdColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Configuration {
     @ObjectIdColumn()
-    _id: ObjectID
+    _id: ObjectID;
 
     @DeleteDateColumn()
-    deletedAt?: Date
+    deletedAt?: Date;
 }

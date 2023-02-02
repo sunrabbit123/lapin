@@ -1,4 +1,4 @@
-import { ObjectID } from "../driver/mongodb/typings"
+import { ObjectID } from "../driver/mongodb/typings";
 
 /**
  * A single property handler for FindOptionsRelations.
@@ -25,7 +25,7 @@ export type FindOptionsRelationsProperty<Property> = Property extends Promise<
     ? never
     : Property extends object
     ? FindOptionsRelations<Property> | boolean
-    : boolean
+    : boolean;
 
 /**
  * Relations find options.
@@ -33,8 +33,8 @@ export type FindOptionsRelationsProperty<Property> = Property extends Promise<
 export type FindOptionsRelations<Entity> = {
     [P in keyof Entity]?: P extends "toString"
         ? unknown
-        : FindOptionsRelationsProperty<NonNullable<Entity[P]>>
-}
+        : FindOptionsRelationsProperty<NonNullable<Entity[P]>>;
+};
 
 /**
  * Relation names to be selected by "relation" defined as string.
@@ -42,4 +42,4 @@ export type FindOptionsRelations<Entity> = {
  *
  * @deprecated will be removed in the next version, use FindOptionsRelation type notation instead
  */
-export type FindOptionsRelationByString = string[]
+export type FindOptionsRelationByString = string[];

@@ -16,7 +16,7 @@ export type PrimaryGeneratedColumnType =
     | "smalldecimal" // sap
     | "fixed" // mysql
     | "numeric" // postgres, mssql, sqlite, spanner
-    | "number" // oracle
+    | "number"; // oracle
 
 /**
  * Column types where spatial properties are used.
@@ -25,7 +25,7 @@ export type SpatialColumnType =
     | "geometry" // postgres
     | "geography" // postgres
     | "st_geometry" // sap
-    | "st_point" // sap
+    | "st_point"; // sap
 
 /**
  * Column types where precision and scale properties are used.
@@ -50,7 +50,7 @@ export type WithPrecisionColumnType =
     | "timestamp" // mysql, postgres, mssql, oracle, cockroachdb, spanner
     | "timestamp without time zone" // postgres, cockroachdb
     | "timestamp with time zone" // postgres, oracle, cockroachdb
-    | "timestamp with local time zone" // oracle
+    | "timestamp with local time zone"; // oracle
 
 /**
  * Column types where column length is used.
@@ -74,14 +74,14 @@ export type WithLengthColumnType =
     | "raw" // oracle
     | "binary" // mssql
     | "varbinary" // mssql, sap
-    | "string" // cockroachdb, spanner
+    | "string"; // cockroachdb, spanner
 
 export type WithWidthColumnType =
     | "tinyint" // mysql
     | "smallint" // mysql
     | "mediumint" // mysql
     | "int" // mysql
-    | "bigint" // mysql
+    | "bigint"; // mysql
 
 /**
  * All other regular column types.
@@ -196,7 +196,7 @@ export type SimpleColumnType =
     | "rowversion" // mssql
     | "array" // cockroachdb, sap, spanner
     | "cube" // postgres
-    | "ltree" // postgres
+    | "ltree"; // postgres
 
 /**
  * Any column type column can be.
@@ -210,4 +210,4 @@ export type ColumnType =
     | BooleanConstructor
     | DateConstructor
     | NumberConstructor
-    | StringConstructor
+    | StringConstructor;

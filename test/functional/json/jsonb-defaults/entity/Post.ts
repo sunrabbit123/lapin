@@ -1,32 +1,32 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src";
 
 export type PostCategory = {
-    name: string
-}
+    name: string;
+};
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column({
         type: "jsonb",
         default: ["Dmitry", "Olimjon"],
     })
-    authors: string[]
+    authors: string[];
 
     @Column({
         type: "jsonb",
         default: { name: "TypeScript" },
     })
-    category: PostCategory
+    category: PostCategory;
 
     @Column({
         type: "jsonb",
         default: [{ name: "TypeScript" }],
     })
-    categories: PostCategory[]
+    categories: PostCategory[];
 }

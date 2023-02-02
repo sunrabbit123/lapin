@@ -1,30 +1,30 @@
-import "reflect-metadata"
-import "../../../utils/test-setup"
-import { DataSource, Not } from "../../../../src"
+import "reflect-metadata";
+import "../../../utils/test-setup";
+import { DataSource, Not } from "../../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { Post } from "./entity/Post"
-import { prepareData } from "./find-options-test-utils"
-import { expect } from "chai"
+} from "../../../utils/test-utils";
+import { Post } from "./entity/Post";
+import { prepareData } from "./find-options-test-utils";
+import { expect } from "chai";
 
 describe("find options > order", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 __dirname,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("order by id DESC", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts1 = await connection
                     .createQueryBuilder(Post, "post")
@@ -33,7 +33,7 @@ describe("find options > order", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts1.should.be.eql([
                     {
                         id: 1,
@@ -59,7 +59,7 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts2 = await connection
                     .createQueryBuilder(Post, "post")
@@ -68,7 +68,7 @@ describe("find options > order", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts2.should.be.eql([
                     {
                         id: 1,
@@ -94,7 +94,7 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts3 = await connection
                     .createQueryBuilder(Post, "post")
@@ -103,7 +103,7 @@ describe("find options > order", () => {
                             id: 1,
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts3.should.be.eql([
                     {
                         id: 1,
@@ -129,7 +129,7 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts4 = await connection
                     .createQueryBuilder(Post, "post")
@@ -140,7 +140,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts4.should.be.eql([
                     {
                         id: 1,
@@ -166,7 +166,7 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts5 = await connection
                     .createQueryBuilder(Post, "post")
@@ -175,7 +175,7 @@ describe("find options > order", () => {
                             id: "DESC",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts5.should.be.eql([
                     {
                         id: 4,
@@ -201,7 +201,7 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts6 = await connection
                     .createQueryBuilder(Post, "post")
@@ -210,7 +210,7 @@ describe("find options > order", () => {
                             id: "desc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts6.should.be.eql([
                     {
                         id: 4,
@@ -236,7 +236,7 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts7 = await connection
                     .createQueryBuilder(Post, "post")
@@ -245,7 +245,7 @@ describe("find options > order", () => {
                             id: -1,
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts7.should.be.eql([
                     {
                         id: 4,
@@ -271,7 +271,7 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts8 = await connection
                     .createQueryBuilder(Post, "post")
@@ -282,7 +282,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts8.should.be.eql([
                     {
                         id: 4,
@@ -308,14 +308,14 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("order by title", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -324,7 +324,7 @@ describe("find options > order", () => {
                             title: "desc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 4,
@@ -350,14 +350,14 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where two criteria", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -367,7 +367,7 @@ describe("find options > order", () => {
                             text: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 4,
@@ -393,14 +393,14 @@ describe("find options > order", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("order by relation", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -411,7 +411,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.have.deep.members([
                     {
                         id: 3,
@@ -437,18 +437,18 @@ describe("find options > order", () => {
                         text: "About post #2",
                         counters: { likes: 2 },
                     },
-                ])
-                expect(posts[0].id).to.be.eql(3)
-                expect(posts[1].id).to.be.oneOf([1, 2, 4])
-                expect(posts[2].id).to.be.oneOf([1, 2, 4])
-                expect(posts[1].id).to.not.be.eql(posts[2].id)
+                ]);
+                expect(posts[0].id).to.be.eql(3);
+                expect(posts[1].id).to.be.oneOf([1, 2, 4]);
+                expect(posts[2].id).to.be.oneOf([1, 2, 4]);
+                expect(posts[1].id).to.not.be.eql(posts[2].id);
             }),
-        ))
+        ));
 
     it("order by relation with where relation applied", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -465,7 +465,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -485,14 +485,14 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("order by nested relations", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -508,7 +508,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 // exact row order depends of settings like NULLS FIRST and NULLS LAST
                 posts.should.have.deep.members([
                     {
@@ -529,14 +529,14 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("order by complex nested relations", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -552,7 +552,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 // exact row order depends of settings like NULLS FIRST and NULLS LAST
                 posts.should.have.deep.members([
                     {
@@ -579,18 +579,18 @@ describe("find options > order", () => {
                         text: "About post #3",
                         counters: { likes: 1 },
                     },
-                ])
-                expect(posts[0].id).to.be.oneOf([4, 3])
-                expect(posts[1].id).to.be.oneOf([2, 1])
-                expect(posts[2].id).to.be.oneOf([2, 1])
-                expect(posts[3].id).to.be.oneOf([3, 4])
+                ]);
+                expect(posts[0].id).to.be.oneOf([4, 3]);
+                expect(posts[1].id).to.be.oneOf([2, 1]);
+                expect(posts[2].id).to.be.oneOf([2, 1]);
+                expect(posts[3].id).to.be.oneOf([3, 4]);
             }),
-        ))
+        ));
 
     it("order by column in embed", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -602,7 +602,7 @@ describe("find options > order", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 2,
@@ -628,14 +628,14 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("order by relation in embed", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -651,7 +651,7 @@ describe("find options > order", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.have.deep.members([
                     {
                         id: 3,
@@ -671,11 +671,11 @@ describe("find options > order", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
-                expect(posts[0].id).to.be.eql(3)
-                expect(posts[1].id).to.be.oneOf([1, 4])
-                expect(posts[2].id).to.be.oneOf([1, 4])
-                expect(posts[1].id).to.not.be.eql(posts[2].id)
+                ]);
+                expect(posts[0].id).to.be.eql(3);
+                expect(posts[1].id).to.be.oneOf([1, 4]);
+                expect(posts[2].id).to.be.oneOf([1, 4]);
+                expect(posts[1].id).to.not.be.eql(posts[2].id);
             }),
-        ))
-})
+        ));
+});

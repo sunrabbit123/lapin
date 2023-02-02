@@ -1,4 +1,4 @@
-import { getMetadataArgsStorage } from "../../globals"
+import { getMetadataArgsStorage } from "../../globals";
 import {
     ColumnType,
     SimpleColumnType,
@@ -6,32 +6,32 @@ import {
     WithLengthColumnType,
     WithPrecisionColumnType,
     WithWidthColumnType,
-} from "../../driver/types/ColumnTypes"
-import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs"
-import { ColumnCommonOptions } from "../options/ColumnCommonOptions"
-import { SpatialColumnOptions } from "../options/SpatialColumnOptions"
-import { ColumnWithLengthOptions } from "../options/ColumnWithLengthOptions"
-import { ColumnNumericOptions } from "../options/ColumnNumericOptions"
-import { ColumnEnumOptions } from "../options/ColumnEnumOptions"
-import { ColumnEmbeddedOptions } from "../options/ColumnEmbeddedOptions"
-import { EmbeddedMetadataArgs } from "../../metadata-args/EmbeddedMetadataArgs"
-import { ColumnTypeUndefinedError } from "../../error/ColumnTypeUndefinedError"
-import { ColumnHstoreOptions } from "../options/ColumnHstoreOptions"
-import { ColumnWithWidthOptions } from "../options/ColumnWithWidthOptions"
-import { GeneratedMetadataArgs } from "../../metadata-args/GeneratedMetadataArgs"
-import { ColumnOptions } from "../options/ColumnOptions"
+} from "../../driver/types/ColumnTypes";
+import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs";
+import { ColumnCommonOptions } from "../options/ColumnCommonOptions";
+import { SpatialColumnOptions } from "../options/SpatialColumnOptions";
+import { ColumnWithLengthOptions } from "../options/ColumnWithLengthOptions";
+import { ColumnNumericOptions } from "../options/ColumnNumericOptions";
+import { ColumnEnumOptions } from "../options/ColumnEnumOptions";
+import { ColumnEmbeddedOptions } from "../options/ColumnEmbeddedOptions";
+import { EmbeddedMetadataArgs } from "../../metadata-args/EmbeddedMetadataArgs";
+import { ColumnTypeUndefinedError } from "../../error/ColumnTypeUndefinedError";
+import { ColumnHstoreOptions } from "../options/ColumnHstoreOptions";
+import { ColumnWithWidthOptions } from "../options/ColumnWithWidthOptions";
+import { GeneratedMetadataArgs } from "../../metadata-args/GeneratedMetadataArgs";
+import { ColumnOptions } from "../options/ColumnOptions";
 
 /**
  * Column decorator is used to mark a specific class property as a table column. Only properties decorated with this
  * decorator will be persisted to the database when entity be saved.
  */
-export function Column(): PropertyDecorator
+export function Column(): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
  * Only properties decorated with this decorator will be persisted to the database when entity be saved.
  */
-export function Column(options: ColumnOptions): PropertyDecorator
+export function Column(options: ColumnOptions): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -40,7 +40,7 @@ export function Column(options: ColumnOptions): PropertyDecorator
 export function Column(
     type: SimpleColumnType,
     options?: ColumnCommonOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -49,7 +49,7 @@ export function Column(
 export function Column(
     type: SpatialColumnType,
     options?: ColumnCommonOptions & SpatialColumnOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -58,7 +58,7 @@ export function Column(
 export function Column(
     type: WithLengthColumnType,
     options?: ColumnCommonOptions & ColumnWithLengthOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -67,7 +67,7 @@ export function Column(
 export function Column(
     type: WithWidthColumnType,
     options?: ColumnCommonOptions & ColumnWithWidthOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -76,7 +76,7 @@ export function Column(
 export function Column(
     type: WithPrecisionColumnType,
     options?: ColumnCommonOptions & ColumnNumericOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -85,7 +85,7 @@ export function Column(
 export function Column(
     type: "enum",
     options?: ColumnCommonOptions & ColumnEnumOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -94,7 +94,7 @@ export function Column(
 export function Column(
     type: "simple-enum",
     options?: ColumnCommonOptions & ColumnEnumOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -103,7 +103,7 @@ export function Column(
 export function Column(
     type: "set",
     options?: ColumnCommonOptions & ColumnEnumOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -112,7 +112,7 @@ export function Column(
 export function Column(
     type: "hstore",
     options?: ColumnCommonOptions & ColumnHstoreOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -125,7 +125,7 @@ export function Column(
 export function Column(
     type: (type?: any) => Function,
     options?: ColumnEmbeddedOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -140,17 +140,17 @@ export function Column(
 ): PropertyDecorator | Function {
     return function (object: Object, propertyName: string) {
         // normalize parameters
-        let type: ColumnType | undefined
+        let type: ColumnType | undefined;
         if (
             typeof typeOrOptions === "string" ||
             typeof typeOrOptions === "function"
         ) {
-            type = <ColumnType>typeOrOptions
+            type = <ColumnType>typeOrOptions;
         } else if (typeOrOptions) {
-            options = <ColumnOptions>typeOrOptions
-            type = typeOrOptions.type
+            options = <ColumnOptions>typeOrOptions;
+            type = typeOrOptions.type;
         }
-        if (!options) options = {} as ColumnOptions
+        if (!options) options = {} as ColumnOptions;
 
         // if type is not given explicitly then try to guess it
         const reflectMetadataType =
@@ -160,18 +160,18 @@ export function Column(
                       object,
                       propertyName,
                   )
-                : undefined
+                : undefined;
         if (!type && reflectMetadataType)
             // if type is not given explicitly then try to guess it
-            type = reflectMetadataType
+            type = reflectMetadataType;
 
         // check if there is no type in column options then set type from first function argument, or guessed one
-        if (!options.type && type) options.type = type
+        if (!options.type && type) options.type = type;
 
         // specify HSTORE type if column is HSTORE
         if (options.type === "hstore" && !options.hstoreType)
             options.hstoreType =
-                reflectMetadataType === Object ? "object" : "string"
+                reflectMetadataType === Object ? "object" : "string";
 
         if (typeof typeOrOptions === "function") {
             // register an embedded
@@ -183,27 +183,27 @@ export function Column(
                 prefix:
                     options.prefix !== undefined ? options.prefix : undefined,
                 type: typeOrOptions as (type?: any) => Function,
-            } as EmbeddedMetadataArgs)
+            } as EmbeddedMetadataArgs);
         } else {
             // register a regular column
 
             // if we still don't have a type then we need to give error to user that type is required
             if (!options.type)
-                throw new ColumnTypeUndefinedError(object, propertyName)
+                throw new ColumnTypeUndefinedError(object, propertyName);
 
             // create unique
             if (options.unique === true)
                 getMetadataArgsStorage().uniques.push({
                     target: object.constructor,
                     columns: [propertyName],
-                })
+                });
 
             getMetadataArgsStorage().columns.push({
                 target: object.constructor,
                 propertyName: propertyName,
                 mode: "regular",
                 options: options,
-            } as ColumnMetadataArgs)
+            } as ColumnMetadataArgs);
 
             if (options.generated) {
                 getMetadataArgsStorage().generations.push({
@@ -213,8 +213,8 @@ export function Column(
                         typeof options.generated === "string"
                             ? options.generated
                             : "increment",
-                } as GeneratedMetadataArgs)
+                } as GeneratedMetadataArgs);
             }
         }
-    }
+    };
 }

@@ -1,18 +1,18 @@
-import { EntitySchema } from "../../../../src"
+import { EntitySchema } from "../../../../src";
 
-import Post from "./Post"
+import Post from "./Post";
 
-let id = 0
+let id = 0;
 
 export default class PostAttachment {
-    postPostId: number
-    postOtherId: number
-    attachmentId: number
+    postPostId: number;
+    postOtherId: number;
+    attachmentId: number;
 
-    post: Post
+    post: Post;
 
     constructor() {
-        this.attachmentId = id++
+        this.attachmentId = id++;
     }
 }
 
@@ -43,4 +43,4 @@ export const PostAttachmentSchema = new EntitySchema<PostAttachment>({
             type: "many-to-one",
         },
     },
-})
+});

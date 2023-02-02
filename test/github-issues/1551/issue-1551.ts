@@ -1,26 +1,26 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { Message, MessageType } from "./entity/Message"
-import { Recipient } from "./entity/Recipient"
-import { User } from "./entity/User"
-import { Chat } from "./entity/Chat"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { Message, MessageType } from "./entity/Message";
+import { Recipient } from "./entity/Recipient";
+import { User } from "./entity/User";
+import { Chat } from "./entity/Chat";
 
 describe("github issues > #1551 complex example of cascades + multiple primary keys = persistence order", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 __dirname,
                 enabledDrivers: ["mysql"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("throws an error because there is no object id defined", () =>
         Promise.all(
@@ -33,8 +33,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/1.jpg",
                     phone: "+391234567890",
-                })
-                await connection.manager.save(user1)
+                });
+                await connection.manager.save(user1);
 
                 const user5 = new User({
                     username: "ray",
@@ -44,8 +44,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/3.jpg",
                     phone: "+391234567894",
-                })
-                await connection.manager.save(user5)
+                });
+                await connection.manager.save(user5);
 
                 await connection.manager.save(
                     new Chat({
@@ -76,16 +76,16 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                             }),
                         ],
                     }),
-                )
+                );
 
-                const messages = await connection.manager.find(Message)
-                messages[0].recipients.length.should.be.equal(1)
-                messages[1].recipients.length.should.be.equal(1)
+                const messages = await connection.manager.find(Message);
+                messages[0].recipients.length.should.be.equal(1);
+                messages[1].recipients.length.should.be.equal(1);
 
-                const recipients = await connection.manager.find(Recipient)
-                recipients.length.should.be.equal(2)
+                const recipients = await connection.manager.find(Recipient);
+                recipients.length.should.be.equal(2);
             }),
-        ))
+        ));
 
     // cascade remove are not supported
     it.skip("throws a \"update or delete on table 'message' violates foreign key constraint on table 'recipient'\" error on delete", () =>
@@ -99,8 +99,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/1.jpg",
                     phone: "+391234567890",
-                })
-                await connection.manager.save(user1)
+                });
+                await connection.manager.save(user1);
 
                 const user5 = new User({
                     username: "ray",
@@ -110,8 +110,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/3.jpg",
                     phone: "+391234567894",
-                })
-                await connection.manager.save(user5)
+                });
+                await connection.manager.save(user5);
 
                 await connection.manager.save(
                     new Chat({
@@ -142,25 +142,25 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                             }),
                         ],
                     }),
-                )
+                );
 
                 const message = await connection
                     .createQueryBuilder(Message, "message")
-                    .getOne()
+                    .getOne();
 
                 if (message) {
-                    await connection.getRepository(Message).remove(message)
+                    await connection.getRepository(Message).remove(message);
                 } else {
-                    throw new Error("Cannot get message")
+                    throw new Error("Cannot get message");
                 }
 
-                const messages = await connection.manager.find(Message)
-                messages.length.should.be.equal(0)
+                const messages = await connection.manager.find(Message);
+                messages.length.should.be.equal(0);
 
-                const recipients = await connection.manager.find(Recipient)
-                recipients.length.should.be.equal(0)
+                const recipients = await connection.manager.find(Recipient);
+                recipients.length.should.be.equal(0);
             }),
-        ))
+        ));
 
     // cascade remove are not supported
     it.skip("throws a \"null value in column 'userId' violates not-null constraint\" error on delete", () =>
@@ -174,8 +174,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/1.jpg",
                     phone: "+391234567890",
-                })
-                await connection.manager.save(user1)
+                });
+                await connection.manager.save(user1);
 
                 const user5 = new User({
                     username: "ray",
@@ -185,8 +185,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/3.jpg",
                     phone: "+391234567894",
-                })
-                await connection.manager.save(user5)
+                });
+                await connection.manager.save(user5);
 
                 await connection.manager.save(
                     new Chat({
@@ -217,19 +217,19 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                             }),
                         ],
                     }),
-                )
+                );
 
                 await connection
                     .getRepository(Message)
-                    .remove(await connection.manager.find(Message))
+                    .remove(await connection.manager.find(Message));
 
-                const messages = await connection.manager.find(Message)
-                messages.length.should.be.equal(0)
+                const messages = await connection.manager.find(Message);
+                messages.length.should.be.equal(0);
 
-                const recipients = await connection.manager.find(Recipient)
-                recipients.length.should.be.equal(0)
+                const recipients = await connection.manager.find(Recipient);
+                recipients.length.should.be.equal(0);
             }),
-        ))
+        ));
 
     // cascade remove are not supported
     it.skip('throws a "Subject Recipient must have an identifier to perform operation" internal error on delete', () =>
@@ -243,8 +243,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/1.jpg",
                     phone: "+391234567890",
-                })
-                await connection.manager.save(user1)
+                });
+                await connection.manager.save(user1);
 
                 const user5 = new User({
                     username: "ray",
@@ -254,8 +254,8 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                     picture:
                         "https://randomuser.me/api/portraits/thumb/men/3.jpg",
                     phone: "+391234567894",
-                })
-                await connection.manager.save(user5)
+                });
+                await connection.manager.save(user5);
 
                 await connection.manager.save(
                     new Chat({
@@ -286,16 +286,16 @@ describe("github issues > #1551 complex example of cascades + multiple primary k
                             }),
                         ],
                     }),
-                )
+                );
 
-                let recipients = await connection.manager.find(Recipient)
+                let recipients = await connection.manager.find(Recipient);
 
                 for (let recipient of recipients) {
-                    await connection.getRepository(Recipient).remove(recipient)
+                    await connection.getRepository(Recipient).remove(recipient);
                 }
 
-                recipients = await connection.manager.find(Recipient)
-                recipients.length.should.be.equal(0)
+                recipients = await connection.manager.find(Recipient);
+                recipients.length.should.be.equal(0);
             }),
-        ))
-})
+        ));
+});

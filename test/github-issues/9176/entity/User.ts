@@ -4,30 +4,30 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Unique,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 @Unique(["firstName", "lastName", "middleName"])
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column()
-    middleName: string
+    middleName: string;
 }
 
 @Entity()
 @Check(`"age" > 18`)
 export class CheckedUser {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    age: number
+    age: number;
 }

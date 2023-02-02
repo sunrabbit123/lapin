@@ -1,12 +1,12 @@
-import { TableInheritance, Column, Entity } from "../../../../src"
-import { BaseEntity } from "./BaseEntity"
+import { TableInheritance, Column, Entity } from "../../../../src";
+import { BaseEntity } from "./BaseEntity";
 
 @Entity()
 @TableInheritance({ column: { type: String, name: "type" } })
 export abstract class User extends BaseEntity {
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 }

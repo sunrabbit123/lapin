@@ -1,30 +1,30 @@
-import "reflect-metadata"
-import "../../utils/test-setup"
-import { DataSource, In, IsNull } from "../../../src"
+import "reflect-metadata";
+import "../../utils/test-setup";
+import { DataSource, In, IsNull } from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { Post } from "./entity/Post"
-import { User } from "./entity/User"
-import { prepareDataManyToOne, prepareDataOneToOne } from "./issue-8890-utils"
+} from "../../utils/test-utils";
+import { Post } from "./entity/Post";
+import { User } from "./entity/User";
+import { prepareDataManyToOne, prepareDataOneToOne } from "./issue-8890-utils";
 
 describe("github issues > #8890 it should be possible to query IS NULL on ManyToOne relations", () => {
-    let dataSources: DataSource[]
+    let dataSources: DataSource[];
     before(
         async () =>
             (dataSources = await createTestingConnections({
                 __dirname,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(dataSources))
-    after(() => closeTestingConnections(dataSources))
+    );
+    beforeEach(() => reloadTestingDatabases(dataSources));
+    after(() => closeTestingConnections(dataSources));
 
     it("where IsNull", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataManyToOne(connection.manager)
+                await prepareDataManyToOne(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -34,7 +34,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         },
                     })
                     .orderBy("post.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 posts.should.be.eql([
                     {
@@ -47,14 +47,14 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         title: "Post #3",
                         text: "About post #3",
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where In", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataManyToOne(connection.manager)
+                await prepareDataManyToOne(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -64,7 +64,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         },
                     })
                     .orderBy("post.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 posts.should.be.eql([
                     {
@@ -77,14 +77,14 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         title: "Post #5",
                         text: "About post #5",
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where IsNull OR In", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataManyToOne(connection.manager)
+                await prepareDataManyToOne(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -99,7 +99,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         ],
                     })
                     .orderBy("post.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 posts.should.be.eql([
                     {
@@ -122,26 +122,26 @@ describe("github issues > #8890 it should be possible to query IS NULL on ManyTo
                         title: "Post #5",
                         text: "About post #5",
                     },
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});
 
 describe("github issues > #8890 it should be possible to query IS NULL on OneToOne relations on owner side", () => {
-    let dataSources: DataSource[]
+    let dataSources: DataSource[];
     before(
         async () =>
             (dataSources = await createTestingConnections({
                 __dirname,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(dataSources))
-    after(() => closeTestingConnections(dataSources))
+    );
+    beforeEach(() => reloadTestingDatabases(dataSources));
+    after(() => closeTestingConnections(dataSources));
 
     it("where IsNull", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataOneToOne(connection.manager)
+                await prepareDataOneToOne(connection.manager);
 
                 const users = await connection
                     .createQueryBuilder(User, "user")
@@ -151,21 +151,21 @@ describe("github issues > #8890 it should be possible to query IS NULL on OneToO
                         },
                     })
                     .orderBy("user.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 users.should.be.eql([
                     {
                         id: 4,
                         username: "user #4",
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where In", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataOneToOne(connection.manager)
+                await prepareDataOneToOne(connection.manager);
 
                 const users = await connection
                     .createQueryBuilder(User, "user")
@@ -175,7 +175,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on OneToO
                         },
                     })
                     .orderBy("user.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 users.should.be.eql([
                     {
@@ -186,14 +186,14 @@ describe("github issues > #8890 it should be possible to query IS NULL on OneToO
                         id: 2,
                         username: "user #2",
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where IsNull OR In", () =>
         Promise.all(
             dataSources.map(async (connection) => {
-                await prepareDataOneToOne(connection.manager)
+                await prepareDataOneToOne(connection.manager);
 
                 const users = await connection
                     .createQueryBuilder(User, "user")
@@ -208,7 +208,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on OneToO
                         ],
                     })
                     .orderBy("user.id", "ASC")
-                    .getMany()
+                    .getMany();
 
                 users.should.be.eql([
                     {
@@ -223,7 +223,7 @@ describe("github issues > #8890 it should be possible to query IS NULL on OneToO
                         id: 4,
                         username: "user #4",
                     },
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});

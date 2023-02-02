@@ -3,20 +3,20 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-} from "../../../../src"
+} from "../../../../src";
 
-import { UserPhoto } from "./UserPhoto"
+import { UserPhoto } from "./UserPhoto";
 
 @Entity()
 export class Photo {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany(() => UserPhoto, (userPhoto) => userPhoto.photo, {
         cascade: true,
     })
-    userPhotos: UserPhoto[]
+    userPhotos: UserPhoto[];
 }

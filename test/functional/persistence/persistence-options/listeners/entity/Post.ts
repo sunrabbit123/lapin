@@ -4,28 +4,28 @@ import {
     Column,
     Entity,
     PrimaryColumn,
-} from "../../../../../../src"
+} from "../../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    description: string
+    description: string;
 
-    isRemoved: boolean = false
+    isRemoved: boolean = false;
 
     @BeforeInsert()
     beforeInsert() {
-        this.title += "!"
+        this.title += "!";
     }
 
     @AfterRemove()
     afterRemove() {
-        this.isRemoved = true
+        this.isRemoved = true;
     }
 }

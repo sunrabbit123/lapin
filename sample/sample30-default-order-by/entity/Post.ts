@@ -1,7 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index"
-import { ManyToMany } from "../../../src/decorator/relations/ManyToMany"
-import { Category } from "./Category"
-import { JoinTable } from "../../../src/decorator/relations/JoinTable"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
+import { Category } from "./Category";
+import { JoinTable } from "../../../src/decorator/relations/JoinTable";
 
 @Entity("sample30_post", {
     orderBy: {
@@ -11,21 +11,21 @@ import { JoinTable } from "../../../src/decorator/relations/JoinTable"
 })
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    text: string
+    text: string;
 
     @ManyToMany((type) => Category)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 
     constructor(title: string, text: string, categories: Category[]) {
-        this.title = title
-        this.text = text
-        this.categories = categories
+        this.title = title;
+        this.text = text;
+        this.categories = categories;
     }
 }

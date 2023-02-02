@@ -1,12 +1,12 @@
-import { Column } from "../../../../../src/decorator/columns/Column"
+import { Column } from "../../../../../src/decorator/columns/Column";
 
 export class Counters {
     @Column()
-    likes: number
+    likes: number;
 
     @Column()
-    comments: number
+    comments: number;
 
     @Column()
-    favorites: number
+    favorites: number;
 }

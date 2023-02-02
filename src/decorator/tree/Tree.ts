@@ -1,7 +1,7 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { TreeMetadataArgs } from "../../metadata-args/TreeMetadataArgs"
-import { TreeType } from "../../metadata/types/TreeTypes"
-import { ClosureTreeOptions } from "../../metadata/types/ClosureTreeOptions"
+import { getMetadataArgsStorage } from "../../globals";
+import { TreeMetadataArgs } from "../../metadata-args/TreeMetadataArgs";
+import { TreeType } from "../../metadata/types/TreeTypes";
+import { ClosureTreeOptions } from "../../metadata/types/ClosureTreeOptions";
 
 /**
  * Marks entity to work like a tree.
@@ -18,6 +18,6 @@ export function Tree(
             target: target,
             type: type,
             options: type === "closure-table" ? options : undefined,
-        } as TreeMetadataArgs)
-    }
+        } as TreeMetadataArgs);
+    };
 }

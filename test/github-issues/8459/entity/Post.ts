@@ -4,21 +4,21 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
-} from "../../../../src"
-import { Category } from "./Category"
+} from "../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    categoryId: number
+    categoryId: number;
 
     @ManyToOne(() => Category)
     @JoinColumn({ name: "categoryId" })
-    category: Category
+    category: Category;
 }

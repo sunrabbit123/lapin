@@ -14,4 +14,4 @@ module.exports = [
         name: "memory2",
         database: ":memory:",
     },
-]
+];

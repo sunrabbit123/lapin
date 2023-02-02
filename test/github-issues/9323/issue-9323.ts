@@ -1,23 +1,23 @@
-import { expect } from "chai"
-import "reflect-metadata"
+import { expect } from "chai";
+import "reflect-metadata";
 import {
     DataSource,
     FindManyOptions,
     FindOneOptions,
     FindOptionsUtils,
     MoreThan,
-} from "../../../src"
+} from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
-} from "../../utils/test-utils"
-import Activity from "./entity/Activity"
-import Company from "./entity/Company"
-import Employee from "./entity/Employee"
-import TimeSheet from "./entity/TimeSheet"
+} from "../../utils/test-utils";
+import Activity from "./entity/Activity";
+import Company from "./entity/Company";
+import Employee from "./entity/Employee";
+import TimeSheet from "./entity/TimeSheet";
 
 describe("github issues > #9323 Add new VirtualColumn decorator feature", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -26,19 +26,19 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                 dropSchema: true,
                 entities: [Company, Employee, TimeSheet, Activity],
             })),
-    )
-    after(() => closeTestingConnections(connections))
+    );
+    after(() => closeTestingConnections(connections));
 
     it("should generate expected sub-select & select statement", () =>
         Promise.all(
             connections.map((connection) => {
-                const metadata = connection.getMetadata(Company)
+                const metadata = connection.getMetadata(Company);
                 const options1: FindManyOptions<Company> = {
                     select: {
                         name: true,
                         totalEmployeesCount: true,
                     },
-                }
+                };
 
                 const query1 = connection
                     .createQueryBuilder(
@@ -48,18 +48,18 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                         ) || metadata.name,
                     )
                     .setFindOptions(options1 || {})
-                    .getSql()
+                    .getSql();
 
                 expect(query1).to.eq(
                     `SELECT "Company"."name" AS "Company_name", (SELECT COUNT("name") FROM "employees" WHERE "companyName" = "Company".name) AS "Company_totalEmployeesCount" FROM "companies" "Company"`,
-                )
+                );
             }),
-        ))
+        ));
 
     it("should generate expected sub-select & nested-subselect statement", () =>
         Promise.all(
             connections.map((connection) => {
-                const metadata = connection.getMetadata(Company)
+                const metadata = connection.getMetadata(Company);
                 const options1: FindManyOptions<Company> = {
                     select: {
                         name: true,
@@ -75,7 +75,7 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                             timesheets: true,
                         },
                     },
-                }
+                };
 
                 const query1 = connection
                     .createQueryBuilder(
@@ -85,27 +85,27 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                         ) || metadata.name,
                     )
                     .setFindOptions(options1 || {})
-                    .getSql()
+                    .getSql();
 
                 expect(query1).to.include(
                     `SELECT "Company"."name" AS "Company_name"`,
-                )
+                );
                 expect(query1).to.include(
                     `(SELECT COUNT("name") FROM "employees" WHERE "companyName" = "Company".name) AS "Company_totalEmployeesCount", (SELECT SUM("hours") FROM "activities" WHERE "timesheetId" =`,
-                )
+                );
             }),
-        ))
+        ));
 
     it("should not generate sub-select if column is not selected", () =>
         Promise.all(
             connections.map((connection) => {
-                const metadata = connection.getMetadata(Company)
+                const metadata = connection.getMetadata(Company);
                 const options: FindManyOptions<Company> = {
                     select: {
                         name: true,
                         totalEmployeesCount: false,
                     },
-                }
+                };
                 const query = connection
                     .createQueryBuilder(
                         Company,
@@ -113,48 +113,50 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                             metadata.name,
                     )
                     .setFindOptions(options || {})
-                    .getSql()
+                    .getSql();
 
                 expect(query).to.eq(
                     `SELECT "Company"."name" AS "Company_name" FROM "companies" "Company"`,
-                )
+                );
             }),
-        ))
+        ));
 
     it("should be able to save and find sub-select data in the databse", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const companyName = "My Company 1"
-                const company = Company.create({ name: companyName } as Company)
-                await company.save()
+                const companyName = "My Company 1";
+                const company = Company.create({
+                    name: companyName,
+                } as Company);
+                await company.save();
 
                 const employee1 = Employee.create({
                     name: "Collin 1",
                     company: company,
-                })
+                });
                 const employee2 = Employee.create({
                     name: "John 1",
                     company: company,
-                })
+                });
                 const employee3 = Employee.create({
                     name: "Cory 1",
                     company: company,
-                })
+                });
                 const employee4 = Employee.create({
                     name: "Kevin 1",
                     company: company,
-                })
+                });
                 await Employee.save([
                     employee1,
                     employee2,
                     employee3,
                     employee4,
-                ])
+                ]);
 
                 const employee1TimeSheet = TimeSheet.create({
                     employee: employee1,
-                })
-                await employee1TimeSheet.save()
+                });
+                await employee1TimeSheet.save();
                 const employee1Activities: Activity[] = [
                     Activity.create({
                         hours: 2,
@@ -168,8 +170,8 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                         hours: 2,
                         timesheet: employee1TimeSheet,
                     }),
-                ]
-                await Activity.save(employee1Activities)
+                ];
+                await Activity.save(employee1Activities);
 
                 const findOneOptions: FindOneOptions<Company> = {
                     select: {
@@ -205,55 +207,59 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                             },
                         },
                     },
-                }
+                };
 
-                const usersUnderCompany = await Company.findOne(findOneOptions)
-                expect(usersUnderCompany?.totalEmployeesCount).to.eq(4)
+                const usersUnderCompany = await Company.findOne(findOneOptions);
+                expect(usersUnderCompany?.totalEmployeesCount).to.eq(4);
                 const employee1TimesheetFound = usersUnderCompany?.employees
                     .find((e) => e.name === employee1.name)
-                    ?.timesheets.find((ts) => ts.id === employee1TimeSheet.id)
-                expect(employee1TimesheetFound?.totalActvityHours).to.eq(6)
+                    ?.timesheets.find((ts) => ts.id === employee1TimeSheet.id);
+                expect(employee1TimesheetFound?.totalActvityHours).to.eq(6);
 
-                const usersUnderCompanyList = await Company.find(findOneOptions)
-                const usersUnderCompanyListOne = usersUnderCompanyList[0]
-                expect(usersUnderCompanyListOne?.totalEmployeesCount).to.eq(4)
+                const usersUnderCompanyList = await Company.find(
+                    findOneOptions,
+                );
+                const usersUnderCompanyListOne = usersUnderCompanyList[0];
+                expect(usersUnderCompanyListOne?.totalEmployeesCount).to.eq(4);
                 const employee1TimesheetListOneFound =
                     usersUnderCompanyListOne?.employees
                         .find((e) => e.name === employee1.name)
                         ?.timesheets.find(
                             (ts) => ts.id === employee1TimeSheet.id,
-                        )
+                        );
                 expect(employee1TimesheetListOneFound?.totalActvityHours).to.eq(
                     6,
-                )
+                );
             }),
-        ))
+        ));
 
     it("should be able to save and find sub-select data in the databse (with query builder)", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const companyName = "My Company 2"
-                const company = Company.create({ name: companyName } as Company)
-                await company.save()
+                const companyName = "My Company 2";
+                const company = Company.create({
+                    name: companyName,
+                } as Company);
+                await company.save();
 
                 const employee1 = Employee.create({
                     name: "Collin 2",
                     company: company,
-                })
+                });
                 const employee2 = Employee.create({
                     name: "John 2",
                     company: company,
-                })
+                });
                 const employee3 = Employee.create({
                     name: "Cory 2",
                     company: company,
-                })
-                await Employee.save([employee1, employee2, employee3])
+                });
+                await Employee.save([employee1, employee2, employee3]);
 
                 const employee1TimeSheet = TimeSheet.create({
                     employee: employee1,
-                })
-                await employee1TimeSheet.save()
+                });
+                await employee1TimeSheet.save();
                 const employee1Activities: Activity[] = [
                     Activity.create({
                         hours: 2,
@@ -267,8 +273,8 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                         hours: 2,
                         timesheet: employee1TimeSheet,
                     }),
-                ]
-                await Activity.save(employee1Activities)
+                ];
+                await Activity.save(employee1Activities);
 
                 const companyQueryData = await connection
                     .createQueryBuilder(Company, "company")
@@ -282,16 +288,16 @@ describe("github issues > #9323 Add new VirtualColumn decorator feature", () => 
                     //    "employees.timesheets.id": "DESC",
                     //    //"employees.timesheets.totalActvityHours": "ASC",
                     //})
-                    .getOne()
+                    .getOne();
 
                 const foundEmployee = companyQueryData?.employees.find(
                     (e) => e.name === employee1.name,
-                )
+                );
                 const foundEmployeeTimeSheet = foundEmployee?.timesheets.find(
                     (t) => t.id === employee1TimeSheet.id,
-                )
+                );
 
-                expect(foundEmployeeTimeSheet?.totalActvityHours).to.eq(6)
+                expect(foundEmployeeTimeSheet?.totalActvityHours).to.eq(6);
             }),
-        ))
-})
+        ));
+});

@@ -1,6 +1,6 @@
-import { getMetadataArgsStorage } from "../globals"
-import { EntityRepositoryMetadataArgs } from "../metadata-args/EntityRepositoryMetadataArgs"
-import { EntitySchema } from "../entity-schema/EntitySchema"
+import { getMetadataArgsStorage } from "../globals";
+import { EntityRepositoryMetadataArgs } from "../metadata-args/EntityRepositoryMetadataArgs";
+import { EntitySchema } from "../entity-schema/EntitySchema";
 
 /**
  * Used to declare a class as a custom repository.
@@ -16,6 +16,6 @@ export function EntityRepository(
         getMetadataArgsStorage().entityRepositories.push({
             target: target,
             entity: entity,
-        } as EntityRepositoryMetadataArgs)
-    }
+        } as EntityRepositoryMetadataArgs);
+    };
 }

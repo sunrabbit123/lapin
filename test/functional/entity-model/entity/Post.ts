@@ -5,29 +5,29 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryColumn,
-} from "../../../../src"
-import { Category } from "./Category"
+} from "../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class Post extends BaseEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({
         nullable: true,
         unique: true,
     })
-    externalId?: string
+    externalId?: string;
 
     @Column()
-    title: string
+    title: string;
 
     @Column({
         default: "This is default text.",
     })
-    text: string
+    text: string;
 
     @ManyToMany((type) => Category)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 }

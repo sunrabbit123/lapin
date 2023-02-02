@@ -1,12 +1,12 @@
-import { PrimaryGeneratedColumn } from "../../../../src"
-import { Entity } from "../../../../src/decorator/entity/Entity"
+import { PrimaryGeneratedColumn } from "../../../../src";
+import { Entity } from "../../../../src/decorator/entity/Entity";
 
 @Entity({
     name: "real_long_name_t2",
 })
 export class AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 }
 
 @Entity({
@@ -14,5 +14,5 @@ export class AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB {
 })
 export class AnotherRealLongNameForAnEntityBecauseThisIsNecessaryC {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 }

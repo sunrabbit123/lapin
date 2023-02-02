@@ -4,17 +4,17 @@ import {
     ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src/index"
-import { Chat } from "./Chat"
-import { Message } from "./Message"
-import { Recipient } from "./Recipient"
+} from "../../../../src/index";
+import { Chat } from "./Chat";
+import { Message } from "./Message";
+import { Recipient } from "./Recipient";
 
 export interface UserConstructor {
-    username?: string
-    password?: string
-    name?: string
-    picture?: string
-    phone?: string
+    username?: string;
+    password?: string;
+    name?: string;
+    picture?: string;
+    phone?: string;
 }
 
 @Entity()
@@ -27,61 +27,61 @@ export class User {
         phone,
     }: UserConstructor = {}) {
         if (username) {
-            this.username = username
+            this.username = username;
         }
         if (password) {
-            this.password = password
+            this.password = password;
         }
         if (name) {
-            this.name = name
+            this.name = name;
         }
         if (picture) {
-            this.picture = picture
+            this.picture = picture;
         }
         if (phone) {
-            this.phone = phone
+            this.phone = phone;
         }
     }
 
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    username: string
+    username: string;
 
     @Column()
-    password: string
+    password: string;
 
     @Column()
-    name: string
+    name: string;
 
     @Column({ nullable: true })
-    picture?: string
+    picture?: string;
 
     @Column({ nullable: true })
-    phone?: string
+    phone?: string;
 
     @ManyToMany((type) => Chat, (chat) => chat.allTimeMembers)
-    allTimeMemberChats: Chat[]
+    allTimeMemberChats: Chat[];
 
     @ManyToMany((type) => Chat, (chat) => chat.listingMembers)
-    listedMemberChats: Chat[]
+    listedMemberChats: Chat[];
 
     @ManyToMany((type) => Chat, (chat) => chat.actualGroupMembers)
-    actualGroupMemberChats: Chat[]
+    actualGroupMemberChats: Chat[];
 
     @ManyToMany((type) => Chat, (chat) => chat.admins)
-    adminChats: Chat[]
+    adminChats: Chat[];
 
     @ManyToMany((type) => Message, (message) => message.holders)
-    holderMessages: Message[]
+    holderMessages: Message[];
 
     @OneToMany((type) => Chat, (chat) => chat.owner)
-    ownerChats: Chat[]
+    ownerChats: Chat[];
 
     @OneToMany((type) => Message, (message) => message.sender)
-    senderMessages: Message[]
+    senderMessages: Message[];
 
     @OneToMany((type) => Recipient, (recipient) => recipient.user)
-    recipients: Recipient[]
+    recipients: Recipient[];
 }

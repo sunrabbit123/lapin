@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src"
+import { Column, Entity, PrimaryColumn } from "../../../../src";
 
 export enum Role {
     GuildMaster = "Guild Master",
@@ -12,10 +12,10 @@ export enum Role {
 @Entity()
 export class User {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ type: "enum", enum: Role, default: Role.GuildMaster })
-    role: Role
+    role: Role;
 
     @Column({
         type: "enum",
@@ -23,5 +23,5 @@ export class User {
         default: [Role.GuildMaster],
         array: true,
     })
-    roles: Role[]
+    roles: Role[];
 }

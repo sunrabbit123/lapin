@@ -1,13 +1,13 @@
-import { getMetadataArgsStorage } from "../globals"
-import { CheckMetadataArgs } from "../metadata-args/CheckMetadataArgs"
-import { LapinError } from "../error"
+import { getMetadataArgsStorage } from "../globals";
+import { CheckMetadataArgs } from "../metadata-args/CheckMetadataArgs";
+import { LapinError } from "../error";
 
 /**
  * Creates a database check.
  * Can be used on entity property or on entity.
  * Can create checks with composite columns when used on entity.
  */
-export function Check(expression: string): ClassDecorator & PropertyDecorator
+export function Check(expression: string): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database check.
@@ -17,7 +17,7 @@ export function Check(expression: string): ClassDecorator & PropertyDecorator
 export function Check(
     name: string,
     expression: string,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database check.
@@ -28,10 +28,10 @@ export function Check(
     nameOrExpression: string,
     maybeExpression?: string,
 ): ClassDecorator & PropertyDecorator {
-    const name = maybeExpression ? nameOrExpression : undefined
-    const expression = maybeExpression ? maybeExpression : nameOrExpression
+    const name = maybeExpression ? nameOrExpression : undefined;
+    const expression = maybeExpression ? maybeExpression : nameOrExpression;
 
-    if (!expression) throw new LapinError(`Check expression is required`)
+    if (!expression) throw new LapinError(`Check expression is required`);
 
     return function (
         clsOrObject: Function | Object,
@@ -43,6 +43,6 @@ export function Check(
                 : (clsOrObject as Function),
             name: name,
             expression: expression,
-        } as CheckMetadataArgs)
-    }
+        } as CheckMetadataArgs);
+    };
 }

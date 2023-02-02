@@ -4,4 +4,4 @@ module.exports = [
         name: "file",
         database: "test-js",
     },
-]
+];

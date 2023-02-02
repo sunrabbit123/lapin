@@ -4,18 +4,18 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../../src"
-import { Category } from "./Category"
+} from "../../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class OneToOneRelationEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @OneToOne(() => Category)
     @JoinColumn()
-    category: Category
+    category: Category;
 
     @Column()
-    order: number
+    order: number;
 }

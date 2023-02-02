@@ -1,15 +1,15 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { expect } from "chai"
-import { Post } from "./entity/Post"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { expect } from "chai";
+import { Post } from "./entity/Post";
 
 describe("github issues > #2131 InsertResult return the same primary key", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     const posts: Post[] = [
         {
             id: null,
@@ -27,7 +27,7 @@ describe("github issues > #2131 InsertResult return the same primary key", () =>
             id: null,
             title: "Post 4",
         },
-    ]
+    ];
 
     before(
         async () =>
@@ -35,9 +35,9 @@ describe("github issues > #2131 InsertResult return the same primary key", () =>
                 entities: [__dirname + "/entity/*{.js,.ts}"],
                 enabledDrivers: ["sqlite", "mysql", "aurora-mysql"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should get correct insert ids for multiple entities inserted", () =>
         Promise.all(
@@ -47,12 +47,12 @@ describe("github issues > #2131 InsertResult return the same primary key", () =>
                     .insert()
                     .into(Post)
                     .values(posts)
-                    .execute()
+                    .execute();
 
-                expect(posts[0].id).to.equal(1)
-                expect(posts[1].id).to.equal(2)
-                expect(posts[2].id).to.equal(3)
-                expect(posts[3].id).to.equal(4)
+                expect(posts[0].id).to.equal(1);
+                expect(posts[1].id).to.equal(2);
+                expect(posts[2].id).to.equal(3);
+                expect(posts[3].id).to.equal(4);
             }),
-        ))
-})
+        ));
+});

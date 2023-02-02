@@ -1,8 +1,8 @@
-import { DataSource } from "../data-source/DataSource"
-import { SchemaBuilder } from "./SchemaBuilder"
-import { MongoQueryRunner } from "../driver/mongodb/MongoQueryRunner"
-import { SqlInMemory } from "../driver/SqlInMemory"
-import { MongodbIndexOptions } from "../driver/mongodb/typings"
+import { DataSource } from "../data-source/DataSource";
+import { SchemaBuilder } from "./SchemaBuilder";
+import { MongoQueryRunner } from "../driver/mongodb/MongoQueryRunner";
+import { SqlInMemory } from "../driver/SqlInMemory";
+import { MongodbIndexOptions } from "../driver/mongodb/typings";
 
 /**
  * Creates complete tables schemas in the database based on the entity metadatas.
@@ -34,8 +34,8 @@ export class MongoSchemaBuilder implements SchemaBuilder {
      */
     async build(): Promise<void> {
         const queryRunner =
-            this.connection.createQueryRunner() as MongoQueryRunner
-        const promises: Promise<any>[] = []
+            this.connection.createQueryRunner() as MongoQueryRunner;
+        const promises: Promise<any>[] = [];
         this.connection.entityMetadatas.forEach((metadata) => {
             metadata.indices.forEach((index) => {
                 const options: MongodbIndexOptions = Object.assign(
@@ -49,36 +49,36 @@ export class MongoSchemaBuilder implements SchemaBuilder {
                     index.expireAfterSeconds === undefined
                         ? {}
                         : { expireAfterSeconds: index.expireAfterSeconds },
-                )
+                );
                 promises.push(
                     queryRunner.createCollectionIndex(
                         metadata.tableName,
                         index.columnNamesWithOrderingMap,
                         options,
                     ),
-                )
-            })
+                );
+            });
             metadata.uniques.forEach((unique) => {
                 const options = <MongodbIndexOptions>{
                     name: unique.name,
                     unique: true,
-                }
+                };
                 promises.push(
                     queryRunner.createCollectionIndex(
                         metadata.tableName,
                         unique.columnNamesWithOrderingMap,
                         options,
                     ),
-                )
-            })
-        })
-        await Promise.all(promises)
+                );
+            });
+        });
+        await Promise.all(promises);
     }
 
     /**
      * Returns query to be executed by schema builder.
      */
     log(): Promise<SqlInMemory> {
-        return Promise.resolve(new SqlInMemory())
+        return Promise.resolve(new SqlInMemory());
     }
 }

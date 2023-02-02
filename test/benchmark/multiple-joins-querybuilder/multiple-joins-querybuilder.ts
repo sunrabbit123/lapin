@@ -1,10 +1,10 @@
-import "reflect-metadata"
-import { DataSource } from "../../../src/data-source/DataSource"
+import "reflect-metadata";
+import { DataSource } from "../../../src/data-source/DataSource";
 import {
     closeTestingConnections,
     createTestingConnections,
-} from "../../utils/test-utils"
-import { One } from "./entity/One"
+} from "../../utils/test-utils";
+import { One } from "./entity/One";
 
 /**
  * This test attempts to benchmark the raw CPU usage/latency of the query builder's
@@ -12,15 +12,15 @@ import { One } from "./entity/One"
  * any actual queries.
  */
 describe("benchmark > QueryBuilder > wide join", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 __dirname,
                 enabledDrivers: ["postgres"],
             })),
-    )
-    after(() => closeTestingConnections(connections))
+    );
+    after(() => closeTestingConnections(connections));
 
     it("testing query builder with join to 10 relations with 10 columns each", () => {
         for (let i = 1; i <= 10_000; i++) {
@@ -42,7 +42,7 @@ describe("benchmark > QueryBuilder > wide join", () => {
                         ],
                     })
                     .getQuery(),
-            )
+            );
         }
 
         /**
@@ -53,5 +53,5 @@ describe("benchmark > QueryBuilder > wide join", () => {
          * 1859ms
          * 1884ms
          */
-    })
-})
+    });
+});

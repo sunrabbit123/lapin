@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../../src"
+import { EntitySchema } from "../../../../../../src";
 
 export const AnimalSchema = new EntitySchema<any>({
     name: "animal",
@@ -46,4 +46,4 @@ export const AnimalSchema = new EntitySchema<any>({
             },
         },
     },
-})
+});

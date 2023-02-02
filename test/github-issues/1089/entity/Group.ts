@@ -6,20 +6,20 @@ import {
     Tree,
     TreeChildren,
     TreeParent,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 @Tree("closure-table")
 export class Group extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column({ nullable: false })
-    name: string
+    name: string;
 
     @TreeChildren()
-    children: Group
+    children: Group;
 
     @TreeParent()
-    parent: Group
+    parent: Group;
 }

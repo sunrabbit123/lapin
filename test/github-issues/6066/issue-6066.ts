@@ -1,14 +1,14 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     createTestingConnections,
     closeTestingConnections,
-} from "../../utils/test-utils"
-import { QueryFailedError, DataSource } from "../../../src"
-import { Session } from "./entity/Session"
-import { expect } from "chai"
+} from "../../utils/test-utils";
+import { QueryFailedError, DataSource } from "../../../src";
+import { Session } from "./entity/Session";
+import { expect } from "chai";
 
 describe("github issues > #6066 Column comment string is not escaped during synchronization", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -17,15 +17,15 @@ describe("github issues > #6066 Column comment string is not escaped during sync
                 schemaCreate: false,
                 dropSchema: true,
             })),
-    )
-    after(() => closeTestingConnections(connections))
+    );
+    after(() => closeTestingConnections(connections));
 
     it("should synchronize", () =>
         Promise.all(
             connections.map((connection) => {
                 return expect(connection.synchronize()).to.not.be.rejectedWith(
                     QueryFailedError,
-                )
+                );
             }),
-        ))
-})
+        ));
+});

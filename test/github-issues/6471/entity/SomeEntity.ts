@@ -1,5 +1,5 @@
-import { Column, Unique, PrimaryGeneratedColumn } from "../../../../src"
-import { Entity } from "../../../../src"
+import { Column, Unique, PrimaryGeneratedColumn } from "../../../../src";
+import { Entity } from "../../../../src";
 
 export enum CreationMechanism {
     SOURCE_A = "SOURCE_A",
@@ -12,21 +12,21 @@ export enum CreationMechanism {
 @Unique(["field1", "field2"])
 export class SomeEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    field1: string
+    field1: string;
 
     @Column()
-    field2: string
+    field2: string;
 
     @Column({
         type: "enum",
         enumName: "creation_mechanism_enum",
         enum: CreationMechanism,
     })
-    creationMechanism: CreationMechanism
+    creationMechanism: CreationMechanism;
 
     @Column({ nullable: false, default: () => "now()" })
-    createdAt: Date
+    createdAt: Date;
 }

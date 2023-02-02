@@ -1,15 +1,15 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { User } from "./entity/User"
-import { expect } from "chai"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { User } from "./entity/User";
+import { expect } from "chai";
 
 describe("github issues > #2067 Unhandled promise rejection warning on postgres connection issues", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -18,28 +18,32 @@ describe("github issues > #2067 Unhandled promise rejection warning on postgres 
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should return a catchable error on connection errors in queries", () =>
         Promise.all(
             connections.map(async (connection) => {
                 const connectionFailureMessage =
-                    "Test error to simulate a connection error"
+                    "Test error to simulate a connection error";
 
                 if (connection.driver.options.type === "postgres") {
                     connection.driver.obtainMasterConnection = () =>
-                        Promise.reject<any>(new Error(connectionFailureMessage))
+                        Promise.reject<any>(
+                            new Error(connectionFailureMessage),
+                        );
                     connection.driver.obtainSlaveConnection = () =>
-                        Promise.reject<any>(new Error(connectionFailureMessage))
+                        Promise.reject<any>(
+                            new Error(connectionFailureMessage),
+                        );
                 }
 
-                const repository = connection.getRepository(User)
+                const repository = connection.getRepository(User);
                 return expect(repository.find()).to.be.rejectedWith(
                     Error,
                     connectionFailureMessage,
-                )
+                );
             }),
-        ))
-})
+        ));
+});

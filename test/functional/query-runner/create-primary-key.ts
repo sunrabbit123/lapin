@@ -1,23 +1,23 @@
-import "reflect-metadata"
-import { DataSource } from "../../../src/data-source/DataSource"
+import "reflect-metadata";
+import { DataSource } from "../../../src/data-source/DataSource";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { Table } from "../../../src/schema-builder/table/Table"
+} from "../../utils/test-utils";
+import { Table } from "../../../src/schema-builder/table/Table";
 
 describe("query runner > create primary key", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(async () => {
         connections = await createTestingConnections({
             entities: [__dirname + "/entity/*{.js,.ts}"],
             schemaCreate: true,
             dropSchema: true,
-        })
-    })
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+        });
+    });
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should correctly create primary key and revert creation", () =>
         Promise.all(
@@ -27,9 +27,9 @@ describe("query runner > create primary key", () => {
                     connection.driver.options.type === "cockroachdb" ||
                     connection.driver.options.type === "spanner"
                 )
-                    return
+                    return;
 
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
                 await queryRunner.createTable(
                     new Table({
                         name: "category",
@@ -45,7 +45,7 @@ describe("query runner > create primary key", () => {
                         ],
                     }),
                     true,
-                )
+                );
 
                 await queryRunner.createTable(
                     new Table({
@@ -66,33 +66,34 @@ describe("query runner > create primary key", () => {
                         ],
                     }),
                     true,
-                )
+                );
 
                 // clear sqls in memory to avoid removing tables when down queries executed.
-                queryRunner.clearSqlMemory()
+                queryRunner.clearSqlMemory();
 
-                await queryRunner.createPrimaryKey("category", ["id"])
-                await queryRunner.createPrimaryKey("person", ["id", "userId"])
+                await queryRunner.createPrimaryKey("category", ["id"]);
+                await queryRunner.createPrimaryKey("person", ["id", "userId"]);
 
-                let categoryTable = await queryRunner.getTable("category")
-                categoryTable!.findColumnByName("id")!.isPrimary.should.be.true
+                let categoryTable = await queryRunner.getTable("category");
+                categoryTable!.findColumnByName("id")!.isPrimary.should.be.true;
 
-                let personTable = await queryRunner.getTable("person")
-                personTable!.findColumnByName("id")!.isPrimary.should.be.true
+                let personTable = await queryRunner.getTable("person");
+                personTable!.findColumnByName("id")!.isPrimary.should.be.true;
                 personTable!.findColumnByName("userId")!.isPrimary.should.be
-                    .true
+                    .true;
 
-                await queryRunner.executeMemoryDownSql()
+                await queryRunner.executeMemoryDownSql();
 
-                categoryTable = await queryRunner.getTable("category")
-                categoryTable!.findColumnByName("id")!.isPrimary.should.be.false
+                categoryTable = await queryRunner.getTable("category");
+                categoryTable!.findColumnByName("id")!.isPrimary.should.be
+                    .false;
 
-                personTable = await queryRunner.getTable("person")
-                personTable!.findColumnByName("id")!.isPrimary.should.be.false
+                personTable = await queryRunner.getTable("person");
+                personTable!.findColumnByName("id")!.isPrimary.should.be.false;
                 personTable!.findColumnByName("userId")!.isPrimary.should.be
-                    .false
+                    .false;
 
-                await queryRunner.release()
+                await queryRunner.release();
             }),
-        ))
-})
+        ));
+});

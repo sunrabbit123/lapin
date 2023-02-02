@@ -1,4 +1,4 @@
-import { ValueTransformer } from "../decorator/options/ValueTransformer"
+import { ValueTransformer } from "../decorator/options/ValueTransformer";
 
 export class ApplyValueTransformers {
     static transformFrom(
@@ -6,15 +6,15 @@ export class ApplyValueTransformers {
         databaseValue: any,
     ) {
         if (Array.isArray(transformer)) {
-            const reverseTransformers = transformer.slice().reverse()
+            const reverseTransformers = transformer.slice().reverse();
             return reverseTransformers.reduce(
                 (transformedValue, _transformer) => {
-                    return _transformer.from(transformedValue)
+                    return _transformer.from(transformedValue);
                 },
                 databaseValue,
-            )
+            );
         }
-        return transformer.from(databaseValue)
+        return transformer.from(databaseValue);
     }
     static transformTo(
         transformer: ValueTransformer | ValueTransformer[],
@@ -22,9 +22,9 @@ export class ApplyValueTransformers {
     ) {
         if (Array.isArray(transformer)) {
             return transformer.reduce((transformedValue, _transformer) => {
-                return _transformer.to(transformedValue)
-            }, entityValue)
+                return _transformer.to(transformedValue);
+            }, entityValue);
         }
-        return transformer.to(entityValue)
+        return transformer.to(entityValue);
     }
 }

@@ -1,4 +1,4 @@
-import { Order } from "./Order"
+import { Order } from "./Order";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -6,25 +6,25 @@ import {
     OneToOne,
     CreateDateColumn,
     UpdateDateColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class OrderCustomer {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "varchar", nullable: false })
-    name: string
+    name: string;
 
     @OneToOne((type) => Order, (order) => order.orderCustomer, {
         cascade: ["insert", "update"],
         nullable: true,
     })
-    order?: Order
+    order?: Order;
 
     @CreateDateColumn()
-    createdDate: Date
+    createdDate: Date;
 
     @UpdateDateColumn()
-    modifiedDate: Date
+    modifiedDate: Date;
 }

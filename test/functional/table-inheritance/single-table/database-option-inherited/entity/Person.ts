@@ -3,14 +3,14 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     TableInheritance,
-} from "../../../../../../src"
+} from "../../../../../../src";
 
 @Entity({ database: "test" })
 @TableInheritance({ column: { name: "type", type: "varchar" } })
 export class Person {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 }

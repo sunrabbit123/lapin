@@ -1,15 +1,15 @@
-import "reflect-metadata"
-import { DataSource } from "../../../src"
+import "reflect-metadata";
+import { DataSource } from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     setupSingleTestingConnection,
-} from "../../utils/test-utils"
-import { fail } from "assert"
-import { expect } from "chai"
+} from "../../utils/test-utils";
+import { fail } from "assert";
+import { expect } from "chai";
 
 describe("github issues > #6115 Down migration for enums with defaults are wrong", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -18,8 +18,8 @@ describe("github issues > #6115 Down migration for enums with defaults are wrong
                 dropSchema: true,
                 schemaCreate: true,
             })),
-    )
-    after(() => closeTestingConnections(connections))
+    );
+    after(() => closeTestingConnections(connections));
 
     it("should change schema when enum definition changes", () =>
         Promise.all(
@@ -32,34 +32,35 @@ describe("github issues > #6115 Down migration for enums with defaults are wrong
                         dropSchema: false,
                         schemaCreate: false,
                     },
-                )
+                );
                 if (!options) {
-                    fail()
-                    return
+                    fail();
+                    return;
                 }
 
-                const dataSource = new DataSource(options)
-                await dataSource.initialize()
-                const queryRunner = dataSource.createQueryRunner()
+                const dataSource = new DataSource(options);
+                await dataSource.initialize();
+                const queryRunner = dataSource.createQueryRunner();
 
                 const sqlInMemory = await dataSource.driver
                     .createSchemaBuilder()
-                    .log()
+                    .log();
 
                 const upQueries = sqlInMemory.upQueries.map(
                     (query) => query.query,
-                )
+                );
                 const downQueries = sqlInMemory.downQueries.map(
                     (query) => query.query,
-                )
+                );
 
                 // update entity
                 for (const query of upQueries) {
-                    await dataSource.query(query)
+                    await dataSource.query(query);
                 }
 
-                let table = await queryRunner.getTable("metric")
-                let defaultOperator = table!.findColumnByName("defaultOperator")
+                let table = await queryRunner.getTable("metric");
+                let defaultOperator =
+                    table!.findColumnByName("defaultOperator");
                 expect(defaultOperator!.enum).to.deep.equal([
                     "lessthan",
                     "lessequal",
@@ -67,28 +68,28 @@ describe("github issues > #6115 Down migration for enums with defaults are wrong
                     "notequal",
                     "greaterequal",
                     "greaterthan",
-                ])
-                expect(defaultOperator!.default).to.equal(`'equal'`)
+                ]);
+                expect(defaultOperator!.default).to.equal(`'equal'`);
 
                 let defaultOperator2 =
-                    table!.findColumnByName("defaultOperator2")
-                expect(defaultOperator2!.default).to.equal(`'equal'`)
+                    table!.findColumnByName("defaultOperator2");
+                expect(defaultOperator2!.default).to.equal(`'equal'`);
 
                 let defaultOperator3 =
-                    table!.findColumnByName("defaultOperator3")
-                expect(defaultOperator3!.default).to.be.undefined
+                    table!.findColumnByName("defaultOperator3");
+                expect(defaultOperator3!.default).to.be.undefined;
 
                 let defaultOperator4 =
-                    table!.findColumnByName("defaultOperator4")
-                expect(defaultOperator4!.default).to.equal(`'greaterthan'`)
+                    table!.findColumnByName("defaultOperator4");
+                expect(defaultOperator4!.default).to.equal(`'greaterthan'`);
 
                 // revert update
                 for (const query of downQueries.reverse()) {
-                    await dataSource.query(query)
+                    await dataSource.query(query);
                 }
 
-                table = await queryRunner.getTable("metric")
-                defaultOperator = table!.findColumnByName("defaultOperator")
+                table = await queryRunner.getTable("metric");
+                defaultOperator = table!.findColumnByName("defaultOperator");
                 expect(defaultOperator!.enum).to.deep.equal([
                     "lt",
                     "le",
@@ -96,20 +97,20 @@ describe("github issues > #6115 Down migration for enums with defaults are wrong
                     "ne",
                     "ge",
                     "gt",
-                ])
-                expect(defaultOperator!.default).to.equal(`'eq'`)
+                ]);
+                expect(defaultOperator!.default).to.equal(`'eq'`);
 
-                defaultOperator2 = table!.findColumnByName("defaultOperator2")
-                expect(defaultOperator2!.default).to.be.undefined
+                defaultOperator2 = table!.findColumnByName("defaultOperator2");
+                expect(defaultOperator2!.default).to.be.undefined;
 
-                defaultOperator3 = table!.findColumnByName("defaultOperator3")
-                expect(defaultOperator3!.default).to.equal(`'eq'`)
+                defaultOperator3 = table!.findColumnByName("defaultOperator3");
+                expect(defaultOperator3!.default).to.equal(`'eq'`);
 
-                defaultOperator4 = table!.findColumnByName("defaultOperator4")
-                expect(defaultOperator4!.default).to.equal(`'eq'`)
+                defaultOperator4 = table!.findColumnByName("defaultOperator4");
+                expect(defaultOperator4!.default).to.equal(`'eq'`);
 
-                await queryRunner.release()
-                await dataSource.close()
+                await queryRunner.release();
+                await dataSource.close();
             }),
-        ))
-})
+        ));
+});

@@ -4,22 +4,22 @@ import {
     Index,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
-import { Customer } from "./Customer"
+import { Customer } from "./Customer";
 
 @Entity("CustomerContact")
 @Index(["firstName", "lastName"])
 export class CustomerContact {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @ManyToOne(() => Customer, (customer) => customer.contacts)
-    customer: Customer
+    customer: Customer;
 
     @Column({ default: "" })
-    firstName: string
+    firstName: string;
 
     @Column({ default: "" })
-    lastName: string
+    lastName: string;
 }

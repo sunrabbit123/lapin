@@ -1,22 +1,22 @@
-import { v4 as uuidv4 } from "uuid"
-import { EntityTarget } from "../common/EntityTarget"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver"
-import { DriverUtils } from "../driver/DriverUtils"
-import { MysqlDriver } from "../driver/mysql/MysqlDriver"
-import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver"
-import { LapinError } from "../error"
-import { InsertValuesMissingError } from "../error/InsertValuesMissingError"
-import { ReturningStatementNotSupportedError } from "../error/ReturningStatementNotSupportedError"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { BroadcasterResult } from "../subscriber/BroadcasterResult"
-import { InstanceChecker } from "../util/InstanceChecker"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { InsertOrUpdateOptions } from "./InsertOrUpdateOptions"
-import { QueryBuilder } from "./QueryBuilder"
-import { QueryDeepPartialEntity } from "./QueryPartialEntity"
-import { InsertResult } from "./result/InsertResult"
-import { ReturningResultsEntityUpdator } from "./ReturningResultsEntityUpdator"
+import { v4 as uuidv4 } from "uuid";
+import { EntityTarget } from "../common/EntityTarget";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver";
+import { DriverUtils } from "../driver/DriverUtils";
+import { MysqlDriver } from "../driver/mysql/MysqlDriver";
+import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
+import { LapinError } from "../error";
+import { InsertValuesMissingError } from "../error/InsertValuesMissingError";
+import { ReturningStatementNotSupportedError } from "../error/ReturningStatementNotSupportedError";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { BroadcasterResult } from "../subscriber/BroadcasterResult";
+import { InstanceChecker } from "../util/InstanceChecker";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { InsertOrUpdateOptions } from "./InsertOrUpdateOptions";
+import { QueryBuilder } from "./QueryBuilder";
+import { QueryDeepPartialEntity } from "./QueryPartialEntity";
+import { InsertResult } from "./result/InsertResult";
+import { ReturningResultsEntityUpdator } from "./ReturningResultsEntityUpdator";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
@@ -24,7 +24,7 @@ import { ReturningResultsEntityUpdator } from "./ReturningResultsEntityUpdator"
 export class InsertQueryBuilder<
     Entity extends ObjectLiteral,
 > extends QueryBuilder<Entity> {
-    readonly "@instanceof" = Symbol.for("InsertQueryBuilder")
+    readonly "@instanceof" = Symbol.for("InsertQueryBuilder");
 
     // -------------------------------------------------------------------------
     // Public Implemented Methods
@@ -34,10 +34,10 @@ export class InsertQueryBuilder<
      * Gets generated SQL query without parameters being replaced.
      */
     getQuery(): string {
-        let sql = this.createComment()
-        sql += this.createCteExpression()
-        sql += this.createInsertExpression()
-        return sql.trim()
+        let sql = this.createComment();
+        sql += this.createCteExpression();
+        sql += this.createInsertExpression();
+        return sql.trim();
     }
 
     /**
@@ -45,7 +45,7 @@ export class InsertQueryBuilder<
      */
     async execute(): Promise<InsertResult> {
         // console.time(".value sets");
-        const valueSets: ObjectLiteral[] = this.getValueSets()
+        const valueSets: ObjectLiteral[] = this.getValueSets();
         // console.timeEnd(".value sets");
 
         // If user passed empty array of entities then we don't need to do
@@ -55,12 +55,12 @@ export class InsertQueryBuilder<
         // we would run into problems downstream, like subscribers getting
         // invoked with the empty array where they expect an entity, and SQL
         // queries with an empty VALUES clause.
-        if (valueSets.length === 0) return new InsertResult()
+        if (valueSets.length === 0) return new InsertResult();
 
         // console.time("QueryBuilder.execute");
         // console.time(".database stuff");
-        const queryRunner = this.obtainQueryRunner()
-        let transactionStartedByUs: boolean = false
+        const queryRunner = this.obtainQueryRunner();
+        let transactionStartedByUs: boolean = false;
 
         try {
             // start transaction if it was enabled
@@ -68,8 +68,8 @@ export class InsertQueryBuilder<
                 this.expressionMap.useTransaction === true &&
                 queryRunner.isTransactionActive === false
             ) {
-                await queryRunner.startTransaction()
-                transactionStartedByUs = true
+                await queryRunner.startTransaction();
+                transactionStartedByUs = true;
             }
 
             // console.timeEnd(".database stuff");
@@ -79,19 +79,19 @@ export class InsertQueryBuilder<
                 this.expressionMap.callListeners === true &&
                 this.expressionMap.mainAlias!.hasMetadata
             ) {
-                const broadcastResult = new BroadcasterResult()
+                const broadcastResult = new BroadcasterResult();
                 valueSets.forEach((valueSet) => {
                     queryRunner.broadcaster.broadcastBeforeInsertEvent(
                         broadcastResult,
                         this.expressionMap.mainAlias!.metadata,
                         valueSet,
-                    )
-                })
-                await broadcastResult.wait()
+                    );
+                });
+                await broadcastResult.wait();
             }
 
-            let declareSql: string | null = null
-            let selectOutputSql: string | null = null
+            let declareSql: string | null = null;
+            let selectOutputSql: string | null = null;
 
             // if update entity mode is enabled we may need extra columns for the returning statement
             // console.time(".prepare returning statement");
@@ -99,9 +99,9 @@ export class InsertQueryBuilder<
                 new ReturningResultsEntityUpdator(
                     queryRunner,
                     this.expressionMap,
-                )
+                );
 
-            const returningColumns: ColumnMetadata[] = []
+            const returningColumns: ColumnMetadata[] = [];
 
             if (
                 Array.isArray(this.expressionMap.returning) &&
@@ -112,7 +112,7 @@ export class InsertQueryBuilder<
                         ...this.expressionMap.mainAlias!.metadata.findColumnsWithPropertyPath(
                             columnPath,
                         ),
-                    )
+                    );
                 }
             }
 
@@ -127,14 +127,14 @@ export class InsertQueryBuilder<
                     )
                 ) {
                     this.expressionMap.extraReturningColumns =
-                        this.expressionMap.mainAlias!.metadata.getInsertionReturningColumns()
+                        this.expressionMap.mainAlias!.metadata.getInsertionReturningColumns();
                 }
 
                 returningColumns.push(
                     ...this.expressionMap.extraReturningColumns.filter(
                         (c) => !returningColumns.includes(c),
                     ),
-                )
+                );
             }
 
             if (
@@ -146,23 +146,23 @@ export class InsertQueryBuilder<
                 ).buildTableVariableDeclaration(
                     "@OutputTable",
                     returningColumns,
-                )
-                selectOutputSql = `SELECT * FROM @OutputTable`
+                );
+                selectOutputSql = `SELECT * FROM @OutputTable`;
             }
             // console.timeEnd(".prepare returning statement");
 
             // execute query
             // console.time(".getting query and parameters");
-            const [insertSql, parameters] = this.getQueryAndParameters()
+            const [insertSql, parameters] = this.getQueryAndParameters();
             // console.timeEnd(".getting query and parameters");
 
             // console.time(".query execution by database");
-            const statements = [declareSql, insertSql, selectOutputSql]
-            const sql = statements.filter((s) => s != null).join(";\n\n")
+            const statements = [declareSql, insertSql, selectOutputSql];
+            const sql = statements.filter((s) => s != null).join(";\n\n");
 
-            const queryResult = await queryRunner.query(sql, parameters, true)
+            const queryResult = await queryRunner.query(sql, parameters, true);
 
-            const insertResult = InsertResult.from(queryResult)
+            const insertResult = InsertResult.from(queryResult);
 
             // console.timeEnd(".query execution by database");
 
@@ -175,7 +175,7 @@ export class InsertQueryBuilder<
                 await returningResultsEntityUpdator.insert(
                     insertResult,
                     valueSets,
-                )
+                );
                 // console.timeEnd(".updating entity");
             }
 
@@ -184,38 +184,38 @@ export class InsertQueryBuilder<
                 this.expressionMap.callListeners === true &&
                 this.expressionMap.mainAlias!.hasMetadata
             ) {
-                const broadcastResult = new BroadcasterResult()
+                const broadcastResult = new BroadcasterResult();
                 valueSets.forEach((valueSet) => {
                     queryRunner.broadcaster.broadcastAfterInsertEvent(
                         broadcastResult,
                         this.expressionMap.mainAlias!.metadata,
                         valueSet,
-                    )
-                })
-                await broadcastResult.wait()
+                    );
+                });
+                await broadcastResult.wait();
             }
 
             // close transaction if we started it
             // console.time(".commit");
             if (transactionStartedByUs) {
-                await queryRunner.commitTransaction()
+                await queryRunner.commitTransaction();
             }
             // console.timeEnd(".commit");
 
-            return insertResult
+            return insertResult;
         } catch (error) {
             // rollback transaction if we started it
             if (transactionStartedByUs) {
                 try {
-                    await queryRunner.rollbackTransaction()
+                    await queryRunner.rollbackTransaction();
                 } catch (rollbackError) {}
             }
-            throw error
+            throw error;
         } finally {
             // console.time(".releasing connection");
             if (queryRunner !== this.queryRunner) {
                 // means we created our own query runner
-                await queryRunner.release()
+                await queryRunner.release();
             }
             // console.timeEnd(".releasing connection");
             // console.timeEnd("QueryBuilder.execute");
@@ -235,11 +235,11 @@ export class InsertQueryBuilder<
     ): InsertQueryBuilder<T> {
         entityTarget = InstanceChecker.isEntitySchema(entityTarget)
             ? entityTarget.options.name
-            : entityTarget
-        const mainAlias = this.createFromAlias(entityTarget)
-        this.expressionMap.setMainAlias(mainAlias)
-        this.expressionMap.insertColumns = columns || []
-        return this as any as InsertQueryBuilder<T>
+            : entityTarget;
+        const mainAlias = this.createFromAlias(entityTarget);
+        this.expressionMap.setMainAlias(mainAlias);
+        this.expressionMap.insertColumns = columns || [];
+        return this as any as InsertQueryBuilder<T>;
     }
 
     /**
@@ -250,50 +250,50 @@ export class InsertQueryBuilder<
             | QueryDeepPartialEntity<Entity>
             | QueryDeepPartialEntity<Entity>[],
     ): this {
-        this.expressionMap.valuesSet = values
-        return this
+        this.expressionMap.valuesSet = values;
+        return this;
     }
 
     /**
      * Optional returning/output clause.
      * This will return given column values.
      */
-    output(columns: string[]): this
+    output(columns: string[]): this;
 
     /**
      * Optional returning/output clause.
      * Returning is a SQL string containing returning statement.
      */
-    output(output: string): this
+    output(output: string): this;
 
     /**
      * Optional returning/output clause.
      */
-    output(output: string | string[]): this
+    output(output: string | string[]): this;
 
     /**
      * Optional returning/output clause.
      */
     output(output: string | string[]): this {
-        return this.returning(output)
+        return this.returning(output);
     }
 
     /**
      * Optional returning/output clause.
      * This will return given column values.
      */
-    returning(columns: string[]): this
+    returning(columns: string[]): this;
 
     /**
      * Optional returning/output clause.
      * Returning is a SQL string containing returning statement.
      */
-    returning(returning: string): this
+    returning(returning: string): this;
 
     /**
      * Optional returning/output clause.
      */
-    returning(returning: string | string[]): this
+    returning(returning: string | string[]): this;
 
     /**
      * Optional returning/output clause.
@@ -301,11 +301,11 @@ export class InsertQueryBuilder<
     returning(returning: string | string[]): this {
         // not all databases support returning/output cause
         if (!this.connection.driver.isReturningSqlSupported("insert")) {
-            throw new ReturningStatementNotSupportedError()
+            throw new ReturningStatementNotSupportedError();
         }
 
-        this.expressionMap.returning = returning
-        return this
+        this.expressionMap.returning = returning;
+        return this;
     }
 
     /**
@@ -314,8 +314,8 @@ export class InsertQueryBuilder<
      * Enabled by default.
      */
     updateEntity(enabled: boolean): this {
-        this.expressionMap.updateEntity = enabled
-        return this
+        this.expressionMap.updateEntity = enabled;
+        return this;
     }
 
     /**
@@ -324,16 +324,16 @@ export class InsertQueryBuilder<
      * @deprecated Use `orIgnore` or `orUpdate`
      */
     onConflict(statement: string): this {
-        this.expressionMap.onConflict = statement
-        return this
+        this.expressionMap.onConflict = statement;
+        return this;
     }
 
     /**
      * Adds additional ignore statement supported in databases.
      */
     orIgnore(statement: string | boolean = true): this {
-        this.expressionMap.onIgnore = !!statement
-        return this
+        this.expressionMap.onIgnore = !!statement;
+        return this;
     }
 
     /**
@@ -349,16 +349,16 @@ export class InsertQueryBuilder<
      *
      */
     orUpdate(statement?: {
-        columns?: string[]
-        overwrite?: string[]
-        conflict_target?: string | string[]
-    }): this
+        columns?: string[];
+        overwrite?: string[];
+        conflict_target?: string | string[];
+    }): this;
 
     orUpdate(
         overwrite: string[],
         conflictTarget?: string | string[],
         orUpdateOptions?: InsertOrUpdateOptions,
-    ): this
+    ): this;
 
     /**
      * Adds additional update statement supported in databases.
@@ -366,9 +366,9 @@ export class InsertQueryBuilder<
     orUpdate(
         statementOrOverwrite?:
             | {
-                  columns?: string[]
-                  overwrite?: string[]
-                  conflict_target?: string | string[]
+                  columns?: string[];
+                  overwrite?: string[];
+                  conflict_target?: string | string[];
               }
             | string[],
         conflictTarget?: string | string[],
@@ -382,8 +382,8 @@ export class InsertQueryBuilder<
                 skipUpdateIfNoValuesChanged:
                     orUpdateOptions?.skipUpdateIfNoValuesChanged,
                 upsertType: orUpdateOptions?.upsertType,
-            }
-            return this
+            };
+            return this;
         }
 
         this.expressionMap.onUpdate = {
@@ -393,8 +393,8 @@ export class InsertQueryBuilder<
                 orUpdateOptions?.skipUpdateIfNoValuesChanged,
             indexPredicate: orUpdateOptions?.indexPredicate,
             upsertType: orUpdateOptions?.upsertType,
-        }
-        return this
+        };
+        return this;
     }
 
     // -------------------------------------------------------------------------
@@ -405,39 +405,39 @@ export class InsertQueryBuilder<
      * Creates INSERT express used to perform insert query.
      */
     protected createInsertExpression() {
-        const tableName = this.getTableName(this.getMainTableName())
-        const valuesExpression = this.createValuesExpression() // its important to get values before returning expression because oracle rely on native parameters and ordering of them is important
+        const tableName = this.getTableName(this.getMainTableName());
+        const valuesExpression = this.createValuesExpression(); // its important to get values before returning expression because oracle rely on native parameters and ordering of them is important
         const returningExpression =
             this.connection.driver.options.type === "oracle" &&
             this.getValueSets().length > 1
                 ? null
-                : this.createReturningExpression("insert") // oracle doesnt support returning with multi-row insert
-        const columnsExpression = this.createColumnNamesExpression()
-        let query = "INSERT "
+                : this.createReturningExpression("insert"); // oracle doesnt support returning with multi-row insert
+        const columnsExpression = this.createColumnNamesExpression();
+        let query = "INSERT ";
 
         if (this.expressionMap.onUpdate?.upsertType === "primary-key") {
-            query = "UPSERT "
+            query = "UPSERT ";
         }
 
         if (
             DriverUtils.isMySQLFamily(this.connection.driver) ||
             this.connection.driver.options.type === "aurora-mysql"
         ) {
-            query += `${this.expressionMap.onIgnore ? " IGNORE " : ""}`
+            query += `${this.expressionMap.onIgnore ? " IGNORE " : ""}`;
         }
 
-        query += `INTO ${tableName}`
+        query += `INTO ${tableName}`;
 
         if (
             this.alias !== this.getMainTableName() &&
             DriverUtils.isPostgresFamily(this.connection.driver)
         ) {
-            query += ` AS "${this.alias}"`
+            query += ` AS "${this.alias}"`;
         }
 
         // add columns expression
         if (columnsExpression) {
-            query += `(${columnsExpression})`
+            query += `(${columnsExpression})`;
         } else {
             if (
                 !valuesExpression &&
@@ -445,7 +445,7 @@ export class InsertQueryBuilder<
                     this.connection.driver.options.type === "aurora-mysql")
             )
                 // special syntax for mysql DEFAULT VALUES insertion
-                query += "()"
+                query += "()";
         }
 
         // add OUTPUT expression
@@ -453,7 +453,7 @@ export class InsertQueryBuilder<
             returningExpression &&
             this.connection.driver.options.type === "mssql"
         ) {
-            query += ` OUTPUT ${returningExpression}`
+            query += ` OUTPUT ${returningExpression}`;
         }
 
         // add VALUES expression
@@ -462,9 +462,9 @@ export class InsertQueryBuilder<
                 this.connection.driver.options.type === "oracle" &&
                 this.getValueSets().length > 1
             ) {
-                query += ` ${valuesExpression}`
+                query += ` ${valuesExpression}`;
             } else {
-                query += ` VALUES ${valuesExpression}`
+                query += ` VALUES ${valuesExpression}`;
             }
         } else {
             if (
@@ -472,9 +472,9 @@ export class InsertQueryBuilder<
                 this.connection.driver.options.type === "aurora-mysql"
             ) {
                 // special syntax for mysql DEFAULT VALUES insertion
-                query += " VALUES ()"
+                query += " VALUES ()";
             } else {
-                query += ` DEFAULT VALUES`
+                query += ` DEFAULT VALUES`;
             }
         }
         if (this.expressionMap.onUpdate?.upsertType !== "primary-key") {
@@ -484,9 +484,9 @@ export class InsertQueryBuilder<
                 )
             ) {
                 if (this.expressionMap.onIgnore) {
-                    query += " ON CONFLICT DO NOTHING "
+                    query += " ON CONFLICT DO NOTHING ";
                 } else if (this.expressionMap.onConflict) {
-                    query += ` ON CONFLICT ${this.expressionMap.onConflict} `
+                    query += ` ON CONFLICT ${this.expressionMap.onConflict} `;
                 } else if (this.expressionMap.onUpdate) {
                     const {
                         overwrite,
@@ -494,14 +494,14 @@ export class InsertQueryBuilder<
                         conflict,
                         skipUpdateIfNoValuesChanged,
                         indexPredicate,
-                    } = this.expressionMap.onUpdate
+                    } = this.expressionMap.onUpdate;
 
-                    let conflictTarget = "ON CONFLICT"
+                    let conflictTarget = "ON CONFLICT";
 
                     if (Array.isArray(conflict)) {
                         conflictTarget += ` ( ${conflict
                             .map((column) => this.escape(column))
-                            .join(", ")} )`
+                            .join(", ")} )`;
                         if (
                             indexPredicate &&
                             !DriverUtils.isPostgresFamily(
@@ -510,7 +510,7 @@ export class InsertQueryBuilder<
                         ) {
                             throw new LapinError(
                                 `indexPredicate option is not supported by the current database driver`,
-                            )
+                            );
                         }
                         if (
                             indexPredicate &&
@@ -518,16 +518,16 @@ export class InsertQueryBuilder<
                         ) {
                             conflictTarget += ` WHERE ( ${this.escape(
                                 indexPredicate,
-                            )} )`
+                            )} )`;
                         }
                     } else if (conflict) {
                         conflictTarget += ` ON CONSTRAINT ${this.escape(
                             conflict,
-                        )}`
+                        )}`;
                     }
 
                     if (Array.isArray(overwrite)) {
-                        query += ` ${conflictTarget} DO UPDATE SET `
+                        query += ` ${conflictTarget} DO UPDATE SET `;
                         query += overwrite
                             ?.map(
                                 (column) =>
@@ -535,17 +535,17 @@ export class InsertQueryBuilder<
                                         column,
                                     )} = EXCLUDED.${this.escape(column)}`,
                             )
-                            .join(", ")
-                        query += " "
+                            .join(", ");
+                        query += " ";
                     } else if (columns) {
-                        query += ` ${conflictTarget} DO UPDATE SET `
+                        query += ` ${conflictTarget} DO UPDATE SET `;
                         query += columns
                             .map(
                                 (column) =>
                                     `${this.escape(column)} = :${column}`,
                             )
-                            .join(", ")
-                        query += " "
+                            .join(", ");
+                        query += " ";
                     }
 
                     if (
@@ -553,7 +553,7 @@ export class InsertQueryBuilder<
                         skipUpdateIfNoValuesChanged &&
                         DriverUtils.isPostgresFamily(this.connection.driver)
                     ) {
-                        query += ` WHERE (`
+                        query += ` WHERE (`;
                         query += overwrite
                             .map(
                                 (column) =>
@@ -563,8 +563,8 @@ export class InsertQueryBuilder<
                                         column,
                                     )}`,
                             )
-                            .join(" OR ")
-                        query += ") "
+                            .join(" OR ");
+                        query += ") ";
                     }
                 }
             } else if (
@@ -573,10 +573,10 @@ export class InsertQueryBuilder<
                 )
             ) {
                 if (this.expressionMap.onUpdate) {
-                    const { overwrite, columns } = this.expressionMap.onUpdate
+                    const { overwrite, columns } = this.expressionMap.onUpdate;
 
                     if (Array.isArray(overwrite)) {
-                        query += " ON DUPLICATE KEY UPDATE "
+                        query += " ON DUPLICATE KEY UPDATE ";
                         query += overwrite
                             .map(
                                 (column) =>
@@ -584,24 +584,24 @@ export class InsertQueryBuilder<
                                         column,
                                     )} = VALUES(${this.escape(column)})`,
                             )
-                            .join(", ")
-                        query += " "
+                            .join(", ");
+                        query += " ";
                     } else if (Array.isArray(columns)) {
-                        query += " ON DUPLICATE KEY UPDATE "
+                        query += " ON DUPLICATE KEY UPDATE ";
                         query += columns
                             .map(
                                 (column) =>
                                     `${this.escape(column)} = :${column}`,
                             )
-                            .join(", ")
-                        query += " "
+                            .join(", ");
+                        query += " ";
                     }
                 }
             } else {
                 if (this.expressionMap.onUpdate) {
                     throw new LapinError(
                         `onUpdate is not supported by the current database driver`,
-                    )
+                    );
                 }
             }
         }
@@ -614,7 +614,7 @@ export class InsertQueryBuilder<
                 this.connection.driver.options.type === "cockroachdb" ||
                 DriverUtils.isMySQLFamily(this.connection.driver))
         ) {
-            query += ` RETURNING ${returningExpression}`
+            query += ` RETURNING ${returningExpression}`;
         }
 
         // Inserting a specific value for an auto-increment primary key in mssql requires enabling IDENTITY_INSERT
@@ -634,17 +634,17 @@ export class InsertQueryBuilder<
                     this.isOverridingAutoIncrementBehavior(column),
                 )
         ) {
-            query = `SET IDENTITY_INSERT ${tableName} ON; ${query}; SET IDENTITY_INSERT ${tableName} OFF`
+            query = `SET IDENTITY_INSERT ${tableName} ON; ${query}; SET IDENTITY_INSERT ${tableName} OFF`;
         }
 
-        return query
+        return query;
     }
 
     /**
      * Gets list of columns where values must be inserted to.
      */
     protected getInsertedColumns(): ColumnMetadata[] {
-        if (!this.expressionMap.mainAlias!.hasMetadata) return []
+        if (!this.expressionMap.mainAlias!.hasMetadata) return [];
 
         return this.expressionMap.mainAlias!.metadata.columns.filter(
             (column) => {
@@ -654,11 +654,11 @@ export class InsertQueryBuilder<
                         this.expressionMap.insertColumns.indexOf(
                             column.propertyPath,
                         ) !== -1
-                    )
+                    );
 
                 // skip columns the user doesn't want included by default
                 if (!column.isInsert) {
-                    return false
+                    return false;
                 }
 
                 // if user did not specified such list then return all columns except auto-increment one
@@ -676,22 +676,22 @@ export class InsertQueryBuilder<
                         this.isOverridingAutoIncrementBehavior(column)
                     )
                 )
-                    return false
+                    return false;
 
-                return true
+                return true;
             },
-        )
+        );
     }
 
     /**
      * Creates a columns string where values must be inserted to for INSERT INTO expression.
      */
     protected createColumnNamesExpression(): string {
-        const columns = this.getInsertedColumns()
+        const columns = this.getInsertedColumns();
         if (columns.length > 0)
             return columns
                 .map((column) => this.escape(column.databaseName))
-                .join(", ")
+                .join(", ");
 
         // in the case if there are no insert columns specified and table without metadata used
         // we get columns from the inserted value map, in the case if only one inserted map is specified
@@ -699,29 +699,29 @@ export class InsertQueryBuilder<
             !this.expressionMap.mainAlias!.hasMetadata &&
             !this.expressionMap.insertColumns.length
         ) {
-            const valueSets = this.getValueSets()
+            const valueSets = this.getValueSets();
             if (valueSets.length === 1)
                 return Object.keys(valueSets[0])
                     .map((columnName) => this.escape(columnName))
-                    .join(", ")
+                    .join(", ");
         }
 
         // get a table name and all column database names
         return this.expressionMap.insertColumns
             .map((columnName) => this.escape(columnName))
-            .join(", ")
+            .join(", ");
     }
 
     /**
      * Creates list of values needs to be inserted in the VALUES expression.
      */
     protected createValuesExpression(): string {
-        const valueSets = this.getValueSets()
-        const columns = this.getInsertedColumns()
+        const valueSets = this.getValueSets();
+        const columns = this.getInsertedColumns();
 
         // if column metadatas are given then apply all necessary operations with values
         if (columns.length > 0) {
-            let expression = ""
+            let expression = "";
             valueSets.forEach((valueSet, valueSetIndex) => {
                 columns.forEach((column, columnIndex) => {
                     if (columnIndex === 0) {
@@ -729,19 +729,19 @@ export class InsertQueryBuilder<
                             this.connection.driver.options.type === "oracle" &&
                             valueSets.length > 1
                         ) {
-                            expression += " SELECT "
+                            expression += " SELECT ";
                         } else if (
                             this.connection.driver.options.type === "sap" &&
                             valueSets.length > 1
                         ) {
-                            expression += " SELECT "
+                            expression += " SELECT ";
                         } else {
-                            expression += "("
+                            expression += "(";
                         }
                     }
 
                     // extract real value from the entity
-                    let value = column.getEntityValue(valueSet)
+                    let value = column.getEntityValue(valueSet);
 
                     // if column is relational and value is an object then get real referenced column value from this object
                     // for example column value is { question: { id: 1 } }, value will be equal to { id: 1 }
@@ -755,13 +755,13 @@ export class InsertQueryBuilder<
                         value = this.connection.driver.preparePersistentValue(
                             value,
                             column,
-                        )
+                        );
                     }
 
                     // newly inserted entities always have a version equal to 1 (first version)
                     // also, user-specified version must be empty
                     if (column.isVersion && value === undefined) {
-                        expression += "1"
+                        expression += "1";
 
                         // } else if (column.isNestedSetLeft) {
                         //     const tableName = this.connection.driver.escape(column.entityMetadata.tablePath);
@@ -778,7 +778,7 @@ export class InsertQueryBuilder<
                         expression += this.createParameter(
                             this.expressionMap.mainAlias!.metadata
                                 .discriminatorValue,
-                        )
+                        );
                         // return "1";
 
                         // for create and update dates we insert current date
@@ -794,8 +794,8 @@ export class InsertQueryBuilder<
                         !this.connection.driver.isUUIDGenerationSupported() &&
                         value === undefined
                     ) {
-                        value = uuidv4()
-                        expression += this.createParameter(value)
+                        value = uuidv4();
+                        expression += this.createParameter(value);
 
                         if (
                             !(
@@ -804,12 +804,12 @@ export class InsertQueryBuilder<
                             )
                         ) {
                             this.expressionMap.locallyGenerated[valueSetIndex] =
-                                {}
+                                {};
                         }
                         column.setEntityValue(
                             this.expressionMap.locallyGenerated[valueSetIndex],
                             value,
-                        )
+                        );
 
                         // if value for this column was not provided then insert default value
                     } else if (value === undefined) {
@@ -831,35 +831,35 @@ export class InsertQueryBuilder<
                                 expression +=
                                     this.connection.driver.normalizeDefault(
                                         column,
-                                    )
+                                    );
                             } else {
-                                expression += "NULL" // otherwise simply use NULL and pray if column is nullable
+                                expression += "NULL"; // otherwise simply use NULL and pray if column is nullable
                             }
                         } else {
-                            expression += "DEFAULT"
+                            expression += "DEFAULT";
                         }
                     } else if (
                         value === null &&
                         this.connection.driver.options.type === "spanner"
                     ) {
-                        expression += "NULL"
+                        expression += "NULL";
 
                         // support for SQL expressions in queries
                     } else if (typeof value === "function") {
-                        expression += value()
+                        expression += value();
 
                         // just any other regular value
                     } else {
                         if (this.connection.driver.options.type === "mssql")
                             value = (
                                 this.connection.driver as SqlServerDriver
-                            ).parametrizeValue(column, value)
+                            ).parametrizeValue(column, value);
 
                         // we need to store array values in a special class to make sure parameter replacement will work correctly
                         // if (value instanceof Array)
                         //     value = new ArrayParameter(value);
 
-                        const paramName = this.createParameter(value)
+                        const paramName = this.createParameter(value);
 
                         if (
                             (DriverUtils.isMySQLFamily(
@@ -875,14 +875,14 @@ export class InsertQueryBuilder<
                                 this.connection.driver as
                                     | MysqlDriver
                                     | AuroraMysqlDriver
-                            ).options.legacySpatialSupport
+                            ).options.legacySpatialSupport;
                             const geomFromText = useLegacy
                                 ? "GeomFromText"
-                                : "ST_GeomFromText"
+                                : "ST_GeomFromText";
                             if (column.srid != null) {
-                                expression += `${geomFromText}(${paramName}, ${column.srid})`
+                                expression += `${geomFromText}(${paramName}, ${column.srid})`;
                             } else {
-                                expression += `${geomFromText}(${paramName})`
+                                expression += `${geomFromText}(${paramName})`;
                             }
                         } else if (
                             DriverUtils.isPostgresFamily(
@@ -893,9 +893,9 @@ export class InsertQueryBuilder<
                             ) !== -1
                         ) {
                             if (column.srid != null) {
-                                expression += `ST_SetSRID(ST_GeomFromGeoJSON(${paramName}), ${column.srid})::${column.type}`
+                                expression += `ST_SetSRID(ST_GeomFromGeoJSON(${paramName}), ${column.srid})::${column.type}`;
                             } else {
-                                expression += `ST_GeomFromGeoJSON(${paramName})::${column.type}`
+                                expression += `ST_GeomFromGeoJSON(${paramName})::${column.type}`;
                             }
                         } else if (
                             this.connection.driver.options.type === "mssql" &&
@@ -909,9 +909,9 @@ export class InsertQueryBuilder<
                                 paramName +
                                 ", " +
                                 (column.srid || "0") +
-                                ")"
+                                ")";
                         } else {
-                            expression += paramName
+                            expression += paramName;
                         }
                     }
 
@@ -922,14 +922,14 @@ export class InsertQueryBuilder<
                                     "oracle" &&
                                 valueSets.length > 1
                             ) {
-                                expression += " FROM DUAL "
+                                expression += " FROM DUAL ";
                             } else if (
                                 this.connection.driver.options.type === "sap" &&
                                 valueSets.length > 1
                             ) {
-                                expression += " FROM dummy "
+                                expression += " FROM dummy ";
                             } else {
-                                expression += ")"
+                                expression += ")";
                             }
                         } else {
                             if (
@@ -937,41 +937,41 @@ export class InsertQueryBuilder<
                                     "oracle" &&
                                 valueSets.length > 1
                             ) {
-                                expression += " FROM DUAL UNION ALL "
+                                expression += " FROM DUAL UNION ALL ";
                             } else if (
                                 this.connection.driver.options.type === "sap" &&
                                 valueSets.length > 1
                             ) {
-                                expression += " FROM dummy UNION ALL "
+                                expression += " FROM dummy UNION ALL ";
                             } else {
-                                expression += "), "
+                                expression += "), ";
                             }
                         }
                     } else {
-                        expression += ", "
+                        expression += ", ";
                     }
-                })
-            })
-            if (expression === "()") return ""
+                });
+            });
+            if (expression === "()") return "";
 
-            return expression
+            return expression;
         } else {
             // for tables without metadata
             // get values needs to be inserted
-            let expression = ""
+            let expression = "";
 
             valueSets.forEach((valueSet, insertionIndex) => {
-                const columns = Object.keys(valueSet)
+                const columns = Object.keys(valueSet);
                 columns.forEach((columnName, columnIndex) => {
                     if (columnIndex === 0) {
-                        expression += "("
+                        expression += "(";
                     }
 
-                    const value = valueSet[columnName]
+                    const value = valueSet[columnName];
 
                     // support for SQL expressions in queries
                     if (typeof value === "function") {
-                        expression += value()
+                        expression += value();
 
                         // if value for this column was not provided then insert default value
                     } else if (value === undefined) {
@@ -984,9 +984,9 @@ export class InsertQueryBuilder<
                             this.connection.driver.options.type === "sap" ||
                             this.connection.driver.options.type === "spanner"
                         ) {
-                            expression += "NULL"
+                            expression += "NULL";
                         } else {
-                            expression += "DEFAULT"
+                            expression += "DEFAULT";
                         }
                     } else if (
                         value === null &&
@@ -994,22 +994,22 @@ export class InsertQueryBuilder<
                     ) {
                         // just any other regular value
                     } else {
-                        expression += this.createParameter(value)
+                        expression += this.createParameter(value);
                     }
 
                     if (columnIndex === Object.keys(valueSet).length - 1) {
                         if (insertionIndex === valueSets.length - 1) {
-                            expression += ")"
+                            expression += ")";
                         } else {
-                            expression += "), "
+                            expression += "), ";
                         }
                     } else {
-                        expression += ", "
+                        expression += ", ";
                     }
-                })
-            })
-            if (expression === "()") return ""
-            return expression
+                });
+            });
+            if (expression === "()") return "";
+            return expression;
         }
     }
 
@@ -1018,12 +1018,12 @@ export class InsertQueryBuilder<
      */
     protected getValueSets(): ObjectLiteral[] {
         if (Array.isArray(this.expressionMap.valuesSet))
-            return this.expressionMap.valuesSet
+            return this.expressionMap.valuesSet;
 
         if (ObjectUtils.isObject(this.expressionMap.valuesSet))
-            return [this.expressionMap.valuesSet]
+            return [this.expressionMap.valuesSet];
 
-        throw new InsertValuesMissingError()
+        throw new InsertValuesMissingError();
     }
 
     /**
@@ -1043,6 +1043,6 @@ export class InsertQueryBuilder<
                     column.getEntityValue(valueSet) !== undefined &&
                     column.getEntityValue(valueSet) !== null,
             )
-        )
+        );
     }
 }

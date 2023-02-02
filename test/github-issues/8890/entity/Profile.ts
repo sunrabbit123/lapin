@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class Profile {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    image: string
+    image: string;
 }

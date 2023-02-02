@@ -1,4 +1,4 @@
-import { MongoFindOneOptions } from "./MongoFindOneOptions"
+import { MongoFindOneOptions } from "./MongoFindOneOptions";
 
 /**
  * Defines a special criteria to find specific entities.
@@ -8,10 +8,10 @@ export interface MongoFindManyOptions<Entity = any>
     /**
      * Offset (paginated) where from entities should be taken.
      */
-    skip?: number
+    skip?: number;
 
     /**
      * Limit (paginated) - max number of entities should be taken.
      */
-    take?: number
+    take?: number;
 }

@@ -1,10 +1,10 @@
-import { Column, Entity, ObjectID, ObjectIdColumn } from "../../../../src"
+import { Column, Entity, ObjectID, ObjectIdColumn } from "../../../../src";
 
 @Entity()
 export class Post {
     @ObjectIdColumn()
-    id: ObjectID
+    id: ObjectID;
 
     @Column()
-    title: string
+    title: string;
 }

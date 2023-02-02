@@ -1,15 +1,15 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { Foo } from "./entity/Foo"
-import { expect } from "chai"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { Foo } from "./entity/Foo";
+import { expect } from "chai";
 
 describe("github issues > #2499 Postgres DELETE query result is useless", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -28,23 +28,23 @@ describe("github issues > #2499 Postgres DELETE query result is useless", () => 
                     "aurora-mysql",
                 ],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should return correct number of affected rows for mysql, mariadb, postgres", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const repo = connection.getRepository(Foo)
+                const repo = connection.getRepository(Foo);
 
-                await repo.save({ id: 1, description: "test1" })
-                await repo.save({ id: 2, description: "test2" })
-                await repo.save({ id: 3, description: "test3" })
+                await repo.save({ id: 1, description: "test1" });
+                await repo.save({ id: 2, description: "test2" });
+                await repo.save({ id: 3, description: "test3" });
 
                 // number 4 doesn't exist
-                const result = await repo.delete([1, 2, 3, 4])
+                const result = await repo.delete([1, 2, 3, 4]);
 
-                expect(result.affected).to.eql(3)
+                expect(result.affected).to.eql(3);
             }),
-        ))
-})
+        ));
+});

@@ -1,11 +1,11 @@
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { DriverUtils } from "../driver/DriverUtils"
-import { LapinError } from "../error/LapinError"
-import { FindOptionsUtils } from "../find-options/FindOptionsUtils"
-import { FindTreeOptions } from "../find-options/FindTreeOptions"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { TreeRepositoryUtils } from "../util/TreeRepositoryUtils"
-import { Repository } from "./Repository"
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { DriverUtils } from "../driver/DriverUtils";
+import { LapinError } from "../error/LapinError";
+import { FindOptionsUtils } from "../find-options/FindOptionsUtils";
+import { FindTreeOptions } from "../find-options/FindTreeOptions";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { TreeRepositoryUtils } from "../util/TreeRepositoryUtils";
+import { Repository } from "./Repository";
 
 /**
  * Repository with additional functions to work with trees.
@@ -23,11 +23,11 @@ export class TreeRepository<
      * Gets complete trees for all roots in the table.
      */
     async findTrees(options?: FindTreeOptions): Promise<Entity[]> {
-        const roots = await this.findRoots(options)
+        const roots = await this.findRoots(options);
         await Promise.all(
             roots.map((root) => this.findDescendantsTree(root, options)),
-        )
-        return roots
+        );
+        return roots;
     }
 
     /**
@@ -35,16 +35,16 @@ export class TreeRepository<
      */
     findRoots(options?: FindTreeOptions): Promise<Entity[]> {
         const escapeAlias = (alias: string) =>
-            this.manager.connection.driver.escape(alias)
+            this.manager.connection.driver.escape(alias);
         const escapeColumn = (column: string) =>
-            this.manager.connection.driver.escape(column)
+            this.manager.connection.driver.escape(column);
 
-        const joinColumn = this.metadata.treeParentRelation!.joinColumns[0]
+        const joinColumn = this.metadata.treeParentRelation!.joinColumns[0];
         const parentPropertyName =
-            joinColumn.givenDatabaseName || joinColumn.databaseName
+            joinColumn.givenDatabaseName || joinColumn.databaseName;
 
-        const qb = this.createQueryBuilder("treeEntity")
-        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options)
+        const qb = this.createQueryBuilder("treeEntity");
+        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options);
 
         return qb
             .where(
@@ -52,7 +52,7 @@ export class TreeRepository<
                     parentPropertyName,
                 )} IS NULL`,
             )
-            .getMany()
+            .getMany();
     }
 
     /**
@@ -66,9 +66,9 @@ export class TreeRepository<
             "treeEntity",
             "treeClosure",
             entity,
-        )
-        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options)
-        return qb.getMany()
+        );
+        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options);
+        return qb.getMany();
     }
 
     /**
@@ -85,16 +85,16 @@ export class TreeRepository<
                 "treeEntity",
                 "treeClosure",
                 entity,
-            )
-        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options)
+            );
+        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options);
 
-        const entities = await qb.getRawAndEntities()
+        const entities = await qb.getRawAndEntities();
         const relationMaps = TreeRepositoryUtils.createRelationMaps(
             this.manager,
             this.metadata,
             "treeEntity",
             entities.raw,
-        )
+        );
         TreeRepositoryUtils.buildChildrenEntityTree(
             this.metadata,
             entity,
@@ -104,9 +104,9 @@ export class TreeRepository<
                 depth: -1,
                 ...options,
             },
-        )
+        );
 
-        return entity
+        return entity;
     }
 
     /**
@@ -117,7 +117,7 @@ export class TreeRepository<
             "treeEntity",
             "treeClosure",
             entity,
-        ).getCount()
+        ).getCount();
     }
 
     /**
@@ -130,7 +130,7 @@ export class TreeRepository<
     ): SelectQueryBuilder<Entity> {
         // create shortcuts for better readability
         const escape = (alias: string) =>
-            this.manager.connection.driver.escape(alias)
+            this.manager.connection.driver.escape(alias);
 
         if (this.metadata.treeType === "closure-table") {
             const joinCondition =
@@ -144,25 +144,25 @@ export class TreeRepository<
                             escape(alias) +
                             "." +
                             escape(column.referencedColumn!.propertyPath)
-                        )
+                        );
                     })
-                    .join(" AND ")
+                    .join(" AND ");
 
-            const parameters: ObjectLiteral = {}
+            const parameters: ObjectLiteral = {};
             const whereCondition =
                 this.metadata.closureJunctionTable.ancestorColumns
                     .map((column) => {
                         parameters[column.referencedColumn!.propertyName] =
-                            column.referencedColumn!.getEntityValue(entity)
+                            column.referencedColumn!.getEntityValue(entity);
                         return (
                             escape(closureTableAlias) +
                             "." +
                             escape(column.propertyPath) +
                             " = :" +
                             column.referencedColumn!.propertyName
-                        )
+                        );
                     })
-                    .join(" AND ")
+                    .join(" AND ");
 
             return this.createQueryBuilder(alias)
                 .innerJoin(
@@ -171,7 +171,7 @@ export class TreeRepository<
                     joinCondition,
                 )
                 .where(whereCondition)
-                .setParameters(parameters)
+                .setParameters(parameters);
         } else if (this.metadata.treeType === "nested-set") {
             const whereCondition =
                 alias +
@@ -181,29 +181,29 @@ export class TreeRepository<
                 "joined." +
                 this.metadata.nestedSetLeftColumn!.propertyPath +
                 " AND joined." +
-                this.metadata.nestedSetRightColumn!.propertyPath
-            const parameters: ObjectLiteral = {}
+                this.metadata.nestedSetRightColumn!.propertyPath;
+            const parameters: ObjectLiteral = {};
             const joinCondition = this.metadata
                 .treeParentRelation!.joinColumns.map((joinColumn) => {
                     const parameterName =
                         joinColumn.referencedColumn!.propertyPath.replace(
                             ".",
                             "_",
-                        )
+                        );
                     parameters[parameterName] =
-                        joinColumn.referencedColumn!.getEntityValue(entity)
+                        joinColumn.referencedColumn!.getEntityValue(entity);
                     return (
                         "joined." +
                         joinColumn.referencedColumn!.propertyPath +
                         " = :" +
                         parameterName
-                    )
+                    );
                 })
-                .join(" AND ")
+                .join(" AND ");
 
             return this.createQueryBuilder(alias)
                 .innerJoin(this.metadata.targetName, "joined", whereCondition)
-                .where(joinCondition, parameters)
+                .where(joinCondition, parameters);
         } else if (this.metadata.treeType === "materialized-path") {
             return this.createQueryBuilder(alias).where((qb) => {
                 const subQuery = qb
@@ -215,23 +215,23 @@ export class TreeRepository<
                         "path",
                     )
                     .from(this.metadata.target, this.metadata.targetName)
-                    .whereInIds(this.metadata.getEntityIdMap(entity))
+                    .whereInIds(this.metadata.getEntityIdMap(entity));
 
                 if (
                     DriverUtils.isSQLiteFamily(this.manager.connection.driver)
                 ) {
                     return `${alias}.${
                         this.metadata.materializedPathColumn!.propertyPath
-                    } LIKE ${subQuery.getQuery()} || '%'`
+                    } LIKE ${subQuery.getQuery()} || '%'`;
                 } else {
                     return `${alias}.${
                         this.metadata.materializedPathColumn!.propertyPath
-                    } LIKE NULLIF(CONCAT(${subQuery.getQuery()}, '%'), '%')`
+                    } LIKE NULLIF(CONCAT(${subQuery.getQuery()}, '%'), '%')`;
                 }
-            })
+            });
         }
 
-        throw new LapinError(`Supported only in tree entities`)
+        throw new LapinError(`Supported only in tree entities`);
     }
 
     /**
@@ -245,9 +245,9 @@ export class TreeRepository<
             "treeEntity",
             "treeClosure",
             entity,
-        )
-        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options)
-        return qb.getMany()
+        );
+        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options);
+        return qb.getMany();
     }
 
     /**
@@ -262,23 +262,23 @@ export class TreeRepository<
             "treeEntity",
             "treeClosure",
             entity,
-        )
-        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options)
+        );
+        FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, options);
 
-        const entities = await qb.getRawAndEntities()
+        const entities = await qb.getRawAndEntities();
         const relationMaps = TreeRepositoryUtils.createRelationMaps(
             this.manager,
             this.metadata,
             "treeEntity",
             entities.raw,
-        )
+        );
         TreeRepositoryUtils.buildParentEntityTree(
             this.metadata,
             entity,
             entities.entities,
             relationMaps,
-        )
-        return entity
+        );
+        return entity;
     }
 
     /**
@@ -289,7 +289,7 @@ export class TreeRepository<
             "treeEntity",
             "treeClosure",
             entity,
-        ).getCount()
+        ).getCount();
     }
 
     /**
@@ -315,25 +315,25 @@ export class TreeRepository<
                             alias +
                             "." +
                             column.referencedColumn!.propertyPath
-                        )
+                        );
                     })
-                    .join(" AND ")
+                    .join(" AND ");
 
-            const parameters: ObjectLiteral = {}
+            const parameters: ObjectLiteral = {};
             const whereCondition =
                 this.metadata.closureJunctionTable.descendantColumns
                     .map((column) => {
                         parameters[column.referencedColumn!.propertyName] =
-                            column.referencedColumn!.getEntityValue(entity)
+                            column.referencedColumn!.getEntityValue(entity);
                         return (
                             closureTableAlias +
                             "." +
                             column.propertyPath +
                             " = :" +
                             column.referencedColumn!.propertyName
-                        )
+                        );
                     })
-                    .join(" AND ")
+                    .join(" AND ");
 
             return this.createQueryBuilder(alias)
                 .innerJoin(
@@ -342,7 +342,7 @@ export class TreeRepository<
                     joinCondition,
                 )
                 .where(whereCondition)
-                .setParameters(parameters)
+                .setParameters(parameters);
         } else if (this.metadata.treeType === "nested-set") {
             const joinCondition =
                 "joined." +
@@ -354,29 +354,29 @@ export class TreeRepository<
                 " AND " +
                 alias +
                 "." +
-                this.metadata.nestedSetRightColumn!.propertyPath
-            const parameters: ObjectLiteral = {}
+                this.metadata.nestedSetRightColumn!.propertyPath;
+            const parameters: ObjectLiteral = {};
             const whereCondition = this.metadata
                 .treeParentRelation!.joinColumns.map((joinColumn) => {
                     const parameterName =
                         joinColumn.referencedColumn!.propertyPath.replace(
                             ".",
                             "_",
-                        )
+                        );
                     parameters[parameterName] =
-                        joinColumn.referencedColumn!.getEntityValue(entity)
+                        joinColumn.referencedColumn!.getEntityValue(entity);
                     return (
                         "joined." +
                         joinColumn.referencedColumn!.propertyPath +
                         " = :" +
                         parameterName
-                    )
+                    );
                 })
-                .join(" AND ")
+                .join(" AND ");
 
             return this.createQueryBuilder(alias)
                 .innerJoin(this.metadata.targetName, "joined", joinCondition)
-                .where(whereCondition, parameters)
+                .where(whereCondition, parameters);
         } else if (this.metadata.treeType === "materialized-path") {
             // example: SELECT * FROM category category WHERE (SELECT mpath FROM `category` WHERE id = 2) LIKE CONCAT(category.mpath, '%');
             return this.createQueryBuilder(alias).where((qb) => {
@@ -389,23 +389,23 @@ export class TreeRepository<
                         "path",
                     )
                     .from(this.metadata.target, this.metadata.targetName)
-                    .whereInIds(this.metadata.getEntityIdMap(entity))
+                    .whereInIds(this.metadata.getEntityIdMap(entity));
 
                 if (
                     DriverUtils.isSQLiteFamily(this.manager.connection.driver)
                 ) {
                     return `${subQuery.getQuery()} LIKE ${alias}.${
                         this.metadata.materializedPathColumn!.propertyPath
-                    } || '%'`
+                    } || '%'`;
                 } else {
                     return `${subQuery.getQuery()} LIKE CONCAT(${alias}.${
                         this.metadata.materializedPathColumn!.propertyPath
-                    }, '%')`
+                    }, '%')`;
                 }
-            })
+            });
         }
 
-        throw new LapinError(`Supported only in tree entities`)
+        throw new LapinError(`Supported only in tree entities`);
     }
 
     /**

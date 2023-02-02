@@ -1,33 +1,33 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { Animal } from "./entity/Animal"
-import { OffsetWithoutLimitNotSupportedError } from "../../../src/error/OffsetWithoutLimitNotSupportedError"
-import { DriverUtils } from "../../../src/driver/DriverUtils"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { Animal } from "./entity/Animal";
+import { OffsetWithoutLimitNotSupportedError } from "../../../src/error/OffsetWithoutLimitNotSupportedError";
+import { DriverUtils } from "../../../src/driver/DriverUtils";
 
 describe("github issues > #1099 BUG - QueryBuilder MySQL skip sql is wrong", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("drivers which does not support offset without limit should throw an exception, other drivers must work fine", () =>
         Promise.all(
             connections.map(async (connection) => {
-                let animals = ["cat", "dog", "bear", "snake"]
+                let animals = ["cat", "dog", "bear", "snake"];
                 for (let animal of animals) {
                     await connection
                         .getRepository(Animal)
-                        .save({ name: animal })
+                        .save({ name: animal });
                 }
 
                 const qb = connection
@@ -35,7 +35,7 @@ describe("github issues > #1099 BUG - QueryBuilder MySQL skip sql is wrong", () 
                     .createQueryBuilder("a")
                     .leftJoinAndSelect("a.categories", "categories")
                     .orderBy("a.id")
-                    .skip(1)
+                    .skip(1);
 
                 if (
                     DriverUtils.isMySQLFamily(connection.driver) ||
@@ -47,7 +47,7 @@ describe("github issues > #1099 BUG - QueryBuilder MySQL skip sql is wrong", () 
                         .getManyAndCount()
                         .should.be.rejectedWith(
                             OffsetWithoutLimitNotSupportedError,
-                        )
+                        );
                 } else {
                     await qb.getManyAndCount().should.eventually.be.eql([
                         [
@@ -56,8 +56,8 @@ describe("github issues > #1099 BUG - QueryBuilder MySQL skip sql is wrong", () 
                             { id: 4, name: "snake", categories: [] },
                         ],
                         4,
-                    ])
+                    ]);
                 }
             }),
-        ))
-})
+        ));
+});

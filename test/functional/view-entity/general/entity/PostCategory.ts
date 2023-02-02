@@ -1,8 +1,8 @@
-import { DataSource } from "../../../../../src"
-import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn"
-import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity"
-import { Category } from "./Category"
-import { Post } from "./Post"
+import { DataSource } from "../../../../../src";
+import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
+import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
+import { Category } from "./Category";
+import { Post } from "./Post";
 
 @ViewEntity({
     expression: (connection: DataSource) =>
@@ -16,11 +16,11 @@ import { Post } from "./Post"
 })
 export class PostCategory {
     @ViewColumn()
-    id: number
+    id: number;
 
     @ViewColumn()
-    name: string
+    name: string;
 
     @ViewColumn()
-    categoryName: string
+    categoryName: string;
 }

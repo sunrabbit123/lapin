@@ -1,4 +1,4 @@
-import { MixedList } from "../common/MixedList"
+import { MixedList } from "../common/MixedList";
 
 export class ObjectUtils {
     /**
@@ -7,7 +7,7 @@ export class ObjectUtils {
      * And we don't simply use typeof because typeof null === "object".
      */
     static isObject(val: any): val is Object {
-        return val !== null && typeof val === "object"
+        return val !== null && typeof val === "object";
     }
 
     /**
@@ -16,7 +16,7 @@ export class ObjectUtils {
      * @param target The target object to copy to.
      * @param source The source object from which to copy properties.
      */
-    static assign<T, U>(target: T, source: U): void
+    static assign<T, U>(target: T, source: U): void;
 
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a
@@ -25,7 +25,7 @@ export class ObjectUtils {
      * @param source1 The first source object from which to copy properties.
      * @param source2 The second source object from which to copy properties.
      */
-    static assign<T, U, V>(target: T, source1: U, source2: V): void
+    static assign<T, U, V>(target: T, source1: U, source2: V): void;
 
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a
@@ -40,7 +40,7 @@ export class ObjectUtils {
         source1: U,
         source2: V,
         source3: W,
-    ): void
+    ): void;
 
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a
@@ -51,7 +51,7 @@ export class ObjectUtils {
     static assign(target: object, ...sources: any[]): void {
         for (const source of sources) {
             for (const prop of Object.getOwnPropertyNames(source)) {
-                ;(target as any)[prop] = source[prop]
+                (target as any)[prop] = source[prop];
             }
         }
     }
@@ -63,9 +63,9 @@ export class ObjectUtils {
         if (list !== null && typeof list === "object") {
             return Object.keys(list).map(
                 (key) => (list as { [key: string]: T })[key],
-            )
+            );
         } else {
-            return list
+            return list;
         }
     }
 }

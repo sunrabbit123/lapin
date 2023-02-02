@@ -3,15 +3,15 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index"
-import { Account } from "./Account"
+} from "../../../../../src/index";
+import { Account } from "./Account";
 
 @Entity()
 export class Person {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @OneToOne(() => Account)
     @JoinColumn()
-    account: Account
+    account: Account;
 }

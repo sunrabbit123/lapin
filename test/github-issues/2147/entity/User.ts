@@ -5,30 +5,30 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 @Unique(["clientId", "key"])
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    public key: number
+    public key: number;
 
     @Column({ name: "client_id" })
-    public clientId: number
+    public clientId: number;
 
     @Column()
-    public name: string
+    public name: string;
 
     @Column({ name: "updated_by" })
-    public updatedById: number
+    public updatedById: number;
 
     @ManyToOne((type) => User)
     @JoinColumn([
         { name: "client_id", referencedColumnName: "clientId" },
         { name: "updated_by", referencedColumnName: "key" },
     ])
-    public updatedBy: Promise<User>
+    public updatedBy: Promise<User>;
 }

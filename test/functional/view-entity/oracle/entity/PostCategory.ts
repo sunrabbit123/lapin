@@ -1,11 +1,11 @@
-import { ValueTransformer } from "../../../../../src"
-import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn"
-import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity"
+import { ValueTransformer } from "../../../../../src";
+import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
+import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
 
 export const uppercase: ValueTransformer = {
     to: (entityValue: string) => {},
     from: (databaseValue: string) => databaseValue.toLocaleUpperCase(),
-}
+};
 @ViewEntity({
     expression: `
     SELECT "post"."id" "id", "post"."name" AS "name", "category"."name" AS "categoryName"
@@ -15,11 +15,11 @@ export const uppercase: ValueTransformer = {
 })
 export class PostCategory {
     @ViewColumn()
-    id: number
+    id: number;
 
     @ViewColumn({ name: "name" })
-    postName: string
+    postName: string;
 
     @ViewColumn({ transformer: uppercase })
-    categoryName: string
+    categoryName: string;
 }

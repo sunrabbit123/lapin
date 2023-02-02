@@ -1,24 +1,24 @@
-import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver"
-import { ExpoConnectionOptions } from "./ExpoConnectionOptions"
-import { ExpoQueryRunner } from "./ExpoQueryRunner"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { DataSource } from "../../data-source/DataSource"
-import { ReplicationMode } from "../types/ReplicationMode"
+import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver";
+import { ExpoConnectionOptions } from "./ExpoConnectionOptions";
+import { ExpoQueryRunner } from "./ExpoQueryRunner";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { DataSource } from "../../data-source/DataSource";
+import { ReplicationMode } from "../types/ReplicationMode";
 
 export class ExpoDriver extends AbstractSqliteDriver {
-    options: ExpoConnectionOptions
+    options: ExpoConnectionOptions;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        super(connection)
+        super(connection);
 
-        this.database = this.options.database
+        this.database = this.options.database;
 
         // load sqlite package
-        this.sqlite = this.options.driver
+        this.sqlite = this.options.driver;
     }
 
     // -------------------------------------------------------------------------
@@ -31,23 +31,23 @@ export class ExpoDriver extends AbstractSqliteDriver {
     async disconnect(): Promise<void> {
         return new Promise<void>((ok, fail) => {
             try {
-                this.queryRunner = undefined
-                this.databaseConnection._db.close()
-                this.databaseConnection = undefined
-                ok()
+                this.queryRunner = undefined;
+                this.databaseConnection._db.close();
+                this.databaseConnection = undefined;
+                ok();
             } catch (error) {
-                fail(error)
+                fail(error);
             }
-        })
+        });
     }
 
     /**
      * Creates a query runner used to execute database queries.
      */
     createQueryRunner(mode: ReplicationMode): QueryRunner {
-        if (!this.queryRunner) this.queryRunner = new ExpoQueryRunner(this)
+        if (!this.queryRunner) this.queryRunner = new ExpoQueryRunner(this);
 
-        return this.queryRunner
+        return this.queryRunner;
     }
 
     // -------------------------------------------------------------------------
@@ -62,7 +62,7 @@ export class ExpoDriver extends AbstractSqliteDriver {
             try {
                 const databaseConnection = this.sqlite.openDatabase(
                     this.options.database,
-                )
+                );
                 /*
                 // we need to enable foreign keys in sqlite to make sure all foreign key related features
                 // working properly. this also makes onDelete work with sqlite.
@@ -73,20 +73,20 @@ export class ExpoDriver extends AbstractSqliteDriver {
                             `PRAGMA foreign_keys = ON`,
                             [],
                             (t: any, result: any) => {
-                                ok(databaseConnection)
+                                ok(databaseConnection);
                             },
                             (t: any, err: any) => {
-                                fail({ transaction: t, error: err })
+                                fail({ transaction: t, error: err });
                             },
-                        )
+                        );
                     },
                     (err: any) => {
-                        fail(err)
+                        fail(err);
                     },
-                )
+                );
             } catch (error) {
-                fail(error)
+                fail(error);
             }
-        })
+        });
     }
 }

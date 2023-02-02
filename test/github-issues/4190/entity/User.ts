@@ -5,22 +5,22 @@ import {
     OneToMany,
     OneToOne,
     JoinColumn,
-} from "../../../../src"
-import { Photo } from "./Photo"
-import { Profile } from "./Profile"
+} from "../../../../src";
+import { Photo } from "./Photo";
+import { Profile } from "./Profile";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany("Photo", "user")
-    photos: Photo[]
+    photos: Photo[];
 
     @OneToOne("Profile")
     @JoinColumn()
-    profile: Profile
+    profile: Profile;
 }

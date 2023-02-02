@@ -1,12 +1,12 @@
-import { ObjectID } from "../../../../src/driver/mongodb/typings"
-import { Comment } from "./comment"
-import { Column, Entity, ObjectIdColumn } from "../../../../src"
+import { ObjectID } from "../../../../src/driver/mongodb/typings";
+import { Comment } from "./comment";
+import { Column, Entity, ObjectIdColumn } from "../../../../src";
 
 @Entity()
 export class Post {
     @ObjectIdColumn()
-    _id?: ObjectID
+    _id?: ObjectID;
 
     @Column(() => Comment)
-    comments: Comment[]
+    comments: Comment[];
 }

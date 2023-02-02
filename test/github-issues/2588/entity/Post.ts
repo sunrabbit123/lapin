@@ -3,19 +3,19 @@ import {
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
-} from "../../../../src"
-import { PostReview } from "./PostReview"
+} from "../../../../src";
+import { PostReview } from "./PostReview";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @OneToMany((type) => PostReview, (postReview) => postReview.post, {
         eager: true,
     })
-    reviews: PostReview[]
+    reviews: PostReview[];
 }

@@ -1,20 +1,20 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "../../../../src"
-import { Post } from "./Post"
+import { Column, Entity, OneToMany, PrimaryColumn } from "../../../../src";
+import { Post } from "./Post";
 
 @Entity()
 export class Author {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column()
-    age: number
+    age: number;
 
     @OneToMany(() => Post, (post) => post.author)
-    posts: Post[]
+    posts: Post[];
 }

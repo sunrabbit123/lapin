@@ -3,17 +3,17 @@ import {
     Column,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
-import { Entity } from "../../../../src/decorator/entity/Entity"
-import { Foo } from "./Foo"
+import { Entity } from "../../../../src/decorator/entity/Entity";
+import { Foo } from "./Foo";
 
 @Entity()
 export class Bar extends BaseEntity {
-    @PrimaryGeneratedColumn() id: number
+    @PrimaryGeneratedColumn() id: number;
 
-    @Column() description: string
+    @Column() description: string;
 
     @ManyToMany((type) => Foo, (foo) => foo.bars)
-    foos?: Foo[]
+    foos?: Foo[];
 }

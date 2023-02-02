@@ -1,5 +1,5 @@
-import { Column, PrimaryGeneratedColumn } from "../../../../src"
-import { Entity } from "../../../../src"
+import { Column, PrimaryGeneratedColumn } from "../../../../src";
+import { Entity } from "../../../../src";
 
 enum Test {
     TEST1 = "testing (brackets)",
@@ -9,8 +9,8 @@ enum Test {
 @Entity()
 export class SomeEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "enum", enum: Test })
-    test: Test
+    test: Test;
 }

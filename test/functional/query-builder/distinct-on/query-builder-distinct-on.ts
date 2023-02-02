@@ -1,17 +1,17 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { Category } from "./entity/Category"
-import { User } from "./entity/User"
-import { Post } from "./entity/Post"
+} from "../../../utils/test-utils";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { Category } from "./entity/Category";
+import { User } from "./entity/User";
+import { Post } from "./entity/Post";
 
 describe("query builder > distinct on", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
 
     before(
         async () =>
@@ -19,9 +19,9 @@ describe("query builder > distinct on", () => {
                 entities: [__dirname + "/entity/*{.js,.ts}"],
                 enabledDrivers: ["postgres"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     async function prepareData(connection: DataSource) {
         const users = [
@@ -37,13 +37,13 @@ describe("query builder > distinct on", () => {
             {
                 name: "Pablo",
             },
-        ]
+        ];
         await connection
             .createQueryBuilder()
             .insert()
             .into(User)
             .values(users)
-            .execute()
+            .execute();
 
         const categories = [
             {
@@ -66,13 +66,13 @@ describe("query builder > distinct on", () => {
                 title: "Category Five",
                 author: "Dion",
             },
-        ]
+        ];
         await connection
             .createQueryBuilder()
             .insert()
             .into(Category)
             .values(categories)
-            .execute()
+            .execute();
 
         const posts = [
             {
@@ -100,41 +100,41 @@ describe("query builder > distinct on", () => {
                 author: "Pablo",
                 moderator: "Sarah",
             },
-        ]
+        ];
         await connection
             .createQueryBuilder()
             .insert()
             .into(Post)
             .values(posts)
-            .execute()
+            .execute();
     }
 
     it("should perform distinct on category authors", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection)
+                await prepareData(connection);
 
                 const result = await connection.manager
                     .createQueryBuilder(Category, "category")
                     .distinctOn(["category.author"])
-                    .getMany()
+                    .getMany();
 
                 expect(result.map(({ author }) => author)).to.have.members([
                     "Dion",
                     "Zelda",
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("should perform distinct on post authors and moderators combination", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection)
+                await prepareData(connection);
 
                 const result = await connection.manager
                     .createQueryBuilder(Post, "post")
                     .distinctOn(["post.author", "post.moderator"])
-                    .getMany()
+                    .getMany();
 
                 expect(
                     result.map(({ moderator }) => moderator),
@@ -144,14 +144,14 @@ describe("query builder > distinct on", () => {
                         "Pablo",
                         "Sarah",
                         "Zelda",
-                    ])
+                    ]);
             }),
-        ))
+        ));
 
     it("should perform distinct on post and category authors", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection)
+                await prepareData(connection);
 
                 const result = await connection.manager
                     .createQueryBuilder(Post, "post")
@@ -161,14 +161,14 @@ describe("query builder > distinct on", () => {
                         "category.author = post.author",
                     )
                     .distinctOn(["post.author", "category.author"])
-                    .getMany()
+                    .getMany();
 
                 expect(result.map(({ author }) => author)).to.have.members([
                     "Dion",
                     "Pablo",
                     "Sarah",
                     "Zelda",
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});

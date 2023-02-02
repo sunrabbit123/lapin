@@ -5,20 +5,20 @@ import {
     Tree,
     TreeParent,
     TreeChildren,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 @Tree("closure-table")
 export class Category {
     @PrimaryGeneratedColumn()
-    cat_id: number
+    cat_id: number;
 
     @Column()
-    cat_name: string
+    cat_name: string;
 
     @TreeParent()
-    parent: Category
+    parent: Category;
 
     @TreeChildren({ cascade: true })
-    children: Category[]
+    children: Category[];
 }

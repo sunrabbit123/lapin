@@ -1,5 +1,5 @@
-import { Column, OneToMany, Entity } from "../../../../src/index"
-import { DataModel } from "./DataModel"
+import { Column, OneToMany, Entity } from "../../../../src/index";
+import { DataModel } from "./DataModel";
 
 @Entity()
 export class ValidationModel {
@@ -7,8 +7,8 @@ export class ValidationModel {
         type: "integer",
         primary: true,
     })
-    validation: number
+    validation: number;
 
     @OneToMany((type) => DataModel, (dataModel) => dataModel.validations)
-    dataModel: DataModel[]
+    dataModel: DataModel[];
 }

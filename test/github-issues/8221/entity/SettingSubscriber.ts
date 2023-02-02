@@ -3,36 +3,36 @@ import {
     EventSubscriber,
     LoadEvent,
     UpdateEvent,
-} from "../../../../src"
-import { Setting } from "./Setting"
+} from "../../../../src";
+import { Setting } from "./Setting";
 
 @EventSubscriber()
 export class SettingSubscriber implements EntitySubscriberInterface {
-    counter: any
+    counter: any;
 
     constructor() {
-        this.reset()
+        this.reset();
     }
 
     listenTo() {
-        return Setting
+        return Setting;
     }
 
     afterLoad(item: Setting, event?: LoadEvent<Setting>) {
         // just an example, any entity modification on after load will lead to this issue
-        item.value = "x"
+        item.value = "x";
     }
 
     beforeUpdate(event: UpdateEvent<any>): void {
-        this.counter.updates++
+        this.counter.updates++;
     }
 
     beforeInsert(event: UpdateEvent<any>): void {
-        this.counter.inserts++
+        this.counter.inserts++;
     }
 
     beforeRemove(event: UpdateEvent<any>): void {
-        this.counter.deletes++
+        this.counter.deletes++;
     }
 
     reset() {
@@ -40,6 +40,6 @@ export class SettingSubscriber implements EntitySubscriberInterface {
             deletes: 0,
             inserts: 0,
             updates: 0,
-        }
+        };
     }
 }

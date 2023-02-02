@@ -1,21 +1,21 @@
-import { PostgresConnectionOptions } from "../driver/postgres/PostgresConnectionOptions"
-import { Query } from "../driver/Query"
-import { SqlInMemory } from "../driver/SqlInMemory"
-import { SqlServerConnectionOptions } from "../driver/sqlserver/SqlServerConnectionOptions"
-import { TableIndex } from "../schema-builder/table/TableIndex"
-import { View } from "../schema-builder/view/View"
-import { DataSource } from "../data-source/DataSource"
-import { Table } from "../schema-builder/table/Table"
-import { EntityManager } from "../entity-manager/EntityManager"
-import { TableColumn } from "../schema-builder/table/TableColumn"
-import { Broadcaster } from "../subscriber/Broadcaster"
-import { ReplicationMode } from "../driver/types/ReplicationMode"
-import { LapinError } from "../error/LapinError"
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { TableForeignKey } from "../schema-builder/table/TableForeignKey"
-import { OrmUtils } from "../util/OrmUtils"
-import { MetadataTableType } from "../driver/types/MetadataTableType"
-import { InstanceChecker } from "../util/InstanceChecker"
+import { PostgresConnectionOptions } from "../driver/postgres/PostgresConnectionOptions";
+import { Query } from "../driver/Query";
+import { SqlInMemory } from "../driver/SqlInMemory";
+import { SqlServerConnectionOptions } from "../driver/sqlserver/SqlServerConnectionOptions";
+import { TableIndex } from "../schema-builder/table/TableIndex";
+import { View } from "../schema-builder/view/View";
+import { DataSource } from "../data-source/DataSource";
+import { Table } from "../schema-builder/table/Table";
+import { EntityManager } from "../entity-manager/EntityManager";
+import { TableColumn } from "../schema-builder/table/TableColumn";
+import { Broadcaster } from "../subscriber/Broadcaster";
+import { ReplicationMode } from "../driver/types/ReplicationMode";
+import { LapinError } from "../error/LapinError";
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { TableForeignKey } from "../schema-builder/table/TableForeignKey";
+import { OrmUtils } from "../util/OrmUtils";
+import { MetadataTableType } from "../driver/types/MetadataTableType";
+import { InstanceChecker } from "../util/InstanceChecker";
 
 export abstract class BaseQueryRunner {
     // -------------------------------------------------------------------------
@@ -25,44 +25,44 @@ export abstract class BaseQueryRunner {
     /**
      * Connection used by this query runner.
      */
-    connection: DataSource
+    connection: DataSource;
 
     /**
      * Entity manager working only with current query runner.
      */
-    manager: EntityManager
+    manager: EntityManager;
 
     /**
      * Indicates if connection for this query runner is released.
      * Once its released, query runner cannot run queries anymore.
      */
-    isReleased = false
+    isReleased = false;
 
     /**
      * Indicates if transaction is in progress.
      */
-    isTransactionActive = false
+    isTransactionActive = false;
 
     /**
      * Stores temporarily user data.
      * Useful for sharing data with subscribers.
      */
-    data = {}
+    data = {};
 
     /**
      * All synchronized tables in the database.
      */
-    loadedTables: Table[] = []
+    loadedTables: Table[] = [];
 
     /**
      * All synchronized views in the database.
      */
-    loadedViews: View[] = []
+    loadedViews: View[] = [];
 
     /**
      * Broadcaster used on this query runner to broadcast entity events.
      */
-    broadcaster: Broadcaster
+    broadcaster: Broadcaster;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -71,32 +71,32 @@ export abstract class BaseQueryRunner {
     /**
      * Real database connection from a connection pool used to perform queries.
      */
-    protected databaseConnection: any
+    protected databaseConnection: any;
 
     /**
      * Indicates if special query runner mode in which sql queries won't be executed is enabled.
      */
-    protected sqlMemoryMode: boolean = false
+    protected sqlMemoryMode: boolean = false;
 
     /**
      * Sql-s stored if "sql in memory" mode is enabled.
      */
-    protected sqlInMemory: SqlInMemory = new SqlInMemory()
+    protected sqlInMemory: SqlInMemory = new SqlInMemory();
 
     /**
      * Mode in which query runner executes.
      * Used for replication.
      * If replication is not setup its value is ignored.
      */
-    protected mode: ReplicationMode
+    protected mode: ReplicationMode;
 
     /**
      * current depth of transaction.
      * for transactionDepth > 0 will use SAVEPOINT to start and commit/rollback transaction blocks
      */
-    protected transactionDepth = 0
+    protected transactionDepth = 0;
 
-    private cachedTablePaths: Record<string, string> = {}
+    private cachedTablePaths: Record<string, string> = {};
 
     // -------------------------------------------------------------------------
     // Public Abstract Methods
@@ -109,15 +109,15 @@ export abstract class BaseQueryRunner {
         query: string,
         parameters?: any[],
         useStructuredResult?: boolean,
-    ): Promise<any>
+    ): Promise<any>;
 
     // -------------------------------------------------------------------------
     // Protected Abstract Methods
     // -------------------------------------------------------------------------
 
-    protected abstract loadTables(tablePaths?: string[]): Promise<Table[]>
+    protected abstract loadTables(tablePaths?: string[]): Promise<Table[]>;
 
-    protected abstract loadViews(tablePaths?: string[]): Promise<View[]>
+    protected abstract loadViews(tablePaths?: string[]): Promise<View[]>;
 
     // -------------------------------------------------------------------------
     // Public Methods
@@ -141,8 +141,8 @@ export abstract class BaseQueryRunner {
      * Loads given table's data from the database.
      */
     async getTable(tablePath: string): Promise<Table | undefined> {
-        this.loadedTables = await this.loadTables([tablePath])
-        return this.loadedTables.length > 0 ? this.loadedTables[0] : undefined
+        this.loadedTables = await this.loadTables([tablePath]);
+        return this.loadedTables.length > 0 ? this.loadedTables[0] : undefined;
     }
 
     /**
@@ -152,27 +152,27 @@ export abstract class BaseQueryRunner {
         if (!tableNames) {
             // Don't cache in this case.
             // This is the new case & isn't used anywhere else anyway.
-            return await this.loadTables(tableNames)
+            return await this.loadTables(tableNames);
         }
 
-        this.loadedTables = await this.loadTables(tableNames)
-        return this.loadedTables
+        this.loadedTables = await this.loadTables(tableNames);
+        return this.loadedTables;
     }
 
     /**
      * Loads given view's data from the database.
      */
     async getView(viewPath: string): Promise<View | undefined> {
-        this.loadedViews = await this.loadViews([viewPath])
-        return this.loadedViews.length > 0 ? this.loadedViews[0] : undefined
+        this.loadedViews = await this.loadViews([viewPath]);
+        return this.loadedViews.length > 0 ? this.loadedViews[0] : undefined;
     }
 
     /**
      * Loads given view's data from the database.
      */
     async getViews(viewPaths?: string[]): Promise<View[]> {
-        this.loadedViews = await this.loadViews(viewPaths)
-        return this.loadedViews
+        this.loadedViews = await this.loadViews(viewPaths);
+        return this.loadedViews;
     }
 
     /**
@@ -181,8 +181,8 @@ export abstract class BaseQueryRunner {
      * You can get memorized sql using getMemorySql() method.
      */
     enableSqlMemory(): void {
-        this.sqlInMemory = new SqlInMemory()
-        this.sqlMemoryMode = true
+        this.sqlInMemory = new SqlInMemory();
+        this.sqlMemoryMode = true;
     }
 
     /**
@@ -192,22 +192,22 @@ export abstract class BaseQueryRunner {
      * Previously memorized sql will be flushed.
      */
     disableSqlMemory(): void {
-        this.sqlInMemory = new SqlInMemory()
-        this.sqlMemoryMode = false
+        this.sqlInMemory = new SqlInMemory();
+        this.sqlMemoryMode = false;
     }
 
     /**
      * Flushes all memorized sqls.
      */
     clearSqlMemory(): void {
-        this.sqlInMemory = new SqlInMemory()
+        this.sqlInMemory = new SqlInMemory();
     }
 
     /**
      * Gets sql stored in the memory. Parameters in the sql are already replaced.
      */
     getMemorySql(): SqlInMemory {
-        return this.sqlInMemory
+        return this.sqlInMemory;
     }
 
     /**
@@ -215,7 +215,7 @@ export abstract class BaseQueryRunner {
      */
     async executeMemoryUpSql(): Promise<void> {
         for (const { query, parameters } of this.sqlInMemory.upQueries) {
-            await this.query(query, parameters)
+            await this.query(query, parameters);
         }
     }
 
@@ -227,12 +227,12 @@ export abstract class BaseQueryRunner {
             query,
             parameters,
         } of this.sqlInMemory.downQueries.reverse()) {
-            await this.query(query, parameters)
+            await this.query(query, parameters);
         }
     }
 
     getReplicationMode(): ReplicationMode {
-        return this.mode
+        return this.mode;
     }
 
     // -------------------------------------------------------------------------
@@ -243,15 +243,15 @@ export abstract class BaseQueryRunner {
      * Gets view from previously loaded views, otherwise loads it from database.
      */
     protected async getCachedView(viewName: string): Promise<View> {
-        const view = this.loadedViews.find((view) => view.name === viewName)
-        if (view) return view
+        const view = this.loadedViews.find((view) => view.name === viewName);
+        if (view) return view;
 
-        const foundViews = await this.loadViews([viewName])
+        const foundViews = await this.loadViews([viewName]);
         if (foundViews.length > 0) {
-            this.loadedViews.push(foundViews[0])
-            return foundViews[0]
+            this.loadedViews.push(foundViews[0]);
+            return foundViews[0];
         } else {
-            throw new LapinError(`View "${viewName}" does not exist.`)
+            throw new LapinError(`View "${viewName}" does not exist.`);
         }
     }
 
@@ -260,36 +260,36 @@ export abstract class BaseQueryRunner {
      */
     protected async getCachedTable(tableName: string): Promise<Table> {
         if (tableName in this.cachedTablePaths) {
-            const tablePath = this.cachedTablePaths[tableName]
+            const tablePath = this.cachedTablePaths[tableName];
             const table = this.loadedTables.find(
                 (table) => this.getTablePath(table) === tablePath,
-            )
+            );
 
             if (table) {
-                return table
+                return table;
             }
         }
 
-        const foundTables = await this.loadTables([tableName])
+        const foundTables = await this.loadTables([tableName]);
 
         if (foundTables.length > 0) {
-            const foundTablePath = this.getTablePath(foundTables[0])
+            const foundTablePath = this.getTablePath(foundTables[0]);
 
             const cachedTable = this.loadedTables.find(
                 (table) => this.getTablePath(table) === foundTablePath,
-            )
+            );
 
             if (!cachedTable) {
                 this.cachedTablePaths[tableName] = this.getTablePath(
                     foundTables[0],
-                )
-                this.loadedTables.push(foundTables[0])
-                return foundTables[0]
+                );
+                this.loadedTables.push(foundTables[0]);
+                return foundTables[0];
             } else {
-                return cachedTable
+                return cachedTable;
             }
         } else {
-            throw new LapinError(`Table "${tableName}" does not exist.`)
+            throw new LapinError(`Table "${tableName}" does not exist.`);
         }
     }
 
@@ -297,53 +297,53 @@ export abstract class BaseQueryRunner {
      * Replaces loaded table with given changed table.
      */
     protected replaceCachedTable(table: Table, changedTable: Table): void {
-        const oldTablePath = this.getTablePath(table)
+        const oldTablePath = this.getTablePath(table);
         const foundTable = this.loadedTables.find(
             (loadedTable) => this.getTablePath(loadedTable) === oldTablePath,
-        )
+        );
 
         // Clean up the lookup cache..
         for (const [key, cachedPath] of Object.entries(this.cachedTablePaths)) {
             if (cachedPath === oldTablePath) {
-                this.cachedTablePaths[key] = this.getTablePath(changedTable)
+                this.cachedTablePaths[key] = this.getTablePath(changedTable);
             }
         }
 
         if (foundTable) {
-            foundTable.database = changedTable.database
-            foundTable.schema = changedTable.schema
-            foundTable.name = changedTable.name
-            foundTable.columns = changedTable.columns
-            foundTable.indices = changedTable.indices
-            foundTable.foreignKeys = changedTable.foreignKeys
-            foundTable.uniques = changedTable.uniques
-            foundTable.checks = changedTable.checks
-            foundTable.justCreated = changedTable.justCreated
-            foundTable.engine = changedTable.engine
+            foundTable.database = changedTable.database;
+            foundTable.schema = changedTable.schema;
+            foundTable.name = changedTable.name;
+            foundTable.columns = changedTable.columns;
+            foundTable.indices = changedTable.indices;
+            foundTable.foreignKeys = changedTable.foreignKeys;
+            foundTable.uniques = changedTable.uniques;
+            foundTable.checks = changedTable.checks;
+            foundTable.justCreated = changedTable.justCreated;
+            foundTable.engine = changedTable.engine;
         }
     }
 
     protected getTablePath(
         target: EntityMetadata | Table | View | TableForeignKey | string,
     ): string {
-        const parsed = this.connection.driver.parseTableName(target)
+        const parsed = this.connection.driver.parseTableName(target);
 
         return this.connection.driver.buildTableName(
             parsed.tableName,
             parsed.schema,
             parsed.database,
-        )
+        );
     }
 
     protected getlapinMetadataTableName(): string {
         const options = <
             SqlServerConnectionOptions | PostgresConnectionOptions
-        >this.connection.driver.options
+        >this.connection.driver.options;
         return this.connection.driver.buildTableName(
             this.connection.metadataTableName,
             options.schema,
             options.database,
-        )
+        );
     }
 
     /**
@@ -356,35 +356,35 @@ export abstract class BaseQueryRunner {
         type,
         name,
     }: {
-        database?: string
-        schema?: string
-        table?: string
-        type: MetadataTableType
-        name: string
+        database?: string;
+        schema?: string;
+        table?: string;
+        type: MetadataTableType;
+        name: string;
     }): Query {
-        const qb = this.connection.createQueryBuilder()
+        const qb = this.connection.createQueryBuilder();
         const selectQb = qb
             .select()
             .from(this.getlapinMetadataTableName(), "t")
             .where(`${qb.escape("type")} = :type`, { type })
-            .andWhere(`${qb.escape("name")} = :name`, { name })
+            .andWhere(`${qb.escape("name")} = :name`, { name });
 
         if (database) {
             selectQb.andWhere(`${qb.escape("database")} = :database`, {
                 database,
-            })
+            });
         }
 
         if (schema) {
-            selectQb.andWhere(`${qb.escape("schema")} = :schema`, { schema })
+            selectQb.andWhere(`${qb.escape("schema")} = :schema`, { schema });
         }
 
         if (table) {
-            selectQb.andWhere(`${qb.escape("table")} = :table`, { table })
+            selectQb.andWhere(`${qb.escape("table")} = :table`, { table });
         }
 
-        const [query, parameters] = selectQb.getQueryAndParameters()
-        return new Query(query, parameters)
+        const [query, parameters] = selectQb.getQueryAndParameters();
+        return new Query(query, parameters);
     }
 
     /**
@@ -398,12 +398,12 @@ export abstract class BaseQueryRunner {
         name,
         value,
     }: {
-        database?: string
-        schema?: string
-        table?: string
-        type: MetadataTableType
-        name: string
-        value?: string
+        database?: string;
+        schema?: string;
+        table?: string;
+        type: MetadataTableType;
+        name: string;
+        value?: string;
     }): Query {
         const [query, parameters] = this.connection
             .createQueryBuilder()
@@ -417,9 +417,9 @@ export abstract class BaseQueryRunner {
                 name: name,
                 value: value,
             })
-            .getQueryAndParameters()
+            .getQueryAndParameters();
 
-        return new Query(query, parameters)
+        return new Query(query, parameters);
     }
 
     /**
@@ -432,35 +432,35 @@ export abstract class BaseQueryRunner {
         type,
         name,
     }: {
-        database?: string
-        schema?: string
-        table?: string
-        type: MetadataTableType
-        name: string
+        database?: string;
+        schema?: string;
+        table?: string;
+        type: MetadataTableType;
+        name: string;
     }): Query {
-        const qb = this.connection.createQueryBuilder()
+        const qb = this.connection.createQueryBuilder();
         const deleteQb = qb
             .delete()
             .from(this.getlapinMetadataTableName())
             .where(`${qb.escape("type")} = :type`, { type })
-            .andWhere(`${qb.escape("name")} = :name`, { name })
+            .andWhere(`${qb.escape("name")} = :name`, { name });
 
         if (database) {
             deleteQb.andWhere(`${qb.escape("database")} = :database`, {
                 database,
-            })
+            });
         }
 
         if (schema) {
-            deleteQb.andWhere(`${qb.escape("schema")} = :schema`, { schema })
+            deleteQb.andWhere(`${qb.escape("schema")} = :schema`, { schema });
         }
 
         if (table) {
-            deleteQb.andWhere(`${qb.escape("table")} = :table`, { table })
+            deleteQb.andWhere(`${qb.escape("table")} = :table`, { table });
         }
 
-        const [query, parameters] = deleteQb.getQueryAndParameters()
-        return new Query(query, parameters)
+        const [query, parameters] = deleteQb.getQueryAndParameters();
+        return new Query(query, parameters);
     }
 
     /**
@@ -514,7 +514,7 @@ export abstract class BaseQueryRunner {
             oldColumn.isNullable !== newColumn.isNullable ||
             (checkComment && oldColumn.comment !== newColumn.comment) ||
             !OrmUtils.isArraysEqual(oldColumn.enum || [], newColumn.enum || [])
-        )
+        );
     }
 
     /**
@@ -527,15 +527,15 @@ export abstract class BaseQueryRunner {
     ): boolean {
         // if table have metadata, we check if length is specified in column metadata
         if (this.connection.hasMetadata(table.name)) {
-            const metadata = this.connection.getMetadata(table.name)
+            const metadata = this.connection.getMetadata(table.name);
             const columnMetadata = metadata.findColumnWithDatabaseName(
                 column.name,
-            )
+            );
 
             if (columnMetadata) {
                 const columnMetadataLength =
-                    this.connection.driver.getColumnLength(columnMetadata)
-                if (columnMetadataLength) return false
+                    this.connection.driver.getColumnLength(columnMetadata);
+                if (columnMetadataLength) return false;
             }
         }
 
@@ -548,10 +548,10 @@ export abstract class BaseQueryRunner {
                 this.connection.driver.dataTypeDefaults[
                     column.type
                 ].length!.toString() === length.toString()
-            )
+            );
         }
 
-        return false
+        return false;
     }
 
     /**
@@ -564,16 +564,16 @@ export abstract class BaseQueryRunner {
     ): boolean {
         // if table have metadata, we check if length is specified in column metadata
         if (this.connection.hasMetadata(table.name)) {
-            const metadata = this.connection.getMetadata(table.name)
+            const metadata = this.connection.getMetadata(table.name);
             const columnMetadata = metadata.findColumnWithDatabaseName(
                 column.name,
-            )
+            );
             if (
                 columnMetadata &&
                 columnMetadata.precision !== null &&
                 columnMetadata.precision !== undefined
             )
-                return false
+                return false;
         }
 
         if (
@@ -587,9 +587,9 @@ export abstract class BaseQueryRunner {
             return (
                 this.connection.driver.dataTypeDefaults[column.type]
                     .precision === precision
-            )
+            );
 
-        return false
+        return false;
     }
 
     /**
@@ -602,16 +602,16 @@ export abstract class BaseQueryRunner {
     ): boolean {
         // if table have metadata, we check if length is specified in column metadata
         if (this.connection.hasMetadata(table.name)) {
-            const metadata = this.connection.getMetadata(table.name)
+            const metadata = this.connection.getMetadata(table.name);
             const columnMetadata = metadata.findColumnWithDatabaseName(
                 column.name,
-            )
+            );
             if (
                 columnMetadata &&
                 columnMetadata.scale !== null &&
                 columnMetadata.scale !== undefined
             )
-                return false
+                return false;
         }
 
         if (
@@ -625,9 +625,9 @@ export abstract class BaseQueryRunner {
             return (
                 this.connection.driver.dataTypeDefaults[column.type].scale ===
                 scale
-            )
+            );
 
-        return false
+        return false;
     }
 
     /**
@@ -637,18 +637,18 @@ export abstract class BaseQueryRunner {
         upQueries: Query | Query[],
         downQueries: Query | Query[],
     ): Promise<void> {
-        if (InstanceChecker.isQuery(upQueries)) upQueries = [upQueries]
-        if (InstanceChecker.isQuery(downQueries)) downQueries = [downQueries]
+        if (InstanceChecker.isQuery(upQueries)) upQueries = [upQueries];
+        if (InstanceChecker.isQuery(downQueries)) downQueries = [downQueries];
 
-        this.sqlInMemory.upQueries.push(...upQueries)
-        this.sqlInMemory.downQueries.push(...downQueries)
+        this.sqlInMemory.upQueries.push(...upQueries);
+        this.sqlInMemory.downQueries.push(...downQueries);
 
         // if sql-in-memory mode is enabled then simply store sql in memory and return
         if (this.sqlMemoryMode === true)
-            return Promise.resolve() as Promise<any>
+            return Promise.resolve() as Promise<any>;
 
         for (const { query, parameters } of upQueries) {
-            await this.query(query, parameters)
+            await this.query(query, parameters);
         }
     }
 
@@ -664,6 +664,6 @@ export abstract class BaseQueryRunner {
             table,
             index.columnNames,
             index.where,
-        )
+        );
     }
 }

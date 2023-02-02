@@ -1,15 +1,15 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { expect } from "chai"
-import { ConcreteEntity } from "./entity/ConcreteEntity"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { expect } from "chai";
+import { ConcreteEntity } from "./entity/ConcreteEntity";
 
 describe("github issues > #1369 EntitySubscriber not firing events on abstract class entity", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -18,18 +18,18 @@ describe("github issues > #1369 EntitySubscriber not firing events on abstract c
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should fire the given event for an abstract entity", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const entity = new ConcreteEntity()
-                entity.firstname = "Michael"
-                entity.lastname = "Scott"
-                entity.position = "Regional Manager"
-                await connection.manager.save(entity)
+                const entity = new ConcreteEntity();
+                entity.firstname = "Michael";
+                entity.lastname = "Scott";
+                entity.position = "Regional Manager";
+                await connection.manager.save(entity);
 
                 const foundEntity = await connection.manager.findOne(
                     ConcreteEntity,
@@ -38,17 +38,17 @@ describe("github issues > #1369 EntitySubscriber not firing events on abstract c
                             id: 1,
                         },
                     },
-                )
-                expect(foundEntity).to.not.be.undefined
+                );
+                expect(foundEntity).to.not.be.undefined;
 
-                const assertObject = Object.assign({}, foundEntity)
+                const assertObject = Object.assign({}, foundEntity);
                 assertObject!.should.be.eql({
                     id: 1,
                     firstname: "Michael",
                     lastname: "Scott",
                     fullname: "Michael Scott",
                     position: "Regional Manager",
-                })
+                });
             }),
-        ))
-})
+        ));
+});

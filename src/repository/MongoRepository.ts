@@ -1,6 +1,6 @@
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { Repository } from "./Repository"
-import { MongoFindManyOptions } from "../find-options/mongodb/MongoFindManyOptions"
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { Repository } from "./Repository";
+import { MongoFindManyOptions } from "../find-options/mongodb/MongoFindManyOptions";
 import {
     AggregationCursor,
     BulkWriteOpResultObject,
@@ -31,13 +31,13 @@ import {
     ReplaceOneOptions,
     UnorderedBulkOperation,
     UpdateWriteOpResult,
-} from "../driver/mongodb/typings"
-import { MongoEntityManager } from "../entity-manager/MongoEntityManager"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { LapinError } from "../error/LapinError"
-import { MongoFindOneOptions } from "../find-options/mongodb/MongoFindOneOptions"
-import { FindOneOptions } from "../find-options/FindOneOptions"
+} from "../driver/mongodb/typings";
+import { MongoEntityManager } from "../entity-manager/MongoEntityManager";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { LapinError } from "../error/LapinError";
+import { MongoFindOneOptions } from "../find-options/mongodb/MongoFindOneOptions";
+import { FindOneOptions } from "../find-options/FindOneOptions";
 
 /**
  * Repository used to manage mongodb documents of a single entity type.
@@ -52,7 +52,7 @@ export class MongoRepository<
     /**
      * Entity Manager used by this repository.
      */
-    readonly manager: MongoEntityManager
+    readonly manager: MongoEntityManager;
 
     // -------------------------------------------------------------------------
     // Overridden Methods
@@ -63,7 +63,7 @@ export class MongoRepository<
      * Calling this method will return an error.
      */
     query(query: string, parameters?: any[]): Promise<any> {
-        throw new LapinError(`Queries aren't supported by MongoDB.`)
+        throw new LapinError(`Queries aren't supported by MongoDB.`);
     }
 
     /**
@@ -74,21 +74,21 @@ export class MongoRepository<
         alias: string,
         queryRunner?: QueryRunner,
     ): SelectQueryBuilder<Entity> {
-        throw new LapinError(`Query Builder is not supported by MongoDB.`)
+        throw new LapinError(`Query Builder is not supported by MongoDB.`);
     }
 
     /**
      * Finds entities that match given find options or conditions.
      */
     find(options?: MongoFindManyOptions<Entity>): Promise<Entity[]> {
-        return this.manager.find(this.metadata.target, options)
+        return this.manager.find(this.metadata.target, options);
     }
 
     /**
      * Finds entities that match given find options or conditions.
      */
     findBy(where: any): Promise<Entity[]> {
-        return this.manager.findBy(this.metadata.target, where)
+        return this.manager.findBy(this.metadata.target, where);
     }
 
     /**
@@ -99,7 +99,7 @@ export class MongoRepository<
     findAndCount(
         options?: MongoFindManyOptions<Entity>,
     ): Promise<[Entity[], number]> {
-        return this.manager.findAndCount(this.metadata.target, options)
+        return this.manager.findAndCount(this.metadata.target, options);
     }
 
     /**
@@ -108,7 +108,7 @@ export class MongoRepository<
      * but ignores pagination settings (from and take options).
      */
     findAndCountBy(where: any): Promise<[Entity[], number]> {
-        return this.manager.findAndCountBy(this.metadata.target, where)
+        return this.manager.findAndCountBy(this.metadata.target, where);
     }
 
     /**
@@ -122,7 +122,7 @@ export class MongoRepository<
      * })
      */
     findByIds(ids: any[], options?: any): Promise<Entity[]> {
-        return this.manager.findByIds(this.metadata.target, ids, options)
+        return this.manager.findByIds(this.metadata.target, ids, options);
     }
 
     /**
@@ -131,14 +131,14 @@ export class MongoRepository<
     async findOne(
         options: MongoFindOneOptions<Entity>,
     ): Promise<Entity | null> {
-        return this.manager.findOne(this.metadata.target, options)
+        return this.manager.findOne(this.metadata.target, options);
     }
 
     /**
      * Finds first entity that matches given WHERE conditions.
      */
     async findOneBy(where: any): Promise<Entity | null> {
-        return this.manager.findOneBy(this.metadata.target, where)
+        return this.manager.findOneBy(this.metadata.target, where);
     }
 
     /**
@@ -161,7 +161,7 @@ export class MongoRepository<
             | ObjectID
             | ObjectID[],
     ): Promise<Entity | null> {
-        return this.manager.findOneById(this.metadata.target, id)
+        return this.manager.findOneById(this.metadata.target, id);
     }
 
     /**
@@ -169,7 +169,7 @@ export class MongoRepository<
      * If entity was not found in the database - rejects with error.
      */
     async findOneOrFail(options: FindOneOptions<Entity>): Promise<Entity> {
-        return this.manager.findOneOrFail(this.metadata.target, options)
+        return this.manager.findOneOrFail(this.metadata.target, options);
     }
 
     /**
@@ -177,14 +177,14 @@ export class MongoRepository<
      * If entity was not found in the database - rejects with error.
      */
     async findOneByOrFail(where: any): Promise<Entity> {
-        return this.manager.findOneByOrFail(this.metadata.target, where)
+        return this.manager.findOneByOrFail(this.metadata.target, where);
     }
 
     /**
      * Creates a cursor for a query that can be used to iterate over results from MongoDB.
      */
     createCursor<T = any>(query?: ObjectLiteral): Cursor<T> {
-        return this.manager.createCursor(this.metadata.target, query)
+        return this.manager.createCursor(this.metadata.target, query);
     }
 
     /**
@@ -192,7 +192,7 @@ export class MongoRepository<
      * This returns modified version of cursor that transforms each result into Entity model.
      */
     createEntityCursor(query?: ObjectLiteral): Cursor<Entity> {
-        return this.manager.createEntityCursor(this.metadata.target, query)
+        return this.manager.createEntityCursor(this.metadata.target, query);
     }
 
     /**
@@ -206,7 +206,7 @@ export class MongoRepository<
             this.metadata.target,
             pipeline,
             options,
-        )
+        );
     }
 
     /**
@@ -221,7 +221,7 @@ export class MongoRepository<
             this.metadata.target,
             pipeline,
             options,
-        )
+        );
     }
     /**
      * Perform a bulkWrite operation without a fluent API.
@@ -230,7 +230,11 @@ export class MongoRepository<
         operations: ObjectLiteral[],
         options?: CollectionBulkWriteOptions,
     ): Promise<BulkWriteOpResultObject> {
-        return this.manager.bulkWrite(this.metadata.target, operations, options)
+        return this.manager.bulkWrite(
+            this.metadata.target,
+            operations,
+            options,
+        );
     }
 
     /**
@@ -240,7 +244,7 @@ export class MongoRepository<
         query?: ObjectLiteral,
         options?: MongoCountPreferences,
     ): Promise<number> {
-        return this.manager.count(this.metadata.target, query || {}, options)
+        return this.manager.count(this.metadata.target, query || {}, options);
     }
 
     /**
@@ -250,7 +254,7 @@ export class MongoRepository<
         query?: ObjectLiteral,
         options?: MongoCountPreferences,
     ): Promise<number> {
-        return this.manager.countBy(this.metadata.target, query || {}, options)
+        return this.manager.countBy(this.metadata.target, query || {}, options);
     }
 
     /**
@@ -264,7 +268,7 @@ export class MongoRepository<
             this.metadata.target,
             fieldOrSpec,
             options,
-        )
+        );
     }
 
     /**
@@ -276,7 +280,7 @@ export class MongoRepository<
         return this.manager.createCollectionIndexes(
             this.metadata.target,
             indexSpecs,
-        )
+        );
     }
 
     /**
@@ -286,7 +290,7 @@ export class MongoRepository<
         query: ObjectLiteral,
         options?: CollectionOptions,
     ): Promise<DeleteWriteOpResultObject> {
-        return this.manager.deleteMany(this.metadata.tableName, query, options)
+        return this.manager.deleteMany(this.metadata.tableName, query, options);
     }
 
     /**
@@ -296,7 +300,7 @@ export class MongoRepository<
         query: ObjectLiteral,
         options?: CollectionOptions,
     ): Promise<DeleteWriteOpResultObject> {
-        return this.manager.deleteOne(this.metadata.tableName, query, options)
+        return this.manager.deleteOne(this.metadata.tableName, query, options);
     }
 
     /**
@@ -312,7 +316,7 @@ export class MongoRepository<
             key,
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -326,14 +330,14 @@ export class MongoRepository<
             this.metadata.tableName,
             indexName,
             options,
-        )
+        );
     }
 
     /**
      * Drops all indexes from the collection.
      */
     dropCollectionIndexes(): Promise<any> {
-        return this.manager.dropCollectionIndexes(this.metadata.tableName)
+        return this.manager.dropCollectionIndexes(this.metadata.tableName);
     }
 
     /**
@@ -347,7 +351,7 @@ export class MongoRepository<
             this.metadata.tableName,
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -363,7 +367,7 @@ export class MongoRepository<
             query,
             replacement,
             options,
-        )
+        );
     }
 
     /**
@@ -379,7 +383,7 @@ export class MongoRepository<
             query,
             update,
             options,
-        )
+        );
     }
 
     /**
@@ -395,14 +399,14 @@ export class MongoRepository<
             x,
             y,
             options,
-        )
+        );
     }
 
     /**
      * Execute the geoNear command to search for items in the collection.
      */
     geoNear(x: number, y: number, options?: GeoNearOptions): Promise<any> {
-        return this.manager.geoNear(this.metadata.tableName, x, y, options)
+        return this.manager.geoNear(this.metadata.tableName, x, y, options);
     }
 
     /**
@@ -426,14 +430,14 @@ export class MongoRepository<
             finalize,
             command,
             options,
-        )
+        );
     }
 
     /**
      * Retrieve all the indexes on the collection.
      */
     collectionIndexes(): Promise<any> {
-        return this.manager.collectionIndexes(this.metadata.tableName)
+        return this.manager.collectionIndexes(this.metadata.tableName);
     }
 
     /**
@@ -443,7 +447,7 @@ export class MongoRepository<
         return this.manager.collectionIndexExists(
             this.metadata.tableName,
             indexes,
-        )
+        );
     }
 
     /**
@@ -453,7 +457,7 @@ export class MongoRepository<
         return this.manager.collectionIndexInformation(
             this.metadata.tableName,
             options,
-        )
+        );
     }
 
     /**
@@ -463,7 +467,7 @@ export class MongoRepository<
         return this.manager.initializeOrderedBulkOp(
             this.metadata.tableName,
             options,
-        )
+        );
     }
 
     /**
@@ -475,7 +479,7 @@ export class MongoRepository<
         return this.manager.initializeUnorderedBulkOp(
             this.metadata.tableName,
             options,
-        )
+        );
     }
 
     /**
@@ -485,7 +489,7 @@ export class MongoRepository<
         docs: ObjectLiteral[],
         options?: CollectionInsertManyOptions,
     ): Promise<InsertWriteOpResult> {
-        return this.manager.insertMany(this.metadata.tableName, docs, options)
+        return this.manager.insertMany(this.metadata.tableName, docs, options);
     }
 
     /**
@@ -495,27 +499,27 @@ export class MongoRepository<
         doc: ObjectLiteral,
         options?: CollectionInsertOneOptions,
     ): Promise<InsertOneWriteOpResult> {
-        return this.manager.insertOne(this.metadata.tableName, doc, options)
+        return this.manager.insertOne(this.metadata.tableName, doc, options);
     }
 
     /**
      * Returns if the collection is a capped collection.
      */
     isCapped(): Promise<any> {
-        return this.manager.isCapped(this.metadata.tableName)
+        return this.manager.isCapped(this.metadata.tableName);
     }
 
     /**
      * Get the list of all indexes information for the collection.
      */
     listCollectionIndexes(options?: {
-        batchSize?: number
-        readPreference?: ReadPreference | string
+        batchSize?: number;
+        readPreference?: ReadPreference | string;
     }): CommandCursor {
         return this.manager.listCollectionIndexes(
             this.metadata.tableName,
             options,
-        )
+        );
     }
 
     /**
@@ -531,7 +535,7 @@ export class MongoRepository<
             map,
             reduce,
             options,
-        )
+        );
     }
 
     /**
@@ -544,14 +548,14 @@ export class MongoRepository<
         return this.manager.parallelCollectionScan(
             this.metadata.tableName,
             options,
-        )
+        );
     }
 
     /**
      * Reindex all indexes on the collection Warning: reIndex is a blocking operation (indexes are rebuilt in the foreground) and will be slow for large collections.
      */
     reIndex(): Promise<any> {
-        return this.manager.reIndex(this.metadata.tableName)
+        return this.manager.reIndex(this.metadata.tableName);
     }
 
     /**
@@ -561,7 +565,7 @@ export class MongoRepository<
         newName: string,
         options?: { dropTarget?: boolean },
     ): Promise<Collection<any>> {
-        return this.manager.rename(this.metadata.tableName, newName, options)
+        return this.manager.rename(this.metadata.tableName, newName, options);
     }
 
     /**
@@ -577,14 +581,14 @@ export class MongoRepository<
             query,
             doc,
             options,
-        )
+        );
     }
 
     /**
      * Get all the collection statistics.
      */
     stats(options?: { scale: number }): Promise<CollStats> {
-        return this.manager.stats(this.metadata.tableName, options)
+        return this.manager.stats(this.metadata.tableName, options);
     }
 
     /**
@@ -600,7 +604,7 @@ export class MongoRepository<
             query,
             update,
             options,
-        )
+        );
     }
 
     /**
@@ -616,6 +620,6 @@ export class MongoRepository<
             query,
             update,
             options,
-        )
+        );
     }
 }

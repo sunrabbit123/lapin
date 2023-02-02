@@ -3,7 +3,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 export enum OrderStatus {
     placed = "placed",
@@ -17,8 +17,8 @@ export enum OrderStatus {
 @Entity()
 export class Order extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column({ type: "enum", enum: OrderStatus })
-    status: OrderStatus
+    status: OrderStatus;
 }

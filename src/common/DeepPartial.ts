@@ -11,4 +11,4 @@ export type DeepPartial<T> =
           ? Set<DeepPartial<M>>
           : T extends object
           ? { [K in keyof T]?: DeepPartial<T[K]> }
-          : T)
+          : T);

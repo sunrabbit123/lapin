@@ -4,20 +4,20 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Category } from "./Category"
+} from "../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class Member extends BaseEntity {
     @PrimaryGeneratedColumn()
-    pk: number
+    pk: number;
 
     @Column({
         length: 250,
         nullable: false,
     })
-    title: string
+    title: string;
 
     @ManyToOne(() => Category, (c) => c.members)
-    category: Category
+    category: Category;
 }

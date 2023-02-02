@@ -1,13 +1,13 @@
-import { Entity, PrimaryColumn } from "../../../../src"
+import { Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Book {
     @PrimaryColumn()
-    ean: string
+    ean: string;
 }
 
 @Entity({ withoutRowid: true })
 export class Book2 {
     @PrimaryColumn()
-    ean: string
+    ean: string;
 }

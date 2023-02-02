@@ -3,20 +3,20 @@ import {
     PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-} from "../../../../src"
-import { Post } from "./Post"
+} from "../../../../src";
+import { Post } from "./Post";
 
 @Entity()
 export class PostReview {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    rating: number
+    rating: number;
 
     @Column()
-    comment: string
+    comment: string;
 
     @ManyToOne((type) => Post)
-    post: Post
+    post: Post;
 }

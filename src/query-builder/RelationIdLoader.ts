@@ -1,9 +1,9 @@
-import { RelationMetadata } from "../metadata/RelationMetadata"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { DataSource } from "../data-source/DataSource"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { SelectQueryBuilder } from "./SelectQueryBuilder"
-import { DriverUtils } from "../driver/DriverUtils"
+import { RelationMetadata } from "../metadata/RelationMetadata";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { DataSource } from "../data-source/DataSource";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { SelectQueryBuilder } from "./SelectQueryBuilder";
+import { DriverUtils } from "../driver/DriverUtils";
 
 /**
  * Loads relation ids for the given entities.
@@ -29,29 +29,29 @@ export class RelationIdLoader {
     ): Promise<any[]> {
         const entities = Array.isArray(entityOrEntities)
             ? entityOrEntities
-            : [entityOrEntities]
+            : [entityOrEntities];
         const relatedEntities = Array.isArray(relatedEntityOrRelatedEntities)
             ? relatedEntityOrRelatedEntities
             : relatedEntityOrRelatedEntities
             ? [relatedEntityOrRelatedEntities]
-            : undefined
+            : undefined;
 
         // load relation ids depend of relation type
         if (relation.isManyToMany) {
-            return this.loadForManyToMany(relation, entities, relatedEntities)
+            return this.loadForManyToMany(relation, entities, relatedEntities);
         } else if (relation.isManyToOne || relation.isOneToOneOwner) {
             return this.loadForManyToOneAndOneToOneOwner(
                 relation,
                 entities,
                 relatedEntities,
-            )
+            );
         } else {
             // if (relation.isOneToMany || relation.isOneToOneNotOwner) {
             return this.loadForOneToManyAndOneToOneNotOwner(
                 relation,
                 entities,
                 relatedEntities,
-            )
+            );
         }
     }
 
@@ -71,10 +71,10 @@ export class RelationIdLoader {
     ): Promise<{ entity: E1; related?: E2 | E2[] }[]> {
         // console.log("relation:", relation.propertyName);
         // console.log("entitiesOrEntities", entitiesOrEntities);
-        const isMany = relation.isManyToMany || relation.isOneToMany
+        const isMany = relation.isManyToMany || relation.isOneToMany;
         const entities: E1[] = Array.isArray(entitiesOrEntities)
             ? entitiesOrEntities
-            : [entitiesOrEntities]
+            : [entitiesOrEntities];
 
         if (!relatedEntityOrEntities) {
             relatedEntityOrEntities = await this.connection.relationLoader.load(
@@ -82,54 +82,54 @@ export class RelationIdLoader {
                 entitiesOrEntities,
                 undefined,
                 queryBuilder,
-            )
+            );
             if (!relatedEntityOrEntities.length)
                 return entities.map((entity) => ({
                     entity: entity,
                     related: isMany ? [] : undefined,
-                }))
+                }));
         }
         // const relationIds = await this.load(relation, relatedEntityOrEntities!, entitiesOrEntities);
         const relationIds = await this.load(
             relation,
             entitiesOrEntities,
             relatedEntityOrEntities,
-        )
+        );
         // console.log("entities", entities);
         // console.log("relatedEntityOrEntities", relatedEntityOrEntities);
         // console.log("relationIds", relationIds);
 
         const relatedEntities: E2[] = Array.isArray(relatedEntityOrEntities)
             ? relatedEntityOrEntities
-            : [relatedEntityOrEntities!]
+            : [relatedEntityOrEntities!];
 
         let columns: ColumnMetadata[] = [],
-            inverseColumns: ColumnMetadata[] = []
+            inverseColumns: ColumnMetadata[] = [];
         if (relation.isManyToManyOwner) {
             columns = relation.junctionEntityMetadata!.inverseColumns.map(
                 (column) => column.referencedColumn!,
-            )
+            );
             inverseColumns = relation.junctionEntityMetadata!.ownerColumns.map(
                 (column) => column.referencedColumn!,
-            )
+            );
         } else if (relation.isManyToManyNotOwner) {
             columns = relation.junctionEntityMetadata!.ownerColumns.map(
                 (column) => column.referencedColumn!,
-            )
+            );
             inverseColumns =
                 relation.junctionEntityMetadata!.inverseColumns.map(
                     (column) => column.referencedColumn!,
-                )
+                );
         } else if (relation.isManyToOne || relation.isOneToOneOwner) {
             columns = relation.joinColumns.map(
                 (column) => column.referencedColumn!,
-            )
-            inverseColumns = relation.entityMetadata.primaryColumns
+            );
+            inverseColumns = relation.entityMetadata.primaryColumns;
         } else if (relation.isOneToMany || relation.isOneToOneNotOwner) {
-            columns = relation.inverseRelation!.entityMetadata.primaryColumns
+            columns = relation.inverseRelation!.entityMetadata.primaryColumns;
             inverseColumns = relation.inverseRelation!.joinColumns.map(
                 (column) => column.referencedColumn!,
-            )
+            );
         } else {
         }
 
@@ -137,7 +137,7 @@ export class RelationIdLoader {
             const group: { entity: E1; related?: E2 | E2[] } = {
                 entity: entity,
                 related: isMany ? [] : undefined,
-            }
+            };
 
             const entityRelationIds = relationIds.filter((relationId) => {
                 return inverseColumns.every((column) => {
@@ -148,10 +148,10 @@ export class RelationIdLoader {
                                 "_" +
                                 column.propertyAliasName
                         ],
-                    )
-                })
-            })
-            if (!entityRelationIds.length) return group
+                    );
+                });
+            });
+            if (!entityRelationIds.length) return group;
 
             relatedEntities.forEach((relatedEntity) => {
                 entityRelationIds.forEach((relationId) => {
@@ -171,19 +171,19 @@ export class RelationIdLoader {
                                         column.propertyPath.replace(".", "_"),
                                 )
                             ],
-                        )
-                    })
+                        );
+                    });
                     if (relatedEntityMatched) {
                         if (isMany) {
-                            ;(group.related as E2[]).push(relatedEntity)
+                            (group.related as E2[]).push(relatedEntity);
                         } else {
-                            group.related = relatedEntity
+                            group.related = relatedEntity;
                         }
                     }
-                })
-            })
-            return group
-        })
+                });
+            });
+            return group;
+        });
     }
 
     /**
@@ -233,15 +233,15 @@ export class RelationIdLoader {
         entities: ObjectLiteral[],
         relatedEntities?: ObjectLiteral[],
     ) {
-        const junctionMetadata = relation.junctionEntityMetadata!
-        const mainAlias = junctionMetadata.name
+        const junctionMetadata = relation.junctionEntityMetadata!;
+        const mainAlias = junctionMetadata.name;
         const columns = relation.isOwning
             ? junctionMetadata.ownerColumns
-            : junctionMetadata.inverseColumns
+            : junctionMetadata.inverseColumns;
         const inverseColumns = relation.isOwning
             ? junctionMetadata.inverseColumns
-            : junctionMetadata.ownerColumns
-        const qb = this.connection.createQueryBuilder()
+            : junctionMetadata.ownerColumns;
+        const qb = this.connection.createQueryBuilder();
 
         // select all columns from junction table
         columns.forEach((column) => {
@@ -250,9 +250,9 @@ export class RelationIdLoader {
                 column.referencedColumn!.entityMetadata.name +
                     "_" +
                     column.referencedColumn!.propertyPath.replace(".", "_"),
-            )
-            qb.addSelect(mainAlias + "." + column.propertyPath, columnName)
-        })
+            );
+            qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
+        });
         inverseColumns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
@@ -261,31 +261,31 @@ export class RelationIdLoader {
                     relation.propertyPath.replace(".", "_") +
                     "_" +
                     column.referencedColumn!.propertyPath.replace(".", "_"),
-            )
-            qb.addSelect(mainAlias + "." + column.propertyPath, columnName)
-        })
+            );
+            qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
+        });
 
         // add conditions for the given entities
-        let condition1 = ""
+        let condition1 = "";
         if (columns.length === 1) {
             const values = entities.map((entity) =>
                 columns[0].referencedColumn!.getEntityValue(entity),
-            )
+            );
             const areAllNumbers = values.every(
                 (value) => typeof value === "number",
-            )
+            );
 
             if (areAllNumbers) {
                 condition1 = `${mainAlias}.${
                     columns[0].propertyPath
-                } IN (${values.join(", ")})`
+                } IN (${values.join(", ")})`;
             } else {
-                qb.setParameter("values1", values)
+                qb.setParameter("values1", values);
                 condition1 =
                     mainAlias +
                     "." +
                     columns[0].propertyPath +
-                    " IN (:...values1)" // todo: use ANY for postgres
+                    " IN (:...values1)"; // todo: use ANY for postgres
             }
         } else {
             condition1 =
@@ -298,50 +298,50 @@ export class RelationIdLoader {
                                     "entity1_" +
                                     entityIndex +
                                     "_" +
-                                    column.propertyName
+                                    column.propertyName;
                                 qb.setParameter(
                                     paramName,
                                     column.referencedColumn!.getEntityValue(
                                         entity,
                                     ),
-                                )
+                                );
                                 return (
                                     mainAlias +
                                     "." +
                                     column.propertyPath +
                                     " = :" +
                                     paramName
-                                )
+                                );
                             })
-                            .join(" AND ")
+                            .join(" AND ");
                     })
                     .map((condition) => "(" + condition + ")")
                     .join(" OR ") +
-                ")"
+                ")";
         }
 
         // add conditions for the given inverse entities
-        let condition2 = ""
+        let condition2 = "";
         if (relatedEntities) {
             if (inverseColumns.length === 1) {
                 const values = relatedEntities.map((entity) =>
                     inverseColumns[0].referencedColumn!.getEntityValue(entity),
-                )
+                );
                 const areAllNumbers = values.every(
                     (value) => typeof value === "number",
-                )
+                );
 
                 if (areAllNumbers) {
                     condition2 = `${mainAlias}.${
                         inverseColumns[0].propertyPath
-                    } IN (${values.join(", ")})`
+                    } IN (${values.join(", ")})`;
                 } else {
-                    qb.setParameter("values2", values)
+                    qb.setParameter("values2", values);
                     condition2 =
                         mainAlias +
                         "." +
                         inverseColumns[0].propertyPath +
-                        " IN (:...values2)" // todo: use ANY for postgres
+                        " IN (:...values2)"; // todo: use ANY for postgres
                 }
             } else {
                 condition2 =
@@ -354,26 +354,26 @@ export class RelationIdLoader {
                                         "entity2_" +
                                         entityIndex +
                                         "_" +
-                                        column.propertyName
+                                        column.propertyName;
                                     qb.setParameter(
                                         paramName,
                                         column.referencedColumn!.getEntityValue(
                                             entity,
                                         ),
-                                    )
+                                    );
                                     return (
                                         mainAlias +
                                         "." +
                                         column.propertyPath +
                                         " = :" +
                                         paramName
-                                    )
+                                    );
                                 })
-                                .join(" AND ")
+                                .join(" AND ");
                         })
                         .map((condition) => "(" + condition + ")")
                         .join(" OR ") +
-                    ")"
+                    ")";
             }
         }
 
@@ -398,11 +398,11 @@ export class RelationIdLoader {
         // execute query
         const condition = [condition1, condition2]
             .filter((v) => v.length > 0)
-            .join(" AND ")
+            .join(" AND ");
         return qb
             .from(junctionMetadata.target, mainAlias)
             .where(condition)
-            .getRawMany()
+            .getRawMany();
     }
 
     /**
@@ -413,7 +413,7 @@ export class RelationIdLoader {
         entities: ObjectLiteral[],
         relatedEntities?: ObjectLiteral[],
     ) {
-        const mainAlias = relation.entityMetadata.targetName
+        const mainAlias = relation.entityMetadata.targetName;
 
         // console.log("entitiesx", entities);
         // console.log("relatedEntitiesx", relatedEntities);
@@ -421,37 +421,37 @@ export class RelationIdLoader {
             (joinColumn) => {
                 return !!relation.entityMetadata.nonVirtualColumns.find(
                     (column) => column === joinColumn,
-                )
+                );
             },
-        )
+        );
         if (relatedEntities && hasAllJoinColumnsInEntity) {
-            let relationIdMaps: ObjectLiteral[] = []
+            let relationIdMaps: ObjectLiteral[] = [];
             entities.forEach((entity) => {
-                let relationIdMap: ObjectLiteral = {}
+                let relationIdMap: ObjectLiteral = {};
                 relation.entityMetadata.primaryColumns.forEach(
                     (primaryColumn) => {
                         const key =
                             primaryColumn.entityMetadata.name +
                             "_" +
-                            primaryColumn.propertyPath.replace(".", "_")
+                            primaryColumn.propertyPath.replace(".", "_");
                         relationIdMap[key] =
-                            primaryColumn.getEntityValue(entity)
+                            primaryColumn.getEntityValue(entity);
                     },
-                )
+                );
 
                 relatedEntities.forEach((relatedEntity) => {
                     relation.joinColumns.forEach((joinColumn) => {
                         const entityColumnValue =
-                            joinColumn.getEntityValue(entity)
+                            joinColumn.getEntityValue(entity);
                         const relatedEntityColumnValue =
                             joinColumn.referencedColumn!.getEntityValue(
                                 relatedEntity,
-                            )
+                            );
                         if (
                             entityColumnValue === undefined ||
                             relatedEntityColumnValue === undefined
                         )
-                            return
+                            return;
 
                         if (entityColumnValue === relatedEntityColumnValue) {
                             const key =
@@ -463,39 +463,39 @@ export class RelationIdLoader {
                                 joinColumn.referencedColumn!.propertyPath.replace(
                                     ".",
                                     "_",
-                                )
-                            relationIdMap[key] = relatedEntityColumnValue
+                                );
+                            relationIdMap[key] = relatedEntityColumnValue;
                         }
-                    })
-                })
+                    });
+                });
                 if (
                     Object.keys(relationIdMap).length ===
                     relation.entityMetadata.primaryColumns.length +
                         relation.joinColumns.length
                 ) {
-                    relationIdMaps.push(relationIdMap)
+                    relationIdMaps.push(relationIdMap);
                 }
-            })
+            });
             // console.log("relationIdMap", relationIdMaps);
             // console.log("entities.length", entities.length);
             if (relationIdMaps.length === entities.length)
-                return Promise.resolve(relationIdMaps)
+                return Promise.resolve(relationIdMaps);
         }
 
         // select all columns we need
-        const qb = this.connection.createQueryBuilder()
+        const qb = this.connection.createQueryBuilder();
         relation.entityMetadata.primaryColumns.forEach((primaryColumn) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
                 primaryColumn.entityMetadata.name +
                     "_" +
                     primaryColumn.propertyPath.replace(".", "_"),
-            )
+            );
             qb.addSelect(
                 mainAlias + "." + primaryColumn.propertyPath,
                 columnName,
-            )
-        })
+            );
+        });
         relation.joinColumns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
@@ -504,33 +504,33 @@ export class RelationIdLoader {
                     relation.propertyPath.replace(".", "_") +
                     "_" +
                     column.referencedColumn!.propertyPath.replace(".", "_"),
-            )
-            qb.addSelect(mainAlias + "." + column.propertyPath, columnName)
-        })
+            );
+            qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
+        });
 
         // add condition for entities
-        let condition: string = ""
+        let condition: string = "";
         if (relation.entityMetadata.primaryColumns.length === 1) {
             const values = entities.map((entity) =>
                 relation.entityMetadata.primaryColumns[0].getEntityValue(
                     entity,
                 ),
-            )
+            );
             const areAllNumbers = values.every(
                 (value) => typeof value === "number",
-            )
+            );
 
             if (areAllNumbers) {
                 condition = `${mainAlias}.${
                     relation.entityMetadata.primaryColumns[0].propertyPath
-                } IN (${values.join(", ")})`
+                } IN (${values.join(", ")})`;
             } else {
-                qb.setParameter("values", values)
+                qb.setParameter("values", values);
                 condition =
                     mainAlias +
                     "." +
                     relation.entityMetadata.primaryColumns[0].propertyPath +
-                    " IN (:...values)" // todo: use ANY for postgres
+                    " IN (:...values)"; // todo: use ANY for postgres
             }
         } else {
             condition = entities
@@ -538,30 +538,30 @@ export class RelationIdLoader {
                     return relation.entityMetadata.primaryColumns
                         .map((column, columnIndex) => {
                             const paramName =
-                                "entity" + entityIndex + "_" + columnIndex
+                                "entity" + entityIndex + "_" + columnIndex;
                             qb.setParameter(
                                 paramName,
                                 column.getEntityValue(entity),
-                            )
+                            );
                             return (
                                 mainAlias +
                                 "." +
                                 column.propertyPath +
                                 " = :" +
                                 paramName
-                            )
+                            );
                         })
-                        .join(" AND ")
+                        .join(" AND ");
                 })
                 .map((condition) => "(" + condition + ")")
-                .join(" OR ")
+                .join(" OR ");
         }
 
         // execute query
         return qb
             .from(relation.entityMetadata.target, mainAlias)
             .where(condition)
-            .getRawMany()
+            .getRawMany();
     }
 
     /**
@@ -572,7 +572,7 @@ export class RelationIdLoader {
         entities: ObjectLiteral[],
         relatedEntities?: ObjectLiteral[],
     ) {
-        relation = relation.inverseRelation!
+        relation = relation.inverseRelation!;
 
         if (
             relation.entityMetadata.primaryColumns.length ===
@@ -580,17 +580,17 @@ export class RelationIdLoader {
         ) {
             const sameReferencedColumns =
                 relation.entityMetadata.primaryColumns.every((column) => {
-                    return relation.joinColumns.indexOf(column) !== -1
-                })
+                    return relation.joinColumns.indexOf(column) !== -1;
+                });
             if (sameReferencedColumns) {
                 return Promise.resolve(
                     entities.map((entity) => {
-                        const result: ObjectLiteral = {}
+                        const result: ObjectLiteral = {};
                         relation.joinColumns.forEach(function (joinColumn) {
                             const value =
                                 joinColumn.referencedColumn!.getEntityValue(
                                     entity,
-                                )
+                                );
                             const joinColumnName =
                                 joinColumn.referencedColumn!.entityMetadata
                                     .name +
@@ -598,7 +598,7 @@ export class RelationIdLoader {
                                 joinColumn.referencedColumn!.propertyPath.replace(
                                     ".",
                                     "_",
-                                )
+                                );
                             const primaryColumnName =
                                 joinColumn.entityMetadata.name +
                                 "_" +
@@ -607,20 +607,20 @@ export class RelationIdLoader {
                                     "_",
                                 ) +
                                 "_" +
-                                joinColumn.propertyPath.replace(".", "_")
-                            result[joinColumnName] = value
-                            result[primaryColumnName] = value
-                        })
-                        return result
+                                joinColumn.propertyPath.replace(".", "_");
+                            result[joinColumnName] = value;
+                            result[primaryColumnName] = value;
+                        });
+                        return result;
                     }),
-                )
+                );
             }
         }
 
-        const mainAlias = relation.entityMetadata.targetName
+        const mainAlias = relation.entityMetadata.targetName;
 
         // select all columns we need
-        const qb = this.connection.createQueryBuilder()
+        const qb = this.connection.createQueryBuilder();
         relation.entityMetadata.primaryColumns.forEach((primaryColumn) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
@@ -629,45 +629,45 @@ export class RelationIdLoader {
                     relation.inverseRelation!.propertyPath.replace(".", "_") +
                     "_" +
                     primaryColumn.propertyPath.replace(".", "_"),
-            )
+            );
             qb.addSelect(
                 mainAlias + "." + primaryColumn.propertyPath,
                 columnName,
-            )
-        })
+            );
+        });
         relation.joinColumns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
                 column.referencedColumn!.entityMetadata.name +
                     "_" +
                     column.referencedColumn!.propertyPath.replace(".", "_"),
-            )
-            qb.addSelect(mainAlias + "." + column.propertyPath, columnName)
-        })
+            );
+            qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
+        });
 
         // add condition for entities
-        let condition: string = ""
+        let condition: string = "";
         if (relation.joinColumns.length === 1) {
             const values = entities.map((entity) =>
                 relation.joinColumns[0].referencedColumn!.getEntityValue(
                     entity,
                 ),
-            )
+            );
             const areAllNumbers = values.every(
                 (value) => typeof value === "number",
-            )
+            );
 
             if (areAllNumbers) {
                 condition = `${mainAlias}.${
                     relation.joinColumns[0].propertyPath
-                } IN (${values.join(", ")})`
+                } IN (${values.join(", ")})`;
             } else {
-                qb.setParameter("values", values)
+                qb.setParameter("values", values);
                 condition =
                     mainAlias +
                     "." +
                     relation.joinColumns[0].propertyPath +
-                    " IN (:...values)" // todo: use ANY for postgres
+                    " IN (:...values)"; // todo: use ANY for postgres
             }
         } else {
             condition = entities
@@ -675,31 +675,31 @@ export class RelationIdLoader {
                     return relation.joinColumns
                         .map((joinColumn, joinColumnIndex) => {
                             const paramName =
-                                "entity" + entityIndex + "_" + joinColumnIndex
+                                "entity" + entityIndex + "_" + joinColumnIndex;
                             qb.setParameter(
                                 paramName,
                                 joinColumn.referencedColumn!.getEntityValue(
                                     entity,
                                 ),
-                            )
+                            );
                             return (
                                 mainAlias +
                                 "." +
                                 joinColumn.propertyPath +
                                 " = :" +
                                 paramName
-                            )
+                            );
                         })
-                        .join(" AND ")
+                        .join(" AND ");
                 })
                 .map((condition) => "(" + condition + ")")
-                .join(" OR ")
+                .join(" OR ");
         }
 
         // execute query
         return qb
             .from(relation.entityMetadata.target, mainAlias)
             .where(condition)
-            .getRawMany()
+            .getRawMany();
     }
 }

@@ -3,21 +3,21 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src/index"
-import { EventRole } from "./EventRole"
+} from "../../../../src/index";
+import { EventRole } from "./EventRole";
 
 @Entity()
 export class Event {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column()
-    title: string
+    title: string;
 
     @OneToMany((type) => EventRole, (role) => role.event, {
         // eager: true,
         // persistence: true,
         cascade: true,
     })
-    roles: EventRole[]
+    roles: EventRole[];
 }

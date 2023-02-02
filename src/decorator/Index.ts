@@ -1,7 +1,7 @@
-import { getMetadataArgsStorage } from "../globals"
-import { IndexMetadataArgs } from "../metadata-args/IndexMetadataArgs"
-import { IndexOptions } from "./options/IndexOptions"
-import { ObjectUtils } from "../util/ObjectUtils"
+import { getMetadataArgsStorage } from "../globals";
+import { IndexMetadataArgs } from "../metadata-args/IndexMetadataArgs";
+import { IndexOptions } from "./options/IndexOptions";
+import { ObjectUtils } from "../util/ObjectUtils";
 
 /**
  * Creates a database index.
@@ -10,7 +10,7 @@ import { ObjectUtils } from "../util/ObjectUtils"
  */
 export function Index(
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -20,7 +20,7 @@ export function Index(
 export function Index(
     name: string,
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -30,7 +30,7 @@ export function Index(
 export function Index(
     name: string,
     options: { synchronize: false },
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -41,7 +41,7 @@ export function Index(
     name: string,
     fields: string[],
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -51,7 +51,7 @@ export function Index(
 export function Index(
     fields: string[],
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -61,7 +61,7 @@ export function Index(
 export function Index(
     fields: (object?: any) => any[] | { [key: string]: number },
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -72,7 +72,7 @@ export function Index(
     name: string,
     fields: (object?: any) => any[] | { [key: string]: number },
     options?: IndexOptions,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database index.
@@ -96,25 +96,25 @@ export function Index(
     const name =
         typeof nameOrFieldsOrOptions === "string"
             ? nameOrFieldsOrOptions
-            : undefined
+            : undefined;
     const fields =
         typeof nameOrFieldsOrOptions === "string"
             ? <
                   | ((object?: any) => any[] | { [key: string]: number })
                   | string[]
               >maybeFieldsOrOptions
-            : (nameOrFieldsOrOptions as string[])
+            : (nameOrFieldsOrOptions as string[]);
     let options =
         ObjectUtils.isObject(nameOrFieldsOrOptions) &&
         !Array.isArray(nameOrFieldsOrOptions)
             ? (nameOrFieldsOrOptions as IndexOptions)
-            : maybeOptions
+            : maybeOptions;
     if (!options)
         options =
             ObjectUtils.isObject(maybeFieldsOrOptions) &&
             !Array.isArray(maybeFieldsOrOptions)
                 ? (maybeFieldsOrOptions as IndexOptions)
-                : maybeOptions
+                : maybeOptions;
 
     return function (
         clsOrObject: Function | Object,
@@ -142,6 +142,6 @@ export function Index(
             expireAfterSeconds: options
                 ? options.expireAfterSeconds
                 : undefined,
-        } as IndexMetadataArgs)
-    }
+        } as IndexMetadataArgs);
+    };
 }

@@ -1,16 +1,16 @@
-import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions"
-import { Author } from "./Author"
+import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions";
+import { Author } from "./Author";
 
 export class Post {
-    authorPublisherId: number
+    authorPublisherId: number;
 
-    authorId: number
+    authorId: number;
 
-    id: number
+    id: number;
 
-    title: string
+    title: string;
 
-    author: Author
+    author: Author;
 }
 
 export const PostSchema: EntitySchemaOptions<Post> = {
@@ -53,4 +53,4 @@ export const PostSchema: EntitySchemaOptions<Post> = {
             ],
         },
     },
-}
+};

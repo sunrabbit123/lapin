@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../src/index"
+import { EntitySchema } from "../../../../../src/index";
 
 export const MeetingSchema = new EntitySchema<any>({
     name: "Meeting",
@@ -22,4 +22,4 @@ export const MeetingSchema = new EntitySchema<any>({
             expression: `USING gist (tsrange("StartsAt", "FinishesAt") WITH &&)`,
         },
     ],
-})
+});

@@ -1,11 +1,11 @@
-import { Entity, ManyToMany, PrimaryGeneratedColumn } from "../../../../src"
-import { Product } from "./product"
+import { Entity, ManyToMany, PrimaryGeneratedColumn } from "../../../../src";
+import { Product } from "./product";
 
 @Entity({ name: "category" })
 export class Category {
     @PrimaryGeneratedColumn()
-    id: string
+    id: string;
 
     @ManyToMany(() => Product, (product) => product.categories)
-    products: Product[]
+    products: Product[];
 }

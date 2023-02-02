@@ -1,30 +1,30 @@
-import "../../utils/test-setup"
-import { expect } from "chai"
-import { Record } from "./entity/Record"
-import { DataSource } from "../../../src"
+import "../../utils/test-setup";
+import { expect } from "chai";
+import { Record } from "./entity/Record";
+import { DataSource } from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { RecordData } from "./entity/RecordData"
+} from "../../utils/test-utils";
+import { RecordData } from "./entity/RecordData";
 
 describe("github issues > #204 jsonb array is not persisted correctly", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [Record],
                 enabledDrivers: ["postgres"], // because only postgres supports jsonb type
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should persist json and jsonb arrays correctly", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const record = new Record()
+                const record = new Record();
                 record.datas = [
                     new RecordData(
                         "hello1",
@@ -43,7 +43,7 @@ describe("github issues > #204 jsonb array is not persisted correctly", () => {
                         false,
                         false,
                     ),
-                ]
+                ];
                 record.configs = [
                     {
                         id: 1,
@@ -69,13 +69,13 @@ describe("github issues > #204 jsonb array is not persisted correctly", () => {
                         isActive: true,
                         extra: { data1: "one", data2: "two" },
                     },
-                ]
-                await connection.manager.save(record)
+                ];
+                await connection.manager.save(record);
 
                 const foundRecord = await connection.manager.findOneBy(Record, {
                     id: record.id,
-                })
-                expect(foundRecord).to.be.not.undefined
+                });
+                expect(foundRecord).to.be.not.undefined;
                 foundRecord!.datas.should.be.eql([
                     new RecordData(
                         "hello1",
@@ -94,7 +94,7 @@ describe("github issues > #204 jsonb array is not persisted correctly", () => {
                         false,
                         false,
                     ),
-                ])
+                ]);
                 foundRecord!.configs.should.be.eql([
                     {
                         id: 1,
@@ -120,7 +120,7 @@ describe("github issues > #204 jsonb array is not persisted correctly", () => {
                         isActive: true,
                         extra: { data1: "one", data2: "two" },
                     },
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});

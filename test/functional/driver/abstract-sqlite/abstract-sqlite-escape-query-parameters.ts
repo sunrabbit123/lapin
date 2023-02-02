@@ -1,21 +1,21 @@
-import { DataSource } from "../../../../src"
+import { DataSource } from "../../../../src";
 import {
     createTestingConnections,
     reloadTestingDatabases,
     closeTestingConnections,
-} from "../../../utils/test-utils"
+} from "../../../utils/test-utils";
 
 describe("escape sqlite query parameters", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
                 enabledDrivers: ["sqlite", "better-sqlite3"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should transform boolean parameters with value `true` into `1`", () =>
         Promise.all(
@@ -25,11 +25,11 @@ describe("escape sqlite query parameters", () => {
                         "SELECT nothing FROM irrelevant WHERE a = :param1",
                         { param1: true },
                         {},
-                    )
+                    );
 
-                parameters.should.eql([1])
+                parameters.should.eql([1]);
             }),
-        ))
+        ));
 
     it("should transform boolean parameters with value `false` into `0`", () =>
         Promise.all(
@@ -39,11 +39,11 @@ describe("escape sqlite query parameters", () => {
                         "SELECT nothing FROM irrelevant WHERE a = :param1",
                         { param1: false },
                         {},
-                    )
+                    );
 
-                parameters.should.eql([0])
+                parameters.should.eql([0]);
             }),
-        ))
+        ));
 
     it("should transform boolean nativeParameters with value `true` into `1`", () =>
         Promise.all(
@@ -53,11 +53,11 @@ describe("escape sqlite query parameters", () => {
                         "SELECT nothing FROM irrelevant",
                         {},
                         { nativeParam1: true },
-                    )
+                    );
 
-                parameters.should.eql([1])
+                parameters.should.eql([1]);
             }),
-        ))
+        ));
 
     it("should transform boolean nativeParameters with value `false` into 0", () =>
         Promise.all(
@@ -67,9 +67,9 @@ describe("escape sqlite query parameters", () => {
                         "SELECT nothing FROM irrelevant",
                         {},
                         { nativeParam1: false },
-                    )
+                    );
 
-                parameters.should.eql([0])
+                parameters.should.eql([0]);
             }),
-        ))
-})
+        ));
+});

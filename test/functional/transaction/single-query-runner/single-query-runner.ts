@@ -1,24 +1,24 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { Post } from "./entity/Post"
-import { expect } from "chai"
-import { PostRepository } from "./repository/PostRepository"
+} from "../../../utils/test-utils";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { Post } from "./entity/Post";
+import { expect } from "chai";
+import { PostRepository } from "./repository/PostRepository";
 
 describe("transaction > single query runner", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should execute all operations in the method in a transaction", () =>
         Promise.all(
@@ -26,62 +26,64 @@ describe("transaction > single query runner", () => {
                 return connection.transaction(
                     async (transactionalEntityManager) => {
                         const originalQueryRunner =
-                            transactionalEntityManager.queryRunner
+                            transactionalEntityManager.queryRunner;
 
-                        expect(originalQueryRunner).to.exist
+                        expect(originalQueryRunner).to.exist;
                         expect(
                             transactionalEntityManager.getRepository(Post)
                                 .queryRunner,
-                        ).to.exist
+                        ).to.exist;
                         transactionalEntityManager
                             .getRepository(Post)
-                            .queryRunner!.should.be.equal(originalQueryRunner)
+                            .queryRunner!.should.be.equal(originalQueryRunner);
                         transactionalEntityManager
                             .getRepository(Post)
-                            .manager.should.be.equal(transactionalEntityManager)
+                            .manager.should.be.equal(
+                                transactionalEntityManager,
+                            );
 
                         transactionalEntityManager
                             .getCustomRepository(PostRepository)
                             .getManager()
-                            .should.be.equal(transactionalEntityManager)
+                            .should.be.equal(transactionalEntityManager);
                     },
-                )
+                );
             }),
-        ))
+        ));
 
     it("should execute all operations in the method in a transaction (#804)", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const entityManager = connection.createQueryRunner().manager
-                entityManager.should.not.be.equal(connection.manager)
+                const entityManager = connection.createQueryRunner().manager;
+                entityManager.should.not.be.equal(connection.manager);
                 entityManager.queryRunner!.should.be.equal(
                     entityManager.queryRunner,
-                )
+                );
 
-                await entityManager.save(new Post(undefined, "Hello World"))
+                await entityManager.save(new Post(undefined, "Hello World"));
 
-                await entityManager.queryRunner!.startTransaction()
+                await entityManager.queryRunner!.startTransaction();
                 const loadedPost1 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost1).to.be.eql({ id: 1, title: "Hello World" })
-                await entityManager.remove(loadedPost1!)
+                });
+                expect(loadedPost1).to.be.eql({ id: 1, title: "Hello World" });
+                await entityManager.remove(loadedPost1!);
                 const loadedPost2 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost2).to.be.null
-                await entityManager.queryRunner!.rollbackTransaction()
+                });
+                expect(loadedPost2).to.be.null;
+                await entityManager.queryRunner!.rollbackTransaction();
 
                 const loadedPost3 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost3).to.be.eql({ id: 1, title: "Hello World" })
+                });
+                expect(loadedPost3).to.be.eql({ id: 1, title: "Hello World" });
 
-                await entityManager.queryRunner!.startTransaction()
+                await entityManager.queryRunner!.startTransaction();
                 const loadedPost4 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost4).to.be.eql({ id: 1, title: "Hello World" })
+                });
+                expect(loadedPost4).to.be.eql({ id: 1, title: "Hello World" });
 
                 // in Spanner DELETE must have a WHERE clause
                 if (connection.driver.options.type === "spanner") {
@@ -89,23 +91,23 @@ describe("transaction > single query runner", () => {
                         `DELETE FROM ${connection.driver.escape(
                             "post",
                         )} WHERE true`,
-                    )
+                    );
                 } else {
                     await entityManager.query(
                         `DELETE FROM ${connection.driver.escape("post")}`,
-                    )
+                    );
                 }
                 const loadedPost5 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost5).to.be.null
-                await entityManager.queryRunner!.rollbackTransaction()
+                });
+                expect(loadedPost5).to.be.null;
+                await entityManager.queryRunner!.rollbackTransaction();
 
                 const loadedPost6 = await entityManager.findOneBy(Post, {
                     title: "Hello World",
-                })
-                expect(loadedPost6).to.be.eql({ id: 1, title: "Hello World" })
-                await entityManager.queryRunner!.release()
+                });
+                expect(loadedPost6).to.be.eql({ id: 1, title: "Hello World" });
+                await entityManager.queryRunner!.release();
             }),
-        ))
-})
+        ));
+});

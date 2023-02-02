@@ -1,13 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from "../../../../src"
+import { BaseEntity, Entity, Column, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Post extends BaseEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ type: "varchar" })
-    title: string
+    title: string;
 
     @Column({ type: "varchar", nullable: true })
-    author: string | null
+    author: string | null;
 }

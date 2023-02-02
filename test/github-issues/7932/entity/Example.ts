@@ -3,19 +3,19 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Example {
     @PrimaryGeneratedColumn("uuid")
-    id?: string
+    id?: string;
 
     @CreateDateColumn({ type: "datetime" })
-    created?: Date
+    created?: Date;
 
     @Column("varchar", { length: 10 })
-    content: string = ""
+    content: string = "";
 
     @Column("char", { length: 10 })
-    fixedLengthContent: string = ""
+    fixedLengthContent: string = "";
 }

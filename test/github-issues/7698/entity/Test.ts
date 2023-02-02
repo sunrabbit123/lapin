@@ -1,20 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class Test {
     @PrimaryGeneratedColumn({ type: "int" })
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column({
         generatedType: "STORED",
         // asExpression is needed here or generatedType above will be ignored
         asExpression: "concat(`firstName`,' ',`lastName`)",
     })
-    name: string
+    name: string;
 }

@@ -7,31 +7,31 @@ import {
     Tree,
     TreeChildren,
     TreeParent,
-} from "../../../../src"
-import { Site } from "./Site"
-import { Member } from "./Member"
+} from "../../../../src";
+import { Site } from "./Site";
+import { Member } from "./Member";
 
 @Entity()
 @Tree("materialized-path")
 export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
-    pk: number
+    pk: number;
 
     @Column({
         length: 250,
         nullable: false,
     })
-    title: string
+    title: string;
 
     @TreeParent()
-    parentCategory: Category | null
+    parentCategory: Category | null;
 
     @TreeChildren()
-    childCategories: Category[]
+    childCategories: Category[];
 
     @OneToMany(() => Site, (site) => site.parentCategory)
-    sites: Site[]
+    sites: Site[];
 
     @OneToMany(() => Member, (m) => m.category)
-    members: Member[]
+    members: Member[];
 }

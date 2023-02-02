@@ -3,14 +3,14 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Unique,
-} from "../../../../../../src"
+} from "../../../../../../src";
 
 @Entity()
 @Unique("UQ_NAME", ["name"])
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 }

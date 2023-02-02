@@ -1,8 +1,8 @@
-import { Subject } from "./Subject"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { FindManyOptions } from "../find-options/FindManyOptions"
-import { MongoRepository } from "../repository/MongoRepository"
+import { Subject } from "./Subject";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { FindManyOptions } from "../find-options/FindManyOptions";
+import { MongoRepository } from "../repository/MongoRepository";
 
 /**
  * Loads database entities for all operate subjects which do not have database entity set.
@@ -38,20 +38,20 @@ export class SubjectDatabaseEntityLoader {
         const promises = this.groupByEntityTargets().map(
             async (subjectGroup) => {
                 // prepare entity ids of the subjects we need to load
-                const allIds: ObjectLiteral[] = []
-                const allSubjects: Subject[] = []
+                const allIds: ObjectLiteral[] = [];
+                const allSubjects: Subject[] = [];
                 subjectGroup.subjects.forEach((subject) => {
                     // we don't load if subject already has a database entity loaded
-                    if (subject.databaseEntity || !subject.identifier) return
+                    if (subject.databaseEntity || !subject.identifier) return;
 
-                    allIds.push(subject.identifier)
-                    allSubjects.push(subject)
-                })
+                    allIds.push(subject.identifier);
+                    allSubjects.push(subject);
+                });
 
                 // if there no ids found (means all entities are new and have generated ids) - then nothing to load there
-                if (!allIds.length) return
+                if (!allIds.length) return;
 
-                const loadRelationPropertyPaths: string[] = []
+                const loadRelationPropertyPaths: string[] = [];
 
                 // for the save, soft-remove and recover operation
                 // extract all property paths of the relations we need to load relation ids for
@@ -68,8 +68,8 @@ export class SubjectDatabaseEntityLoader {
                         subject.metadata.relations.forEach((relation) => {
                             const value = relation.getEntityValue(
                                 subject.entityWithFulfilledIds!,
-                            )
-                            if (value === undefined) return
+                            );
+                            if (value === undefined) return;
 
                             if (
                                 loadRelationPropertyPaths.indexOf(
@@ -78,9 +78,9 @@ export class SubjectDatabaseEntityLoader {
                             )
                                 loadRelationPropertyPaths.push(
                                     relation.propertyPath,
-                                )
-                        })
-                    })
+                                );
+                        });
+                    });
                 } else {
                     // remove
 
@@ -90,7 +90,7 @@ export class SubjectDatabaseEntityLoader {
                         ...subjectGroup.subjects[0].metadata.manyToManyRelations.map(
                             (relation) => relation.propertyPath,
                         ),
-                    )
+                    );
                 }
 
                 const findOptions: FindManyOptions<any> = {
@@ -101,10 +101,10 @@ export class SubjectDatabaseEntityLoader {
                     },
                     // the soft-deleted entities should be included in the loaded entities for recover operation
                     withDeleted: true,
-                }
+                };
 
                 // load database entities for all given ids
-                let entities: any[] = []
+                let entities: any[] = [];
                 if (
                     this.queryRunner.connection.driver.options.type ===
                     "mongodb"
@@ -112,15 +112,15 @@ export class SubjectDatabaseEntityLoader {
                     const mongoRepo =
                         this.queryRunner.manager.getRepository<ObjectLiteral>(
                             subjectGroup.target,
-                        ) as MongoRepository<ObjectLiteral>
-                    entities = await mongoRepo.findByIds(allIds, findOptions)
+                        ) as MongoRepository<ObjectLiteral>;
+                    entities = await mongoRepo.findByIds(allIds, findOptions);
                 } else {
                     entities = await this.queryRunner.manager
                         .getRepository<ObjectLiteral>(subjectGroup.target)
                         .createQueryBuilder()
                         .setFindOptions(findOptions)
                         .whereInIds(allIds)
-                        .getMany()
+                        .getMany();
                 }
 
                 // now when we have entities we need to find subject of each entity
@@ -129,25 +129,25 @@ export class SubjectDatabaseEntityLoader {
                     const subjects = this.findByPersistEntityLike(
                         subjectGroup.target,
                         entity,
-                    )
+                    );
                     subjects.forEach((subject) => {
-                        subject.databaseEntity = entity
+                        subject.databaseEntity = entity;
                         if (!subject.identifier)
                             subject.identifier =
                                 subject.metadata.hasAllPrimaryKeys(entity)
                                     ? subject.metadata.getEntityIdMap(entity)
-                                    : undefined
-                    })
-                })
+                                    : undefined;
+                    });
+                });
 
                 // this way we tell what subjects we tried to load database entities of
                 for (let subject of allSubjects) {
-                    subject.databaseEntityLoaded = true
+                    subject.databaseEntityLoaded = true;
                 }
             },
-        )
+        );
 
-        await Promise.all(promises)
+        await Promise.all(promises);
     }
 
     // ---------------------------------------------------------------------
@@ -165,9 +165,9 @@ export class SubjectDatabaseEntityLoader {
         entity: ObjectLiteral,
     ): Subject[] {
         return this.subjects.filter((subject) => {
-            if (!subject.entity) return false
+            if (!subject.entity) return false;
 
-            if (subject.entity === entity) return true
+            if (subject.entity === entity) return true;
 
             return (
                 subject.metadata.target === entityTarget &&
@@ -175,27 +175,30 @@ export class SubjectDatabaseEntityLoader {
                     subject.entityWithFulfilledIds!,
                     entity,
                 )
-            )
-        })
+            );
+        });
     }
 
     /**
      * Groups given Subject objects into groups separated by entity targets.
      */
     protected groupByEntityTargets(): {
-        target: Function | string
-        subjects: Subject[]
+        target: Function | string;
+        subjects: Subject[];
     }[] {
         return this.subjects.reduce((groups, operatedEntity) => {
             let group = groups.find(
                 (group) => group.target === operatedEntity.metadata.target,
-            )
+            );
             if (!group) {
-                group = { target: operatedEntity.metadata.target, subjects: [] }
-                groups.push(group)
+                group = {
+                    target: operatedEntity.metadata.target,
+                    subjects: [],
+                };
+                groups.push(group);
             }
-            group.subjects.push(operatedEntity)
-            return groups
-        }, [] as { target: Function | string; subjects: Subject[] }[])
+            group.subjects.push(operatedEntity);
+            return groups;
+        }, [] as { target: Function | string; subjects: Subject[] }[]);
     }
 }

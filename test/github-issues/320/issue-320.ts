@@ -1,34 +1,34 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { ActivityEntity } from "./entity/ActivityEntity"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { ActivityEntity } from "./entity/ActivityEntity";
 
 describe("github issues > #320 Bug in getManyAndCount", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
                 enabledDrivers: ["mysql"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should correctly parse type from PrimaryGeneratedColumn options", () =>
         Promise.all(
             connections.map(async (connection) => {
-                let tiles = [2, 3]
+                let tiles = [2, 3];
 
                 let query = connection
                     .createQueryBuilder(ActivityEntity, "activity")
                     .innerJoinAndSelect("activity.tiles", "tile")
                     .select("activity.id")
-                    .orderBy("activity.endDate", "DESC")
+                    .orderBy("activity.endDate", "DESC");
 
                 query = query
                     .innerJoin(
@@ -49,9 +49,9 @@ describe("github issues > #320 Bug in getManyAndCount", () => {
                     .having("b.matchedTileCount = :tileCount")
                     .orHaving("tileCount <= b.matchedTileCount")
                     .setParameter("tiles", tiles)
-                    .setParameter("tileCount", tiles.length)
+                    .setParameter("tileCount", tiles.length);
 
-                await query.getMany
+                await query.getMany;
             }),
-        ))
-})
+        ));
+});

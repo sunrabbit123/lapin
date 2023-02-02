@@ -1,32 +1,32 @@
-import "reflect-metadata"
-import "../../../utils/test-setup"
-import { DataSource, LessThan, MoreThan } from "../../../../src"
+import "reflect-metadata";
+import "../../../utils/test-setup";
+import { DataSource, LessThan, MoreThan } from "../../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { Author } from "./entity/Author"
-import { Counters } from "./entity/Counters"
-import { Post } from "./entity/Post"
-import { Tag } from "./entity/Tag"
-import { prepareData } from "./find-options-test-utils"
+} from "../../../utils/test-utils";
+import { Author } from "./entity/Author";
+import { Counters } from "./entity/Counters";
+import { Post } from "./entity/Post";
+import { Tag } from "./entity/Tag";
+import { prepareData } from "./find-options-test-utils";
 
 describe("find options > where", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 __dirname,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("where id", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -35,7 +35,7 @@ describe("find options > where", () => {
                             id: 1,
                         },
                     })
-                    .getMany()
+                    .getMany();
 
                 posts.should.be.eql([
                     {
@@ -44,14 +44,14 @@ describe("find options > where", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where title", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -60,7 +60,7 @@ describe("find options > where", () => {
                             title: "Post #2",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 2,
@@ -68,14 +68,14 @@ describe("find options > where", () => {
                         text: "About post #2",
                         counters: { likes: 2 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where two criteria", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -85,7 +85,7 @@ describe("find options > where", () => {
                             text: "About post #2",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 2,
@@ -93,14 +93,14 @@ describe("find options > where", () => {
                         text: "About post #2",
                         counters: { likes: 2 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where two criteria without match", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -110,15 +110,15 @@ describe("find options > where", () => {
                             text: "About post #3",
                         },
                     })
-                    .getMany()
-                posts.should.be.eql([])
+                    .getMany();
+                posts.should.be.eql([]);
             }),
-        ))
+        ));
 
     it("where relation", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts1 = await connection
                     .createQueryBuilder(Post, "post")
@@ -129,7 +129,7 @@ describe("find options > where", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts1.should.be.eql([
                     {
                         id: 1,
@@ -149,7 +149,7 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts2 = await connection
                     .createQueryBuilder(Post, "post")
@@ -160,7 +160,7 @@ describe("find options > where", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts2.should.be.eql([
                     {
                         id: 3,
@@ -168,14 +168,14 @@ describe("find options > where", () => {
                         text: "About post #3",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where column and relation", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -187,7 +187,7 @@ describe("find options > where", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 2,
@@ -195,14 +195,14 @@ describe("find options > where", () => {
                         text: "About post #2",
                         counters: { likes: 2 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where nested relations", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -219,7 +219,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -239,14 +239,14 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where complex nested relations", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -263,7 +263,7 @@ describe("find options > where", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -271,14 +271,14 @@ describe("find options > where", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where or + optional relations", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -299,7 +299,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -325,14 +325,14 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where column in embed", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -346,7 +346,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -366,14 +366,14 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where relation in embed", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -389,7 +389,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 2,
@@ -403,14 +403,14 @@ describe("find options > where", () => {
                         text: "About post #3",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where complex with or + and", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -438,7 +438,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -464,14 +464,14 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("where relations with operators", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts1 = await connection
                     .createQueryBuilder(Post, "post")
@@ -480,7 +480,7 @@ describe("find options > where", () => {
                             tags: MoreThan(1),
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts1.should.be.eql([
                     {
                         id: 1,
@@ -488,7 +488,7 @@ describe("find options > where", () => {
                         text: "About post #1",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const posts2 = await connection
                     .createQueryBuilder(Post, "post")
@@ -500,7 +500,7 @@ describe("find options > where", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts2.should.be.eql([
                     {
                         id: 2,
@@ -508,7 +508,7 @@ describe("find options > where", () => {
                         text: "About post #2",
                         counters: { likes: 2 },
                     },
-                ])
+                ]);
 
                 const posts3 = await connection
                     .createQueryBuilder(Post, "post")
@@ -522,7 +522,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts3.should.be.eql([
                     {
                         id: 1,
@@ -542,7 +542,7 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
 
                 const authors = await connection
                     .createQueryBuilder(Author, "author")
@@ -551,10 +551,10 @@ describe("find options > where", () => {
                             photos: MoreThan(0),
                         },
                     })
-                    .getMany()
+                    .getMany();
                 authors.should.be.eql([
                     { id: 1, firstName: "Timber", lastName: "Saw", age: 25 },
-                ])
+                ]);
 
                 const tags1 = await connection
                     .createQueryBuilder(Tag, "tag")
@@ -566,11 +566,11 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 tags1.should.be.eql([
                     { id: 1, name: "category #1" },
                     { id: 2, name: "category #2" },
-                ])
+                ]);
 
                 const tags2 = await connection
                     .createQueryBuilder(Tag, "tag")
@@ -579,23 +579,23 @@ describe("find options > where", () => {
                             posts: LessThan(1),
                         },
                     })
-                    .getMany()
-                tags2.should.be.eql([{ id: 3, name: "category #3" }])
+                    .getMany();
+                tags2.should.be.eql([{ id: 3, name: "category #3" }]);
             }),
-        ))
+        ));
 
     it("should not apply inner join if all conditions return undefined", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
-                const post4 = new Post()
-                post4.id = 4
-                post4.title = "Post #4"
-                post4.text = "About post #4"
-                post4.counters = new Counters()
-                post4.counters.likes = 1
-                await connection.manager.save(post4)
+                const post4 = new Post();
+                post4.id = 4;
+                post4.title = "Post #4";
+                post4.text = "About post #4";
+                post4.counters = new Counters();
+                post4.counters.likes = 1;
+                await connection.manager.save(post4);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -610,7 +610,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -636,22 +636,22 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("should apply inner join if true is applied", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
-                const post4 = new Post()
-                post4.id = 4
-                post4.title = "Post #4"
-                post4.text = "About post #4"
-                post4.counters = new Counters()
-                post4.counters.likes = 1
-                await connection.manager.save(post4)
+                const post4 = new Post();
+                post4.id = 4;
+                post4.title = "Post #4";
+                post4.text = "About post #4";
+                post4.counters = new Counters();
+                post4.counters.likes = 1;
+                await connection.manager.save(post4);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -663,7 +663,7 @@ describe("find options > where", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -689,7 +689,7 @@ describe("find options > where", () => {
                         text: "About post #4",
                         counters: { likes: 1 },
                     },
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});

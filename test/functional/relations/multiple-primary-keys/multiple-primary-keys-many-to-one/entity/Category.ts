@@ -1,37 +1,37 @@
-import { Entity } from "../../../../../../src/decorator/entity/Entity"
-import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn"
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { OneToMany } from "../../../../../../src/decorator/relations/OneToMany"
-import { Post } from "./Post"
-import { Unique } from "../../../../../../src"
+import { Entity } from "../../../../../../src/decorator/entity/Entity";
+import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn";
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { OneToMany } from "../../../../../../src/decorator/relations/OneToMany";
+import { Post } from "./Post";
+import { Unique } from "../../../../../../src";
 
 @Entity()
 @Unique(["code", "version", "description"])
 export class Category {
     @PrimaryColumn()
-    name: string
+    name: string;
 
     @PrimaryColumn()
-    type: string
+    type: string;
 
     @Column()
-    code: number
+    code: number;
 
     @Column()
-    version: number
+    version: number;
 
     @Column({ nullable: true })
-    description: string
+    description: string;
 
     @OneToMany((type) => Post, (post) => post.category)
-    posts: Post[]
+    posts: Post[];
 
     @OneToMany((type) => Post, (post) => post.categoryWithJoinColumn)
-    postsWithJoinColumn: Post[]
+    postsWithJoinColumn: Post[];
 
     @OneToMany((type) => Post, (post) => post.categoryWithOptions)
-    postsWithOptions: Post[]
+    postsWithOptions: Post[];
 
     @OneToMany((type) => Post, (post) => post.categoryWithNonPKColumns)
-    postsWithNonPKColumns: Post[]
+    postsWithNonPKColumns: Post[];
 }

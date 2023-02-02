@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 enum FooEnum {
     FOO,
@@ -7,14 +7,14 @@ enum FooEnum {
 
 class ParentEntity {
     @PrimaryGeneratedColumn()
-    ud: number
+    ud: number;
 
     @Column({
         type: "enum",
         enum: FooEnum,
         enumName: "foo_enum",
     })
-    foo: FooEnum
+    foo: FooEnum;
 }
 
 @Entity()

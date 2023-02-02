@@ -1,13 +1,13 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { InheritanceMetadataArgs } from "../../metadata-args/InheritanceMetadataArgs"
-import { ColumnOptions } from "../options/ColumnOptions"
+import { getMetadataArgsStorage } from "../../globals";
+import { InheritanceMetadataArgs } from "../../metadata-args/InheritanceMetadataArgs";
+import { ColumnOptions } from "../options/ColumnOptions";
 
 /**
  * Sets for entity to use table inheritance pattern.
  */
 export function TableInheritance(options?: {
-    pattern?: "STI" /*|"CTI"*/
-    column?: string | ColumnOptions
+    pattern?: "STI" /*|"CTI"*/;
+    column?: string | ColumnOptions;
 }): ClassDecorator {
     return function (target: Function) {
         getMetadataArgsStorage().inheritances.push({
@@ -19,6 +19,6 @@ export function TableInheritance(options?: {
                         ? { name: options.column }
                         : options.column
                     : undefined,
-        } as InheritanceMetadataArgs)
-    }
+        } as InheritanceMetadataArgs);
+    };
 }

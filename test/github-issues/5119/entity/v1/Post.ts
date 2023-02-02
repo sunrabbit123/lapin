@@ -3,20 +3,20 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index"
-import { User } from "./User"
+} from "../../../../../src/index";
+import { User } from "./User";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    text: string
+    text: string;
 
     @ManyToOne((type) => User)
-    owner: User
+    owner: User;
 }

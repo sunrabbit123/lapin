@@ -1,20 +1,20 @@
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { Information } from "./Information"
-import { ExtraInformation } from "./ExtraInformation"
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { Information } from "./Information";
+import { ExtraInformation } from "./ExtraInformation";
 
 export class Counters {
     @Column()
-    likes: number
+    likes: number;
 
     @Column()
-    comments: number
+    comments: number;
 
     @Column()
-    favorites: number
+    favorites: number;
 
     @Column((type) => Information)
-    information: Information
+    information: Information;
 
     @Column((type) => ExtraInformation)
-    extraInformation: ExtraInformation
+    extraInformation: ExtraInformation;
 }

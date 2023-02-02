@@ -6,79 +6,79 @@ import {
     Tree,
     TreeChildren,
     TreeParent,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Relation {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 }
 
 @Entity()
 export class OtherRelation {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 }
 
 @Entity()
 @Tree("closure-table")
 export class RelationClosure {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @TreeChildren()
-    children: RelationClosure[]
+    children: RelationClosure[];
 
     @TreeParent()
-    parent: RelationClosure
+    parent: RelationClosure;
 
     @OneToOne(() => Relation, { nullable: false })
     @JoinColumn()
-    relation: Relation
+    relation: Relation;
 
     @OneToOne(() => OtherRelation, { cascade: true })
     @JoinColumn()
-    otherRelation: OtherRelation
+    otherRelation: OtherRelation;
 }
 
 @Entity()
 @Tree("nested-set")
 export class RelationNested {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @TreeChildren()
-    children: RelationNested[]
+    children: RelationNested[];
 
     @TreeParent()
-    parent: RelationNested
+    parent: RelationNested;
 
     @OneToOne(() => Relation, { nullable: false })
     @JoinColumn()
-    relation: Relation
+    relation: Relation;
 
     @OneToOne(() => OtherRelation, { cascade: true })
     @JoinColumn()
-    otherRelation: OtherRelation
+    otherRelation: OtherRelation;
 }
 
 @Entity()
 @Tree("materialized-path")
 export class RelationMaterialized {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @TreeChildren()
-    children: RelationMaterialized[]
+    children: RelationMaterialized[];
 
     @TreeParent()
-    parent: RelationMaterialized
+    parent: RelationMaterialized;
 
     @OneToOne(() => Relation, { nullable: false })
     @JoinColumn()
-    relation: Relation
+    relation: Relation;
 
     @OneToOne(() => OtherRelation, { cascade: true })
     @JoinColumn()
-    otherRelation: OtherRelation
+    otherRelation: OtherRelation;
 }

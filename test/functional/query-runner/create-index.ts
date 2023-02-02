@@ -1,42 +1,42 @@
-import "reflect-metadata"
-import { DataSource } from "../../../src/data-source/DataSource"
+import "reflect-metadata";
+import { DataSource } from "../../../src/data-source/DataSource";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { Table } from "../../../src/schema-builder/table/Table"
-import { TableIndex } from "../../../src/schema-builder/table/TableIndex"
-import { DriverUtils } from "../../../src/driver/DriverUtils"
+} from "../../utils/test-utils";
+import { Table } from "../../../src/schema-builder/table/Table";
+import { TableIndex } from "../../../src/schema-builder/table/TableIndex";
+import { DriverUtils } from "../../../src/driver/DriverUtils";
 
 describe("query runner > create index", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(async () => {
         connections = await createTestingConnections({
             entities: [__dirname + "/entity/*{.js,.ts}"],
             schemaCreate: true,
             dropSchema: true,
-        })
-    })
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+        });
+    });
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should correctly create index and revert creation", () =>
         Promise.all(
             connections.map(async (connection) => {
-                let numericType = "int"
+                let numericType = "int";
                 if (DriverUtils.isSQLiteFamily(connection.driver)) {
-                    numericType = "integer"
+                    numericType = "integer";
                 } else if (connection.driver.options.type === "spanner") {
-                    numericType = "int64"
+                    numericType = "int64";
                 }
 
-                let stringType = "varchar"
+                let stringType = "varchar";
                 if (connection.driver.options.type === "spanner") {
-                    stringType = "string"
+                    stringType = "string";
                 }
 
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
                 await queryRunner.createTable(
                     new Table({
                         name: "question",
@@ -57,39 +57,39 @@ describe("query runner > create index", () => {
                         ],
                     }),
                     true,
-                )
+                );
 
                 // clear sqls in memory to avoid removing tables when down queries executed.
-                queryRunner.clearSqlMemory()
+                queryRunner.clearSqlMemory();
 
                 const index = new TableIndex({
                     columnNames: ["name", "description"],
-                })
-                await queryRunner.createIndex("question", index)
+                });
+                await queryRunner.createIndex("question", index);
 
                 const uniqueIndex = new TableIndex({
                     columnNames: ["description"],
                     isUnique: true,
-                })
-                await queryRunner.createIndex("question", uniqueIndex)
+                });
+                await queryRunner.createIndex("question", uniqueIndex);
 
-                let table = await queryRunner.getTable("question")
+                let table = await queryRunner.getTable("question");
 
                 // CockroachDB stores unique indices as UNIQUE constraints
                 if (connection.driver.options.type === "cockroachdb") {
-                    table!.indices.length.should.be.equal(1)
-                    table!.uniques.length.should.be.equal(1)
+                    table!.indices.length.should.be.equal(1);
+                    table!.uniques.length.should.be.equal(1);
                 } else {
-                    table!.indices.length.should.be.equal(2)
+                    table!.indices.length.should.be.equal(2);
                 }
 
-                await queryRunner.executeMemoryDownSql()
+                await queryRunner.executeMemoryDownSql();
 
-                table = await queryRunner.getTable("question")
-                table!.indices.length.should.be.equal(0)
-                table!.uniques.length.should.be.equal(0)
+                table = await queryRunner.getTable("question");
+                table!.indices.length.should.be.equal(0);
+                table!.uniques.length.should.be.equal(0);
 
-                await queryRunner.release()
+                await queryRunner.release();
             }),
-        ))
-})
+        ));
+});

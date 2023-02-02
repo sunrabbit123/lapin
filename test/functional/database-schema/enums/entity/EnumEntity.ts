@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from "../../../../../src"
+import { Entity, Column, PrimaryColumn } from "../../../../../src";
 
 export enum NumericEnum {
     ADMIN,
@@ -26,62 +26,62 @@ export enum HeterogeneousEnum {
     YES = "YES",
 }
 
-export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost"
+export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost";
 
-export type ArrayDefinedNumericEnumType = 11 | 12 | 13
+export type ArrayDefinedNumericEnumType = 11 | 12 | 13;
 
 @Entity()
 export class EnumEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({
         type: "enum",
         enum: NumericEnum,
         default: NumericEnum.MODERATOR,
     })
-    numericEnum: NumericEnum
+    numericEnum: NumericEnum;
 
     @Column({
         type: "enum",
         enum: StringEnum,
         default: StringEnum.GHOST,
     })
-    stringEnum: StringEnum
+    stringEnum: StringEnum;
 
     @Column({
         type: "enum",
         enum: StringNumericEnum,
         default: StringNumericEnum.FOUR,
     })
-    stringNumericEnum: StringNumericEnum
+    stringNumericEnum: StringNumericEnum;
 
     @Column({
         type: "enum",
         enum: HeterogeneousEnum,
         default: HeterogeneousEnum.NO,
     })
-    heterogeneousEnum: HeterogeneousEnum
+    heterogeneousEnum: HeterogeneousEnum;
 
     @Column({
         type: "enum",
         enum: ["admin", "editor", "ghost"],
         default: "ghost",
     })
-    arrayDefinedStringEnum: ArrayDefinedStringEnumType
+    arrayDefinedStringEnum: ArrayDefinedStringEnumType;
 
     @Column({
         type: "enum",
         enum: [11, 12, 13],
         default: 12,
     })
-    arrayDefinedNumericEnum: ArrayDefinedNumericEnumType
+    arrayDefinedNumericEnum: ArrayDefinedNumericEnumType;
 
     @Column({
         type: "enum",
         enum: StringEnum,
     })
-    enumWithoutdefault: StringEnum
+    enumWithoutdefault: StringEnum;
 
     @Column({
         type: "enum",
@@ -89,5 +89,5 @@ export class EnumEntity {
         nullable: true,
         default: null,
     })
-    nullableDefaultEnum: StringEnum
+    nullableDefaultEnum: StringEnum;
 }

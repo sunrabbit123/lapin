@@ -3,17 +3,17 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { User } from "./User"
+} from "../../../../src";
+import { User } from "./User";
 
 @Entity()
 export class Address {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    address: string
+    address: string;
 
     @ManyToOne(() => User)
-    user: User
+    user: User;
 }

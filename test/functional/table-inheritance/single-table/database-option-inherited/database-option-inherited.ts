@@ -1,13 +1,13 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../../utils/test-utils"
-import { DataSource } from "../../../../../src"
+} from "../../../../utils/test-utils";
+import { DataSource } from "../../../../../src";
 
 describe("table-inheritance > single-table > database-option-inherited", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -24,16 +24,16 @@ describe("table-inheritance > single-table > database-option-inherited", () => {
                     "sqljs",
                 ],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should correctly inherit database option", () =>
         Promise.all(
             connections.map(async (connection) => {
                 connection.entityMetadatas.forEach((metadata) =>
                     metadata.database!.should.equal("test"),
-                )
+                );
             }),
-        ))
-})
+        ));
+});

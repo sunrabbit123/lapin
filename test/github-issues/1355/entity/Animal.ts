@@ -6,17 +6,17 @@ import {
     ManyToMany,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Category } from "./Category"
-import { Breed } from "./Breed"
+} from "../../../../src";
+import { Category } from "./Category";
+import { Breed } from "./Breed";
 
 @Entity()
 export class Animal {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @ManyToMany(() => Category, { eager: true })
     @JoinTable({
@@ -31,7 +31,7 @@ export class Animal {
             foreignKeyConstraintName: "fk_animal_category_animalId",
         },
     })
-    categories: Category[]
+    categories: Category[];
 
     @ManyToOne(() => Breed)
     @JoinColumn({
@@ -39,5 +39,5 @@ export class Animal {
         referencedColumnName: "id",
         foreignKeyConstraintName: "fk_animal_breedId",
     })
-    breed: Breed
+    breed: Breed;
 }

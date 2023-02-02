@@ -1,4 +1,4 @@
-import { LapinError } from "./LapinError"
+import { LapinError } from "./LapinError";
 
 export class MetadataAlreadyExistsError extends LapinError {
     constructor(
@@ -14,6 +14,6 @@ export class MetadataAlreadyExistsError extends LapinError {
                     ? " on property " + propertyName
                     : ". If you previously renamed or moved entity class, make sure" +
                       " that compiled version of old entity class source wasn't left in the compiler output directory."),
-        )
+        );
     }
 }

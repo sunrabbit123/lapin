@@ -1,7 +1,7 @@
-import { Column } from "../../../src/decorator/columns/Column"
-import { TableInheritance } from "../../../src/decorator/entity/TableInheritance"
-import { Entity } from "../../../src/decorator/entity/Entity"
-import { PrimaryColumn } from "../../../src/decorator/columns/PrimaryColumn"
+import { Column } from "../../../src/decorator/columns/Column";
+import { TableInheritance } from "../../../src/decorator/entity/TableInheritance";
+import { Entity } from "../../../src/decorator/entity/Entity";
+import { PrimaryColumn } from "../../../src/decorator/columns/PrimaryColumn";
 
 // todo: some things left to do:
 // * check how it works when is join (conditions are not added in the joins right now)
@@ -10,11 +10,11 @@ import { PrimaryColumn } from "../../../src/decorator/columns/PrimaryColumn"
 @TableInheritance({ column: { name: "type", type: "varchar" } })
 export abstract class Person {
     @PrimaryColumn("int")
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 }

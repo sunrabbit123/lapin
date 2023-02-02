@@ -9,10 +9,10 @@ export interface TableExclusionOptions {
     /**
      * Constraint name.
      */
-    name?: string
+    name?: string;
 
     /**
      * Exclusion expression.
      */
-    expression?: string
+    expression?: string;
 }

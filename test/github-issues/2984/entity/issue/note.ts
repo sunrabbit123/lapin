@@ -2,11 +2,11 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     TableInheritance,
-} from "../../../../../src"
+} from "../../../../../src";
 
 @Entity({ name: "issueNote" })
 @TableInheritance({ column: { type: String, name: "type" } })
 export class Note {
     @PrimaryGeneratedColumn()
-    public id: number
+    public id: number;
 }

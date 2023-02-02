@@ -4,24 +4,24 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { User } from "./User"
+} from "../../../../src";
+import { User } from "./User";
 
 @Entity()
 export class UserMeta {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    foo: number
+    foo: number;
 
     @Column()
-    bar: number
+    bar: number;
 
     @Column({ nullable: false })
-    userId: number
+    userId: number;
 
     @OneToOne(() => User)
     @JoinColumn({ name: "userId", referencedColumnName: "id" })
-    user: User
+    user: User;
 }

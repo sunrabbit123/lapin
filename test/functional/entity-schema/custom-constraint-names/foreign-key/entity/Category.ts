@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../../src"
+import { EntitySchema } from "../../../../../../src";
 
 export const CategorySchema = new EntitySchema<any>({
     name: "category",
@@ -9,4 +9,4 @@ export const CategorySchema = new EntitySchema<any>({
             generated: "increment",
         },
     },
-})
+});

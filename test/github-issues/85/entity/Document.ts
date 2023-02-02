@@ -1,16 +1,16 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src"
+import { Column, Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Document {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ nullable: true, select: false })
-    name: string
+    name: string;
 
     @Column({ insert: false, select: false, nullable: true })
-    permission: number
+    permission: number;
 
     @Column({ insert: false, default: 1 })
-    version: number
+    version: number;
 }

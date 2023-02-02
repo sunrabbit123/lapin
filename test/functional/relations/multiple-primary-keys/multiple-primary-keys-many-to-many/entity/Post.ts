@@ -1,21 +1,21 @@
-import { Entity } from "../../../../../../src/decorator/entity/Entity"
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/PrimaryGeneratedColumn"
-import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany"
-import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable"
-import { Category } from "./Category"
+import { Entity } from "../../../../../../src/decorator/entity/Entity";
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/PrimaryGeneratedColumn";
+import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany";
+import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
+import { Category } from "./Category";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @ManyToMany((type) => Category, (category) => category.posts)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 
     @ManyToMany((type) => Category, (category) => category.postsWithOptions)
     @JoinTable({
@@ -37,7 +37,7 @@ export class Post {
             },
         ],
     })
-    categoriesWithOptions: Category[]
+    categoriesWithOptions: Category[];
 
     @ManyToMany(
         (type) => Category,
@@ -66,5 +66,5 @@ export class Post {
             },
         ],
     })
-    categoriesWithNonPKColumns: Category[]
+    categoriesWithNonPKColumns: Category[];
 }

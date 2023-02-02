@@ -1,14 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "../../../../src"
-import { Zip } from "./zip"
+import { Column, Entity, OneToMany, PrimaryColumn } from "../../../../src";
+import { Zip } from "./zip";
 
 @Entity()
 export class Country {
     @PrimaryColumn({ length: 2 })
-    code: string
+    code: string;
 
     @Column()
-    caption: string
+    caption: string;
 
     @OneToMany(() => Zip, (zip) => zip.country)
-    zips: Zip[]
+    zips: Zip[];
 }

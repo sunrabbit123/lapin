@@ -1,8 +1,8 @@
-import "reflect-metadata"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { ConnectionMetadataBuilder } from "../../../../src/connection/ConnectionMetadataBuilder"
-import { EntityMetadataValidator } from "../../../../src/metadata-builder/EntityMetadataValidator"
-import { expect } from "chai"
+import "reflect-metadata";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { ConnectionMetadataBuilder } from "../../../../src/connection/ConnectionMetadataBuilder";
+import { EntityMetadataValidator } from "../../../../src/metadata-builder/EntityMetadataValidator";
+import { expect } from "chai";
 
 describe("entity-metadata-validator", () => {
     it("should throw error if relation count decorator used with ManyToOne or OneToOne relations", async () => {
@@ -14,20 +14,20 @@ describe("entity-metadata-validator", () => {
             password: "test",
             database: "test",
             entities: [__dirname + "/entity/*{.js,.ts}"],
-        })
+        });
         const connectionMetadataBuilder = new ConnectionMetadataBuilder(
             connection,
-        )
+        );
         const entityMetadatas =
             await connectionMetadataBuilder.buildEntityMetadatas([
                 __dirname + "/entity/*{.js,.ts}",
-            ])
-        const entityMetadataValidator = new EntityMetadataValidator()
+            ]);
+        const entityMetadataValidator = new EntityMetadataValidator();
         expect(() =>
             entityMetadataValidator.validateMany(
                 entityMetadatas,
                 connection.driver,
             ),
-        ).to.throw(Error)
-    })
-})
+        ).to.throw(Error);
+    });
+});

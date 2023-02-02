@@ -1,18 +1,18 @@
-import { Driver } from "../Driver"
-import { PostgresDriver } from "../postgres/PostgresDriver"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { DataSource } from "../../data-source/DataSource"
-import { AuroraPostgresConnectionOptions } from "./AuroraPostgresConnectionOptions"
-import { AuroraPostgresQueryRunner } from "./AuroraPostgresQueryRunner"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { ColumnMetadata } from "../../metadata/ColumnMetadata"
-import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
-import { DriverUtils } from "../DriverUtils"
+import { Driver } from "../Driver";
+import { PostgresDriver } from "../postgres/PostgresDriver";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { DataSource } from "../../data-source/DataSource";
+import { AuroraPostgresConnectionOptions } from "./AuroraPostgresConnectionOptions";
+import { AuroraPostgresQueryRunner } from "./AuroraPostgresQueryRunner";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { ColumnMetadata } from "../../metadata/ColumnMetadata";
+import { ApplyValueTransformers } from "../../util/ApplyValueTransformers";
+import { DriverUtils } from "../DriverUtils";
 
 abstract class PostgresWrapper extends PostgresDriver {
-    options: any
+    options: any;
 
-    abstract createQueryRunner(mode: ReplicationMode): any
+    abstract createQueryRunner(mode: ReplicationMode): any;
 }
 
 export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
@@ -23,19 +23,19 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
     /**
      * Connection used by driver.
      */
-    connection: DataSource
+    connection: DataSource;
 
     /**
      * Aurora Data API underlying library.
      */
-    DataApiDriver: any
+    DataApiDriver: any;
 
-    client: any
+    client: any;
 
     /**
      * Represent transaction support by this driver
      */
-    transactionSupport = "nested" as const
+    transactionSupport = "nested" as const;
 
     // -------------------------------------------------------------------------
     // Public Implemented Properties
@@ -44,25 +44,25 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
     /**
      * Connection options.
      */
-    options: AuroraPostgresConnectionOptions
+    options: AuroraPostgresConnectionOptions;
 
     /**
      * Master database used to perform all write queries.
      */
-    database?: string
+    database?: string;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        super()
-        this.connection = connection
-        this.options = connection.options as AuroraPostgresConnectionOptions
-        this.isReplicated = false
+        super();
+        this.connection = connection;
+        this.options = connection.options as AuroraPostgresConnectionOptions;
+        this.isReplicated = false;
 
         // load data-api package
-        this.loadDependencies()
+        this.loadDependencies();
 
         this.client = new this.DataApiDriver(
             this.options.region,
@@ -73,9 +73,9 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
                 this.connection.logger.logQuery(query, parameters),
             this.options.serviceConfigOptions,
             this.options.formatOptions,
-        )
+        );
 
-        this.database = DriverUtils.buildDriverOptions(this.options).database
+        this.database = DriverUtils.buildDriverOptions(this.options).database;
     }
 
     // -------------------------------------------------------------------------
@@ -111,7 +111,7 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
                 this.options.formatOptions,
             ),
             mode,
-        )
+        );
     }
 
     /**
@@ -122,16 +122,16 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
             this.options.formatOptions &&
             this.options.formatOptions.castParameters === false
         ) {
-            return super.preparePersistentValue(value, columnMetadata)
+            return super.preparePersistentValue(value, columnMetadata);
         }
 
         if (columnMetadata.transformer)
             value = ApplyValueTransformers.transformTo(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        return this.client.preparePersistentValue(value, columnMetadata)
+        return this.client.preparePersistentValue(value, columnMetadata);
     }
 
     /**
@@ -142,16 +142,16 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
             this.options.formatOptions &&
             this.options.formatOptions.castParameters === false
         ) {
-            return super.prepareHydratedValue(value, columnMetadata)
+            return super.prepareHydratedValue(value, columnMetadata);
         }
 
         if (columnMetadata.transformer)
             value = ApplyValueTransformers.transformFrom(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        return this.client.prepareHydratedValue(value, columnMetadata)
+        return this.client.prepareHydratedValue(value, columnMetadata);
     }
 
     // -------------------------------------------------------------------------
@@ -164,29 +164,29 @@ export class AuroraPostgresDriver extends PostgresWrapper implements Driver {
     protected loadDependencies(): void {
         const driver =
             this.options.driver ||
-            PlatformTools.load("lapin-aurora-data-api-driver")
-        const { pg } = driver
+            PlatformTools.load("lapin-aurora-data-api-driver");
+        const { pg } = driver;
 
-        this.DataApiDriver = pg
+        this.DataApiDriver = pg;
     }
 
     /**
      * Executes given query.
      */
     protected executeQuery(connection: any, query: string) {
-        return this.connection.query(query)
+        return this.connection.query(query);
     }
 
     /**
      * Makes any action after connection (e.g. create extensions in Postgres driver).
      */
     async afterConnect(): Promise<void> {
-        const extensionsMetadata = await this.checkMetadataForExtensions()
+        const extensionsMetadata = await this.checkMetadataForExtensions();
 
         if (extensionsMetadata.hasExtensions) {
-            await this.enableExtensions(extensionsMetadata, this.connection)
+            await this.enableExtensions(extensionsMetadata, this.connection);
         }
 
-        return Promise.resolve()
+        return Promise.resolve();
     }
 }

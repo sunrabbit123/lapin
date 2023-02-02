@@ -1,14 +1,14 @@
-import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions"
-import { Post } from "./Post"
+import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions";
+import { Post } from "./Post";
 
 export class Author {
-    id: number
+    id: number;
 
-    publisherId: number
+    publisherId: number;
 
-    name: string
+    name: string;
 
-    posts: Post[]
+    posts: Post[];
 }
 
 export const AuthorSchema: EntitySchemaOptions<Author> = {
@@ -38,4 +38,4 @@ export const AuthorSchema: EntitySchemaOptions<Author> = {
             type: "one-to-many",
         },
     },
-}
+};

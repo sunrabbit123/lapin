@@ -3,23 +3,23 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { User } from "./User"
+} from "../../../../src";
+import { User } from "./User";
 
 @Entity()
 export class Photo {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    description: string
+    description: string;
 
     @Column()
-    uri: string
+    uri: string;
 
     @Column()
-    userId: number
+    userId: number;
 
     @ManyToOne((type) => User, (user) => user.photos)
-    user: User
+    user: User;
 }

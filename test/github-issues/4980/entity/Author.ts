@@ -3,13 +3,13 @@ import {
     JoinTable,
     ManyToMany,
     Entity,
-} from "../../../../src"
-import { Book } from "./Book"
+} from "../../../../src";
+import { Book } from "./Book";
 
 @Entity("author")
 export class Author {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @ManyToMany(() => Book, (book) => book.authors, {
         onDelete: "CASCADE",
@@ -26,5 +26,5 @@ export class Author {
             referencedColumnName: "id",
         },
     })
-    books: Book[]
+    books: Book[];
 }

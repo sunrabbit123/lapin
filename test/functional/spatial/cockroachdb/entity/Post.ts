@@ -6,12 +6,12 @@ import {
     Index,
     Point,
     PrimaryGeneratedColumn,
-} from "../../../../../src"
+} from "../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column("geometry", {
         nullable: true,
@@ -19,23 +19,23 @@ export class Post {
     @Index({
         spatial: true,
     })
-    geom: Geometry
+    geom: Geometry;
 
     @Column("geometry", {
         nullable: true,
         spatialFeatureType: "Point",
     })
-    pointWithoutSRID: Point
+    pointWithoutSRID: Point;
 
     @Column("geometry", {
         nullable: true,
         spatialFeatureType: "Point",
         srid: 4326,
     })
-    point: Point
+    point: Point;
 
     @Column("geography", {
         nullable: true,
     })
-    geog: Geography
+    geog: Geography;
 }

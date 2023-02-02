@@ -1,30 +1,30 @@
-import { Entity } from "../../../../../src/decorator/entity/Entity"
-import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/PrimaryGeneratedColumn"
-import { Column } from "../../../../../src/decorator/columns/Column"
+import { Entity } from "../../../../../src/decorator/entity/Entity";
+import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/PrimaryGeneratedColumn";
+import { Column } from "../../../../../src/decorator/columns/Column";
 import {
     CreateDateColumn,
     ManyToOne,
     UpdateDateColumn,
-} from "../../../../../src"
-import { Category } from "./Category"
+} from "../../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number | undefined | null | string
+    id: number | undefined | null | string;
 
     @Column({
         nullable: true,
         unique: true,
         name: "eXtErNal___id", // makes sure we test handling differing property/database names where necessary
     })
-    externalId?: string
+    externalId?: string;
 
     @Column()
-    title: string
+    title: string;
 
     @Column({ nullable: true })
-    subTitle: string
+    subTitle: string;
 
     @Column({
         nullable: true,
@@ -34,16 +34,16 @@ export class Post {
             to: (value?: Date) => value?.toISOString(),
         },
     })
-    dateAdded?: Date
+    dateAdded?: Date;
 
     @ManyToOne(() => Category, { nullable: true })
-    category?: Category
+    category?: Category;
 
     @CreateDateColumn()
-    createdAt!: Date
+    createdAt!: Date;
 
     @UpdateDateColumn({
         name: "uPdAtEd___At", // makes sure we test handling differing property/database names where necessary
     })
-    updatedAt!: Date
+    updatedAt!: Date;
 }

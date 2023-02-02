@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../../src"
+import { EntitySchema } from "../../../../../../src";
 
 export const PersonSchema = new EntitySchema<any>({
     name: "Person",
@@ -40,4 +40,4 @@ export const PersonSchema = new EntitySchema<any>({
             onUpdate: "CURRENT_TIMESTAMP(3)",
         },
     },
-})
+});

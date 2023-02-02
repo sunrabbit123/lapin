@@ -152,9 +152,9 @@ export const resultsTemplates: Record<string, any> = {
     },
 
     get mariadb() {
-        return this.mysql
+        return this.mysql;
     },
     get "better-sqlite3"() {
-        return this.sqlite
+        return this.sqlite;
     },
-}
+};

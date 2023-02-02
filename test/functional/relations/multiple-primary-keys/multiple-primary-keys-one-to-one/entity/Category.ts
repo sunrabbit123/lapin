@@ -1,44 +1,44 @@
-import { Entity } from "../../../../../../src/decorator/entity/Entity"
-import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn"
-import { Column } from "../../../../../../src/decorator/columns/Column"
-import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne"
-import { Post } from "./Post"
-import { Tag } from "./Tag"
-import { Unique } from "../../../../../../src"
+import { Entity } from "../../../../../../src/decorator/entity/Entity";
+import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn";
+import { Column } from "../../../../../../src/decorator/columns/Column";
+import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne";
+import { Post } from "./Post";
+import { Tag } from "./Tag";
+import { Unique } from "../../../../../../src";
 
 @Entity()
 @Unique(["code", "version", "description"])
 export class Category {
     @PrimaryColumn()
-    name: string
+    name: string;
 
     @PrimaryColumn()
-    type: string
+    type: string;
 
     @Column()
-    code: number
+    code: number;
 
     @Column()
-    version: number
+    version: number;
 
     @Column({ nullable: true })
-    description: string
+    description: string;
 
     @OneToOne((type) => Post, (post) => post.category)
-    post: Post
+    post: Post;
 
     @OneToOne((type) => Post, (post) => post.categoryWithOptions)
-    postWithOptions: Post
+    postWithOptions: Post;
 
     @OneToOne((type) => Post, (post) => post.categoryWithNonPKColumns)
-    postWithNonPKColumns: Post
+    postWithNonPKColumns: Post;
 
     @OneToOne((type) => Tag, (tag) => tag.category)
-    tag: Tag
+    tag: Tag;
 
     @OneToOne((type) => Tag, (tag) => tag.categoryWithOptions)
-    tagWithOptions: Tag
+    tagWithOptions: Tag;
 
     @OneToOne((type) => Tag, (tag) => tag.categoryWithNonPKColumns)
-    tagWithNonPKColumns: Tag
+    tagWithNonPKColumns: Tag;
 }

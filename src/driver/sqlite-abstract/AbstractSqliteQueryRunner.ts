@@ -1,24 +1,24 @@
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { Table } from "../../schema-builder/table/Table"
-import { TableIndex } from "../../schema-builder/table/TableIndex"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { View } from "../../schema-builder/view/View"
-import { Query } from "../Query"
-import { AbstractSqliteDriver } from "./AbstractSqliteDriver"
-import { ReadStream } from "../../platform/PlatformTools"
-import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions"
-import { TableUnique } from "../../schema-builder/table/TableUnique"
-import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner"
-import { OrmUtils } from "../../util/OrmUtils"
-import { TableCheck } from "../../schema-builder/table/TableCheck"
-import { IsolationLevel } from "../types/IsolationLevel"
-import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { TransactionAlreadyStartedError, LapinError } from "../../error"
-import { MetadataTableType } from "../types/MetadataTableType"
-import { InstanceChecker } from "../../util/InstanceChecker"
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { Table } from "../../schema-builder/table/Table";
+import { TableIndex } from "../../schema-builder/table/TableIndex";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { View } from "../../schema-builder/view/View";
+import { Query } from "../Query";
+import { AbstractSqliteDriver } from "./AbstractSqliteDriver";
+import { ReadStream } from "../../platform/PlatformTools";
+import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions";
+import { TableUnique } from "../../schema-builder/table/TableUnique";
+import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
+import { OrmUtils } from "../../util/OrmUtils";
+import { TableCheck } from "../../schema-builder/table/TableCheck";
+import { IsolationLevel } from "../types/IsolationLevel";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
+import { TransactionAlreadyStartedError, LapinError } from "../../error";
+import { MetadataTableType } from "../types/MetadataTableType";
+import { InstanceChecker } from "../../util/InstanceChecker";
 
 /**
  * Runs queries on a single sqlite database connection.
@@ -34,16 +34,16 @@ export abstract class AbstractSqliteQueryRunner
     /**
      * Database driver used by connection.
      */
-    driver: AbstractSqliteDriver
+    driver: AbstractSqliteDriver;
 
-    protected transactionPromise: Promise<any> | null = null
+    protected transactionPromise: Promise<any> | null = null;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor() {
-        super()
+        super();
     }
 
     // -------------------------------------------------------------------------
@@ -55,7 +55,7 @@ export abstract class AbstractSqliteQueryRunner
      * Returns obtained database connection.
      */
     connect(): Promise<any> {
-        return Promise.resolve(this.driver.databaseConnection)
+        return Promise.resolve(this.driver.databaseConnection);
     }
 
     /**
@@ -63,9 +63,9 @@ export abstract class AbstractSqliteQueryRunner
      * We just clear loaded tables and sql in memory, because sqlite do not support multiple connections thus query runners.
      */
     release(): Promise<void> {
-        this.loadedTables = []
-        this.clearSqlMemory()
-        return Promise.resolve()
+        this.loadedTables = [];
+        this.clearSqlMemory();
+        return Promise.resolve();
     }
 
     /**
@@ -75,13 +75,13 @@ export abstract class AbstractSqliteQueryRunner
         if (this.driver.transactionSupport === "none")
             throw new LapinError(
                 `Transactions aren't supported by ${this.connection.driver.options.type}.`,
-            )
+            );
 
         if (
             this.isTransactionActive &&
             this.driver.transactionSupport === "simple"
         )
-            throw new TransactionAlreadyStartedError()
+            throw new TransactionAlreadyStartedError();
 
         if (
             isolationLevel &&
@@ -90,31 +90,31 @@ export abstract class AbstractSqliteQueryRunner
         )
             throw new LapinError(
                 `SQLite only supports SERIALIZABLE and READ UNCOMMITTED isolation`,
-            )
+            );
 
-        this.isTransactionActive = true
+        this.isTransactionActive = true;
         try {
-            await this.broadcaster.broadcast("BeforeTransactionStart")
+            await this.broadcaster.broadcast("BeforeTransactionStart");
         } catch (err) {
-            this.isTransactionActive = false
-            throw err
+            this.isTransactionActive = false;
+            throw err;
         }
 
         if (this.transactionDepth === 0) {
             if (isolationLevel) {
                 if (isolationLevel === "READ UNCOMMITTED") {
-                    await this.query("PRAGMA read_uncommitted = true")
+                    await this.query("PRAGMA read_uncommitted = true");
                 } else {
-                    await this.query("PRAGMA read_uncommitted = false")
+                    await this.query("PRAGMA read_uncommitted = false");
                 }
             }
-            await this.query("BEGIN TRANSACTION")
+            await this.query("BEGIN TRANSACTION");
         } else {
-            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`);
         }
-        this.transactionDepth += 1
+        this.transactionDepth += 1;
 
-        await this.broadcaster.broadcast("AfterTransactionStart")
+        await this.broadcaster.broadcast("AfterTransactionStart");
     }
 
     /**
@@ -122,21 +122,21 @@ export abstract class AbstractSqliteQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async commitTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionCommit")
+        await this.broadcaster.broadcast("BeforeTransactionCommit");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.query("COMMIT")
-            this.isTransactionActive = false
+            await this.query("COMMIT");
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionCommit")
+        await this.broadcaster.broadcast("AfterTransactionCommit");
     }
 
     /**
@@ -144,21 +144,21 @@ export abstract class AbstractSqliteQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async rollbackTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionRollback")
+        await this.broadcaster.broadcast("BeforeTransactionRollback");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.query("ROLLBACK")
-            this.isTransactionActive = false
+            await this.query("ROLLBACK");
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionRollback")
+        await this.broadcaster.broadcast("AfterTransactionRollback");
     }
 
     /**
@@ -170,14 +170,14 @@ export abstract class AbstractSqliteQueryRunner
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        throw new LapinError(`Stream is not supported by sqlite driver.`)
+        throw new LapinError(`Stream is not supported by sqlite driver.`);
     }
 
     /**
      * Returns all available database names including system databases.
      */
     async getDatabases(): Promise<string[]> {
-        return Promise.resolve([])
+        return Promise.resolve([]);
     }
 
     /**
@@ -185,35 +185,35 @@ export abstract class AbstractSqliteQueryRunner
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        return Promise.resolve([])
+        return Promise.resolve([]);
     }
 
     /**
      * Checks if database with the given name exist.
      */
     async hasDatabase(database: string): Promise<boolean> {
-        return Promise.resolve(false)
+        return Promise.resolve(false);
     }
 
     /**
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<undefined> {
-        return Promise.resolve(undefined)
+        return Promise.resolve(undefined);
     }
 
     /**
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new LapinError(`This driver does not support table schemas`)
+        throw new LapinError(`This driver does not support table schemas`);
     }
 
     /**
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<undefined> {
-        return Promise.resolve(undefined)
+        return Promise.resolve(undefined);
     }
 
     /**
@@ -222,10 +222,10 @@ export abstract class AbstractSqliteQueryRunner
     async hasTable(tableOrName: Table | string): Promise<boolean> {
         const tableName = InstanceChecker.isTable(tableOrName)
             ? tableOrName.name
-            : tableOrName
-        const sql = `SELECT * FROM "sqlite_master" WHERE "type" = 'table' AND "name" = '${tableName}'`
-        const result = await this.query(sql)
-        return result.length ? true : false
+            : tableOrName;
+        const sql = `SELECT * FROM "sqlite_master" WHERE "type" = 'table' AND "name" = '${tableName}'`;
+        const result = await this.query(sql);
+        return result.length ? true : false;
     }
 
     /**
@@ -237,10 +237,10 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<boolean> {
         const tableName = InstanceChecker.isTable(tableOrName)
             ? tableOrName.name
-            : tableOrName
-        const sql = `PRAGMA table_xinfo(${this.escapePath(tableName)})`
-        const columns: ObjectLiteral[] = await this.query(sql)
-        return !!columns.find((column) => column["name"] === columnName)
+            : tableOrName;
+        const sql = `PRAGMA table_xinfo(${this.escapePath(tableName)})`;
+        const columns: ObjectLiteral[] = await this.query(sql);
+        return !!columns.find((column) => column["name"] === columnName);
     }
 
     /**
@@ -250,14 +250,14 @@ export abstract class AbstractSqliteQueryRunner
         database: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
      * Drops database.
      */
     async dropDatabase(database: string, ifExist?: boolean): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -267,14 +267,14 @@ export abstract class AbstractSqliteQueryRunner
         schemaPath: string,
         ifNotExist?: boolean,
     ): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
      * Drops table schema.
      */
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -286,16 +286,16 @@ export abstract class AbstractSqliteQueryRunner
         createForeignKeys: boolean = true,
         createIndices: boolean = true,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         if (ifNotExist) {
-            const isTableExist = await this.hasTable(table)
-            if (isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(table);
+            if (isTableExist) return Promise.resolve();
         }
 
-        upQueries.push(this.createTableSql(table, createForeignKeys))
-        downQueries.push(this.dropTableSql(table))
+        upQueries.push(this.createTableSql(table, createForeignKeys));
+        downQueries.push(this.dropTableSql(table));
 
         if (createIndices) {
             table.indices.forEach((index) => {
@@ -305,16 +305,16 @@ export abstract class AbstractSqliteQueryRunner
                         table,
                         index.columnNames,
                         index.where,
-                    )
-                upQueries.push(this.createIndexSql(table, index))
-                downQueries.push(this.dropIndexSql(index))
-            })
+                    );
+                upQueries.push(this.createIndexSql(table, index));
+                downQueries.push(this.dropIndexSql(index));
+            });
         }
 
         // if table have column with generated type, we must add the expression to the metadata table
         const generatedColumns = table.columns.filter(
             (column) => column.generatedType && column.asExpression,
-        )
+        );
 
         for (const column of generatedColumns) {
             const insertQuery = this.insertlapinMetadataSql({
@@ -322,19 +322,19 @@ export abstract class AbstractSqliteQueryRunner
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
             const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
 
-            upQueries.push(insertQuery)
-            downQueries.push(deleteQuery)
+            upQueries.push(insertQuery);
+            downQueries.push(deleteQuery);
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -347,52 +347,52 @@ export abstract class AbstractSqliteQueryRunner
         dropIndices: boolean = true,
     ): Promise<void> {
         if (ifExist) {
-            const isTableExist = await this.hasTable(tableOrName)
-            if (!isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(tableOrName);
+            if (!isTableExist) return Promise.resolve();
         }
 
         // if dropTable called with dropForeignKeys = true, we must create foreign keys in down query.
-        const createForeignKeys: boolean = dropForeignKeys
+        const createForeignKeys: boolean = dropForeignKeys;
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+            : await this.getCachedTable(tableOrName);
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         if (dropIndices) {
             table.indices.forEach((index) => {
-                upQueries.push(this.dropIndexSql(index))
-                downQueries.push(this.createIndexSql(table, index))
-            })
+                upQueries.push(this.dropIndexSql(index));
+                downQueries.push(this.createIndexSql(table, index));
+            });
         }
 
-        upQueries.push(this.dropTableSql(table, ifExist))
-        downQueries.push(this.createTableSql(table, createForeignKeys))
+        upQueries.push(this.dropTableSql(table, ifExist));
+        downQueries.push(this.createTableSql(table, createForeignKeys));
 
         // if table had columns with generated type, we must remove the expression from the metadata table
         const generatedColumns = table.columns.filter(
             (column) => column.generatedType && column.asExpression,
-        )
+        );
 
         for (const column of generatedColumns) {
             const deleteQuery = this.deletelapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
 
             const insertQuery = this.insertlapinMetadataSql({
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
-            upQueries.push(deleteQuery)
-            downQueries.push(insertQuery)
+            upQueries.push(deleteQuery);
+            downQueries.push(insertQuery);
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -402,30 +402,31 @@ export abstract class AbstractSqliteQueryRunner
         view: View,
         syncWithMetadata: boolean = false,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(this.createViewSql(view))
-        if (syncWithMetadata) upQueries.push(this.insertViewDefinitionSql(view))
-        downQueries.push(this.dropViewSql(view))
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(this.createViewSql(view));
         if (syncWithMetadata)
-            downQueries.push(this.deleteViewDefinitionSql(view))
-        await this.executeQueries(upQueries, downQueries)
+            upQueries.push(this.insertViewDefinitionSql(view));
+        downQueries.push(this.dropViewSql(view));
+        if (syncWithMetadata)
+            downQueries.push(this.deleteViewDefinitionSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
      * Drops the view.
      */
     async dropView(target: View | string): Promise<void> {
-        const viewName = InstanceChecker.isView(target) ? target.name : target
-        const view = await this.getCachedView(viewName)
+        const viewName = InstanceChecker.isView(target) ? target.name : target;
+        const view = await this.getCachedView(viewName);
 
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(this.deleteViewDefinitionSql(view))
-        upQueries.push(this.dropViewSql(view))
-        downQueries.push(this.insertViewDefinitionSql(view))
-        downQueries.push(this.createViewSql(view))
-        await this.executeQueries(upQueries, downQueries)
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(this.deleteViewDefinitionSql(view));
+        upQueries.push(this.dropViewSql(view));
+        downQueries.push(this.insertViewDefinitionSql(view));
+        downQueries.push(this.createViewSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -437,23 +438,23 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const oldTable = InstanceChecker.isTable(oldTableOrName)
             ? oldTableOrName
-            : await this.getCachedTable(oldTableOrName)
-        const newTable = oldTable.clone()
+            : await this.getCachedTable(oldTableOrName);
+        const newTable = oldTable.clone();
 
-        newTable.name = newTableName
+        newTable.name = newTableName;
 
         // rename table
         const up = new Query(
             `ALTER TABLE ${this.escapePath(
                 oldTable.name,
             )} RENAME TO ${this.escapePath(newTableName)}`,
-        )
+        );
         const down = new Query(
             `ALTER TABLE ${this.escapePath(
                 newTableName,
             )} RENAME TO ${this.escapePath(oldTable.name)}`,
-        )
-        await this.executeQueries(up, down)
+        );
+        await this.executeQueries(up, down);
 
         // rename unique constraints
         newTable.uniques.forEach((unique) => {
@@ -461,16 +462,16 @@ export abstract class AbstractSqliteQueryRunner
                 this.connection.namingStrategy.uniqueConstraintName(
                     oldTable,
                     unique.columnNames,
-                )
+                );
 
             // Skip renaming if Unique has user defined constraint name
-            if (unique.name !== oldUniqueName) return
+            if (unique.name !== oldUniqueName) return;
 
             unique.name = this.connection.namingStrategy.uniqueConstraintName(
                 newTable,
                 unique.columnNames,
-            )
-        })
+            );
+        });
 
         // rename foreign key constraints
         newTable.foreignKeys.forEach((foreignKey) => {
@@ -480,18 +481,18 @@ export abstract class AbstractSqliteQueryRunner
                     foreignKey.columnNames,
                     this.getTablePath(foreignKey),
                     foreignKey.referencedColumnNames,
-                )
+                );
 
             // Skip renaming if foreign key has user defined constraint name
-            if (foreignKey.name !== oldForeignKeyName) return
+            if (foreignKey.name !== oldForeignKeyName) return;
 
             foreignKey.name = this.connection.namingStrategy.foreignKeyName(
                 newTable,
                 foreignKey.columnNames,
                 this.getTablePath(foreignKey),
                 foreignKey.referencedColumnNames,
-            )
-        })
+            );
+        });
 
         // rename indices
         newTable.indices.forEach((index) => {
@@ -499,23 +500,23 @@ export abstract class AbstractSqliteQueryRunner
                 oldTable,
                 index.columnNames,
                 index.where,
-            )
+            );
 
             // Skip renaming if Index has user defined constraint name
-            if (index.name !== oldIndexName) return
+            if (index.name !== oldIndexName) return;
 
             index.name = this.connection.namingStrategy.indexName(
                 newTable,
                 index.columnNames,
                 index.where,
-            )
-        })
+            );
+        });
 
         // rename old table;
-        oldTable.name = newTable.name
+        oldTable.name = newTable.name;
 
         // recreate table with new constraint names
-        await this.recreateTable(newTable, oldTable)
+        await this.recreateTable(newTable, oldTable);
     }
 
     /**
@@ -527,8 +528,8 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        return this.addColumns(table!, [column])
+            : await this.getCachedTable(tableOrName);
+        return this.addColumns(table!, [column]);
     }
 
     /**
@@ -540,10 +541,10 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const changedTable = table.clone()
-        columns.forEach((column) => changedTable.addColumn(column))
-        await this.recreateTable(changedTable, table)
+            : await this.getCachedTable(tableOrName);
+        const changedTable = table.clone();
+        columns.forEach((column) => changedTable.addColumn(column));
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -556,24 +557,24 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const oldColumn = InstanceChecker.isTableColumn(oldTableColumnOrName)
             ? oldTableColumnOrName
-            : table.columns.find((c) => c.name === oldTableColumnOrName)
+            : table.columns.find((c) => c.name === oldTableColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
-        let newColumn: TableColumn | undefined = undefined
+        let newColumn: TableColumn | undefined = undefined;
         if (InstanceChecker.isTableColumn(newTableColumnOrName)) {
-            newColumn = newTableColumnOrName
+            newColumn = newTableColumnOrName;
         } else {
-            newColumn = oldColumn.clone()
-            newColumn.name = newTableColumnOrName
+            newColumn = oldColumn.clone();
+            newColumn.name = newTableColumnOrName;
         }
 
-        return this.changeColumn(table, oldColumn, newColumn)
+        return this.changeColumn(table, oldColumn, newColumn);
     }
 
     /**
@@ -586,16 +587,16 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const oldColumn = InstanceChecker.isTableColumn(oldTableColumnOrName)
             ? oldTableColumnOrName
-            : table.columns.find((c) => c.name === oldTableColumnOrName)
+            : table.columns.find((c) => c.name === oldTableColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
-        await this.changeColumns(table, [{ oldColumn, newColumn }])
+        await this.changeColumns(table, [{ oldColumn, newColumn }]);
     }
 
     /**
@@ -608,8 +609,8 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const changedTable = table.clone()
+            : await this.getCachedTable(tableOrName);
+        const changedTable = table.clone();
         changedColumns.forEach((changedColumnSet) => {
             if (
                 changedColumnSet.newColumn.name !==
@@ -622,15 +623,17 @@ export abstract class AbstractSqliteQueryRunner
                             this.connection.namingStrategy.uniqueConstraintName(
                                 table,
                                 unique.columnNames,
-                            )
+                            );
 
                         unique.columnNames.splice(
                             unique.columnNames.indexOf(
                                 changedColumnSet.oldColumn.name,
                             ),
                             1,
-                        )
-                        unique.columnNames.push(changedColumnSet.newColumn.name)
+                        );
+                        unique.columnNames.push(
+                            changedColumnSet.newColumn.name,
+                        );
 
                         // rename Unique only if it has default constraint name
                         if (unique.name === uniqueName) {
@@ -638,9 +641,9 @@ export abstract class AbstractSqliteQueryRunner
                                 this.connection.namingStrategy.uniqueConstraintName(
                                     changedTable,
                                     unique.columnNames,
-                                )
+                                );
                         }
-                    })
+                    });
 
                 changedTable
                     .findColumnForeignKeys(changedColumnSet.oldColumn)
@@ -651,17 +654,17 @@ export abstract class AbstractSqliteQueryRunner
                                 foreignKey.columnNames,
                                 this.getTablePath(foreignKey),
                                 foreignKey.referencedColumnNames,
-                            )
+                            );
 
                         foreignKey.columnNames.splice(
                             foreignKey.columnNames.indexOf(
                                 changedColumnSet.oldColumn.name,
                             ),
                             1,
-                        )
+                        );
                         foreignKey.columnNames.push(
                             changedColumnSet.newColumn.name,
-                        )
+                        );
 
                         // rename FK only if it has default constraint name
                         if (foreignKey.name === foreignKeyName) {
@@ -671,9 +674,9 @@ export abstract class AbstractSqliteQueryRunner
                                     foreignKey.columnNames,
                                     this.getTablePath(foreignKey),
                                     foreignKey.referencedColumnNames,
-                                )
+                                );
                         }
-                    })
+                    });
 
                 changedTable
                     .findColumnIndices(changedColumnSet.oldColumn)
@@ -683,15 +686,15 @@ export abstract class AbstractSqliteQueryRunner
                                 table,
                                 index.columnNames,
                                 index.where,
-                            )
+                            );
 
                         index.columnNames.splice(
                             index.columnNames.indexOf(
                                 changedColumnSet.oldColumn.name,
                             ),
                             1,
-                        )
-                        index.columnNames.push(changedColumnSet.newColumn.name)
+                        );
+                        index.columnNames.push(changedColumnSet.newColumn.name);
 
                         // rename Index only if it has default constraint name
                         if (index.name === indexName) {
@@ -700,20 +703,20 @@ export abstract class AbstractSqliteQueryRunner
                                     changedTable,
                                     index.columnNames,
                                     index.where,
-                                )
+                                );
                         }
-                    })
+                    });
             }
             const originalColumn = changedTable.columns.find(
                 (column) => column.name === changedColumnSet.oldColumn.name,
-            )
+            );
             if (originalColumn)
                 changedTable.columns[
                     changedTable.columns.indexOf(originalColumn)
-                ] = changedColumnSet.newColumn
-        })
+                ] = changedColumnSet.newColumn;
+        });
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -725,16 +728,16 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const column = InstanceChecker.isTableColumn(columnOrName)
             ? columnOrName
-            : table.findColumnByName(columnOrName)
+            : table.findColumnByName(columnOrName);
         if (!column)
             throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
-            )
+            );
 
-        await this.dropColumns(table, [column])
+        await this.dropColumns(table, [column]);
     }
 
     /**
@@ -746,34 +749,34 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and remove column and its constraints from cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         columns.forEach((column: TableColumn | string) => {
             const columnInstance = InstanceChecker.isTableColumn(column)
                 ? column
-                : table.findColumnByName(column)
+                : table.findColumnByName(column);
             if (!columnInstance)
                 throw new Error(
                     `Column "${column}" was not found in table "${table.name}"`,
-                )
+                );
 
-            changedTable.removeColumn(columnInstance)
+            changedTable.removeColumn(columnInstance);
             changedTable
                 .findColumnUniques(columnInstance)
                 .forEach((unique) =>
                     changedTable.removeUniqueConstraint(unique),
-                )
+                );
             changedTable
                 .findColumnIndices(columnInstance)
-                .forEach((index) => changedTable.removeIndex(index))
+                .forEach((index) => changedTable.removeIndex(index));
             changedTable
                 .findColumnForeignKeys(columnInstance)
-                .forEach((fk) => changedTable.removeForeignKey(fk))
-        })
+                .forEach((fk) => changedTable.removeForeignKey(fk));
+        });
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -785,20 +788,20 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         // clone original table and mark columns as primary
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         changedTable.columns.forEach((column) => {
             if (columnNames.find((columnName) => columnName === column.name))
-                column.isPrimary = true
-        })
+                column.isPrimary = true;
+        });
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
         // mark columns as primary in original table
         table.columns.forEach((column) => {
             if (columnNames.find((columnName) => columnName === column.name))
-                column.isPrimary = true
-        })
+                column.isPrimary = true;
+        });
     }
 
     /**
@@ -808,7 +811,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         columns: TableColumn[],
     ): Promise<void> {
-        await Promise.resolve()
+        await Promise.resolve();
     }
 
     /**
@@ -817,18 +820,18 @@ export abstract class AbstractSqliteQueryRunner
     async dropPrimaryKey(tableOrName: Table | string): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         // clone original table and mark primary columns as non-primary
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         changedTable.primaryColumns.forEach((column) => {
-            column.isPrimary = false
-        })
+            column.isPrimary = false;
+        });
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
         // mark primary columns as non-primary in original table
         table.primaryColumns.forEach((column) => {
-            column.isPrimary = false
-        })
+            column.isPrimary = false;
+        });
     }
 
     /**
@@ -838,7 +841,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         uniqueConstraint: TableUnique,
     ): Promise<void> {
-        await this.createUniqueConstraints(tableOrName, [uniqueConstraint])
+        await this.createUniqueConstraints(tableOrName, [uniqueConstraint]);
     }
 
     /**
@@ -850,14 +853,14 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and add unique constraints in to cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         uniqueConstraints.forEach((uniqueConstraint) =>
             changedTable.addUniqueConstraint(uniqueConstraint),
-        )
-        await this.recreateTable(changedTable, table)
+        );
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -869,16 +872,16 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const uniqueConstraint = InstanceChecker.isTableUnique(uniqueOrName)
             ? uniqueOrName
-            : table.uniques.find((u) => u.name === uniqueOrName)
+            : table.uniques.find((u) => u.name === uniqueOrName);
         if (!uniqueConstraint)
             throw new LapinError(
                 `Supplied unique constraint was not found in table ${table.name}`,
-            )
+            );
 
-        await this.dropUniqueConstraints(table, [uniqueConstraint])
+        await this.dropUniqueConstraints(table, [uniqueConstraint]);
     }
 
     /**
@@ -890,15 +893,15 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and remove unique constraints from cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         uniqueConstraints.forEach((uniqueConstraint) =>
             changedTable.removeUniqueConstraint(uniqueConstraint),
-        )
+        );
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -908,7 +911,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        await this.createCheckConstraints(tableOrName, [checkConstraint])
+        await this.createCheckConstraints(tableOrName, [checkConstraint]);
     }
 
     /**
@@ -920,14 +923,14 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and add check constraints in to cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         checkConstraints.forEach((checkConstraint) =>
             changedTable.addCheckConstraint(checkConstraint),
-        )
-        await this.recreateTable(changedTable, table)
+        );
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -939,16 +942,16 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const checkConstraint = InstanceChecker.isTableCheck(checkOrName)
             ? checkOrName
-            : table.checks.find((c) => c.name === checkOrName)
+            : table.checks.find((c) => c.name === checkOrName);
         if (!checkConstraint)
             throw new LapinError(
                 `Supplied check constraint was not found in table ${table.name}`,
-            )
+            );
 
-        await this.dropCheckConstraints(table, [checkConstraint])
+        await this.dropCheckConstraints(table, [checkConstraint]);
     }
 
     /**
@@ -960,15 +963,15 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and remove check constraints from cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         checkConstraints.forEach((checkConstraint) =>
             changedTable.removeCheckConstraint(checkConstraint),
-        )
+        );
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -978,7 +981,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new LapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`);
     }
 
     /**
@@ -988,7 +991,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`);
     }
 
     /**
@@ -998,7 +1001,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new LapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`);
     }
 
     /**
@@ -1008,7 +1011,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`Sqlite does not support exclusion constraints.`)
+        throw new LapinError(`Sqlite does not support exclusion constraints.`);
     }
 
     /**
@@ -1018,7 +1021,7 @@ export abstract class AbstractSqliteQueryRunner
         tableOrName: Table | string,
         foreignKey: TableForeignKey,
     ): Promise<void> {
-        await this.createForeignKeys(tableOrName, [foreignKey])
+        await this.createForeignKeys(tableOrName, [foreignKey]);
     }
 
     /**
@@ -1030,14 +1033,14 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         // clone original table and add foreign keys in to cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         foreignKeys.forEach((foreignKey) =>
             changedTable.addForeignKey(foreignKey),
-        )
+        );
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -1049,16 +1052,16 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const foreignKey = InstanceChecker.isTableForeignKey(foreignKeyOrName)
             ? foreignKeyOrName
-            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
+            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName);
         if (!foreignKey)
             throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
-            )
+            );
 
-        await this.dropForeignKeys(tableOrName, [foreignKey])
+        await this.dropForeignKeys(tableOrName, [foreignKey]);
     }
 
     /**
@@ -1070,15 +1073,15 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // clone original table and remove foreign keys from cloned table
-        const changedTable = table.clone()
+        const changedTable = table.clone();
         foreignKeys.forEach((foreignKey) =>
             changedTable.removeForeignKey(foreignKey),
-        )
+        );
 
-        await this.recreateTable(changedTable, table)
+        await this.recreateTable(changedTable, table);
     }
 
     /**
@@ -1090,15 +1093,15 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // new index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.createIndexSql(table, index)
-        const down = this.dropIndexSql(index)
-        await this.executeQueries(up, down)
-        table.addIndex(index)
+        const up = this.createIndexSql(table, index);
+        const down = this.dropIndexSql(index);
+        await this.executeQueries(up, down);
+        table.addIndex(index);
     }
 
     /**
@@ -1110,8 +1113,8 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.createIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1123,22 +1126,22 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const index = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName
-            : table.indices.find((i) => i.name === indexOrName)
+            : table.indices.find((i) => i.name === indexOrName);
         if (!index)
             throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
-            )
+            );
 
         // old index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.dropIndexSql(index)
-        const down = this.createIndexSql(table, index)
-        await this.executeQueries(up, down)
-        table.removeIndex(index)
+        const up = this.dropIndexSql(index);
+        const down = this.createIndexSql(table, index);
+        await this.executeQueries(up, down);
+        table.removeIndex(index);
     }
 
     /**
@@ -1150,8 +1153,8 @@ export abstract class AbstractSqliteQueryRunner
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.dropIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1159,57 +1162,57 @@ export abstract class AbstractSqliteQueryRunner
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     async clearTable(tableName: string): Promise<void> {
-        await this.query(`DELETE FROM ${this.escapePath(tableName)}`)
+        await this.query(`DELETE FROM ${this.escapePath(tableName)}`);
     }
 
     /**
      * Removes all tables from the currently connected database.
      */
     async clearDatabase(database?: string): Promise<void> {
-        let dbPath: string | undefined = undefined
+        let dbPath: string | undefined = undefined;
         if (
             database &&
             this.driver.getAttachedDatabaseHandleByRelativePath(database)
         ) {
             dbPath =
-                this.driver.getAttachedDatabaseHandleByRelativePath(database)
+                this.driver.getAttachedDatabaseHandleByRelativePath(database);
         }
 
-        await this.query(`PRAGMA foreign_keys = OFF`)
+        await this.query(`PRAGMA foreign_keys = OFF`);
 
-        const isAnotherTransactionActive = this.isTransactionActive
-        if (!isAnotherTransactionActive) await this.startTransaction()
+        const isAnotherTransactionActive = this.isTransactionActive;
+        if (!isAnotherTransactionActive) await this.startTransaction();
         try {
             const selectViewDropsQuery = dbPath
                 ? `SELECT 'DROP VIEW "${dbPath}"."' || name || '";' as query FROM "${dbPath}"."sqlite_master" WHERE "type" = 'view'`
-                : `SELECT 'DROP VIEW "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'view'`
+                : `SELECT 'DROP VIEW "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'view'`;
             const dropViewQueries: ObjectLiteral[] = await this.query(
                 selectViewDropsQuery,
-            )
+            );
             await Promise.all(
                 dropViewQueries.map((q) => this.query(q["query"])),
-            )
+            );
 
             const selectTableDropsQuery = dbPath
                 ? `SELECT 'DROP TABLE "${dbPath}"."' || name || '";' as query FROM "${dbPath}"."sqlite_master" WHERE "type" = 'table' AND "name" != 'sqlite_sequence'`
-                : `SELECT 'DROP TABLE "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'table' AND "name" != 'sqlite_sequence'`
+                : `SELECT 'DROP TABLE "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'table' AND "name" != 'sqlite_sequence'`;
             const dropTableQueries: ObjectLiteral[] = await this.query(
                 selectTableDropsQuery,
-            )
+            );
             await Promise.all(
                 dropTableQueries.map((q) => this.query(q["query"])),
-            )
+            );
 
-            if (!isAnotherTransactionActive) await this.commitTransaction()
+            if (!isAnotherTransactionActive) await this.commitTransaction();
         } catch (error) {
             try {
                 // we throw original error even if rollback thrown an error
                 if (!isAnotherTransactionActive)
-                    await this.rollbackTransaction()
+                    await this.rollbackTransaction();
             } catch (rollbackError) {}
-            throw error
+            throw error;
         } finally {
-            await this.query(`PRAGMA foreign_keys = ON`)
+            await this.query(`PRAGMA foreign_keys = ON`);
         }
     }
 
@@ -1218,44 +1221,44 @@ export abstract class AbstractSqliteQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName());
         if (!hasTable) {
-            return []
+            return [];
         }
 
         if (!viewNames) {
-            viewNames = []
+            viewNames = [];
         }
 
         const viewNamesString = viewNames
             .map((name) => "'" + name + "'")
-            .join(", ")
+            .join(", ");
         let query = `SELECT "t".* FROM "${this.getlapinMetadataTableName()}" "t" INNER JOIN "sqlite_master" s ON "s"."name" = "t"."name" AND "s"."type" = 'view' WHERE "t"."type" = '${
             MetadataTableType.VIEW
-        }'`
+        }'`;
         if (viewNamesString.length > 0)
-            query += ` AND "t"."name" IN (${viewNamesString})`
-        const dbViews = await this.query(query)
+            query += ` AND "t"."name" IN (${viewNamesString})`;
+        const dbViews = await this.query(query);
         return dbViews.map((dbView: any) => {
-            const view = new View()
-            view.name = dbView["name"]
-            view.expression = dbView["value"]
-            return view
-        })
+            const view = new View();
+            view.name = dbView["name"];
+            view.expression = dbView["value"];
+            return view;
+        });
     }
 
     protected async loadTableRecords(
         tablePath: string,
         tableOrIndex: "table" | "index",
     ) {
-        let database: string | undefined = undefined
-        const [schema, tableName] = this.splitTablePath(tablePath)
+        let database: string | undefined = undefined;
+        const [schema, tableName] = this.splitTablePath(tablePath);
         if (
             schema &&
             this.driver.getAttachedDatabasePathRelativeByHandle(schema)
         ) {
             database =
-                this.driver.getAttachedDatabasePathRelativeByHandle(schema)
+                this.driver.getAttachedDatabasePathRelativeByHandle(schema);
         }
         return this.query(
             `SELECT ${database ? `'${database}'` : null} as database, ${
@@ -1267,12 +1270,12 @@ export abstract class AbstractSqliteQueryRunner
             )} WHERE "type" = '${tableOrIndex}' AND "${
                 tableOrIndex === "table" ? "name" : "tbl_name"
             }" IN ('${tableName}')`,
-        )
+        );
     }
 
     protected async loadPragmaRecords(tablePath: string, pragma: string) {
-        const [, tableName] = this.splitTablePath(tablePath)
-        return this.query(`PRAGMA ${pragma}("${tableName}")`)
+        const [, tableName] = this.splitTablePath(tablePath);
+        return this.query(`PRAGMA ${pragma}("${tableName}")`);
     }
 
     /**
@@ -1281,39 +1284,39 @@ export abstract class AbstractSqliteQueryRunner
     protected async loadTables(tableNames?: string[]): Promise<Table[]> {
         // if no tables given then no need to proceed
         if (tableNames && tableNames.length === 0) {
-            return []
+            return [];
         }
 
-        let dbTables: { database?: string; name: string; sql: string }[] = []
-        let dbIndicesDef: ObjectLiteral[]
+        let dbTables: { database?: string; name: string; sql: string }[] = [];
+        let dbIndicesDef: ObjectLiteral[];
 
         if (!tableNames) {
-            const tablesSql = `SELECT * FROM "sqlite_master" WHERE "type" = 'table'`
-            dbTables.push(...(await this.query(tablesSql)))
+            const tablesSql = `SELECT * FROM "sqlite_master" WHERE "type" = 'table'`;
+            dbTables.push(...(await this.query(tablesSql)));
 
             const tableNamesString = dbTables
                 .map(({ name }) => `'${name}'`)
-                .join(", ")
+                .join(", ");
             dbIndicesDef = await this.query(
                 `SELECT * FROM "sqlite_master" WHERE "type" = 'index' AND "tbl_name" IN (${tableNamesString})`,
-            )
+            );
         } else {
             const tableNamesWithoutDot = tableNames
                 .filter((tableName) => {
-                    return tableName.split(".").length === 1
+                    return tableName.split(".").length === 1;
                 })
-                .map((tableName) => `'${tableName}'`)
+                .map((tableName) => `'${tableName}'`);
 
             const tableNamesWithDot = tableNames.filter((tableName) => {
-                return tableName.split(".").length > 1
-            })
+                return tableName.split(".").length > 1;
+            });
 
             const queryPromises = (type: "table" | "index") => {
                 const promises = [
                     ...tableNamesWithDot.map((tableName) =>
                         this.loadTableRecords(tableName, type),
                     ),
-                ]
+                ];
 
                 if (tableNamesWithoutDot.length) {
                     promises.push(
@@ -1322,22 +1325,22 @@ export abstract class AbstractSqliteQueryRunner
                                 type === "table" ? "name" : "tbl_name"
                             }" IN (${tableNamesWithoutDot})`,
                         ),
-                    )
+                    );
                 }
 
-                return promises
-            }
+                return promises;
+            };
             dbTables = (await Promise.all(queryPromises("table")))
                 .reduce((acc, res) => [...acc, ...res], [])
-                .filter(Boolean)
+                .filter(Boolean);
             dbIndicesDef = (await Promise.all(queryPromises("index")))
                 .reduce((acc, res) => [...acc, ...res], [])
-                .filter(Boolean)
+                .filter(Boolean);
         }
 
         // if tables were not found in the db, no need to proceed
         if (dbTables.length === 0) {
-            return []
+            return [];
         }
 
         // create table schemas for loaded tables
@@ -1351,12 +1354,12 @@ export abstract class AbstractSqliteQueryRunner
                         ? `${this.driver.getAttachedDatabaseHandleByRelativePath(
                               dbTable["database"],
                           )}.${dbTable["name"]}`
-                        : dbTable["name"]
+                        : dbTable["name"];
 
-                const sql = dbTable["sql"]
+                const sql = dbTable["sql"];
 
-                const withoutRowid = sql.includes("WITHOUT ROWID")
-                const table = new Table({ name: tablePath, withoutRowid })
+                const withoutRowid = sql.includes("WITHOUT ROWID");
+                const table = new Table({ name: tablePath, withoutRowid });
 
                 // load columns and indices
                 const [dbColumns, dbIndices, dbForeignKeys]: ObjectLiteral[][] =
@@ -1364,67 +1367,67 @@ export abstract class AbstractSqliteQueryRunner
                         this.loadPragmaRecords(tablePath, `table_xinfo`),
                         this.loadPragmaRecords(tablePath, `index_list`),
                         this.loadPragmaRecords(tablePath, `foreign_key_list`),
-                    ])
+                    ]);
 
                 // find column name with auto increment
-                let autoIncrementColumnName: string | undefined = undefined
-                const tableSql: string = dbTable["sql"]
+                let autoIncrementColumnName: string | undefined = undefined;
+                const tableSql: string = dbTable["sql"];
                 let autoIncrementIndex = tableSql
                     .toUpperCase()
-                    .indexOf("AUTOINCREMENT")
+                    .indexOf("AUTOINCREMENT");
                 if (autoIncrementIndex !== -1) {
                     autoIncrementColumnName = tableSql.substr(
                         0,
                         autoIncrementIndex,
-                    )
-                    const comma = autoIncrementColumnName.lastIndexOf(",")
-                    const bracket = autoIncrementColumnName.lastIndexOf("(")
+                    );
+                    const comma = autoIncrementColumnName.lastIndexOf(",");
+                    const bracket = autoIncrementColumnName.lastIndexOf("(");
                     if (comma !== -1) {
                         autoIncrementColumnName =
-                            autoIncrementColumnName.substr(comma)
+                            autoIncrementColumnName.substr(comma);
                         autoIncrementColumnName =
                             autoIncrementColumnName.substr(
                                 0,
                                 autoIncrementColumnName.lastIndexOf('"'),
-                            )
+                            );
                         autoIncrementColumnName =
                             autoIncrementColumnName.substr(
                                 autoIncrementColumnName.indexOf('"') + 1,
-                            )
+                            );
                     } else if (bracket !== -1) {
                         autoIncrementColumnName =
-                            autoIncrementColumnName.substr(bracket)
+                            autoIncrementColumnName.substr(bracket);
                         autoIncrementColumnName =
                             autoIncrementColumnName.substr(
                                 0,
                                 autoIncrementColumnName.lastIndexOf('"'),
-                            )
+                            );
                         autoIncrementColumnName =
                             autoIncrementColumnName.substr(
                                 autoIncrementColumnName.indexOf('"') + 1,
-                            )
+                            );
                     }
                 }
 
                 // create columns from the loaded columns
                 table.columns = await Promise.all(
                     dbColumns.map(async (dbColumn) => {
-                        const tableColumn = new TableColumn()
-                        tableColumn.name = dbColumn["name"]
-                        tableColumn.type = dbColumn["type"].toLowerCase()
+                        const tableColumn = new TableColumn();
+                        tableColumn.name = dbColumn["name"];
+                        tableColumn.type = dbColumn["type"].toLowerCase();
                         tableColumn.default =
                             dbColumn["dflt_value"] !== null &&
                             dbColumn["dflt_value"] !== undefined
                                 ? dbColumn["dflt_value"]
-                                : undefined
-                        tableColumn.isNullable = dbColumn["notnull"] === 0
+                                : undefined;
+                        tableColumn.isNullable = dbColumn["notnull"] === 0;
                         // primary keys are numbered starting with 1, columns that aren't primary keys are marked with 0
-                        tableColumn.isPrimary = dbColumn["pk"] > 0
-                        tableColumn.comment = "" // SQLite does not support column comments
+                        tableColumn.isPrimary = dbColumn["pk"] > 0;
+                        tableColumn.comment = ""; // SQLite does not support column comments
                         tableColumn.isGenerated =
-                            autoIncrementColumnName === dbColumn["name"]
+                            autoIncrementColumnName === dbColumn["name"];
                         if (tableColumn.isGenerated) {
-                            tableColumn.generationStrategy = "increment"
+                            tableColumn.generationStrategy = "increment";
                         }
 
                         if (
@@ -1432,23 +1435,23 @@ export abstract class AbstractSqliteQueryRunner
                             dbColumn["hidden"] === 3
                         ) {
                             tableColumn.generatedType =
-                                dbColumn["hidden"] === 2 ? "VIRTUAL" : "STORED"
+                                dbColumn["hidden"] === 2 ? "VIRTUAL" : "STORED";
 
                             const asExpressionQuery =
                                 await this.selectlapinMetadataSql({
                                     table: table.name,
                                     type: MetadataTableType.GENERATED_COLUMN,
                                     name: tableColumn.name,
-                                })
+                                });
 
                             const results = await this.query(
                                 asExpressionQuery.query,
                                 asExpressionQuery.parameters,
-                            )
+                            );
                             if (results[0] && results[0].value) {
-                                tableColumn.asExpression = results[0].value
+                                tableColumn.asExpression = results[0].value;
                             } else {
-                                tableColumn.asExpression = ""
+                                tableColumn.asExpression = "";
                             }
                         }
 
@@ -1460,20 +1463,20 @@ export abstract class AbstractSqliteQueryRunner
                                         tableColumn.name +
                                         ")\" varchar CHECK\\s*\\(\\s*\"\\1\"\\s+IN\\s*\\(('[^']+'(?:\\s*,\\s*'[^']+')+)\\s*\\)\\s*\\)",
                                 ),
-                            )
+                            );
                             if (enumMatch) {
                                 // This is an enum
                                 tableColumn.enum = enumMatch[2]
                                     .substr(1, enumMatch[2].length - 2)
-                                    .split("','")
+                                    .split("','");
                             }
                         }
 
                         // parse datatype and attempt to retrieve length, precision and scale
-                        let pos = tableColumn.type.indexOf("(")
+                        let pos = tableColumn.type.indexOf("(");
                         if (pos !== -1) {
-                            const fullType = tableColumn.type
-                            let dataType = fullType.substr(0, pos)
+                            const fullType = tableColumn.type;
+                            let dataType = fullType.substr(0, pos);
                             if (
                                 !!this.driver.withLengthColumnTypes.find(
                                     (col) => col === dataType,
@@ -1484,10 +1487,10 @@ export abstract class AbstractSqliteQueryRunner
                                         pos + 1,
                                         fullType.length - 1,
                                     ),
-                                )
+                                );
                                 if (len) {
-                                    tableColumn.length = len.toString()
-                                    tableColumn.type = dataType // remove the length part from the datatype
+                                    tableColumn.length = len.toString();
+                                    tableColumn.type = dataType; // remove the length part from the datatype
                                 }
                             }
                             if (
@@ -1497,10 +1500,10 @@ export abstract class AbstractSqliteQueryRunner
                             ) {
                                 const re = new RegExp(
                                     `^${dataType}\\((\\d+),?\\s?(\\d+)?\\)`,
-                                )
-                                const matches = fullType.match(re)
+                                );
+                                const matches = fullType.match(re);
                                 if (matches && matches[1]) {
-                                    tableColumn.precision = +matches[1]
+                                    tableColumn.precision = +matches[1];
                                 }
                                 if (
                                     !!this.driver.withScaleColumnTypes.find(
@@ -1508,26 +1511,26 @@ export abstract class AbstractSqliteQueryRunner
                                     )
                                 ) {
                                     if (matches && matches[2]) {
-                                        tableColumn.scale = +matches[2]
+                                        tableColumn.scale = +matches[2];
                                     }
                                 }
-                                tableColumn.type = dataType // remove the precision/scale part from the datatype
+                                tableColumn.type = dataType; // remove the precision/scale part from the datatype
                             }
                         }
 
-                        return tableColumn
+                        return tableColumn;
                     }),
-                )
+                );
 
                 // find foreign key constraints from CREATE TABLE sql
-                let fkResult
+                let fkResult;
                 const fkMappings: {
-                    name: string
-                    columns: string[]
-                    referencedTableName: string
-                }[] = []
+                    name: string;
+                    columns: string[];
+                    referencedTableName: string;
+                }[] = [];
                 const fkRegex =
-                    /CONSTRAINT "([^"]*)" FOREIGN KEY ?\((.*?)\) REFERENCES "([^"]*)"/g
+                    /CONSTRAINT "([^"]*)" FOREIGN KEY ?\((.*?)\) REFERENCES "([^"]*)"/g;
                 while ((fkResult = fkRegex.exec(sql)) !== null) {
                     fkMappings.push({
                         name: fkResult[1],
@@ -1535,14 +1538,14 @@ export abstract class AbstractSqliteQueryRunner
                             .substr(1, fkResult[2].length - 2)
                             .split(`", "`),
                         referencedTableName: fkResult[3],
-                    })
+                    });
                 }
 
                 // build foreign keys
                 const tableForeignKeyConstraints = OrmUtils.uniq(
                     dbForeignKeys,
                     (dbForeignKey) => dbForeignKey["id"],
-                )
+                );
 
                 table.foreignKeys = tableForeignKeyConstraints.map(
                     (foreignKey) => {
@@ -1550,13 +1553,13 @@ export abstract class AbstractSqliteQueryRunner
                             (dbForeignKey) =>
                                 dbForeignKey["id"] === foreignKey["id"] &&
                                 dbForeignKey["table"] === foreignKey["table"],
-                        )
+                        );
                         const columnNames = ownForeignKeys.map(
                             (dbForeignKey) => dbForeignKey["from"],
-                        )
+                        );
                         const referencedColumnNames = ownForeignKeys.map(
                             (dbForeignKey) => dbForeignKey["to"],
-                        )
+                        );
 
                         // find related foreign key mapping
                         const fkMapping = fkMappings.find(
@@ -1567,7 +1570,7 @@ export abstract class AbstractSqliteQueryRunner
                                     (column) =>
                                         columnNames.indexOf(column) !== -1,
                                 ),
-                        )
+                        );
 
                         return new TableForeignKey({
                             name: fkMapping!.name,
@@ -1576,21 +1579,22 @@ export abstract class AbstractSqliteQueryRunner
                             referencedColumnNames: referencedColumnNames,
                             onDelete: foreignKey["on_delete"],
                             onUpdate: foreignKey["on_update"],
-                        })
+                        });
                     },
-                )
+                );
 
                 // find unique constraints from CREATE TABLE sql
-                let uniqueRegexResult
-                const uniqueMappings: { name: string; columns: string[] }[] = []
-                const uniqueRegex = /CONSTRAINT "([^"]*)" UNIQUE ?\((.*?)\)/g
+                let uniqueRegexResult;
+                const uniqueMappings: { name: string; columns: string[] }[] =
+                    [];
+                const uniqueRegex = /CONSTRAINT "([^"]*)" UNIQUE ?\((.*?)\)/g;
                 while ((uniqueRegexResult = uniqueRegex.exec(sql)) !== null) {
                     uniqueMappings.push({
                         name: uniqueRegexResult[1],
                         columns: uniqueRegexResult[2]
                             .substr(1, uniqueRegexResult[2].length - 2)
                             .split(`", "`),
-                    })
+                    });
                 }
 
                 // build unique constraints
@@ -1603,33 +1607,33 @@ export abstract class AbstractSqliteQueryRunner
                     .map(async (dbIndexName) => {
                         const dbIndex = dbIndices.find(
                             (dbIndex) => dbIndex["name"] === dbIndexName,
-                        )
+                        );
                         const indexInfos: ObjectLiteral[] = await this.query(
                             `PRAGMA index_info("${dbIndex!["name"]}")`,
-                        )
+                        );
                         const indexColumns = indexInfos
                             .sort(
                                 (indexInfo1, indexInfo2) =>
                                     parseInt(indexInfo1["seqno"]) -
                                     parseInt(indexInfo2["seqno"]),
                             )
-                            .map((indexInfo) => indexInfo["name"])
+                            .map((indexInfo) => indexInfo["name"]);
                         if (indexColumns.length === 1) {
                             const column = table.columns.find((column) => {
                                 return !!indexColumns.find(
                                     (indexColumn) =>
                                         indexColumn === column.name,
-                                )
-                            })
-                            if (column) column.isUnique = true
+                                );
+                            });
+                            if (column) column.isUnique = true;
                         }
 
                         // find existent mapping by a column names
                         const foundMapping = uniqueMappings.find((mapping) => {
                             return mapping!.columns.every(
                                 (column) => indexColumns.indexOf(column) !== -1,
-                            )
-                        })
+                            );
+                        });
 
                         return new TableUnique({
                             name: foundMapping
@@ -1639,23 +1643,23 @@ export abstract class AbstractSqliteQueryRunner
                                       indexColumns,
                                   ),
                             columnNames: indexColumns,
-                        })
-                    })
+                        });
+                    });
                 table.uniques = (await Promise.all(
                     tableUniquePromises,
-                )) as TableUnique[]
+                )) as TableUnique[];
 
                 // build checks
-                let result
+                let result;
                 const regexp =
-                    /CONSTRAINT "([^"]*)" CHECK ?(\(.*?\))([,]|[)]$)/g
+                    /CONSTRAINT "([^"]*)" CHECK ?(\(.*?\))([,]|[)]$)/g;
                 while ((result = regexp.exec(sql)) !== null) {
                     table.checks.push(
                         new TableCheck({
                             name: result[1],
                             expression: result[2],
                         }),
-                    )
+                    );
                 }
 
                 // build indices
@@ -1668,44 +1672,44 @@ export abstract class AbstractSqliteQueryRunner
                     .map(async (dbIndexName) => {
                         const indexDef = dbIndicesDef.find(
                             (dbIndexDef) => dbIndexDef["name"] === dbIndexName,
-                        )
-                        const condition = /WHERE (.*)/.exec(indexDef!["sql"])
+                        );
+                        const condition = /WHERE (.*)/.exec(indexDef!["sql"]);
                         const dbIndex = dbIndices.find(
                             (dbIndex) => dbIndex["name"] === dbIndexName,
-                        )
+                        );
                         const indexInfos: ObjectLiteral[] = await this.query(
                             `PRAGMA index_info("${dbIndex!["name"]}")`,
-                        )
+                        );
                         const indexColumns = indexInfos
                             .sort(
                                 (indexInfo1, indexInfo2) =>
                                     parseInt(indexInfo1["seqno"]) -
                                     parseInt(indexInfo2["seqno"]),
                             )
-                            .map((indexInfo) => indexInfo["name"])
+                            .map((indexInfo) => indexInfo["name"]);
                         const dbIndexPath = `${
                             dbTable["database"] ? `${dbTable["database"]}.` : ""
-                        }${dbIndex!["name"]}`
+                        }${dbIndex!["name"]}`;
 
                         const isUnique =
                             dbIndex!["unique"] === "1" ||
-                            dbIndex!["unique"] === 1
+                            dbIndex!["unique"] === 1;
                         return new TableIndex(<TableIndexOptions>{
                             table: table,
                             name: dbIndexPath,
                             columnNames: indexColumns,
                             isUnique: isUnique,
                             where: condition ? condition[1] : undefined,
-                        })
-                    })
-                const indices = await Promise.all(indicesPromises)
+                        });
+                    });
+                const indices = await Promise.all(indicesPromises);
                 table.indices = indices.filter(
                     (index) => !!index,
-                ) as TableIndex[]
+                ) as TableIndex[];
 
-                return table
+                return table;
             }),
-        )
+        );
     }
 
     /**
@@ -1718,32 +1722,32 @@ export abstract class AbstractSqliteQueryRunner
     ): Query {
         const primaryColumns = table.columns.filter(
             (column) => column.isPrimary,
-        )
+        );
         const hasAutoIncrement = primaryColumns.find(
             (column) =>
                 column.isGenerated && column.generationStrategy === "increment",
-        )
-        const skipPrimary = primaryColumns.length > 1
+        );
+        const skipPrimary = primaryColumns.length > 1;
         if (skipPrimary && hasAutoIncrement)
             throw new LapinError(
                 `Sqlite does not support AUTOINCREMENT on composite primary key`,
-            )
+            );
 
         const columnDefinitions = table.columns
             .map((column) => this.buildCreateColumnSql(column, skipPrimary))
-            .join(", ")
-        const [database] = this.splitTablePath(table.name)
+            .join(", ");
+        const [database] = this.splitTablePath(table.name);
         let sql = `CREATE TABLE ${this.escapePath(
             table.name,
-        )} (${columnDefinitions}`
+        )} (${columnDefinitions}`;
 
-        let [databaseNew, tableName] = this.splitTablePath(table.name)
+        let [databaseNew, tableName] = this.splitTablePath(table.name);
         const newTableName = temporaryTable
             ? `${databaseNew ? `${databaseNew}.` : ""}${tableName.replace(
                   /^temporary_/,
                   "",
               )}`
-            : table.name
+            : table.name;
 
         // need for `addColumn()` method, because it recreates table.
         table.columns
@@ -1753,7 +1757,7 @@ export abstract class AbstractSqliteQueryRunner
                     (unique) =>
                         unique.columnNames.length === 1 &&
                         unique.columnNames[0] === column.name,
-                )
+                );
                 if (!isUniqueExist)
                     table.uniques.push(
                         new TableUnique({
@@ -1763,8 +1767,8 @@ export abstract class AbstractSqliteQueryRunner
                             ),
                             columnNames: [column.name],
                         }),
-                    )
-            })
+                    );
+            });
 
         if (table.uniques.length > 0) {
             const uniquesSql = table.uniques
@@ -1774,15 +1778,15 @@ export abstract class AbstractSqliteQueryRunner
                         : this.connection.namingStrategy.uniqueConstraintName(
                               newTableName,
                               unique.columnNames,
-                          )
+                          );
                     const columnNames = unique.columnNames
                         .map((columnName) => `"${columnName}"`)
-                        .join(", ")
-                    return `CONSTRAINT "${uniqueName}" UNIQUE (${columnNames})`
+                        .join(", ");
+                    return `CONSTRAINT "${uniqueName}" UNIQUE (${columnNames})`;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${uniquesSql}`
+            sql += `, ${uniquesSql}`;
         }
 
         if (table.checks.length > 0) {
@@ -1793,12 +1797,12 @@ export abstract class AbstractSqliteQueryRunner
                         : this.connection.namingStrategy.checkConstraintName(
                               newTableName,
                               check.expression!,
-                          )
-                    return `CONSTRAINT "${checkName}" CHECK (${check.expression})`
+                          );
+                    return `CONSTRAINT "${checkName}" CHECK (${check.expression})`;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${checksSql}`
+            sql += `, ${checksSql}`;
         }
 
         if (table.foreignKeys.length > 0 && createForeignKeys) {
@@ -1806,57 +1810,57 @@ export abstract class AbstractSqliteQueryRunner
                 .filter((fk) => {
                     const [referencedDatabase] = this.splitTablePath(
                         fk.referencedTableName,
-                    )
+                    );
                     if (referencedDatabase !== database) {
-                        return false
+                        return false;
                     }
-                    return true
+                    return true;
                 })
                 .map((fk) => {
                     const [, referencedTable] = this.splitTablePath(
                         fk.referencedTableName,
-                    )
+                    );
                     const columnNames = fk.columnNames
                         .map((columnName) => `"${columnName}"`)
-                        .join(", ")
+                        .join(", ");
                     if (!fk.name)
                         fk.name = this.connection.namingStrategy.foreignKeyName(
                             newTableName,
                             fk.columnNames,
                             this.getTablePath(fk),
                             fk.referencedColumnNames,
-                        )
+                        );
                     const referencedColumnNames = fk.referencedColumnNames
                         .map((columnName) => `"${columnName}"`)
-                        .join(", ")
+                        .join(", ");
 
-                    let constraint = `CONSTRAINT "${fk.name}" FOREIGN KEY (${columnNames}) REFERENCES "${referencedTable}" (${referencedColumnNames})`
-                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`
-                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`
+                    let constraint = `CONSTRAINT "${fk.name}" FOREIGN KEY (${columnNames}) REFERENCES "${referencedTable}" (${referencedColumnNames})`;
+                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`;
+                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`;
                     if (fk.deferrable)
-                        constraint += ` DEFERRABLE ${fk.deferrable}`
+                        constraint += ` DEFERRABLE ${fk.deferrable}`;
 
-                    return constraint
+                    return constraint;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${foreignKeysSql}`
+            sql += `, ${foreignKeysSql}`;
         }
 
         if (primaryColumns.length > 1) {
             const columnNames = primaryColumns
                 .map((column) => `"${column.name}"`)
-                .join(", ")
-            sql += `, PRIMARY KEY (${columnNames})`
+                .join(", ");
+            sql += `, PRIMARY KEY (${columnNames})`;
         }
 
-        sql += `)`
+        sql += `)`;
 
         if (table.withoutRowid) {
-            sql += " WITHOUT ROWID"
+            sql += " WITHOUT ROWID";
         }
 
-        return new Query(sql)
+        return new Query(sql);
     }
 
     /**
@@ -1868,22 +1872,24 @@ export abstract class AbstractSqliteQueryRunner
     ): Query {
         const tableName = InstanceChecker.isTable(tableOrName)
             ? tableOrName.name
-            : tableOrName
+            : tableOrName;
         const query = ifExist
             ? `DROP TABLE IF EXISTS ${this.escapePath(tableName)}`
-            : `DROP TABLE ${this.escapePath(tableName)}`
-        return new Query(query)
+            : `DROP TABLE ${this.escapePath(tableName)}`;
+        return new Query(query);
     }
 
     protected createViewSql(view: View): Query {
         if (typeof view.expression === "string") {
-            return new Query(`CREATE VIEW "${view.name}" AS ${view.expression}`)
+            return new Query(
+                `CREATE VIEW "${view.name}" AS ${view.expression}`,
+            );
         } else {
             return new Query(
                 `CREATE VIEW "${view.name}" AS ${view
                     .expression(this.connection)
                     .getQuery()}`,
-            )
+            );
         }
     }
 
@@ -1891,12 +1897,12 @@ export abstract class AbstractSqliteQueryRunner
         const expression =
             typeof view.expression === "string"
                 ? view.expression.trim()
-                : view.expression(this.connection).getQuery()
+                : view.expression(this.connection).getQuery();
         return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             name: view.name,
             value: expression,
-        })
+        });
     }
 
     /**
@@ -1905,8 +1911,8 @@ export abstract class AbstractSqliteQueryRunner
     protected dropViewSql(viewOrPath: View | string): Query {
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
-            : viewOrPath
-        return new Query(`DROP VIEW "${viewName}"`)
+            : viewOrPath;
+        return new Query(`DROP VIEW "${viewName}"`);
     }
 
     /**
@@ -1915,11 +1921,11 @@ export abstract class AbstractSqliteQueryRunner
     protected deleteViewDefinitionSql(viewOrPath: View | string): Query {
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
-            : viewOrPath
+            : viewOrPath;
         return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             name: viewName,
-        })
+        });
     }
 
     /**
@@ -1928,15 +1934,15 @@ export abstract class AbstractSqliteQueryRunner
     protected createIndexSql(table: Table, index: TableIndex): Query {
         const columns = index.columnNames
             .map((columnName) => `"${columnName}"`)
-            .join(", ")
-        const [database, tableName] = this.splitTablePath(table.name)
+            .join(", ");
+        const [database, tableName] = this.splitTablePath(table.name);
         return new Query(
             `CREATE ${index.isUnique ? "UNIQUE " : ""}INDEX ${
                 database ? `"${database}".` : ""
             }${this.escapePath(index.name!)} ON "${tableName}" (${columns}) ${
                 index.where ? "WHERE " + index.where : ""
             }`,
-        )
+        );
     }
 
     /**
@@ -1945,8 +1951,8 @@ export abstract class AbstractSqliteQueryRunner
     protected dropIndexSql(indexOrName: TableIndex | string): Query {
         let indexName = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName.name
-            : indexOrName
-        return new Query(`DROP INDEX ${this.escapePath(indexName!)}`)
+            : indexOrName;
+        return new Query(`DROP INDEX ${this.escapePath(indexName!)}`);
     }
 
     /**
@@ -1956,11 +1962,11 @@ export abstract class AbstractSqliteQueryRunner
         column: TableColumn,
         skipPrimary?: boolean,
     ): string {
-        let c = '"' + column.name + '"'
+        let c = '"' + column.name + '"';
         if (InstanceChecker.isColumnMetadata(column)) {
-            c += " " + this.driver.normalizeType(column)
+            c += " " + this.driver.normalizeType(column);
         } else {
-            c += " " + this.connection.driver.createFullType(column)
+            c += " " + this.connection.driver.createFullType(column);
         }
 
         if (column.enum)
@@ -1969,27 +1975,27 @@ export abstract class AbstractSqliteQueryRunner
                 column.name +
                 '" IN (' +
                 column.enum.map((val) => "'" + val + "'").join(",") +
-                ") )"
-        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY"
+                ") )";
+        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY";
         if (
             column.isGenerated === true &&
             column.generationStrategy === "increment"
         )
             // don't use skipPrimary here since updates can update already exist primary without auto inc.
-            c += " AUTOINCREMENT"
-        if (column.collation) c += " COLLATE " + column.collation
-        if (column.isNullable !== true) c += " NOT NULL"
+            c += " AUTOINCREMENT";
+        if (column.collation) c += " COLLATE " + column.collation;
+        if (column.isNullable !== true) c += " NOT NULL";
 
         if (column.asExpression) {
             c += ` AS (${column.asExpression}) ${
                 column.generatedType ? column.generatedType : "VIRTUAL"
-            }`
+            }`;
         } else {
             if (column.default !== undefined && column.default !== null)
-                c += " DEFAULT (" + column.default + ")"
+                c += " DEFAULT (" + column.default + ")";
         }
 
-        return c
+        return c;
     }
 
     protected async recreateTable(
@@ -1997,55 +2003,55 @@ export abstract class AbstractSqliteQueryRunner
         oldTable: Table,
         migrateData = true,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         // drop old table indices
         oldTable.indices.forEach((index) => {
-            upQueries.push(this.dropIndexSql(index))
-            downQueries.push(this.createIndexSql(oldTable, index))
-        })
+            upQueries.push(this.dropIndexSql(index));
+            downQueries.push(this.createIndexSql(oldTable, index));
+        });
 
         // change table name into 'temporary_table'
-        let [databaseNew, tableNameNew] = this.splitTablePath(newTable.name)
-        let [, tableNameOld] = this.splitTablePath(oldTable.name)
+        let [databaseNew, tableNameNew] = this.splitTablePath(newTable.name);
+        let [, tableNameOld] = this.splitTablePath(oldTable.name);
         newTable.name = tableNameNew = `${
             databaseNew ? `${databaseNew}.` : ""
-        }temporary_${tableNameNew}`
+        }temporary_${tableNameNew}`;
 
         // create new table
-        upQueries.push(this.createTableSql(newTable, true, true))
-        downQueries.push(this.dropTableSql(newTable))
+        upQueries.push(this.createTableSql(newTable, true, true));
+        downQueries.push(this.dropTableSql(newTable));
 
         // migrate all data from the old table into new table
         if (migrateData) {
             let newColumnNames = newTable.columns
                 .filter((column) => !column.generatedType)
-                .map((column) => `"${column.name}"`)
+                .map((column) => `"${column.name}"`);
 
             let oldColumnNames = oldTable.columns
                 .filter((column) => !column.generatedType)
-                .map((column) => `"${column.name}"`)
+                .map((column) => `"${column.name}"`);
 
             if (oldColumnNames.length < newColumnNames.length) {
                 newColumnNames = newTable.columns
                     .filter((column) => {
                         const oldColumn = oldTable.columns.find(
                             (c) => c.name === column.name,
-                        )
-                        if (oldColumn && oldColumn.generatedType) return false
-                        return !column.generatedType && oldColumn
+                        );
+                        if (oldColumn && oldColumn.generatedType) return false;
+                        return !column.generatedType && oldColumn;
                     })
-                    .map((column) => `"${column.name}"`)
+                    .map((column) => `"${column.name}"`);
             } else if (oldColumnNames.length > newColumnNames.length) {
                 oldColumnNames = oldTable.columns
                     .filter((column) => {
                         return (
                             !column.generatedType &&
                             newTable.columns.find((c) => c.name === column.name)
-                        )
+                        );
                     })
-                    .map((column) => `"${column.name}"`)
+                    .map((column) => `"${column.name}"`);
             }
 
             upQueries.push(
@@ -2058,7 +2064,7 @@ export abstract class AbstractSqliteQueryRunner
                         ", ",
                     )} FROM ${this.escapePath(oldTable.name)}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `INSERT INTO ${this.escapePath(
@@ -2069,12 +2075,12 @@ export abstract class AbstractSqliteQueryRunner
                         ", ",
                     )} FROM ${this.escapePath(newTable.name)}`,
                 ),
-            )
+            );
         }
 
         // drop old table
-        upQueries.push(this.dropTableSql(oldTable))
-        downQueries.push(this.createTableSql(oldTable, true))
+        upQueries.push(this.dropTableSql(oldTable));
+        downQueries.push(this.createTableSql(oldTable, true));
 
         // rename old table
         upQueries.push(
@@ -2083,16 +2089,16 @@ export abstract class AbstractSqliteQueryRunner
                     newTable.name,
                 )} RENAME TO ${this.escapePath(tableNameOld)}`,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(
                     oldTable.name,
                 )} RENAME TO ${this.escapePath(tableNameNew)}`,
             ),
-        )
+        );
 
-        newTable.name = oldTable.name
+        newTable.name = oldTable.name;
 
         // recreate table indices
         newTable.indices.forEach((index) => {
@@ -2102,10 +2108,10 @@ export abstract class AbstractSqliteQueryRunner
                     newTable,
                     index.columnNames,
                     index.where,
-                )
-            upQueries.push(this.createIndexSql(newTable, index))
-            downQueries.push(this.dropIndexSql(index))
-        })
+                );
+            upQueries.push(this.createIndexSql(newTable, index));
+            downQueries.push(this.dropIndexSql(index));
+        });
 
         // update generated columns in "lapin_metadata" table
         // Step 1: clear data for removed generated columns
@@ -2113,7 +2119,7 @@ export abstract class AbstractSqliteQueryRunner
             .filter((column) => {
                 const newTableColumn = newTable.columns.find(
                     (c) => c.name === column.name,
-                )
+                );
                 // we should delete record from "lapin_metadata" if generated column was removed
                 // or it was changed to non-generated
                 return (
@@ -2122,25 +2128,25 @@ export abstract class AbstractSqliteQueryRunner
                     (!newTableColumn ||
                         (!newTableColumn.generatedType &&
                             !newTableColumn.asExpression))
-                )
+                );
             })
             .forEach((column) => {
                 const deleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
-                })
+                });
 
                 const insertQuery = this.insertlapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
                     value: column.asExpression,
-                })
+                });
 
-                upQueries.push(deleteQuery)
-                downQueries.push(insertQuery)
-            })
+                upQueries.push(deleteQuery);
+                downQueries.push(insertQuery);
+            });
 
         // Step 2: add data for new generated columns
         newTable.columns
@@ -2156,17 +2162,17 @@ export abstract class AbstractSqliteQueryRunner
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
                     value: column.asExpression,
-                })
+                });
 
                 const deleteQuery = this.deletelapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
-                })
+                });
 
-                upQueries.push(insertQuery)
-                downQueries.push(deleteQuery)
-            })
+                upQueries.push(insertQuery);
+                downQueries.push(deleteQuery);
+            });
 
         // Step 3: update changed expressions
         newTable.columns
@@ -2178,26 +2184,26 @@ export abstract class AbstractSqliteQueryRunner
                         c.generatedType &&
                         column.generatedType &&
                         c.asExpression !== column.asExpression,
-                )
+                );
 
-                if (!oldColumn) return
+                if (!oldColumn) return;
 
                 // update expression
                 const deleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: oldColumn.name,
-                })
+                });
 
                 const insertQuery = this.insertlapinMetadataSql({
                     table: newTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
                     value: column.asExpression,
-                })
+                });
 
-                upQueries.push(deleteQuery)
-                upQueries.push(insertQuery)
+                upQueries.push(deleteQuery);
+                upQueries.push(insertQuery);
 
                 // revert update
                 const revertInsertQuery = this.insertlapinMetadataSql({
@@ -2205,20 +2211,20 @@ export abstract class AbstractSqliteQueryRunner
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: oldColumn.name,
                     value: oldColumn.asExpression,
-                })
+                });
 
                 const revertDeleteQuery = this.deletelapinMetadataSql({
                     table: oldTable.name,
                     type: MetadataTableType.GENERATED_COLUMN,
                     name: column.name,
-                })
+                });
 
-                downQueries.push(revertInsertQuery)
-                downQueries.push(revertDeleteQuery)
-            })
+                downQueries.push(revertInsertQuery);
+                downQueries.push(revertDeleteQuery);
+            });
 
-        await this.executeQueries(upQueries, downQueries)
-        this.replaceCachedTable(oldTable, newTable)
+        await this.executeQueries(upQueries, downQueries);
+        this.replaceCachedTable(oldTable, newTable);
     }
 
     /**
@@ -2229,7 +2235,7 @@ export abstract class AbstractSqliteQueryRunner
             tablePath.indexOf(".") !== -1
                 ? tablePath.split(".")
                 : [undefined, tablePath]
-        ) as [string | undefined, string]
+        ) as [string | undefined, string];
     }
 
     /**
@@ -2242,11 +2248,11 @@ export abstract class AbstractSqliteQueryRunner
         const tableName =
             InstanceChecker.isTable(target) || InstanceChecker.isView(target)
                 ? target.name
-                : target
+                : target;
         return tableName
             .replace(/^\.+|\.+$/g, "")
             .split(".")
             .map((i) => (disableEscape ? i : `"${i}"`))
-            .join(".")
+            .join(".");
     }
 }

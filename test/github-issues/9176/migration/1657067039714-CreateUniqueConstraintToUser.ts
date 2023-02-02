@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableUnique } from "../../../../src"
+import { MigrationInterface, QueryRunner, TableUnique } from "../../../../src";
 
 export class CreateUniqueConstraintToUser1657067039714
     implements MigrationInterface
@@ -9,7 +9,7 @@ export class CreateUniqueConstraintToUser1657067039714
             new TableUnique({
                 columnNames: ["firstName", "lastName", "middleName"],
             }),
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -18,6 +18,6 @@ export class CreateUniqueConstraintToUser1657067039714
             new TableUnique({
                 columnNames: ["firstName", "lastName", "middleName"],
             }),
-        )
+        );
     }
 }

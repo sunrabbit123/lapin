@@ -5,15 +5,15 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class ProductBrand extends BaseEntity {
     @PrimaryGeneratedColumn()
-    public id: number
+    public id: number;
 
     @Column()
-    public name: string
+    public name: string;
 
     @CreateDateColumn({
         name: "created_at",
@@ -21,7 +21,7 @@ export class ProductBrand extends BaseEntity {
         precision: null,
         default: () => "CURRENT_TIMESTAMP",
     })
-    public createdAt: Date
+    public createdAt: Date;
 
     @UpdateDateColumn({
         name: "updated_at",
@@ -30,5 +30,5 @@ export class ProductBrand extends BaseEntity {
         default: () => "CURRENT_TIMESTAMP",
         onUpdate: "CURRENT_TIMESTAMP",
     })
-    public updatedAt: Date
+    public updatedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { EntitySchema } from "../../../../../src"
+import { EntitySchema } from "../../../../../src";
 
 export const UserEntity = new EntitySchema({
     name: "User",
@@ -17,4 +17,4 @@ export const UserEntity = new EntitySchema({
             nullable: false,
         },
     },
-})
+});

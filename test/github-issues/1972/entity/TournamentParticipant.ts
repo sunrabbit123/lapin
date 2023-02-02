@@ -2,7 +2,7 @@ import {
     Entity,
     TableInheritance,
     PrimaryGeneratedColumn,
-} from "../../../../src/index"
+} from "../../../../src/index";
 
 @Entity()
 @TableInheritance({
@@ -14,5 +14,5 @@ import {
 })
 export abstract class TournamentParticipant {
     @PrimaryGeneratedColumn()
-    public id: number
+    public id: number;
 }

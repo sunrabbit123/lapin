@@ -1,34 +1,34 @@
-import { PrimaryColumn, Column } from "../../../../src"
-import { Entity } from "../../../../src/decorator/entity/Entity"
+import { PrimaryColumn, Column } from "../../../../src";
+import { Entity } from "../../../../src/decorator/entity/Entity";
 
 @Entity()
 export class User {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column("decimal", { default: -0, precision: 3, scale: 1 })
-    decimalWithDefault: number
+    decimalWithDefault: number;
 
     @Column("decimal", { default: 100, precision: 3 })
-    noScale: number
+    noScale: number;
 
     @Column("decimal", { default: 10, precision: 3, scale: 0 })
-    zeroScale: number
+    zeroScale: number;
 
     @Column("decimal", { default: 9999999999 })
-    maxDefault: number
+    maxDefault: number;
 
     @Column("decimal", { default: -9999999999 })
-    minDefault: number
+    minDefault: number;
 
     @Column("int", { default: -100 })
-    intDefault: number
+    intDefault: number;
 
     @Column("float", { default: 3.5 })
-    floatDefault: number
+    floatDefault: number;
 
     @Column({ default: "New user" })
-    stringDefault: string
+    stringDefault: string;
 
     // ER_PARSE_ERROR
     // @Column("decimal", { default: 0, precision: 8, scale: -4 })

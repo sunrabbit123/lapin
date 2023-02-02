@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src";
 
 /**
  * For testing Postgres jsonb
@@ -6,21 +6,21 @@ import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src"
 @Entity()
 export class Record {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "json", nullable: true })
-    config: any
+    config: any;
 
     @Column({ type: "jsonb", nullable: true })
-    data: any
+    data: any;
 
     @Column({
         type: "jsonb",
         nullable: true,
         default: { hello: "world", foo: "bar" },
     })
-    dataWithDefaultObject: any
+    dataWithDefaultObject: any;
 
     @Column({ type: "jsonb", nullable: true, default: null })
-    dataWithDefaultNull: any
+    dataWithDefaultNull: any;
 }

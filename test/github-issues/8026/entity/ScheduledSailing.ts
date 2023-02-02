@@ -5,16 +5,16 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryColumn,
-} from "../../../../src"
-import { Sailing } from "./Sailing"
+} from "../../../../src";
+import { Sailing } from "./Sailing";
 
 @Entity()
 export class ScheduledSailing extends BaseEntity {
     @PrimaryColumn()
-    scheduled_departure_time: Date
+    scheduled_departure_time: Date;
 
     @Column()
-    scheduled_arrival_time: Date
+    scheduled_arrival_time: Date;
 
     @ManyToOne(() => Sailing, (sailing) => sailing.scheduled_sailings)
     @JoinColumn([
@@ -23,5 +23,5 @@ export class ScheduledSailing extends BaseEntity {
             name: "scheduled_departure_time",
         },
     ])
-    sailing: Sailing
+    sailing: Sailing;
 }

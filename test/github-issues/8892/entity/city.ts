@@ -5,26 +5,26 @@ import {
     ManyToMany,
     PrimaryGeneratedColumn,
     RelationId,
-} from "../../../../src"
-import { Zip } from "./zip"
+} from "../../../../src";
+import { Zip } from "./zip";
 
 @Entity()
 export class City {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    caption: string
+    caption: string;
 
     @RelationId((city: City) => city.zips)
     zipCodes: {
-        countryCode: string
-        zipCode: string
-    }[]
+        countryCode: string;
+        zipCode: string;
+    }[];
 
     @ManyToMany(() => Zip, (zip) => zip.cities, {
         // cascade: true,
     })
     @JoinTable()
-    zips: Zip[]
+    zips: Zip[];
 }

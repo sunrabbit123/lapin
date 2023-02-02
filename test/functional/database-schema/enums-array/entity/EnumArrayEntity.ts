@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from "../../../../../src"
+import { Entity, Column, PrimaryColumn } from "../../../../../src";
 
 export enum NumericEnum {
     ADMIN,
@@ -26,14 +26,14 @@ export enum HeterogeneousEnum {
     YES = "YES",
 }
 
-export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost"
+export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost";
 
-export type ArrayDefinedNumericEnumType = 11 | 12 | 13
+export type ArrayDefinedNumericEnumType = 11 | 12 | 13;
 
 @Entity()
 export class EnumArrayEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({
         type: "enum",
@@ -41,7 +41,7 @@ export class EnumArrayEntity {
         array: true,
         default: [NumericEnum.GHOST, NumericEnum.ADMIN],
     })
-    numericEnums: NumericEnum[]
+    numericEnums: NumericEnum[];
 
     @Column({
         type: "enum",
@@ -49,7 +49,7 @@ export class EnumArrayEntity {
         array: true,
         default: [],
     })
-    stringEnums: StringEnum[]
+    stringEnums: StringEnum[];
 
     @Column({
         type: "enum",
@@ -57,7 +57,7 @@ export class EnumArrayEntity {
         array: true,
         default: [StringNumericEnum.THREE, StringNumericEnum.ONE],
     })
-    stringNumericEnums: StringNumericEnum[]
+    stringNumericEnums: StringNumericEnum[];
 
     @Column({
         type: "enum",
@@ -65,7 +65,7 @@ export class EnumArrayEntity {
         array: true,
         default: [HeterogeneousEnum.YES],
     })
-    heterogeneousEnums: HeterogeneousEnum[]
+    heterogeneousEnums: HeterogeneousEnum[];
 
     @Column({
         type: "enum",
@@ -73,7 +73,7 @@ export class EnumArrayEntity {
         array: true,
         default: ["admin"],
     })
-    arrayDefinedStringEnums: ArrayDefinedStringEnumType[]
+    arrayDefinedStringEnums: ArrayDefinedStringEnumType[];
 
     @Column({
         type: "enum",
@@ -81,7 +81,7 @@ export class EnumArrayEntity {
         array: true,
         default: [11, 13],
     })
-    arrayDefinedNumericEnums: ArrayDefinedNumericEnumType[]
+    arrayDefinedNumericEnums: ArrayDefinedNumericEnumType[];
 
     @Column({
         type: "enum",
@@ -89,7 +89,7 @@ export class EnumArrayEntity {
         array: true,
         nullable: true,
     })
-    enumWithoutDefault: StringEnum[]
+    enumWithoutDefault: StringEnum[];
 
     @Column({
         type: "enum",
@@ -97,7 +97,7 @@ export class EnumArrayEntity {
         array: true,
         default: "{a,e}",
     })
-    defaultArrayAsString: StringEnum[]
+    defaultArrayAsString: StringEnum[];
 
     @Column({
         type: "enum",
@@ -105,5 +105,5 @@ export class EnumArrayEntity {
         array: true,
         default: "{}",
     })
-    legacyDefaultAsString: StringEnum[]
+    legacyDefaultAsString: StringEnum[];
 }

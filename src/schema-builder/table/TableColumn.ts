@@ -1,10 +1,10 @@
-import { TableColumnOptions } from "../options/TableColumnOptions"
+import { TableColumnOptions } from "../options/TableColumnOptions";
 
 /**
  * Table's columns in the database represented in this class.
  */
 export class TableColumn {
-    readonly "@instanceof" = Symbol.for("TableColumn")
+    readonly "@instanceof" = Symbol.for("TableColumn");
 
     // -------------------------------------------------------------------------
     // Public Properties
@@ -13,143 +13,143 @@ export class TableColumn {
     /**
      * Column name.
      */
-    name: string
+    name: string;
 
     /**
      * Column type.
      */
-    type: string
+    type: string;
 
     /**
      * Column's default value.
      */
-    default?: any
+    default?: any;
 
     /**
      * ON UPDATE trigger. Works only for MySQL.
      */
-    onUpdate?: string
+    onUpdate?: string;
 
     /**
      * Indicates if column is NULL, or is NOT NULL in the database.
      */
-    isNullable: boolean = false
+    isNullable: boolean = false;
 
     /**
      * Indicates if column is auto-generated sequence.
      */
-    isGenerated: boolean = false
+    isGenerated: boolean = false;
 
     /**
      * Specifies generation strategy if this column will use auto increment.
      * `rowid` option supported only in CockroachDB.
      */
-    generationStrategy?: "uuid" | "increment" | "rowid" | "identity"
+    generationStrategy?: "uuid" | "increment" | "rowid" | "identity";
 
     /**
      * Indicates if column is a primary key.
      */
-    isPrimary: boolean = false
+    isPrimary: boolean = false;
 
     /**
      * Indicates if column has unique value.
      */
-    isUnique: boolean = false
+    isUnique: boolean = false;
 
     /**
      * Indicates if column stores array.
      */
-    isArray: boolean = false
+    isArray: boolean = false;
 
     /**
      * Column's comment.
      */
-    comment?: string
+    comment?: string;
 
     /**
      * Column type's length. Used only on some column types.
      * For example type = "string" and length = "100" means that ORM will create a column with type varchar(100).
      */
-    length: string = ""
+    length: string = "";
 
     /**
      * Column type's display width. Used only on some column types in MySQL.
      * For example, INT(4) specifies an INT with a display width of four digits.
      */
-    width?: number
+    width?: number;
 
     /**
      * Defines column character set.
      */
-    charset?: string
+    charset?: string;
 
     /**
      * Defines column collation.
      */
-    collation?: string
+    collation?: string;
 
     /**
      * The precision for a decimal (exact numeric) column (applies only for decimal column), which is the maximum
      * number of digits that are stored for the values.
      */
-    precision?: number | null
+    precision?: number | null;
 
     /**
      * The scale for a decimal (exact numeric) column (applies only for decimal column), which represents the number
      * of digits to the right of the decimal point and must not be greater than precision.
      */
-    scale?: number
+    scale?: number;
 
     /**
      * Puts ZEROFILL attribute on to numeric column. Works only for MySQL.
      * If you specify ZEROFILL for a numeric column, MySQL automatically adds the UNSIGNED attribute to the column
      */
-    zerofill: boolean = false
+    zerofill: boolean = false;
 
     /**
      * Puts UNSIGNED attribute on to numeric column. Works only for MySQL.
      */
-    unsigned: boolean = false
+    unsigned: boolean = false;
 
     /**
      * Array of possible enumerated values.
      */
-    enum?: string[]
+    enum?: string[];
 
     /**
      * Exact name of enum
      */
-    enumName?: string
+    enumName?: string;
 
     /**
      * Name of the primary key constraint for primary column.
      */
-    primaryKeyConstraintName?: string
+    primaryKeyConstraintName?: string;
 
     /**
      * Generated column expression.
      */
-    asExpression?: string
+    asExpression?: string;
 
     /**
      * Generated column type.
      */
-    generatedType?: "VIRTUAL" | "STORED"
+    generatedType?: "VIRTUAL" | "STORED";
 
     /**
      * Identity column type. Supports only in Postgres 10+.
      */
-    generatedIdentity?: "ALWAYS" | "BY DEFAULT"
+    generatedIdentity?: "ALWAYS" | "BY DEFAULT";
 
     /**
      * Spatial Feature Type (Geometry, Point, Polygon, etc.)
      */
-    spatialFeatureType?: string
+    spatialFeatureType?: string;
 
     /**
      * SRID (Spatial Reference ID (EPSG code))
      */
-    srid?: number
+    srid?: number;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -157,33 +157,33 @@ export class TableColumn {
 
     constructor(options?: TableColumnOptions) {
         if (options) {
-            this.name = options.name
-            this.type = options.type || ""
-            this.length = options.length || ""
-            this.width = options.width
-            this.charset = options.charset
-            this.collation = options.collation
-            this.precision = options.precision
-            this.scale = options.scale
-            this.zerofill = options.zerofill || false
-            this.unsigned = this.zerofill ? true : options.unsigned || false
-            this.default = options.default
-            this.onUpdate = options.onUpdate
-            this.isNullable = options.isNullable || false
-            this.isGenerated = options.isGenerated || false
-            this.generationStrategy = options.generationStrategy
-            this.generatedIdentity = options.generatedIdentity
-            this.isPrimary = options.isPrimary || false
-            this.isUnique = options.isUnique || false
-            this.isArray = options.isArray || false
-            this.comment = options.comment
-            this.enum = options.enum
-            this.enumName = options.enumName
-            this.primaryKeyConstraintName = options.primaryKeyConstraintName
-            this.asExpression = options.asExpression
-            this.generatedType = options.generatedType
-            this.spatialFeatureType = options.spatialFeatureType
-            this.srid = options.srid
+            this.name = options.name;
+            this.type = options.type || "";
+            this.length = options.length || "";
+            this.width = options.width;
+            this.charset = options.charset;
+            this.collation = options.collation;
+            this.precision = options.precision;
+            this.scale = options.scale;
+            this.zerofill = options.zerofill || false;
+            this.unsigned = this.zerofill ? true : options.unsigned || false;
+            this.default = options.default;
+            this.onUpdate = options.onUpdate;
+            this.isNullable = options.isNullable || false;
+            this.isGenerated = options.isGenerated || false;
+            this.generationStrategy = options.generationStrategy;
+            this.generatedIdentity = options.generatedIdentity;
+            this.isPrimary = options.isPrimary || false;
+            this.isUnique = options.isUnique || false;
+            this.isArray = options.isArray || false;
+            this.comment = options.comment;
+            this.enum = options.enum;
+            this.enumName = options.enumName;
+            this.primaryKeyConstraintName = options.primaryKeyConstraintName;
+            this.asExpression = options.asExpression;
+            this.generatedType = options.generatedType;
+            this.spatialFeatureType = options.spatialFeatureType;
+            this.srid = options.srid;
         }
     }
 
@@ -223,6 +223,6 @@ export class TableColumn {
             comment: this.comment,
             spatialFeatureType: this.spatialFeatureType,
             srid: this.srid,
-        })
+        });
     }
 }

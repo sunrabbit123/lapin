@@ -1,32 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src"
+import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
 
 export class LatLong {
     @Column()
-    latitude: number
+    latitude: number;
 
     @Column()
-    longitude: number
+    longitude: number;
 }
 
 export class Address {
     @Column(() => LatLong)
-    latLong: LatLong
+    latLong: LatLong;
 }
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column(() => Address)
-    address: Address
+    address: Address;
 
     @Column()
-    age: number
+    age: number;
 }

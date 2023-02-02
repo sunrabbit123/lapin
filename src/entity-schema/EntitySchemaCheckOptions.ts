@@ -2,10 +2,10 @@ export interface EntitySchemaCheckOptions {
     /**
      * Check constraint name.
      */
-    name?: string
+    name?: string;
 
     /**
      * Check expression.
      */
-    expression: string
+    expression: string;
 }

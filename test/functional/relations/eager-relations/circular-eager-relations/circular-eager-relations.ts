@@ -1,8 +1,8 @@
-import "reflect-metadata"
-import { DataSource } from "../../../../../src/data-source/DataSource"
-import { EntityMetadataValidator } from "../../../../../src/metadata-builder/EntityMetadataValidator"
-import { ConnectionMetadataBuilder } from "../../../../../src/connection/ConnectionMetadataBuilder"
-import { expect } from "chai"
+import "reflect-metadata";
+import { DataSource } from "../../../../../src/data-source/DataSource";
+import { EntityMetadataValidator } from "../../../../../src/metadata-builder/EntityMetadataValidator";
+import { ConnectionMetadataBuilder } from "../../../../../src/connection/ConnectionMetadataBuilder";
+import { expect } from "chai";
 
 describe("relations > eager relations > circular eager relations", () => {
     it("should throw error if eager: true is set on both sides of relationship", async () => {
@@ -14,20 +14,20 @@ describe("relations > eager relations > circular eager relations", () => {
             password: "test",
             database: "test",
             entities: [__dirname + "/entity/*{.js,.ts}"],
-        })
+        });
         const connectionMetadataBuilder = new ConnectionMetadataBuilder(
             connection,
-        )
+        );
         const entityMetadatas =
             await connectionMetadataBuilder.buildEntityMetadatas([
                 __dirname + "/entity/*{.js,.ts}",
-            ])
-        const entityMetadataValidator = new EntityMetadataValidator()
+            ]);
+        const entityMetadataValidator = new EntityMetadataValidator();
         expect(() =>
             entityMetadataValidator.validateMany(
                 entityMetadatas,
                 connection.driver,
             ),
-        ).to.throw(Error)
-    })
-})
+        ).to.throw(Error);
+    });
+});

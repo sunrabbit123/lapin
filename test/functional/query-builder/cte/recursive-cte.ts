@@ -1,14 +1,14 @@
-import { expect } from "chai"
-import { Connection } from "../../../../src"
+import { expect } from "chai";
+import { Connection } from "../../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { filterByCteCapabilities } from "./helpers"
+} from "../../../utils/test-utils";
+import { filterByCteCapabilities } from "./helpers";
 
 describe("query builder > cte > recursive", () => {
-    let connections: Connection[]
+    let connections: Connection[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -16,9 +16,9 @@ describe("query builder > cte > recursive", () => {
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should work with simple recursive query", () =>
         Promise.all(
@@ -26,7 +26,7 @@ describe("query builder > cte > recursive", () => {
                 .filter(filterByCteCapabilities("enabled"))
                 .map(async (connection) => {
                     // CTE cannot reference itself in Spanner
-                    if (connection.options.type === "spanner") return
+                    if (connection.options.type === "spanner") return;
 
                     const qb = await connection
                         .createQueryBuilder()
@@ -44,9 +44,9 @@ describe("query builder > cte > recursive", () => {
                             { recursive: true, columnNames: ["foo"] },
                         )
                         .addSelect("cte.foo", "foo")
-                        .getRawMany<{ foo: number }>()
+                        .getRawMany<{ foo: number }>();
 
-                    expect(qb).to.have.length(10)
+                    expect(qb).to.have.length(10);
                 }),
-        ))
-})
+        ));
+});

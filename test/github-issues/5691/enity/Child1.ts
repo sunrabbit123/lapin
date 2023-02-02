@@ -4,24 +4,24 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
     RelationId,
-} from "../../../../src"
-import { Root } from "./Root"
-import { Shared } from "./Shared"
+} from "../../../../src";
+import { Root } from "./Root";
+import { Shared } from "./Shared";
 
 @Entity()
 export class Child1 {
     @PrimaryGeneratedColumn("uuid")
-    public id?: string
+    public id?: string;
 
     @ManyToOne(() => Root, (entity) => entity.allChild1)
-    public root?: Root
+    public root?: Root;
 
     @RelationId("root")
-    public rootId?: string
+    public rootId?: string;
 
     @OneToMany(() => Shared, (entity) => entity.child1)
-    public allShared?: Array<Shared>
+    public allShared?: Array<Shared>;
 
     @RelationId("allShared")
-    public allSharedId?: Array<string>
+    public allSharedId?: Array<string>;
 }

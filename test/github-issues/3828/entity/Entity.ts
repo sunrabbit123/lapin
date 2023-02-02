@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 enum MyEntityEnum {
     Something = "SOMETHING",
@@ -8,8 +8,8 @@ enum MyEntityEnum {
 @Entity({ name: "MyEntity" })
 export class MyEntity {
     @PrimaryGeneratedColumn("uuid")
-    id: number
+    id: number;
 
     @Column("enum", { enum: MyEntityEnum })
-    myColumn: MyEntityEnum
+    myColumn: MyEntityEnum;
 }

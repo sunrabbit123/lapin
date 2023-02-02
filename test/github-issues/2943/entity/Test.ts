@@ -1,22 +1,22 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src"
+import { Column, Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Test {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ type: "int", unsigned: true })
-    uInt: number
+    uInt: number;
 
     @Column({ type: "tinyint", unsigned: true })
-    uTinyInt: number
+    uTinyInt: number;
 
     @Column({ type: "smallint", unsigned: true })
-    uSmallInt: number
+    uSmallInt: number;
 
     @Column({ type: "mediumint", unsigned: true })
-    uMediumInt: number
+    uMediumInt: number;
 
     @Column({ type: "bigint", unsigned: true })
-    uBigInt: number
+    uBigInt: number;
 }

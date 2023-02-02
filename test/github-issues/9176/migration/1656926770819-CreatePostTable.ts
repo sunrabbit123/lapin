@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "../../../../src"
+import { MigrationInterface, QueryRunner, Table } from "../../../../src";
 
 export class CreatePostTable1656926770819 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -26,10 +26,10 @@ export class CreatePostTable1656926770819 implements MigrationInterface {
             true,
             true,
             true,
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("post")
+        await queryRunner.dropTable("post");
     }
 }

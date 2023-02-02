@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "../../../../src"
+import { MigrationInterface, QueryRunner, Table } from "../../../../src";
 
 export class CreateAuthorTable1656939116999 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -22,10 +22,10 @@ export class CreateAuthorTable1656939116999 implements MigrationInterface {
             true,
             true,
             true,
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("author")
+        await queryRunner.dropTable("author");
     }
 }

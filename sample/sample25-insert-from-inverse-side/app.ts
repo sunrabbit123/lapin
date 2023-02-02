@@ -1,7 +1,7 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { Author } from "./entity/Author"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { Author } from "./entity/Author";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -13,49 +13,49 @@ const options: DataSourceOptions = {
     logging: ["query", "error"],
     synchronize: true,
     entities: [Post, Author],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let postRepository = dataSource.getRepository(Post)
-        let authorRepository = dataSource.getRepository(Author)
+        let postRepository = dataSource.getRepository(Post);
+        let authorRepository = dataSource.getRepository(Author);
 
         const authorPromise = authorRepository
             .findOneBy({ id: 1 })
             .then((author) => {
                 if (!author) {
-                    author = new Author()
-                    author.name = "Umed"
+                    author = new Author();
+                    author.name = "Umed";
                     return authorRepository.save(author).then((savedAuthor) => {
-                        return authorRepository.findOneBy({ id: 1 })
-                    })
+                        return authorRepository.findOneBy({ id: 1 });
+                    });
                 }
-                return author
-            })
+                return author;
+            });
 
         const postPromise = postRepository.findOneBy({ id: 1 }).then((post) => {
             if (!post) {
-                post = new Post()
-                post.title = "Hello post"
-                post.text = "This is post contents"
+                post = new Post();
+                post.title = "Hello post";
+                post.text = "This is post contents";
                 return postRepository.save(post).then((savedPost) => {
-                    return postRepository.findOneBy({ id: 1 })
-                })
+                    return postRepository.findOneBy({ id: 1 });
+                });
             }
-            return post
-        })
+            return post;
+        });
 
         return Promise.all<any>([authorPromise, postPromise])
             .then((results) => {
-                const [author, post] = results
-                author.posts = [post]
-                return authorRepository.save(author)
+                const [author, post] = results;
+                author.posts = [post];
+                return authorRepository.save(author);
             })
             .then((savedAuthor) => {
-                console.log("Author has been saved: ", savedAuthor)
+                console.log("Author has been saved: ", savedAuthor);
             })
-            .catch((error) => console.log(error.stack))
+            .catch((error) => console.log(error.stack));
     },
     (error) => console.log("Cannot connect: ", error),
-)
+);

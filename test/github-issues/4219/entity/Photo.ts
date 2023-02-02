@@ -1,12 +1,12 @@
-import { Shim } from "../shim"
+import { Shim } from "../shim";
 
 @Shim.Entity()
 export class Photo {
     @Shim.PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Shim.Column()
-    url: string
+    url: string;
 
-    user: any
+    user: any;
 }

@@ -1,34 +1,34 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    useTitle: boolean
+    useTitle: boolean;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column({
         asExpression: `CONCAT("firstName", "lastName")`,
         length: 700,
         generatedType: "VIRTUAL",
     })
-    virtualFullName: string
+    virtualFullName: string;
 
     @Column({
         asExpression: `"firstName" || ' ' || "lastName"`,
         length: 700,
     })
-    name: string
+    name: string;
 
     @Column({
         generatedType: "VIRTUAL",
@@ -37,5 +37,5 @@ export class Post {
         length: 255,
         nullable: true,
     })
-    nameHash: string
+    nameHash: string;
 }

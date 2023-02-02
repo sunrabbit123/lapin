@@ -1,4 +1,4 @@
-import { ViewColumn, ViewEntity } from "../../../../../src"
+import { ViewColumn, ViewEntity } from "../../../../../src";
 
 @ViewEntity({
     name: "view_b",
@@ -7,8 +7,8 @@ import { ViewColumn, ViewEntity } from "../../../../../src"
 })
 export class ViewB {
     @ViewColumn()
-    id: number
+    id: number;
 
     @ViewColumn()
-    type: string
+    type: string;
 }

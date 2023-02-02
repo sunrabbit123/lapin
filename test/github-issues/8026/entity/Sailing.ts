@@ -4,13 +4,13 @@ import {
     JoinColumn,
     OneToMany,
     PrimaryColumn,
-} from "../../../../src"
-import { ScheduledSailing } from "./ScheduledSailing"
+} from "../../../../src";
+import { ScheduledSailing } from "./ScheduledSailing";
 
 @Entity()
 export class Sailing extends BaseEntity {
     @PrimaryColumn()
-    scheduled_departure_time: Date
+    scheduled_departure_time: Date;
 
     @OneToMany(
         () => ScheduledSailing,
@@ -22,5 +22,5 @@ export class Sailing extends BaseEntity {
             name: "scheduled_departure_time",
         },
     ])
-    scheduled_sailings: ScheduledSailing[]
+    scheduled_sailings: ScheduledSailing[];
 }

@@ -4,26 +4,26 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from "../../../../src"
-import { Column } from "../../../../src/decorator/columns/Column"
+} from "../../../../src";
+import { Column } from "../../../../src/decorator/columns/Column";
 
 @Entity()
 export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    type: string
+    type: string;
 
     @Column({ nullable: true })
-    token: string
+    token: string;
 
     @Column("simple-json", { default: "{}" })
-    values: Object
+    values: Object;
 
     @CreateDateColumn()
-    createdAt: Date
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date
+    updatedAt: Date;
 }

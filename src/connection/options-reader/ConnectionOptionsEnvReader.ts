@@ -1,6 +1,6 @@
-import { DataSourceOptions } from "../../data-source/DataSourceOptions"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { OrmUtils } from "../../util/OrmUtils"
+import { DataSourceOptions } from "../../data-source/DataSourceOptions";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { OrmUtils } from "../../util/OrmUtils";
 
 /**
  * Reads connection options from environment variables.
@@ -82,7 +82,7 @@ export class ConnectionOptionsEnvReader {
                     "lapin_UUID_EXTENSION",
                 ),
             },
-        ]
+        ];
     }
 
     // -------------------------------------------------------------------------
@@ -94,21 +94,21 @@ export class ConnectionOptionsEnvReader {
      */
     protected transformLogging(logging: string): any {
         if (logging === "true" || logging === "TRUE" || logging === "1")
-            return true
-        if (logging === "all") return "all"
+            return true;
+        if (logging === "all") return "all";
 
-        return this.stringToArray(logging)
+        return this.stringToArray(logging);
     }
 
     /**
      * Transforms caching option into real caching value option requires.
      */
     protected transformCaching(): boolean | object | undefined {
-        const caching = PlatformTools.getEnvVariable("lapin_CACHE")
+        const caching = PlatformTools.getEnvVariable("lapin_CACHE");
         if (caching === "true" || caching === "TRUE" || caching === "1")
-            return true
+            return true;
         if (caching === "false" || caching === "FALSE" || caching === "0")
-            return false
+            return false;
         if (
             caching === "redis" ||
             caching === "ioredis" ||
@@ -127,17 +127,17 @@ export class ConnectionOptionsEnvReader {
                 duration: parseInt(
                     PlatformTools.getEnvVariable("lapin_CACHE_DURATION"),
                 ),
-            }
+            };
 
-        return undefined
+        return undefined;
     }
 
     /**
      * Converts a string which contains multiple elements split by comma into a string array of strings.
      */
     protected stringToArray(variable?: string) {
-        if (!variable) return []
-        return variable.split(",").map((str) => str.trim())
+        if (!variable) return [];
+        return variable.split(",").map((str) => str.trim());
     }
 
     /**
@@ -145,9 +145,9 @@ export class ConnectionOptionsEnvReader {
      */
     private stringToNumber(value: any): number | undefined {
         if (!value) {
-            return undefined
+            return undefined;
         }
 
-        return parseInt(value)
+        return parseInt(value);
     }
 }

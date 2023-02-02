@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from "../../../../src"
+import { Entity, PrimaryColumn, Column } from "../../../../src";
 
 @Entity()
 export class User {
@@ -7,8 +7,8 @@ export class User {
         length: 16,
         type: "binary",
     })
-    id: Buffer
+    id: Buffer;
 
     @Column()
-    name: string
+    name: string;
 }

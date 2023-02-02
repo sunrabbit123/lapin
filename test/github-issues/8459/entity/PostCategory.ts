@@ -1,6 +1,6 @@
-import { ViewEntity, ViewColumn, DataSource, Index } from "../../../../src"
-import { Category } from "./Category"
-import { Post } from "./Post"
+import { ViewEntity, ViewColumn, DataSource, Index } from "../../../../src";
+import { Category } from "./Category";
+import { Post } from "./Post";
 
 @ViewEntity({
     materialized: true,
@@ -15,12 +15,12 @@ import { Post } from "./Post"
 })
 export class PostCategory {
     @ViewColumn()
-    id: number
+    id: number;
 
     @Index("name-idx")
     @ViewColumn()
-    name: string
+    name: string;
 
     @ViewColumn()
-    categoryName: string
+    categoryName: string;
 }

@@ -1,4 +1,4 @@
-import { DataSource } from "../data-source/DataSource"
+import { DataSource } from "../data-source/DataSource";
 
 /**
  * Connection is a single database ORM connection to a specific database.

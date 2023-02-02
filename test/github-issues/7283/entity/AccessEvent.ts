@@ -5,18 +5,18 @@ import {
     ManyToMany,
     ManyToOne,
     PrimaryColumn,
-} from "../../../../src"
-import { Employee } from "./Employee"
+} from "../../../../src";
+import { Employee } from "./Employee";
 
 @Entity()
 export class AccessEvent extends BaseEntity {
     @PrimaryColumn({ type: "varchar", length: 128 })
-    id!: string
+    id!: string;
 
     @ManyToOne(() => Employee, (employee) => employee.accessEvents)
-    employee!: Employee
+    employee!: Employee;
 
     @ManyToMany(() => Employee)
     @JoinTable()
-    employees: Employee[]
+    employees: Employee[];
 }

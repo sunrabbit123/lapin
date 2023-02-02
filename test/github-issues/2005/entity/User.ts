@@ -1,9 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({
         type: "tinyint",
@@ -12,5 +12,5 @@ export class User {
             to: (val) => val,
         },
     })
-    activated: boolean
+    activated: boolean;
 }

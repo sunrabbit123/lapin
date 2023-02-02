@@ -3,18 +3,18 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     Entity,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class DefaultUpdateDate {
     @PrimaryGeneratedColumn({
         type: "int",
     })
-    public id: number
+    public id: number;
 
     @CreateDateColumn()
-    public createdDate: Date
+    public createdDate: Date;
 
     @UpdateDateColumn()
-    public updatedDate: Date
+    public updatedDate: Date;
 }

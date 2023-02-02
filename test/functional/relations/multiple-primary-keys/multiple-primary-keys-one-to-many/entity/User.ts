@@ -4,23 +4,23 @@ import {
     Entity,
     OneToMany,
     PrimaryColumn,
-} from "../../../../../../src"
-import { Setting } from "./Setting"
+} from "../../../../../../src";
+import { Setting } from "./Setting";
 
 @Entity()
 export class User extends BaseEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany("Setting", "asset", { cascade: true })
-    settings: Setting[]
+    settings: Setting[];
 
     constructor(id: number, name: string) {
-        super()
-        this.id = id
-        this.name = name
+        super();
+        this.id = id;
+        this.name = name;
     }
 }

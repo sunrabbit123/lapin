@@ -1,8 +1,8 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { Author } from "./entity/Author"
-import { Category } from "./entity/Category"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { Author } from "./entity/Author";
+import { Category } from "./entity/Category";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -14,32 +14,32 @@ const options: DataSourceOptions = {
     logging: ["query", "error"],
     synchronize: true,
     entities: [Post, Author, Category],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let entityManager = dataSource.manager
+        let entityManager = dataSource.manager;
 
-        let postRepository = dataSource.getRepository(Post)
-        let authorRepository = dataSource.getRepository(Author)
-        let categoryRepository = dataSource.getRepository(Category)
+        let postRepository = dataSource.getRepository(Post);
+        let authorRepository = dataSource.getRepository(Author);
+        let categoryRepository = dataSource.getRepository(Category);
 
-        let category1 = categoryRepository.create()
-        category1.name = "Hello category1"
+        let category1 = categoryRepository.create();
+        category1.name = "Hello category1";
 
-        let category2 = categoryRepository.create()
-        category2.name = "Bye category2"
+        let category2 = categoryRepository.create();
+        category2.name = "Bye category2";
 
-        let author = authorRepository.create()
-        author.name = "Umed"
+        let author = authorRepository.create();
+        author.name = "Umed";
 
-        let post = postRepository.create()
-        post.text = "Hello how are you?"
-        post.title = "hello"
-        post.authorId = 1
+        let post = postRepository.create();
+        post.text = "Hello how are you?";
+        post.title = "hello";
+        post.authorId = 1;
         // post.author = author;
-        post.categories = [category1, category2]
+        post.categories = [category1, category2];
 
         Promise.all<any>([
             authorRepository.save(author),
@@ -47,10 +47,10 @@ dataSource.initialize().then(
             categoryRepository.save(category2),
         ])
             .then(() => {
-                return postRepository.save(post)
+                return postRepository.save(post);
             })
             .then(() => {
-                console.log("Everything has been saved.")
+                console.log("Everything has been saved.");
             })
             .then(() => {
                 return postRepository
@@ -66,17 +66,17 @@ dataSource.initialize().then(
                         "author",
                         "author.id=post.authorId",
                     )
-                    .getMany()
+                    .getMany();
             })
             .then((posts) => {
-                console.log("Loaded posts: ", posts)
+                console.log("Loaded posts: ", posts);
 
                 return entityManager
                     .createQueryBuilder(Author, "author")
-                    .getMany()
+                    .getMany();
             })
             .then((authors) => {
-                console.log("Loaded authors: ", authors)
+                console.log("Loaded authors: ", authors);
             })
             /*    posts[0].title = "should be updated second post";
 
@@ -133,7 +133,7 @@ dataSource.initialize().then(
             .then((posts) => {
                 // console.log("One of the post category has been removed.");
             })
-            .catch((error) => console.log(error.stack))
+            .catch((error) => console.log(error.stack));
     },
     (error) => console.log("Cannot connect: ", error),
-)
+);

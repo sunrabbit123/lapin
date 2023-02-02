@@ -1,74 +1,74 @@
-import { expect } from "chai"
-import "reflect-metadata"
-import { DataSource } from "../../../src"
+import { expect } from "chai";
+import "reflect-metadata";
+import { DataSource } from "../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { Post } from "./entity/Post"
-import { PostVersion } from "./entity/PostVersion"
-import { DriverUtils } from "../../../src/driver/DriverUtils"
+} from "../../utils/test-utils";
+import { Post } from "./entity/Post";
+import { PostVersion } from "./entity/PostVersion";
+import { DriverUtils } from "../../../src/driver/DriverUtils";
 
 describe("schema builder > change column", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(async () => {
         connections = await createTestingConnections({
             entities: [__dirname + "/entity/*{.js,.ts}"],
             schemaCreate: true,
             dropSchema: true,
-        })
-    })
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+        });
+    });
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should correctly change column name", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const postMetadata = connection.getMetadata(Post)
+                const postMetadata = connection.getMetadata(Post);
                 const nameColumn =
-                    postMetadata.findColumnWithPropertyName("name")!
-                nameColumn.propertyName = "title"
-                nameColumn.build(connection)
+                    postMetadata.findColumnWithPropertyName("name")!;
+                nameColumn.propertyName = "title";
+                nameColumn.build(connection);
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
-                const postTable = await queryRunner.getTable("post")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const postTable = await queryRunner.getTable("post");
+                await queryRunner.release();
 
-                expect(postTable!.findColumnByName("name")).to.be.undefined
-                postTable!.findColumnByName("title")!.should.be.exist
+                expect(postTable!.findColumnByName("name")).to.be.undefined;
+                postTable!.findColumnByName("title")!.should.be.exist;
 
                 // revert changes
-                nameColumn.propertyName = "name"
-                nameColumn.build(connection)
+                nameColumn.propertyName = "name";
+                nameColumn.build(connection);
             }),
-        ))
+        ));
 
     it("should correctly change column length", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const postMetadata = connection.getMetadata(Post)
+                const postMetadata = connection.getMetadata(Post);
                 const nameColumn =
-                    postMetadata.findColumnWithPropertyName("name")!
+                    postMetadata.findColumnWithPropertyName("name")!;
                 const textColumn =
-                    postMetadata.findColumnWithPropertyName("text")!
-                nameColumn.length = "500"
-                textColumn.length = "300"
+                    postMetadata.findColumnWithPropertyName("text")!;
+                nameColumn.length = "500";
+                textColumn.length = "300";
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
-                const postTable = await queryRunner.getTable("post")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const postTable = await queryRunner.getTable("post");
+                await queryRunner.release();
 
                 postTable!
                     .findColumnByName("name")!
-                    .length.should.be.equal("500")
+                    .length.should.be.equal("500");
                 postTable!
                     .findColumnByName("text")!
-                    .length.should.be.equal("300")
+                    .length.should.be.equal("300");
 
                 if (
                     DriverUtils.isMySQLFamily(connection.driver) ||
@@ -76,82 +76,82 @@ describe("schema builder > change column", () => {
                     connection.driver.options.type === "sap" ||
                     connection.driver.options.type === "spanner"
                 ) {
-                    postTable!.indices.length.should.be.equal(2)
+                    postTable!.indices.length.should.be.equal(2);
                 } else {
-                    postTable!.uniques.length.should.be.equal(2)
+                    postTable!.uniques.length.should.be.equal(2);
                 }
 
                 // revert changes
-                nameColumn.length = "255"
-                textColumn.length = "255"
+                nameColumn.length = "255";
+                textColumn.length = "255";
             }),
-        ))
+        ));
 
     it("should correctly change column type", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const postMetadata = connection.getMetadata(Post)
+                const postMetadata = connection.getMetadata(Post);
                 const versionColumn =
-                    postMetadata.findColumnWithPropertyName("version")!
+                    postMetadata.findColumnWithPropertyName("version")!;
                 versionColumn.type =
                     connection.driver.options.type === "spanner"
                         ? "int64"
-                        : "int"
+                        : "int";
 
                 // in test we must manually change referenced column too, but in real sync, it changes automatically
-                const postVersionMetadata = connection.getMetadata(PostVersion)
+                const postVersionMetadata = connection.getMetadata(PostVersion);
                 const postVersionColumn =
-                    postVersionMetadata.findColumnWithPropertyName("post")!
+                    postVersionMetadata.findColumnWithPropertyName("post")!;
                 postVersionColumn.type =
                     connection.driver.options.type === "spanner"
                         ? "int64"
-                        : "int"
+                        : "int";
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
                 const postVersionTable = await queryRunner.getTable(
                     "post_version",
-                )
-                await queryRunner.release()
+                );
+                await queryRunner.release();
 
-                postVersionTable!.foreignKeys.length.should.be.equal(1)
+                postVersionTable!.foreignKeys.length.should.be.equal(1);
 
                 // revert changes
                 if (connection.driver.options.type === "spanner") {
-                    versionColumn.type = "string"
-                    postVersionColumn.type = "string"
+                    versionColumn.type = "string";
+                    postVersionColumn.type = "string";
                 } else {
-                    versionColumn.type = "varchar"
-                    postVersionColumn.type = "varchar"
+                    versionColumn.type = "varchar";
+                    postVersionColumn.type = "varchar";
                 }
             }),
-        ))
+        ));
 
     it("should correctly change column default value", () =>
         Promise.all(
             connections.map(async (connection) => {
                 // Spanner does not support DEFAULT
-                if (connection.driver.options.type === "spanner") return
+                if (connection.driver.options.type === "spanner") return;
 
-                const postMetadata = connection.getMetadata(Post)
+                const postMetadata = connection.getMetadata(Post);
                 const nameColumn =
-                    postMetadata.findColumnWithPropertyName("name")!
+                    postMetadata.findColumnWithPropertyName("name")!;
 
-                nameColumn.default = "My awesome post"
-                nameColumn.build(connection)
+                nameColumn.default = "My awesome post";
+                nameColumn.build(connection);
 
-                await connection.synchronize(false)
+                await connection.synchronize(false);
 
-                const queryRunner = connection.createQueryRunner()
-                const postTable = await queryRunner.getTable("post")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const postTable = await queryRunner.getTable("post");
+                await queryRunner.release();
 
                 postTable!
                     .findColumnByName("name")!
-                    .default.should.be.equal("'My awesome post'")
+                    .default.should.be.equal("'My awesome post'");
             }),
-        ))
+        ));
 
     it("should correctly make column primary and generated", () =>
         Promise.all(
@@ -161,14 +161,14 @@ describe("schema builder > change column", () => {
                     connection.driver.options.type === "cockroachdb" ||
                     connection.driver.options.type === "spanner"
                 )
-                    return
+                    return;
 
-                const postMetadata = connection.getMetadata(Post)
-                const idColumn = postMetadata.findColumnWithPropertyName("id")!
+                const postMetadata = connection.getMetadata(Post);
+                const idColumn = postMetadata.findColumnWithPropertyName("id")!;
                 const versionColumn =
-                    postMetadata.findColumnWithPropertyName("version")!
-                idColumn.isGenerated = true
-                idColumn.generationStrategy = "increment"
+                    postMetadata.findColumnWithPropertyName("version")!;
+                idColumn.isGenerated = true;
+                idColumn.generationStrategy = "increment";
 
                 // SQLite does not support AUTOINCREMENT with composite primary keys
                 // Oracle does not support both unique and primary attributes on such column
@@ -176,18 +176,18 @@ describe("schema builder > change column", () => {
                     !DriverUtils.isSQLiteFamily(connection.driver) &&
                     !(connection.driver.options.type === "oracle")
                 )
-                    versionColumn.isPrimary = true
+                    versionColumn.isPrimary = true;
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
-                const postTable = await queryRunner.getTable("post")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const postTable = await queryRunner.getTable("post");
+                await queryRunner.release();
 
-                postTable!.findColumnByName("id")!.isGenerated.should.be.true
+                postTable!.findColumnByName("id")!.isGenerated.should.be.true;
                 postTable!
                     .findColumnByName("id")!
-                    .generationStrategy!.should.be.equal("increment")
+                    .generationStrategy!.should.be.equal("increment");
 
                 // SQLite does not support AUTOINCREMENT with composite primary keys
                 if (
@@ -195,40 +195,40 @@ describe("schema builder > change column", () => {
                     !(connection.driver.options.type === "oracle")
                 )
                     postTable!.findColumnByName("version")!.isPrimary.should.be
-                        .true
+                        .true;
 
                 // revert changes
-                idColumn.isGenerated = false
-                idColumn.generationStrategy = undefined
-                versionColumn.isPrimary = false
+                idColumn.isGenerated = false;
+                idColumn.generationStrategy = undefined;
+                versionColumn.isPrimary = false;
             }),
-        ))
+        ));
 
     it("should correctly change column `isGenerated` property when column is on foreign key", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const teacherMetadata = connection.getMetadata("teacher")
+                const teacherMetadata = connection.getMetadata("teacher");
                 const idColumn =
-                    teacherMetadata.findColumnWithPropertyName("id")!
-                idColumn.isGenerated = false
-                idColumn.generationStrategy = undefined
+                    teacherMetadata.findColumnWithPropertyName("id")!;
+                idColumn.isGenerated = false;
+                idColumn.generationStrategy = undefined;
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
-                const teacherTable = await queryRunner.getTable("teacher")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const teacherTable = await queryRunner.getTable("teacher");
+                await queryRunner.release();
 
                 teacherTable!.findColumnByName("id")!.isGenerated.should.be
-                    .false
+                    .false;
                 expect(teacherTable!.findColumnByName("id")!.generationStrategy)
-                    .to.be.undefined
+                    .to.be.undefined;
 
                 // revert changes
-                idColumn.isGenerated = true
-                idColumn.generationStrategy = "increment"
+                idColumn.isGenerated = true;
+                idColumn.generationStrategy = "increment";
             }),
-        ))
+        ));
 
     it("should correctly change non-generated column on to uuid-generated column", () =>
         Promise.all(
@@ -238,63 +238,63 @@ describe("schema builder > change column", () => {
                     connection.driver.options.type === "cockroachdb" ||
                     connection.driver.options.type === "spanner"
                 )
-                    return
+                    return;
 
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
 
                 if (connection.driver.options.type === "postgres")
                     await queryRunner.query(
                         `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`,
-                    )
+                    );
 
-                const postMetadata = connection.getMetadata(Post)
-                const idColumn = postMetadata.findColumnWithPropertyName("id")!
-                idColumn.isGenerated = true
-                idColumn.generationStrategy = "uuid"
+                const postMetadata = connection.getMetadata(Post);
+                const idColumn = postMetadata.findColumnWithPropertyName("id")!;
+                idColumn.isGenerated = true;
+                idColumn.generationStrategy = "uuid";
 
                 // depending on driver, we must change column and referenced column types
                 if (connection.driver.options.type === "postgres") {
-                    idColumn.type = "uuid"
+                    idColumn.type = "uuid";
                 } else if (connection.driver.options.type === "mssql") {
-                    idColumn.type = "uniqueidentifier"
+                    idColumn.type = "uniqueidentifier";
                 } else {
-                    idColumn.type = "varchar"
+                    idColumn.type = "varchar";
                 }
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const postTable = await queryRunner.getTable("post")
-                await queryRunner.release()
+                const postTable = await queryRunner.getTable("post");
+                await queryRunner.release();
 
                 if (
                     connection.driver.options.type === "postgres" ||
                     connection.driver.options.type === "mssql"
                 ) {
                     postTable!.findColumnByName("id")!.isGenerated.should.be
-                        .true
+                        .true;
                     postTable!
                         .findColumnByName("id")!
-                        .generationStrategy!.should.be.equal("uuid")
+                        .generationStrategy!.should.be.equal("uuid");
                 } else {
                     // other driver does not natively supports uuid type
                     postTable!.findColumnByName("id")!.isGenerated.should.be
-                        .false
+                        .false;
                     expect(
                         postTable!.findColumnByName("id")!.generationStrategy,
-                    ).to.be.undefined
+                    ).to.be.undefined;
                 }
 
                 // revert changes
-                idColumn.isGenerated = false
-                idColumn.generationStrategy = undefined
-                idColumn.type = "int"
+                idColumn.isGenerated = false;
+                idColumn.generationStrategy = undefined;
+                idColumn.type = "int";
                 postMetadata.generatedColumns.splice(
                     postMetadata.generatedColumns.indexOf(idColumn),
                     1,
-                )
-                postMetadata.hasUUIDGeneratedColumns = false
+                );
+                postMetadata.hasUUIDGeneratedColumns = false;
             }),
-        ))
+        ));
 
     it("should correctly change generated column generation strategy", () =>
         Promise.all(
@@ -304,60 +304,60 @@ describe("schema builder > change column", () => {
                     connection.driver.options.type === "cockroachdb" ||
                     connection.driver.options.type === "spanner"
                 )
-                    return
+                    return;
 
-                const teacherMetadata = connection.getMetadata("teacher")
-                const studentMetadata = connection.getMetadata("student")
+                const teacherMetadata = connection.getMetadata("teacher");
+                const studentMetadata = connection.getMetadata("student");
                 const idColumn =
-                    teacherMetadata.findColumnWithPropertyName("id")!
+                    teacherMetadata.findColumnWithPropertyName("id")!;
                 const teacherColumn =
-                    studentMetadata.findColumnWithPropertyName("teacher")!
-                idColumn.generationStrategy = "uuid"
+                    studentMetadata.findColumnWithPropertyName("teacher")!;
+                idColumn.generationStrategy = "uuid";
 
                 // depending on driver, we must change column and referenced column types
                 if (connection.driver.options.type === "postgres") {
-                    idColumn.type = "uuid"
-                    teacherColumn.type = "uuid"
+                    idColumn.type = "uuid";
+                    teacherColumn.type = "uuid";
                 } else if (connection.driver.options.type === "mssql") {
-                    idColumn.type = "uniqueidentifier"
-                    teacherColumn.type = "uniqueidentifier"
+                    idColumn.type = "uniqueidentifier";
+                    teacherColumn.type = "uniqueidentifier";
                 } else {
-                    idColumn.type = "varchar"
-                    teacherColumn.type = "varchar"
+                    idColumn.type = "varchar";
+                    teacherColumn.type = "varchar";
                 }
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
-                const teacherTable = await queryRunner.getTable("teacher")
-                await queryRunner.release()
+                const queryRunner = connection.createQueryRunner();
+                const teacherTable = await queryRunner.getTable("teacher");
+                await queryRunner.release();
 
                 if (
                     connection.driver.options.type === "postgres" ||
                     connection.driver.options.type === "mssql"
                 ) {
                     teacherTable!.findColumnByName("id")!.isGenerated.should.be
-                        .true
+                        .true;
                     teacherTable!
                         .findColumnByName("id")!
-                        .generationStrategy!.should.be.equal("uuid")
+                        .generationStrategy!.should.be.equal("uuid");
                 } else {
                     // other driver does not natively supports uuid type
                     teacherTable!.findColumnByName("id")!.isGenerated.should.be
-                        .false
+                        .false;
                     expect(
                         teacherTable!.findColumnByName("id")!
                             .generationStrategy,
-                    ).to.be.undefined
+                    ).to.be.undefined;
                 }
 
                 // revert changes
-                idColumn.isGenerated = true
-                idColumn.generationStrategy = "increment"
-                idColumn.type = "int"
-                teacherColumn.type = "int"
+                idColumn.isGenerated = true;
+                idColumn.generationStrategy = "increment";
+                idColumn.type = "int";
+                teacherColumn.type = "int";
             }),
-        ))
+        ));
 
     it("should correctly change column comment", () =>
         Promise.all(
@@ -370,38 +370,38 @@ describe("schema builder > change column", () => {
                         DriverUtils.isMySQLFamily(connection.driver)
                     )
                 ) {
-                    return
+                    return;
                 }
 
-                const teacherMetadata = connection.getMetadata("teacher")
+                const teacherMetadata = connection.getMetadata("teacher");
                 const idColumn =
-                    teacherMetadata.findColumnWithPropertyName("id")!
+                    teacherMetadata.findColumnWithPropertyName("id")!;
 
-                idColumn.comment = "The Teacher's Key"
+                idColumn.comment = "The Teacher's Key";
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunnerA = connection.createQueryRunner()
-                const teacherTableA = await queryRunnerA.getTable("teacher")
-                await queryRunnerA.release()
+                const queryRunnerA = connection.createQueryRunner();
+                const teacherTableA = await queryRunnerA.getTable("teacher");
+                await queryRunnerA.release();
 
                 expect(
                     teacherTableA!.findColumnByName("id")!.comment,
-                ).to.be.equal("The Teacher's Key", connection.name)
+                ).to.be.equal("The Teacher's Key", connection.name);
 
                 // revert changes
-                idColumn.comment = ""
+                idColumn.comment = "";
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunnerB = connection.createQueryRunner()
-                const teacherTableB = await queryRunnerB.getTable("teacher")
-                await queryRunnerB.release()
+                const queryRunnerB = connection.createQueryRunner();
+                const teacherTableB = await queryRunnerB.getTable("teacher");
+                await queryRunnerB.release();
 
                 expect(teacherTableB!.findColumnByName("id")!.comment).to.be
-                    .undefined
+                    .undefined;
             }),
-        ))
+        ));
 
     it("should correctly change column type when FK relationships impact it", () =>
         Promise.all(
@@ -412,35 +412,35 @@ describe("schema builder > change column", () => {
                     text: "a",
                     tag: "b",
                     likesCount: 45,
-                })
+                });
 
                 const post = await connection
                     .getRepository(Post)
-                    .findOneByOrFail({ id: 1234 })
+                    .findOneByOrFail({ id: 1234 });
 
                 await connection.getRepository(PostVersion).insert({
                     id: 1,
                     post,
                     details: "Example",
-                })
+                });
 
-                const postMetadata = connection.getMetadata(Post)
+                const postMetadata = connection.getMetadata(Post);
                 const nameColumn =
-                    postMetadata.findColumnWithPropertyName("name")!
-                nameColumn.length = "500"
+                    postMetadata.findColumnWithPropertyName("name")!;
+                nameColumn.length = "500";
 
-                await connection.synchronize()
+                await connection.synchronize();
 
-                const queryRunner = connection.createQueryRunner()
+                const queryRunner = connection.createQueryRunner();
                 const postVersionTable = await queryRunner.getTable(
                     "post_version",
-                )
-                await queryRunner.release()
+                );
+                await queryRunner.release();
 
-                postVersionTable!.foreignKeys.length.should.be.equal(1)
+                postVersionTable!.foreignKeys.length.should.be.equal(1);
 
                 // revert changes
-                nameColumn.length = "255"
+                nameColumn.length = "255";
             }),
-        ))
-})
+        ));
+});

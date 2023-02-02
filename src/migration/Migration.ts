@@ -1,4 +1,4 @@
-import { MigrationInterface } from "./MigrationInterface"
+import { MigrationInterface } from "./MigrationInterface";
 
 /**
  * Represents entity of the migration in the database.
@@ -12,27 +12,27 @@ export class Migration {
      * Migration id.
      * Indicates order of the executed migrations.
      */
-    id: number | undefined
+    id: number | undefined;
 
     /**
      * Timestamp of the migration.
      */
-    timestamp: number
+    timestamp: number;
 
     /**
      * Name of the migration (class name).
      */
-    name: string
+    name: string;
 
     /**
      * Migration instance that needs to be run.
      */
-    instance?: MigrationInterface
+    instance?: MigrationInterface;
 
     /**
      * Whether to run this migration within a transaction
      */
-    transaction?: boolean
+    transaction?: boolean;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -45,10 +45,10 @@ export class Migration {
         instance?: MigrationInterface,
         transaction?: boolean,
     ) {
-        this.id = id
-        this.timestamp = timestamp
-        this.name = name
-        this.instance = instance
-        this.transaction = transaction
+        this.id = id;
+        this.timestamp = timestamp;
+        this.name = name;
+        this.instance = instance;
+        this.transaction = transaction;
     }
 }

@@ -1,9 +1,9 @@
-import { DataSource } from "../../../../../src"
-import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn"
-import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity"
-import { Album } from "./Album"
-import { Category } from "./Category"
-import { Photo } from "./Photo"
+import { DataSource } from "../../../../../src";
+import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
+import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
+import { Album } from "./Album";
+import { Category } from "./Category";
+import { Photo } from "./Photo";
 
 @ViewEntity({
     expression: (connection: DataSource) =>
@@ -21,17 +21,17 @@ import { Photo } from "./Photo"
 })
 export class PhotoAlbumCategory {
     @ViewColumn()
-    id: number
+    id: number;
 
     @ViewColumn()
-    name: string
+    name: string;
 
     @ViewColumn()
-    categoryName: string
+    categoryName: string;
 
     @ViewColumn()
-    albumName: string
+    albumName: string;
 
     @ViewColumn({ name: "albumId" })
-    photoAlbumId: number
+    photoAlbumId: number;
 }

@@ -1,4 +1,4 @@
-import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions"
+import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions";
 
 export enum PostType {
     draft = "draft",
@@ -6,9 +6,9 @@ export enum PostType {
 }
 
 export class Post {
-    id: number
+    id: number;
 
-    type: PostType
+    type: PostType;
 }
 
 export const PostSchema: EntitySchemaOptions<Post> = {
@@ -27,4 +27,4 @@ export const PostSchema: EntitySchemaOptions<Post> = {
             enum: PostType,
         },
     },
-}
+};

@@ -1,6 +1,6 @@
-import { DeferrableType } from "../../metadata/types/DeferrableType"
-import { OnDeleteType } from "../../metadata/types/OnDeleteType"
-import { OnUpdateType } from "../../metadata/types/OnUpdateType"
+import { DeferrableType } from "../../metadata/types/DeferrableType";
+import { OnDeleteType } from "../../metadata/types/OnDeleteType";
+import { OnUpdateType } from "../../metadata/types/OnUpdateType";
 
 /**
  * Describes all relation's options.
@@ -15,40 +15,40 @@ export interface RelationOptions {
      */
     cascade?:
         | boolean
-        | ("insert" | "update" | "remove" | "soft-remove" | "recover")[]
+        | ("insert" | "update" | "remove" | "soft-remove" | "recover")[];
 
     /**
      * Indicates if relation column value can be nullable or not.
      */
-    nullable?: boolean
+    nullable?: boolean;
 
     /**
      * Database cascade action on delete.
      */
-    onDelete?: OnDeleteType
+    onDelete?: OnDeleteType;
 
     /**
      * Database cascade action on update.
      */
-    onUpdate?: OnUpdateType
+    onUpdate?: OnUpdateType;
 
     /**
      * Indicate if foreign key constraints can be deferred.
      */
-    deferrable?: DeferrableType
+    deferrable?: DeferrableType;
 
     /**
      * Indicates whether foreign key constraints will be created for join columns.
      * Can be used only for many-to-one and owner one-to-one relations.
      * Defaults to true.
      */
-    createForeignKeyConstraints?: boolean
+    createForeignKeyConstraints?: boolean;
 
     /**
      * Set this relation to be lazy. Note: lazy relations are promises. When you call them they return promise
      * which resolve relation result then. If your property's type is Promise then this relation is set to lazy automatically.
      */
-    lazy?: boolean
+    lazy?: boolean;
 
     /**
      * Set this relation to be eager.
@@ -56,7 +56,7 @@ export interface RelationOptions {
      * Only using QueryBuilder prevents loading eager relations.
      * Eager flag cannot be set from both sides of relation - you can eager load only one side of the relationship.
      */
-    eager?: boolean
+    eager?: boolean;
 
     /**
      * Indicates if persistence is enabled for the relation.
@@ -64,7 +64,7 @@ export interface RelationOptions {
      * If its disabled you can only change a relation from inverse side of a relation or using relation query builder functionality.
      * This is useful for performance optimization since its disabling avoid multiple extra queries during entity save.
      */
-    persistence?: boolean
+    persistence?: boolean;
 
     /**
      * When a parent is saved (with cascading but) without a child row that still exists in database, this will control what shall happen to them.
@@ -72,5 +72,5 @@ export interface RelationOptions {
      * nullify will remove the relation key.
      * disable will keep the relation intact. Removal of related item is only possible through its own repo.
      */
-    orphanedRowAction?: "nullify" | "delete" | "soft-delete" | "disable"
+    orphanedRowAction?: "nullify" | "delete" | "soft-delete" | "disable";
 }

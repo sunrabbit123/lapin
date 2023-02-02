@@ -1,81 +1,81 @@
-import "reflect-metadata"
-import { Post } from "./entity/Post"
-import { Counters } from "./entity/Counters"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { expect } from "chai"
+import "reflect-metadata";
+import { Post } from "./entity/Post";
+import { Counters } from "./entity/Counters";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { expect } from "chai";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { Subcounters } from "./entity/Subcounters"
-import { User } from "./entity/User"
+} from "../../../utils/test-utils";
+import { Subcounters } from "./entity/Subcounters";
+import { User } from "./entity/User";
 
 describe("embedded > embedded-many-to-many-case2", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     describe("owner side", () => {
         it("should insert, load, update and remove entities with embeddeds when embedded entity having ManyToMany relation", () =>
             Promise.all(
                 connections.map(async (connection) => {
-                    const post1 = new Post()
-                    post1.id = 1
-                    post1.title = "About cars"
-                    post1.counters = new Counters()
-                    post1.counters.code = 1
-                    post1.counters.comments = 1
-                    post1.counters.favorites = 2
-                    post1.counters.likes = 3
-                    post1.counters.subcounters = new Subcounters()
-                    post1.counters.subcounters.version = 1
-                    post1.counters.subcounters.watches = 5
-                    await connection.getRepository(Post).save(post1)
+                    const post1 = new Post();
+                    post1.id = 1;
+                    post1.title = "About cars";
+                    post1.counters = new Counters();
+                    post1.counters.code = 1;
+                    post1.counters.comments = 1;
+                    post1.counters.favorites = 2;
+                    post1.counters.likes = 3;
+                    post1.counters.subcounters = new Subcounters();
+                    post1.counters.subcounters.version = 1;
+                    post1.counters.subcounters.watches = 5;
+                    await connection.getRepository(Post).save(post1);
 
-                    const post2 = new Post()
-                    post2.id = 2
-                    post2.title = "About airplanes"
-                    post2.counters = new Counters()
-                    post2.counters.code = 2
-                    post2.counters.comments = 2
-                    post2.counters.favorites = 3
-                    post2.counters.likes = 4
-                    post2.counters.subcounters = new Subcounters()
-                    post2.counters.subcounters.version = 1
-                    post2.counters.subcounters.watches = 10
-                    await connection.getRepository(Post).save(post2)
+                    const post2 = new Post();
+                    post2.id = 2;
+                    post2.title = "About airplanes";
+                    post2.counters = new Counters();
+                    post2.counters.code = 2;
+                    post2.counters.comments = 2;
+                    post2.counters.favorites = 3;
+                    post2.counters.likes = 4;
+                    post2.counters.subcounters = new Subcounters();
+                    post2.counters.subcounters.version = 1;
+                    post2.counters.subcounters.watches = 10;
+                    await connection.getRepository(Post).save(post2);
 
-                    const user1 = new User()
-                    user1.id = 1
-                    user1.name = "Alice"
-                    user1.likedPosts = [post1, post2]
-                    await connection.getRepository(User).save(user1)
+                    const user1 = new User();
+                    user1.id = 1;
+                    user1.name = "Alice";
+                    user1.likedPosts = [post1, post2];
+                    await connection.getRepository(User).save(user1);
 
-                    const user2 = new User()
-                    user2.id = 2
-                    user2.name = "Bob"
-                    user2.likedPosts = [post1]
-                    await connection.getRepository(User).save(user2)
+                    const user2 = new User();
+                    user2.id = 2;
+                    user2.name = "Bob";
+                    user2.likedPosts = [post1];
+                    await connection.getRepository(User).save(user2);
 
-                    const user3 = new User()
-                    user3.id = 3
-                    user3.name = "Clara"
-                    user3.likedPosts = [post2]
-                    await connection.getRepository(User).save(user3)
+                    const user3 = new User();
+                    user3.id = 3;
+                    user3.name = "Clara";
+                    user3.likedPosts = [post2];
+                    await connection.getRepository(User).save(user3);
 
                     const loadedUsers = await connection.manager
                         .createQueryBuilder(User, "user")
                         .leftJoinAndSelect("user.likedPosts", "likedPost")
                         .orderBy("user.id")
                         .addOrderBy("likedPost.id")
-                        .getMany()
+                        .getMany();
 
                     expect(
                         loadedUsers[0].should.be.eql({
@@ -112,7 +112,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             ],
                         }),
-                    )
+                    );
                     expect(
                         loadedUsers[1].should.be.eql({
                             id: 2,
@@ -134,7 +134,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             ],
                         }),
-                    )
+                    );
                     expect(
                         loadedUsers[2].should.be.eql({
                             id: 3,
@@ -156,14 +156,14 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             ],
                         }),
-                    )
+                    );
 
                     const loadedUser = await connection.manager
                         .createQueryBuilder(User, "user")
                         .leftJoinAndSelect("user.likedPosts", "likedPost")
                         .orderBy("likedPost.id")
                         .where("user.id = :id", { id: 1 })
-                        .getOne()
+                        .getOne();
 
                     expect(
                         loadedUser!.should.be.eql({
@@ -200,18 +200,18 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             ],
                         }),
-                    )
+                    );
 
-                    loadedUser!.name = "Anna"
-                    loadedUser!.likedPosts = [post1]
-                    await connection.getRepository(User).save(loadedUser!)
+                    loadedUser!.name = "Anna";
+                    loadedUser!.likedPosts = [post1];
+                    await connection.getRepository(User).save(loadedUser!);
 
                     const loadedUser2 = await connection.manager
                         .createQueryBuilder(User, "user")
                         .leftJoinAndSelect("user.likedPosts", "likedPost")
                         .orderBy("likedPost.id")
                         .where("user.id = :id", { id: 1 })
-                        .getOne()
+                        .getOne();
 
                     expect(
                         loadedUser2!.should.be.eql({
@@ -234,68 +234,68 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             ],
                         }),
-                    )
+                    );
 
-                    await connection.getRepository(User).remove(loadedUser2!)
+                    await connection.getRepository(User).remove(loadedUser2!);
 
                     const loadedUsers2 = (await connection
                         .getRepository(User)
-                        .find({ order: { name: "ASC" } }))!
-                    expect(loadedUsers2.length).to.be.equal(2)
-                    expect(loadedUsers2[0].name).to.be.equal("Bob")
-                    expect(loadedUsers2[1].name).to.be.equal("Clara")
+                        .find({ order: { name: "ASC" } }))!;
+                    expect(loadedUsers2.length).to.be.equal(2);
+                    expect(loadedUsers2[0].name).to.be.equal("Bob");
+                    expect(loadedUsers2[1].name).to.be.equal("Clara");
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("inverse side", () => {
         it("should insert, load, update and remove entities with embeddeds when embedded entity having ManyToMany relation", () =>
             Promise.all(
                 connections.map(async (connection) => {
-                    const user1 = new User()
-                    user1.id = 1
-                    user1.name = "Alice"
-                    await connection.getRepository(User).save(user1)
+                    const user1 = new User();
+                    user1.id = 1;
+                    user1.name = "Alice";
+                    await connection.getRepository(User).save(user1);
 
-                    const user2 = new User()
-                    user2.id = 2
-                    user2.name = "Bob"
-                    await connection.getRepository(User).save(user2)
+                    const user2 = new User();
+                    user2.id = 2;
+                    user2.name = "Bob";
+                    await connection.getRepository(User).save(user2);
 
-                    const user3 = new User()
-                    user3.id = 3
-                    user3.name = "Clara"
-                    await connection.getRepository(User).save(user3)
+                    const user3 = new User();
+                    user3.id = 3;
+                    user3.name = "Clara";
+                    await connection.getRepository(User).save(user3);
 
-                    const postRepository = connection.getRepository(Post)
+                    const postRepository = connection.getRepository(Post);
 
-                    const post1 = new Post()
-                    post1.id = 1
-                    post1.title = "About cars"
-                    post1.counters = new Counters()
-                    post1.counters.code = 1
-                    post1.counters.comments = 1
-                    post1.counters.favorites = 2
-                    post1.counters.likes = 3
-                    post1.counters.likedUsers = [user1, user2]
-                    post1.counters.subcounters = new Subcounters()
-                    post1.counters.subcounters.version = 1
-                    post1.counters.subcounters.watches = 5
-                    await postRepository.save(post1)
+                    const post1 = new Post();
+                    post1.id = 1;
+                    post1.title = "About cars";
+                    post1.counters = new Counters();
+                    post1.counters.code = 1;
+                    post1.counters.comments = 1;
+                    post1.counters.favorites = 2;
+                    post1.counters.likes = 3;
+                    post1.counters.likedUsers = [user1, user2];
+                    post1.counters.subcounters = new Subcounters();
+                    post1.counters.subcounters.version = 1;
+                    post1.counters.subcounters.watches = 5;
+                    await postRepository.save(post1);
 
-                    const post2 = new Post()
-                    post2.id = 2
-                    post2.title = "About airplanes"
-                    post2.counters = new Counters()
-                    post2.counters.code = 2
-                    post2.counters.comments = 2
-                    post2.counters.favorites = 3
-                    post2.counters.likes = 4
-                    post2.counters.likedUsers = [user3]
-                    post2.counters.subcounters = new Subcounters()
-                    post2.counters.subcounters.version = 1
-                    post2.counters.subcounters.watches = 10
-                    await postRepository.save(post2)
+                    const post2 = new Post();
+                    post2.id = 2;
+                    post2.title = "About airplanes";
+                    post2.counters = new Counters();
+                    post2.counters.code = 2;
+                    post2.counters.comments = 2;
+                    post2.counters.favorites = 3;
+                    post2.counters.likes = 4;
+                    post2.counters.likedUsers = [user3];
+                    post2.counters.subcounters = new Subcounters();
+                    post2.counters.subcounters.version = 1;
+                    post2.counters.subcounters.watches = 10;
+                    await postRepository.save(post2);
 
                     const loadedPosts = await connection.manager
                         .createQueryBuilder(Post, "post")
@@ -305,7 +305,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                         )
                         .orderBy("post.id")
                         .addOrderBy("likedUser.id")
-                        .getMany()
+                        .getMany();
 
                     expect(
                         loadedPosts[0].should.be.eql({
@@ -332,7 +332,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             },
                         }),
-                    )
+                    );
                     expect(
                         loadedPosts[1].should.be.eql({
                             id: 2,
@@ -354,7 +354,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             },
                         }),
-                    )
+                    );
 
                     const loadedPost = await connection.manager
                         .createQueryBuilder(Post, "post")
@@ -364,7 +364,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                         )
                         .orderBy("likedUser.id")
                         .where("post.id = :id", { id: 1 })
-                        .getOne()
+                        .getOne();
 
                     expect(
                         loadedPost!.should.be.eql({
@@ -391,12 +391,12 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             },
                         }),
-                    )
+                    );
 
-                    loadedPost!.counters.favorites += 1
-                    loadedPost!.counters.subcounters.watches += 1
-                    loadedPost!.counters.likedUsers = [user1]
-                    await postRepository.save(loadedPost!)
+                    loadedPost!.counters.favorites += 1;
+                    loadedPost!.counters.subcounters.watches += 1;
+                    loadedPost!.counters.likedUsers = [user1];
+                    await postRepository.save(loadedPost!);
 
                     const loadedPost2 = await connection.manager
                         .createQueryBuilder(Post, "post")
@@ -406,7 +406,7 @@ describe("embedded > embedded-many-to-many-case2", () => {
                         )
                         .orderBy("likedUser.id")
                         .where("post.id = :id", { id: 1 })
-                        .getOne()
+                        .getOne();
 
                     expect(
                         loadedPost2!.should.be.eql({
@@ -429,14 +429,16 @@ describe("embedded > embedded-many-to-many-case2", () => {
                                 },
                             },
                         }),
-                    )
+                    );
 
-                    await postRepository.remove(loadedPost2!)
+                    await postRepository.remove(loadedPost2!);
 
-                    const loadedPosts2 = (await postRepository.find())!
-                    expect(loadedPosts2.length).to.be.equal(1)
-                    expect(loadedPosts2[0].title).to.be.equal("About airplanes")
+                    const loadedPosts2 = (await postRepository.find())!;
+                    expect(loadedPosts2.length).to.be.equal(1);
+                    expect(loadedPosts2[0].title).to.be.equal(
+                        "About airplanes",
+                    );
                 }),
-            ))
-    })
-})
+            ));
+    });
+});

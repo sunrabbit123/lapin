@@ -1,40 +1,40 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    useTitle: boolean
+    useTitle: boolean;
 
     @Column()
-    firstName: string
+    firstName: string;
 
     @Column()
-    lastName: string
+    lastName: string;
 
     @Column({
         asExpression: "concat(`firstName`,' ',`lastName`)",
         collation: "latin1_bin",
     })
-    virtualFullName: string
+    virtualFullName: string;
 
     @Column({
         asExpression: "CONCAT(`firstName`,' ',`lastName`)",
         generatedType: "STORED",
     })
-    storedFullName: string
+    storedFullName: string;
 
     @Column({
         asExpression: "`firstName` || `lastName`",
         generatedType: "STORED",
         collation: "latin1_bin",
     })
-    name: string
+    name: string;
 
     @Column({
         generatedType: "VIRTUAL",
@@ -43,12 +43,12 @@ export class Post {
         length: 255,
         nullable: true,
     })
-    nameHash: string
+    nameHash: string;
 
     @Column({
         generatedType: "VIRTUAL",
         asExpression:
             "concat(if(((not `useTitle`) or IsNull(`title`)), '', concat(`firstName`,' ', `lastName`)))",
     })
-    complexColumn: string
+    complexColumn: string;
 }

@@ -1,15 +1,15 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { expect } from "chai"
-import { User } from "./entity/User"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { expect } from "chai";
+import { User } from "./entity/User";
 
 describe("github issues > #4220 Fix the bug when using buffer as the key.", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -18,9 +18,9 @@ describe("github issues > #4220 Fix the bug when using buffer as the key.", () =
                 dropSchema: true,
                 enabledDrivers: ["mysql", "mssql"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should use the hex string format of buffer when the primary column is buffer type.", () =>
         Promise.all(
@@ -45,25 +45,27 @@ describe("github issues > #4220 Fix the bug when using buffer as the key.", () =
                     "11E9845B851D6FA0A99EDBC51EED5BB5",
                     "11E9845B85214030A99EDBC51EED5BB5",
                     "11E9845B852510C0A99EDBC51EED5BB5",
-                ]
+                ];
 
-                const repo = await connection.getRepository(User)
+                const repo = await connection.getRepository(User);
 
                 await Promise.all(
                     [...Array(10)]
                         .map((_, index) => {
-                            const user = new User()
-                            user.name = "random-name"
-                            user.id = Buffer.from(ids[index], "hex")
-                            return user
+                            const user = new User();
+                            user.name = "random-name";
+                            user.id = Buffer.from(ids[index], "hex");
+                            return user;
                         })
                         .map((user) => repo.save(user)),
-                )
+                );
 
-                const result = await repo.createQueryBuilder("user").getMany()
+                const result = await repo.createQueryBuilder("user").getMany();
 
-                expect(result.length).equal(10)
-                expect(result[0].id.toString("hex").toUpperCase()).equal(ids[0])
+                expect(result.length).equal(10);
+                expect(result[0].id.toString("hex").toUpperCase()).equal(
+                    ids[0],
+                );
             }),
-        ))
-})
+        ));
+});

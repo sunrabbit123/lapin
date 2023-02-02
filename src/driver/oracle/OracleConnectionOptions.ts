@@ -1,5 +1,5 @@
-import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions"
-import { OracleConnectionCredentialsOptions } from "./OracleConnectionCredentialsOptions"
+import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions";
+import { OracleConnectionCredentialsOptions } from "./OracleConnectionCredentialsOptions";
 
 /**
  * Oracle-specific connection options.
@@ -10,23 +10,23 @@ export interface OracleConnectionOptions
     /**
      * Database type.
      */
-    readonly type: "oracle"
+    readonly type: "oracle";
 
     /**
      * Schema name. By default is "public".
      */
-    readonly schema?: string
+    readonly schema?: string;
 
     /**
      * The driver object
      * This defaults to require("oracledb")
      */
-    readonly driver?: any
+    readonly driver?: any;
 
     /**
      * A boolean determining whether to pass time values in UTC or local time. (default: false).
      */
-    readonly useUTC?: boolean
+    readonly useUTC?: boolean;
 
     /**
      * Replication setup.
@@ -35,11 +35,11 @@ export interface OracleConnectionOptions
         /**
          * Master server used by orm to perform writes.
          */
-        readonly master: OracleConnectionCredentialsOptions
+        readonly master: OracleConnectionCredentialsOptions;
 
         /**
          * List of read-from severs (slaves).
          */
-        readonly slaves: OracleConnectionCredentialsOptions[]
-    }
+        readonly slaves: OracleConnectionCredentialsOptions[];
+    };
 }

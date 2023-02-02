@@ -1,13 +1,13 @@
-import appRootPath from "app-root-path"
-import path from "path"
-import { DataSourceOptions } from "../data-source/DataSourceOptions"
-import { PlatformTools } from "../platform/PlatformTools"
-import { ConnectionOptionsEnvReader } from "./options-reader/ConnectionOptionsEnvReader"
-import { ConnectionOptionsYmlReader } from "./options-reader/ConnectionOptionsYmlReader"
-import { ConnectionOptionsXmlReader } from "./options-reader/ConnectionOptionsXmlReader"
-import { LapinError } from "../error"
-import { isAbsolute } from "../util/PathUtils"
-import { importOrRequireFile } from "../util/ImportUtils"
+import appRootPath from "app-root-path";
+import path from "path";
+import { DataSourceOptions } from "../data-source/DataSourceOptions";
+import { PlatformTools } from "../platform/PlatformTools";
+import { ConnectionOptionsEnvReader } from "./options-reader/ConnectionOptionsEnvReader";
+import { ConnectionOptionsYmlReader } from "./options-reader/ConnectionOptionsYmlReader";
+import { ConnectionOptionsXmlReader } from "./options-reader/ConnectionOptionsXmlReader";
+import { LapinError } from "../error";
+import { isAbsolute } from "../util/PathUtils";
+import { importOrRequireFile } from "../util/ImportUtils";
 
 /**
  * Reads connection options from the ormconfig.
@@ -24,12 +24,12 @@ export class ConnectionOptionsReader {
              * Directory where ormconfig should be read from.
              * By default its your application root (where your app package.json is located).
              */
-            root?: string
+            root?: string;
 
             /**
              * Filename of the ormconfig configuration. By default its equal to "ormconfig".
              */
-            configName?: string
+            configName?: string;
         },
     ) {}
 
@@ -41,13 +41,13 @@ export class ConnectionOptionsReader {
      * Returns all connection options read from the ormconfig.
      */
     async all(): Promise<DataSourceOptions[]> {
-        const options = await this.load()
+        const options = await this.load();
         if (!options)
             throw new LapinError(
                 `No connection options were found in any orm configuration files.`,
-            )
+            );
 
-        return options
+        return options;
     }
 
     /**
@@ -55,31 +55,31 @@ export class ConnectionOptionsReader {
      * If connection with such name would not be found then it throw error.
      */
     async get(name: string): Promise<DataSourceOptions> {
-        const allOptions = await this.all()
+        const allOptions = await this.all();
         const targetOptions = allOptions.find(
             (options) =>
                 options.name === name || (name === "default" && !options.name),
-        )
+        );
         if (!targetOptions)
             throw new LapinError(
                 `Cannot find connection ${name} because its not defined in any orm configuration files.`,
-            )
+            );
 
-        return targetOptions
+        return targetOptions;
     }
 
     /**
      * Checks if there is a lapin configuration file.
      */
     async has(name: string): Promise<boolean> {
-        const allOptions = await this.load()
-        if (!allOptions) return false
+        const allOptions = await this.load();
+        if (!allOptions) return false;
 
         const targetOptions = allOptions.find(
             (options) =>
                 options.name === name || (name === "default" && !options.name),
-        )
-        return !!targetOptions
+        );
+        return !!targetOptions;
     }
 
     // -------------------------------------------------------------------------
@@ -95,7 +95,7 @@ export class ConnectionOptionsReader {
         let connectionOptions:
             | DataSourceOptions
             | DataSourceOptions[]
-            | undefined = undefined
+            | undefined = undefined;
 
         const fileFormats = [
             "env",
@@ -109,33 +109,35 @@ export class ConnectionOptionsReader {
             "yml",
             "yaml",
             "xml",
-        ]
+        ];
 
         // Detect if baseFilePath contains file extension
         const possibleExtension = this.baseFilePath.substr(
             this.baseFilePath.lastIndexOf("."),
-        )
+        );
         const fileExtension = fileFormats.find(
             (extension) => `.${extension}` === possibleExtension,
-        )
+        );
 
         // try to find any of following configuration formats
         const foundFileFormat =
             fileExtension ||
             fileFormats.find((format) => {
-                return PlatformTools.fileExist(this.baseFilePath + "." + format)
-            })
+                return PlatformTools.fileExist(
+                    this.baseFilePath + "." + format,
+                );
+            });
 
         // Determine config file name
         const configFile = fileExtension
             ? this.baseFilePath
-            : this.baseFilePath + "." + foundFileFormat
+            : this.baseFilePath + "." + foundFileFormat;
 
         // if .env file found then load all its variables into process.env using dotenv package
         if (foundFileFormat === "env") {
-            PlatformTools.dotenv(configFile)
+            PlatformTools.dotenv(configFile);
         } else if (PlatformTools.fileExist(this.baseDirectory + "/.env")) {
-            PlatformTools.dotenv(this.baseDirectory + "/.env")
+            PlatformTools.dotenv(this.baseDirectory + "/.env");
         }
 
         // try to find connection options from any of available sources of configuration
@@ -143,7 +145,7 @@ export class ConnectionOptionsReader {
             PlatformTools.getEnvVariable("lapin_CONNECTION") ||
             PlatformTools.getEnvVariable("lapin_URL")
         ) {
-            connectionOptions = await new ConnectionOptionsEnvReader().read()
+            connectionOptions = await new ConnectionOptionsEnvReader().read();
         } else if (
             foundFileFormat === "js" ||
             foundFileFormat === "mjs" ||
@@ -153,8 +155,8 @@ export class ConnectionOptionsReader {
             foundFileFormat === "cts"
         ) {
             const [importOrRequireResult, moduleSystem] =
-                await importOrRequireFile(configFile)
-            const configModule = await importOrRequireResult
+                await importOrRequireFile(configFile);
+            const configModule = await importOrRequireResult;
 
             if (
                 moduleSystem === "esm" ||
@@ -162,32 +164,32 @@ export class ConnectionOptionsReader {
                     "__esModule" in configModule &&
                     "default" in configModule)
             ) {
-                connectionOptions = configModule.default
+                connectionOptions = configModule.default;
             } else {
-                connectionOptions = configModule
+                connectionOptions = configModule;
             }
         } else if (foundFileFormat === "json") {
-            connectionOptions = require(configFile)
+            connectionOptions = require(configFile);
         } else if (foundFileFormat === "yml") {
             connectionOptions = await new ConnectionOptionsYmlReader().read(
                 configFile,
-            )
+            );
         } else if (foundFileFormat === "yaml") {
             connectionOptions = await new ConnectionOptionsYmlReader().read(
                 configFile,
-            )
+            );
         } else if (foundFileFormat === "xml") {
             connectionOptions = await new ConnectionOptionsXmlReader().read(
                 configFile,
-            )
+            );
         }
 
         // normalize and return connection options
         if (connectionOptions) {
-            return this.normalizeConnectionOptions(connectionOptions)
+            return this.normalizeConnectionOptions(connectionOptions);
         }
 
-        return undefined
+        return undefined;
     }
 
     /**
@@ -197,21 +199,21 @@ export class ConnectionOptionsReader {
         connectionOptions: DataSourceOptions | DataSourceOptions[],
     ): DataSourceOptions[] {
         if (!Array.isArray(connectionOptions))
-            connectionOptions = [connectionOptions]
+            connectionOptions = [connectionOptions];
 
         connectionOptions.forEach((options) => {
-            options.baseDirectory = this.baseDirectory
+            options.baseDirectory = this.baseDirectory;
             if (options.entities) {
                 const entities = (options.entities as any[]).map((entity) => {
                     if (
                         typeof entity === "string" &&
                         entity.substr(0, 1) !== "/"
                     )
-                        return this.baseDirectory + "/" + entity
+                        return this.baseDirectory + "/" + entity;
 
-                    return entity
-                })
-                Object.assign(connectionOptions, { entities: entities })
+                    return entity;
+                });
+                Object.assign(connectionOptions, { entities: entities });
             }
             if (options.subscribers) {
                 const subscribers = (options.subscribers as any[]).map(
@@ -220,12 +222,12 @@ export class ConnectionOptionsReader {
                             typeof subscriber === "string" &&
                             subscriber.substr(0, 1) !== "/"
                         )
-                            return this.baseDirectory + "/" + subscriber
+                            return this.baseDirectory + "/" + subscriber;
 
-                        return subscriber
+                        return subscriber;
                     },
-                )
-                Object.assign(connectionOptions, { subscribers: subscribers })
+                );
+                Object.assign(connectionOptions, { subscribers: subscribers });
             }
             if (options.migrations) {
                 const migrations = (options.migrations as any[]).map(
@@ -234,12 +236,12 @@ export class ConnectionOptionsReader {
                             typeof migration === "string" &&
                             migration.substr(0, 1) !== "/"
                         )
-                            return this.baseDirectory + "/" + migration
+                            return this.baseDirectory + "/" + migration;
 
-                        return migration
+                        return migration;
                     },
-                )
-                Object.assign(connectionOptions, { migrations: migrations })
+                );
+                Object.assign(connectionOptions, { migrations: migrations });
             }
 
             // make database path file in sqlite relative to package.json
@@ -256,28 +258,28 @@ export class ConnectionOptionsReader {
                 ) {
                     Object.assign(options, {
                         database: this.baseDirectory + "/" + options.database,
-                    })
+                    });
                 }
             }
-        })
+        });
 
-        return connectionOptions
+        return connectionOptions;
     }
 
     /**
      * Gets directory where configuration file should be located and configuration file name.
      */
     protected get baseFilePath(): string {
-        return path.resolve(this.baseDirectory, this.baseConfigName)
+        return path.resolve(this.baseDirectory, this.baseConfigName);
     }
 
     /**
      * Gets directory where configuration file should be located.
      */
     protected get baseDirectory(): string {
-        if (this.options && this.options.root) return this.options.root
+        if (this.options && this.options.root) return this.options.root;
 
-        return appRootPath.path
+        return appRootPath.path;
     }
 
     /**
@@ -285,8 +287,8 @@ export class ConnectionOptionsReader {
      */
     protected get baseConfigName(): string {
         if (this.options && this.options.configName)
-            return this.options.configName
+            return this.options.configName;
 
-        return "ormconfig"
+        return "ormconfig";
     }
 }

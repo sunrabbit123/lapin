@@ -2,13 +2,13 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity({ name: "foo", schema: "SYSTEM" })
 export class Foo {
     @PrimaryGeneratedColumn({ name: "id" })
-    id: number
+    id: number;
 
     @UpdateDateColumn({ name: "updated_at" })
-    updatedAt: Date
+    updatedAt: Date;
 }

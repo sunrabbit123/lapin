@@ -3,14 +3,14 @@ import {
     Entity,
     ObjectIdColumn,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class TestEntity {
     @ObjectIdColumn()
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ nullable: true })
-    testColumn: string
+    testColumn: string;
 }

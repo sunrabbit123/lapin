@@ -3,17 +3,17 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index"
-import { Post } from "./Post"
+} from "../../../src/index";
+import { Post } from "./Post";
 
 @Entity("sample10_cover")
 export class Cover {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    url: string
+    url: string;
 
     @OneToMany((type) => Post, (post) => post.cover)
-    posts: Post[]
+    posts: Post[];
 }

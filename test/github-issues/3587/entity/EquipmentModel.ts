@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src"
+import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
 
 export enum EquipmentModelType {
     Thing1 = 1,
@@ -10,8 +10,8 @@ export enum EquipmentModelType {
 @Entity("equipmentmodels")
 export class EquipmentModel {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column("enum", { enum: EquipmentModelType })
-    type: EquipmentModelType
+    type: EquipmentModelType;
 }

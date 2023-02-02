@@ -3,17 +3,17 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Order } from "./Order"
+} from "../../../../src";
+import { Order } from "./Order";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ unique: true })
-    email: string
+    email: string;
 
     @OneToMany((type) => Order, (recurringOrder) => recurringOrder.user)
-    recurringOrders: Order[]
+    recurringOrders: Order[];
 }

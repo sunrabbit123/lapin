@@ -4,33 +4,33 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Cart } from "./Cart"
+} from "../../../../src";
+import { Cart } from "./Cart";
 
 @Entity()
 export class CartItems {
     @PrimaryGeneratedColumn()
-    ID!: number
+    ID!: number;
 
     @Column()
-    CartID!: number
+    CartID!: number;
 
     @Column()
-    ItemID!: number
+    ItemID!: number;
 
     @Column()
-    OptionID!: number
+    OptionID!: number;
 
     @Column()
-    Quantity!: number
+    Quantity!: number;
 
     @Column()
-    RegDate!: Date
+    RegDate!: Date;
 
     @Column()
-    ModifiedDate!: Date
+    ModifiedDate!: Date;
 
     @ManyToOne((type) => Cart, (t) => t.CartItems)
     @JoinColumn({ name: "CartID" })
-    Cart?: Cart
+    Cart?: Cart;
 }

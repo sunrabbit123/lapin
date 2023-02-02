@@ -1,24 +1,24 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../utils/test-utils"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { expect } from "chai"
-import { Post } from "./entity/Post"
+} from "../../utils/test-utils";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { expect } from "chai";
+import { Post } from "./entity/Post";
 
 describe("github issues > #2128 skip preparePersistentValue for value functions", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
                 enabledDrivers: ["postgres", "mysql"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should be able to resolve value functions", () =>
         Promise.all(
@@ -33,11 +33,11 @@ describe("github issues > #2128 skip preparePersistentValue for value functions"
                             keywords: ["important", "fresh"],
                         },
                     })
-                    .execute()
+                    .execute();
 
                 const metaAddition = JSON.stringify({
                     author: "John Doe",
-                })
+                });
 
                 await connection
                     .createQueryBuilder()
@@ -51,16 +51,16 @@ describe("github issues > #2128 skip preparePersistentValue for value functions"
                     .where("title = :title", {
                         title: "First Post",
                     })
-                    .execute()
+                    .execute();
 
                 const loadedPost = await connection
                     .getRepository(Post)
-                    .findOneBy({ title: "First Post" })
+                    .findOneBy({ title: "First Post" });
 
                 expect(loadedPost!.meta).to.deep.equal({
                     author: "John Doe",
                     keywords: ["important", "fresh"],
-                })
+                });
             }),
-        ))
-})
+        ));
+});

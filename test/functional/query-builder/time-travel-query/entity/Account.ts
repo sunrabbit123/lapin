@@ -2,16 +2,16 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index"
+} from "../../../../../src/index";
 
 @Entity()
 export class Account {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    balance: number
+    balance: number;
 }

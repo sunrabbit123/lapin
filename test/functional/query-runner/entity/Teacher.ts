@@ -3,17 +3,17 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Student } from "./Student"
+} from "../../../../src";
+import { Student } from "./Student";
 
 @Entity()
 export class Teacher {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany((type) => Student, (student) => student.teacher)
-    students: Student[]
+    students: Student[];
 }

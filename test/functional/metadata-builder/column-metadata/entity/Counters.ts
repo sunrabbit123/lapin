@@ -1,19 +1,19 @@
-import { Column } from "../../../../../src/decorator/columns/Column"
-import { Subcounters } from "./Subcounters"
+import { Column } from "../../../../../src/decorator/columns/Column";
+import { Subcounters } from "./Subcounters";
 
 export class Counters {
     @Column()
-    code: number
+    code: number;
 
     @Column()
-    likes: number
+    likes: number;
 
     @Column()
-    comments: number
+    comments: number;
 
     @Column()
-    favorites: number
+    favorites: number;
 
     @Column(() => Subcounters, { prefix: "sub" })
-    subcounters: Subcounters
+    subcounters: Subcounters;
 }

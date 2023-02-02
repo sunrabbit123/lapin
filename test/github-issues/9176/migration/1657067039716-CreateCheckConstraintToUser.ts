@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableCheck } from "../../../../src"
+import { MigrationInterface, QueryRunner, TableCheck } from "../../../../src";
 
 export class CreateCheckConstraintToUser1657067039716
     implements MigrationInterface
@@ -9,7 +9,7 @@ export class CreateCheckConstraintToUser1657067039716
             new TableCheck({
                 expression: `"age" > 18`,
             }),
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -18,6 +18,6 @@ export class CreateCheckConstraintToUser1657067039716
             new TableCheck({
                 expression: `"age" > 18`,
             }),
-        )
+        );
     }
 }

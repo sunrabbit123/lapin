@@ -3,23 +3,23 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     ValueTransformer,
-} from "../../../../../src"
-import { encrypt, lowercase } from "./User"
+} from "../../../../../src";
+import { encrypt, lowercase } from "./User";
 
 const trim: ValueTransformer = {
     to: (entityValue: string) => {
-        return entityValue.trim()
+        return entityValue.trim();
     },
     from: (databaseValue: string) => {
-        return databaseValue
+        return databaseValue;
     },
-}
+};
 
 @Entity()
 export class Category {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id: string;
 
     @Column({ transformer: [lowercase, trim, encrypt] })
-    description: string
+    description: string;
 }

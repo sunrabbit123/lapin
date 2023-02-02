@@ -5,7 +5,7 @@ import {
     Exclusion,
     PrimaryColumn,
     Unique,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 @Unique(["text", "tag"])
@@ -14,17 +14,17 @@ import {
 // @Check(`\`version\` < 999`) // should be properly escaped for each driver.
 export class Post {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ unique: true })
-    version: number
+    version: number;
 
     @Column({ default: "My post" })
-    name: string
+    name: string;
 
     @Column()
-    text: string
+    text: string;
 
     @Column()
-    tag: string
+    tag: string;
 }

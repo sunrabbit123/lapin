@@ -1,49 +1,49 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { DataSource } from "../../../../src/data-source/DataSource"
-import { User } from "./entity/User"
-import { LimitOnUpdateNotSupportedError } from "../../../../src/error/LimitOnUpdateNotSupportedError"
-import { Photo } from "./entity/Photo"
-import { UpdateValuesMissingError } from "../../../../src/error/UpdateValuesMissingError"
-import { EntityPropertyNotFoundError } from "../../../../src/error/EntityPropertyNotFoundError"
-import { DriverUtils } from "../../../../src/driver/DriverUtils"
+} from "../../../utils/test-utils";
+import { DataSource } from "../../../../src/data-source/DataSource";
+import { User } from "./entity/User";
+import { LimitOnUpdateNotSupportedError } from "../../../../src/error/LimitOnUpdateNotSupportedError";
+import { Photo } from "./entity/Photo";
+import { UpdateValuesMissingError } from "../../../../src/error/UpdateValuesMissingError";
+import { EntityPropertyNotFoundError } from "../../../../src/error/EntityPropertyNotFoundError";
+import { DriverUtils } from "../../../../src/driver/DriverUtils";
 
 describe("query builder > update", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [__dirname + "/entity/*{.js,.ts}"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should perform updation correctly", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
                 await connection
                     .createQueryBuilder()
                     .update(User)
                     .set({ name: "Dima Zotov" })
                     .where("name = :name", { name: "Alex Messer" })
-                    .execute()
+                    .execute();
 
                 const loadedUser1 = await connection
                     .getRepository(User)
-                    .findOneBy({ name: "Dima Zotov" })
-                expect(loadedUser1).to.exist
-                loadedUser1!.name.should.be.equal("Dima Zotov")
+                    .findOneBy({ name: "Dima Zotov" });
+                expect(loadedUser1).to.exist;
+                loadedUser1!.name.should.be.equal("Dima Zotov");
 
                 await connection
                     .getRepository(User)
@@ -51,23 +51,23 @@ describe("query builder > update", () => {
                     .update()
                     .set({ name: "Muhammad Mirzoev" })
                     .where("name = :name", { name: "Dima Zotov" })
-                    .execute()
+                    .execute();
 
                 const loadedUser2 = await connection
                     .getRepository(User)
-                    .findOneBy({ name: "Muhammad Mirzoev" })
-                expect(loadedUser2).to.exist
-                loadedUser2!.name.should.be.equal("Muhammad Mirzoev")
+                    .findOneBy({ name: "Muhammad Mirzoev" });
+                expect(loadedUser2).to.exist;
+                loadedUser2!.name.should.be.equal("Muhammad Mirzoev");
             }),
-        ))
+        ));
 
     it("should be able to use sql functions", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
                 await connection
                     .createQueryBuilder()
@@ -81,40 +81,40 @@ describe("query builder > update", () => {
                     .where("name = :name", {
                         name: "Alex Messer",
                     })
-                    .execute()
+                    .execute();
 
                 const loadedUser1 = await connection
                     .getRepository(User)
-                    .findOneBy({ name: "Dima" })
-                expect(loadedUser1).to.exist
-                loadedUser1!.name.should.be.equal("Dima")
+                    .findOneBy({ name: "Dima" });
+                expect(loadedUser1).to.exist;
+                loadedUser1!.name.should.be.equal("Dima");
             }),
-        ))
+        ));
 
     it("should update and escape properly", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Dima"
-                user.likesCount = 1
+                const user = new User();
+                user.name = "Dima";
+                user.likesCount = 1;
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
-                const qb = connection.createQueryBuilder()
+                const qb = connection.createQueryBuilder();
                 await qb
                     .update(User)
                     .set({ likesCount: () => qb.escape(`likesCount`) + " + 1" })
                     // .set({ likesCount: 2 })
                     .where("likesCount = 1")
-                    .execute()
+                    .execute();
 
                 const loadedUser1 = await connection
                     .getRepository(User)
-                    .findOneBy({ likesCount: 2 })
-                expect(loadedUser1).to.exist
-                loadedUser1!.name.should.be.equal("Dima")
+                    .findOneBy({ likesCount: 2 });
+                expect(loadedUser1).to.exist;
+                loadedUser1!.name.should.be.equal("Dima");
             }),
-        ))
+        ));
 
     it("should update properties inside embeds as well", () =>
         Promise.all(
@@ -127,7 +127,7 @@ describe("query builder > update", () => {
                         favorites: 1,
                         comments: 1,
                     },
-                })
+                });
                 await connection.manager.save(Photo, {
                     url: "2.jpg",
                     counters: {
@@ -135,7 +135,7 @@ describe("query builder > update", () => {
                         favorites: 1,
                         comments: 1,
                     },
-                })
+                });
 
                 // update photo now
                 await connection
@@ -152,12 +152,12 @@ describe("query builder > update", () => {
                             likes: 2,
                         },
                     })
-                    .execute()
+                    .execute();
 
                 const loadedPhoto1 = await connection
                     .getRepository(Photo)
-                    .findOneBy({ url: "1.jpg" })
-                expect(loadedPhoto1).to.exist
+                    .findOneBy({ url: "1.jpg" });
+                expect(loadedPhoto1).to.exist;
                 loadedPhoto1!.should.be.eql({
                     id: 1,
                     url: "1.jpg",
@@ -166,12 +166,12 @@ describe("query builder > update", () => {
                         favorites: 1,
                         comments: 1,
                     },
-                })
+                });
 
                 const loadedPhoto2 = await connection
                     .getRepository(Photo)
-                    .findOneBy({ url: "2.jpg" })
-                expect(loadedPhoto2).to.exist
+                    .findOneBy({ url: "2.jpg" });
+                expect(loadedPhoto2).to.exist;
                 loadedPhoto2!.should.be.eql({
                     id: 2,
                     url: "2.jpg",
@@ -180,24 +180,24 @@ describe("query builder > update", () => {
                         favorites: 1,
                         comments: 1,
                     },
-                })
+                });
             }),
-        ))
+        ));
 
     it("should perform update with limit correctly", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user1 = new User()
-                user1.name = "Alex Messer"
-                const user2 = new User()
-                user2.name = "Muhammad Mirzoev"
-                const user3 = new User()
-                user3.name = "Brad Porter"
+                const user1 = new User();
+                user1.name = "Alex Messer";
+                const user2 = new User();
+                user2.name = "Muhammad Mirzoev";
+                const user3 = new User();
+                user3.name = "Brad Porter";
 
-                await connection.manager.save([user1, user2, user3])
+                await connection.manager.save([user1, user2, user3]);
 
-                const limitNum = 2
-                const nameToFind = "Dima Zotov"
+                const limitNum = 2;
+                const nameToFind = "Dima Zotov";
 
                 if (DriverUtils.isMySQLFamily(connection.driver)) {
                     await connection
@@ -205,13 +205,13 @@ describe("query builder > update", () => {
                         .update(User)
                         .set({ name: nameToFind })
                         .limit(limitNum)
-                        .execute()
+                        .execute();
 
                     const loadedUsers = await connection
                         .getRepository(User)
-                        .findBy({ name: nameToFind })
-                    expect(loadedUsers).to.exist
-                    loadedUsers!.length.should.be.equal(limitNum)
+                        .findBy({ name: nameToFind });
+                    expect(loadedUsers).to.exist;
+                    loadedUsers!.length.should.be.equal(limitNum);
                 } else {
                     await connection
                         .createQueryBuilder()
@@ -219,98 +219,98 @@ describe("query builder > update", () => {
                         .set({ name: nameToFind })
                         .limit(limitNum)
                         .execute()
-                        .should.be.rejectedWith(LimitOnUpdateNotSupportedError)
+                        .should.be.rejectedWith(LimitOnUpdateNotSupportedError);
                 }
             }),
-        ))
+        ));
 
     it("should throw error when update value is missing", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
-                let error: Error | undefined
+                let error: Error | undefined;
                 try {
                     await connection
                         .createQueryBuilder()
                         .update(User)
                         .where("name = :name", { name: "Alex Messer" })
-                        .execute()
+                        .execute();
                 } catch (err) {
-                    error = err
+                    error = err;
                 }
-                expect(error).to.be.an.instanceof(UpdateValuesMissingError)
+                expect(error).to.be.an.instanceof(UpdateValuesMissingError);
             }),
-        ))
+        ));
 
     it("should throw error when update value is missing 2", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
-                let error: Error | undefined
+                let error: Error | undefined;
                 try {
                     await connection
                         .createQueryBuilder(User, "user")
                         .update()
                         .where("name = :name", { name: "Alex Messer" })
-                        .execute()
+                        .execute();
                 } catch (err) {
-                    error = err
+                    error = err;
                 }
-                expect(error).to.be.an.instanceof(UpdateValuesMissingError)
+                expect(error).to.be.an.instanceof(UpdateValuesMissingError);
             }),
-        ))
+        ));
 
     it("should throw error when update property in set method is unknown", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
-                let error: Error | undefined
+                let error: Error | undefined;
                 try {
                     await connection
                         .createQueryBuilder()
                         .update(User)
                         .set({ unknownProp: true } as any)
                         .where("name = :name", { name: "Alex Messer" })
-                        .execute()
+                        .execute();
                 } catch (err) {
-                    error = err
+                    error = err;
                 }
-                expect(error).to.be.an.instanceof(EntityPropertyNotFoundError)
+                expect(error).to.be.an.instanceof(EntityPropertyNotFoundError);
             }),
-        ))
+        ));
 
     it("should throw error when unknown property in where criteria", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const user = new User()
-                user.name = "Alex Messer"
+                const user = new User();
+                user.name = "Alex Messer";
 
-                await connection.manager.save(user)
+                await connection.manager.save(user);
 
-                let error: Error | undefined
+                let error: Error | undefined;
                 try {
                     await connection
                         .createQueryBuilder()
                         .update(User)
                         .set({ name: "John Doe" } as any)
                         .where({ unknownProp: "Alex Messer" })
-                        .execute()
+                        .execute();
                 } catch (err) {
-                    error = err
+                    error = err;
                 }
-                expect(error).to.be.an.instanceof(EntityPropertyNotFoundError)
+                expect(error).to.be.an.instanceof(EntityPropertyNotFoundError);
             }),
-        ))
-})
+        ));
+});

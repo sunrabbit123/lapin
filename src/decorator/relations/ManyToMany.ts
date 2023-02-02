@@ -1,8 +1,8 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { RelationMetadataArgs } from "../../metadata-args/RelationMetadataArgs"
-import { ObjectType } from "../../common/ObjectType"
-import { RelationOptions } from "../options/RelationOptions"
-import { ObjectUtils } from "../../util/ObjectUtils"
+import { getMetadataArgsStorage } from "../../globals";
+import { RelationMetadataArgs } from "../../metadata-args/RelationMetadataArgs";
+import { ObjectType } from "../../common/ObjectType";
+import { RelationOptions } from "../options/RelationOptions";
+import { ObjectUtils } from "../../util/ObjectUtils";
 
 /**
  * Many-to-many is a type of relationship when Entity1 can have multiple instances of Entity2, and Entity2 can have
@@ -12,7 +12,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 export function ManyToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     options?: RelationOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * Many-to-many is a type of relationship when Entity1 can have multiple instances of Entity2, and Entity2 can have
@@ -23,7 +23,7 @@ export function ManyToMany<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide?: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * Many-to-many is a type of relationship when Entity1 can have multiple instances of Entity2, and Entity2 can have
@@ -36,31 +36,31 @@ export function ManyToMany<T>(
     options?: RelationOptions,
 ): PropertyDecorator | Function {
     // normalize parameters
-    let inverseSideProperty: string | ((object: T) => any)
+    let inverseSideProperty: string | ((object: T) => any);
     if (ObjectUtils.isObject(inverseSideOrOptions)) {
-        options = <RelationOptions>inverseSideOrOptions
+        options = <RelationOptions>inverseSideOrOptions;
     } else {
-        inverseSideProperty = inverseSideOrOptions as any
+        inverseSideProperty = inverseSideOrOptions as any;
     }
 
     return function (object: Object, propertyName: string) {
-        if (!options) options = {} as RelationOptions
+        if (!options) options = {} as RelationOptions;
 
         // now try to determine it its lazy relation
-        let isLazy = options.lazy === true
+        let isLazy = options.lazy === true;
         if (!isLazy && Reflect && (Reflect as any).getMetadata) {
             // automatic determination
             const reflectedType = (Reflect as any).getMetadata(
                 "design:type",
                 object,
                 propertyName,
-            )
+            );
             if (
                 reflectedType &&
                 typeof reflectedType.name === "string" &&
                 reflectedType.name.toLowerCase() === "promise"
             )
-                isLazy = true
+                isLazy = true;
         }
 
         getMetadataArgsStorage().relations.push({
@@ -72,6 +72,6 @@ export function ManyToMany<T>(
             type: typeFunctionOrTarget,
             inverseSideProperty: inverseSideProperty,
             options: options,
-        } as RelationMetadataArgs)
-    }
+        } as RelationMetadataArgs);
+    };
 }

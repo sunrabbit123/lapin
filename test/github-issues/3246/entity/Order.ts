@@ -7,23 +7,23 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
-} from "../../../../src"
-import { OrderCustomer } from "./OrderCustomer"
-import { Broker } from "./Broker"
+} from "../../../../src";
+import { OrderCustomer } from "./OrderCustomer";
+import { Broker } from "./Broker";
 
 @Entity()
 export class Order {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "varchar", nullable: true })
-    orderReferenceNumber: string
+    orderReferenceNumber: string;
 
     @ManyToOne(() => Broker, (broker) => broker.orders, {
         cascade: false,
         nullable: false, // starts working when set to true
     })
-    company?: Broker
+    company?: Broker;
 
     @OneToOne(() => OrderCustomer, (orderCustomer) => orderCustomer.order, {
         cascade: ["insert", "update"],
@@ -31,14 +31,14 @@ export class Order {
         nullable: true,
     })
     @JoinColumn({ name: "orderCustomerId" })
-    orderCustomer?: OrderCustomer
+    orderCustomer?: OrderCustomer;
 
     @Column({ type: "int", nullable: true })
-    orderCustomerId?: number
+    orderCustomerId?: number;
 
     @CreateDateColumn()
-    createdDate: Date
+    createdDate: Date;
 
     @UpdateDateColumn()
-    modifiedDate: Date
+    modifiedDate: Date;
 }

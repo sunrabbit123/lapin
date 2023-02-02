@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from "../../../../../src"
+import { Entity, Column, PrimaryColumn } from "../../../../../src";
 
 export enum NumericEnum {
     ADMIN,
@@ -26,60 +26,60 @@ export enum HeterogeneousEnum {
     YES = "YES",
 }
 
-export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost"
+export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost";
 
-export type ArrayDefinedNumericEnumType = 11 | 12 | 13
+export type ArrayDefinedNumericEnumType = 11 | 12 | 13;
 
 @Entity()
 export class SimpleEnumEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({
         type: "simple-enum",
         enum: NumericEnum,
         default: NumericEnum.MODERATOR,
     })
-    numericEnum: NumericEnum
+    numericEnum: NumericEnum;
 
     @Column({
         type: "simple-enum",
         enum: StringEnum,
         default: StringEnum.GHOST,
     })
-    stringEnum: StringEnum
+    stringEnum: StringEnum;
 
     @Column({
         type: "simple-enum",
         enum: StringNumericEnum,
         default: StringNumericEnum.FOUR,
     })
-    stringNumericEnum: StringNumericEnum
+    stringNumericEnum: StringNumericEnum;
 
     @Column({
         type: "simple-enum",
         enum: HeterogeneousEnum,
         default: HeterogeneousEnum.NO,
     })
-    heterogeneousEnum: HeterogeneousEnum
+    heterogeneousEnum: HeterogeneousEnum;
 
     @Column({
         type: "simple-enum",
         enum: ["admin", "editor", "ghost"],
         default: "ghost",
     })
-    arrayDefinedStringEnum: ArrayDefinedStringEnumType
+    arrayDefinedStringEnum: ArrayDefinedStringEnumType;
 
     @Column({
         type: "simple-enum",
         enum: [11, 12, 13],
         default: 12,
     })
-    arrayDefinedNumericEnum: ArrayDefinedNumericEnumType
+    arrayDefinedNumericEnum: ArrayDefinedNumericEnumType;
 
     @Column({
         type: "simple-enum",
         enum: StringEnum,
     })
-    enumWithoutdefault: StringEnum
+    enumWithoutdefault: StringEnum;
 }

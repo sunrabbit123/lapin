@@ -1,9 +1,9 @@
-import { Subject } from "./Subject"
-import { DateUtils } from "../util/DateUtils"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { OrmUtils } from "../util/OrmUtils"
-import { ApplyValueTransformers } from "../util/ApplyValueTransformers"
-import { ObjectUtils } from "../util/ObjectUtils"
+import { Subject } from "./Subject";
+import { DateUtils } from "../util/DateUtils";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { OrmUtils } from "../util/OrmUtils";
+import { ApplyValueTransformers } from "../util/ApplyValueTransformers";
+import { ObjectUtils } from "../util/ObjectUtils";
 
 /**
  * Finds what columns are changed in the subject entities.
@@ -18,9 +18,9 @@ export class SubjectChangedColumnsComputer {
      */
     compute(subjects: Subject[]) {
         subjects.forEach((subject) => {
-            this.computeDiffColumns(subject)
-            this.computeDiffRelationalColumns(subjects, subject)
-        })
+            this.computeDiffColumns(subject);
+            this.computeDiffRelationalColumns(subjects, subject);
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -32,7 +32,7 @@ export class SubjectChangedColumnsComputer {
      */
     protected computeDiffColumns(subject: Subject): void {
         // if there is no persisted entity then nothing to compute changed in it
-        if (!subject.entity) return
+        if (!subject.entity) return;
 
         subject.metadata.columns.forEach((column) => {
             // ignore special columns
@@ -43,59 +43,59 @@ export class SubjectChangedColumnsComputer {
                 // column.isVersion ||
                 // column.isCreateDate
             )
-                return
+                return;
 
             const changeMap = subject.changeMaps.find(
                 (changeMap) => changeMap.column === column,
-            )
+            );
             if (changeMap) {
                 subject.changeMaps.splice(
                     subject.changeMaps.indexOf(changeMap),
                     1,
-                )
+                );
             }
 
             // get user provided value - column value from the user provided persisted entity
-            const entityValue = column.getEntityValue(subject.entity!)
+            const entityValue = column.getEntityValue(subject.entity!);
 
             // we don't perform operation over undefined properties (but we DO need null properties!)
-            if (entityValue === undefined) return
+            if (entityValue === undefined) return;
 
             // if there is no database entity then all columns are treated as new, e.g. changed
             if (subject.databaseEntity) {
                 // skip transform database value for json / jsonb for comparison later on
                 const shouldTransformDatabaseEntity =
-                    column.type !== "json" && column.type !== "jsonb"
+                    column.type !== "json" && column.type !== "jsonb";
 
                 // get database value of the column
                 let databaseValue = column.getEntityValue(
                     subject.databaseEntity,
                     shouldTransformDatabaseEntity,
-                )
+                );
 
                 // filter out "relational columns" only in the case if there is a relation object in entity
                 if (column.relationMetadata) {
                     const value = column.relationMetadata.getEntityValue(
                         subject.entity!,
-                    )
-                    if (value !== null && value !== undefined) return
+                    );
+                    if (value !== null && value !== undefined) return;
                 }
-                let normalizedValue = entityValue
+                let normalizedValue = entityValue;
                 // normalize special values to make proper comparision
                 if (entityValue !== null) {
                     switch (column.type) {
                         case "date":
                             normalizedValue =
-                                DateUtils.mixedDateToDateString(entityValue)
-                            break
+                                DateUtils.mixedDateToDateString(entityValue);
+                            break;
 
                         case "time":
                         case "time with time zone":
                         case "time without time zone":
                         case "timetz":
                             normalizedValue =
-                                DateUtils.mixedDateToTimeString(entityValue)
-                            break
+                                DateUtils.mixedDateToTimeString(entityValue);
+                            break;
 
                         case "datetime":
                         case "datetime2":
@@ -108,12 +108,12 @@ export class SubjectChangedColumnsComputer {
                             normalizedValue =
                                 DateUtils.mixedDateToUtcDatetimeString(
                                     entityValue,
-                                )
+                                );
                             databaseValue =
                                 DateUtils.mixedDateToUtcDatetimeString(
                                     databaseValue,
-                                )
-                            break
+                                );
+                            break;
 
                         case "json":
                         case "jsonb":
@@ -123,34 +123,34 @@ export class SubjectChangedColumnsComputer {
                             if (
                                 OrmUtils.deepCompare(entityValue, databaseValue)
                             )
-                                return
-                            break
+                                return;
+                            break;
 
                         case "simple-array":
                             normalizedValue =
-                                DateUtils.simpleArrayToString(entityValue)
+                                DateUtils.simpleArrayToString(entityValue);
                             databaseValue =
-                                DateUtils.simpleArrayToString(databaseValue)
-                            break
+                                DateUtils.simpleArrayToString(databaseValue);
+                            break;
                         case "simple-enum":
                             normalizedValue =
-                                DateUtils.simpleEnumToString(entityValue)
+                                DateUtils.simpleEnumToString(entityValue);
                             databaseValue =
-                                DateUtils.simpleEnumToString(databaseValue)
-                            break
+                                DateUtils.simpleEnumToString(databaseValue);
+                            break;
                         case "simple-json":
                             normalizedValue =
-                                DateUtils.simpleJsonToString(entityValue)
+                                DateUtils.simpleJsonToString(entityValue);
                             databaseValue =
-                                DateUtils.simpleJsonToString(databaseValue)
-                            break
+                                DateUtils.simpleJsonToString(databaseValue);
+                            break;
                     }
 
                     if (column.transformer) {
                         normalizedValue = ApplyValueTransformers.transformTo(
                             column.transformer,
                             entityValue,
-                        )
+                        );
                     }
                 }
 
@@ -160,18 +160,18 @@ export class SubjectChangedColumnsComputer {
                     Buffer.isBuffer(databaseValue)
                 ) {
                     if (normalizedValue.equals(databaseValue)) {
-                        return
+                        return;
                     }
                 } else {
-                    if (normalizedValue === databaseValue) return
+                    if (normalizedValue === databaseValue) return;
                 }
             }
-            subject.diffColumns.push(column)
+            subject.diffColumns.push(column);
             subject.changeMaps.push({
                 column: column,
                 value: entityValue,
-            })
-        })
+            });
+        });
     }
 
     /**
@@ -182,14 +182,14 @@ export class SubjectChangedColumnsComputer {
         subject: Subject,
     ): void {
         // if there is no persisted entity then nothing to compute changed in it
-        if (!subject.entity) return
+        if (!subject.entity) return;
 
         subject.metadata.relationsWithJoinColumns.forEach((relation) => {
             // get the related entity from the persisted entity
-            let relatedEntity = relation.getEntityValue(subject.entity!)
+            let relatedEntity = relation.getEntityValue(subject.entity!);
 
             // we don't perform operation over undefined properties (but we DO need null properties!)
-            if (relatedEntity === undefined) return
+            if (relatedEntity === undefined) return;
 
             // if there is no database entity then all relational columns are treated as new, e.g. changed
             if (subject.databaseEntity) {
@@ -198,29 +198,29 @@ export class SubjectChangedColumnsComputer {
                 // 2. related entity can be just an entity id
                 // if relation entity is just a relation id set (for example post.tag = 1)
                 // then we create an id map from it to make a proper comparision
-                let relatedEntityRelationIdMap: ObjectLiteral = relatedEntity
+                let relatedEntityRelationIdMap: ObjectLiteral = relatedEntity;
                 if (
                     relatedEntityRelationIdMap !== null &&
                     ObjectUtils.isObject(relatedEntityRelationIdMap)
                 )
                     relatedEntityRelationIdMap = relation.getRelationIdMap(
                         relatedEntityRelationIdMap,
-                    )!
+                    )!;
 
                 // get database related entity. Since loadRelationIds are used on databaseEntity
                 // related entity will contain only its relation ids
                 const databaseRelatedEntityRelationIdMap =
-                    relation.getEntityValue(subject.databaseEntity)
+                    relation.getEntityValue(subject.databaseEntity);
 
                 // if relation ids are equal then we don't need to update anything
                 const areRelatedIdsEqual = OrmUtils.compareIds(
                     relatedEntityRelationIdMap,
                     databaseRelatedEntityRelationIdMap,
-                )
+                );
                 if (areRelatedIdsEqual) {
-                    return
+                    return;
                 } else {
-                    subject.diffRelations.push(relation)
+                    subject.diffRelations.push(relation);
                 }
             }
 
@@ -229,23 +229,23 @@ export class SubjectChangedColumnsComputer {
             const valueSubject = allSubjects.find(
                 (subject) =>
                     subject.mustBeInserted && subject.entity === relatedEntity,
-            )
-            if (valueSubject) relatedEntity = valueSubject
+            );
+            if (valueSubject) relatedEntity = valueSubject;
 
             // find if there is already a relation to be changed
             const changeMap = subject.changeMaps.find(
                 (changeMap) => changeMap.relation === relation,
-            )
+            );
             if (changeMap) {
                 // and update its value if it was found
-                changeMap.value = relatedEntity
+                changeMap.value = relatedEntity;
             } else {
                 // if it wasn't found add a new relation for change
                 subject.changeMaps.push({
                     relation: relation,
                     value: relatedEntity,
-                })
+                });
             }
-        })
+        });
     }
 }

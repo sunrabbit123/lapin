@@ -3,7 +3,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     TableInheritance,
-} from "../../../../src"
+} from "../../../../src";
 
 export enum ContentType {
     Photo = "photo",
@@ -18,11 +18,11 @@ export enum ContentType {
 })
 export class Content {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    description: string
+    description: string;
 }

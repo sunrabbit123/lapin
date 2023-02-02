@@ -3,20 +3,20 @@ import {
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
-} from "../../../../src"
-import { SuperLongTableNameWhichIsRelatedToOriginalTable } from "./SuperLongTableNameIsRelatedToOriginal"
+} from "../../../../src";
+import { SuperLongTableNameWhichIsRelatedToOriginalTable } from "./SuperLongTableNameIsRelatedToOriginal";
 
 @Entity()
 export class SuperLongTableName {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToMany(
         () => SuperLongTableNameWhichIsRelatedToOriginalTable,
         (table) => table.superLongTableName,
     )
-    relatedToOriginal: SuperLongTableNameWhichIsRelatedToOriginalTable[]
+    relatedToOriginal: SuperLongTableNameWhichIsRelatedToOriginalTable[];
 }

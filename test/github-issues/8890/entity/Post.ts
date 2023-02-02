@@ -3,22 +3,22 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Author } from "./Author"
+} from "../../../../src";
+import { Author } from "./Author";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    text: string
+    text: string;
 
     @ManyToOne(() => Author, (author) => author.posts, {
         nullable: true,
     })
-    author: Author | null
+    author: Author | null;
 }

@@ -6,15 +6,15 @@ import {
     ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../../../src"
-import { Category } from "./Category"
-import { Breed } from "./Breed"
-import { Name } from "./Name"
+} from "../../../../../../src";
+import { Category } from "./Category";
+import { Breed } from "./Breed";
+import { Name } from "./Name";
 
 @Entity()
 export class Animal {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @ManyToMany(() => Category)
     @JoinTable({
@@ -30,7 +30,7 @@ export class Animal {
             foreignKeyConstraintName: "fk_animal_category_animalId",
         },
     })
-    categories: Category[]
+    categories: Category[];
 
     @ManyToOne(() => Breed)
     @JoinColumn({
@@ -38,7 +38,7 @@ export class Animal {
         referencedColumnName: "id",
         foreignKeyConstraintName: "fk_animal_breedId",
     })
-    breed: Breed
+    breed: Breed;
 
     @OneToOne(() => Name)
     @JoinColumn({
@@ -46,5 +46,5 @@ export class Animal {
         referencedColumnName: "id",
         foreignKeyConstraintName: "fk_animal_nameId",
     })
-    name: Name
+    name: Name;
 }

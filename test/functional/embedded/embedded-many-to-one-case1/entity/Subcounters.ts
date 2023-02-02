@@ -1,9 +1,9 @@
-import { Column } from "../../../../../src/decorator/columns/Column"
+import { Column } from "../../../../../src/decorator/columns/Column";
 
 export class Subcounters {
     @Column()
-    version: number
+    version: number;
 
     @Column()
-    watches: number
+    watches: number;
 }

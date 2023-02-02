@@ -1,10 +1,10 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src"
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Category extends BaseEntity {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 }

@@ -2,13 +2,13 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index"
+} from "../../../../../src/index";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 }

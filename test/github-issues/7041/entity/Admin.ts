@@ -5,23 +5,23 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryColumn,
-} from "../../../../src"
-import { User } from "./User"
-import { Organization } from "./Organization"
+} from "../../../../src";
+import { User } from "./User";
+import { Organization } from "./Organization";
 
 @Entity()
 export class Admin extends BaseEntity {
     @PrimaryColumn()
-    userId: string
+    userId: string;
 
     @OneToOne(() => User, (user) => user.admin)
     @JoinColumn()
-    user: User
+    user: User;
 
     @OneToOne(() => Organization, (org) => org.admin)
     @JoinColumn()
-    organization: Organization
+    organization: Organization;
 
     @Column()
-    randomField: string
+    randomField: string;
 }

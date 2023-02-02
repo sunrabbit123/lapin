@@ -1,6 +1,6 @@
-import { DefaultNamingStrategy } from "../../../../src/naming-strategy/DefaultNamingStrategy"
-import { NamingStrategyInterface } from "../../../../src/naming-strategy/NamingStrategyInterface"
-import { Table } from "../../../../src"
+import { DefaultNamingStrategy } from "../../../../src/naming-strategy/DefaultNamingStrategy";
+import { NamingStrategyInterface } from "../../../../src/naming-strategy/NamingStrategyInterface";
+import { Table } from "../../../../src";
 
 export class NamingStrategyUnderTest
     extends DefaultNamingStrategy
@@ -13,11 +13,11 @@ export class NamingStrategyUnderTest
         referencedColumnNames?: string[],
     ): string {
         tableOrName =
-            typeof tableOrName === "string" ? tableOrName : tableOrName.name
+            typeof tableOrName === "string" ? tableOrName : tableOrName.name;
 
         return columnNames.reduce(
             (name, column) => `${name}_${column}`,
             `fk_${tableOrName}_${referencedTablePath}`,
-        )
+        );
     }
 }

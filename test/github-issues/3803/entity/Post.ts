@@ -1,9 +1,9 @@
-import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions"
+import { EntitySchemaOptions } from "../../../../src/entity-schema/EntitySchemaOptions";
 
 export class Post {
-    id: number
-    name: string
-    title: string
+    id: number;
+    name: string;
+    title: string;
 }
 
 export const PostSchema: EntitySchemaOptions<Post> = {
@@ -22,4 +22,4 @@ export const PostSchema: EntitySchemaOptions<Post> = {
             type: String,
         },
     },
-}
+};

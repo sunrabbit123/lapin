@@ -4,19 +4,19 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
     VersionColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @VersionColumn()
-    version: number
+    version: number;
 
     @CreateDateColumn({ type: "timestamp" })
-    createdAt: Date
+    createdAt: Date;
 
     @UpdateDateColumn({ type: "timestamp" })
-    updatedAt: Date
+    updatedAt: Date;
 }

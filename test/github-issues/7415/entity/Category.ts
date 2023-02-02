@@ -1,20 +1,26 @@
-import { Column, Entity, Tree, TreeChildren, TreeParent } from "../../../../src"
-import { Slug } from "./Slug"
+import {
+    Column,
+    Entity,
+    Tree,
+    TreeChildren,
+    TreeParent,
+} from "../../../../src";
+import { Slug } from "./Slug";
 
 @Entity()
 @Tree("materialized-path")
 export class Category {
     @Column((type) => Slug, { prefix: false })
-    id: Slug
+    id: Slug;
 
     @TreeChildren()
-    children: Category[]
+    children: Category[];
 
     @TreeParent()
-    parent: Category
+    parent: Category;
 
     constructor(slug: string, parent?: Category) {
-        this.id = new Slug(slug)
-        if (parent) this.parent = parent
+        this.id = new Slug(slug);
+        if (parent) this.parent = parent;
     }
 }

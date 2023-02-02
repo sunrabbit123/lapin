@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "../../../../src"
+import {
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+    Unique,
+} from "../../../../src";
 
 @Entity()
 @Unique(["age"])
@@ -6,14 +11,14 @@ import { Column, Entity, PrimaryGeneratedColumn, Unique } from "../../../../src"
 @Unique("unique-email-nickname", ["email", "nickname"])
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    email: string
+    email: string;
 
     @Column()
-    nickname: string
+    nickname: string;
 
     @Column()
-    age: number
+    age: number;
 }

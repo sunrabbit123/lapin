@@ -1,5 +1,5 @@
-import { EntitySchema } from "../../../../../src"
-import { Post } from "../model/Post"
+import { EntitySchema } from "../../../../../src";
+import { Post } from "../model/Post";
 
 export const PostEntity = new EntitySchema<Post>({
     name: "post",
@@ -17,4 +17,4 @@ export const PostEntity = new EntitySchema<Post>({
             type: String,
         },
     },
-})
+});

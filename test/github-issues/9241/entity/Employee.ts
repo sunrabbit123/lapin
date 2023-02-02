@@ -1,9 +1,9 @@
-import { Column, ChildEntity } from "../../../../src"
+import { Column, ChildEntity } from "../../../../src";
 
-import { User } from "./User"
+import { User } from "./User";
 
 @ChildEntity()
 export class Employee extends User {
     @Column()
-    salary: number
+    salary: number;
 }

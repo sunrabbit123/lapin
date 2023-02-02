@@ -4,8 +4,8 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Parent } from "./Parent"
+} from "../../../../src";
+import { Parent } from "./Parent";
 
 @Entity("test_child")
 export class Child {
@@ -13,28 +13,28 @@ export class Child {
         name: "id",
         type: "int",
     })
-    public id: number
+    public id: number;
 
     @Column({
         name: "parent_id",
         type: "int",
     })
-    public parentId: number
+    public parentId: number;
 
     @ManyToOne((type) => Parent, (parent) => parent.children)
     @JoinColumn({
         name: "parent_id",
         referencedColumnName: "id",
     })
-    public parent: Parent
+    public parent: Parent;
 
     @Column({
         name: "data",
         type: "int",
     })
-    public data: number
+    public data: number;
 
     constructor(_data: number) {
-        this.data = _data
+        this.data = _data;
     }
 }

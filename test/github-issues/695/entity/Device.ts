@@ -1,6 +1,6 @@
-import { Entity } from "../../../../src/decorator/entity/Entity"
-import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn"
-import { Column } from "../../../../src/decorator/columns/Column"
+import { Entity } from "../../../../src/decorator/entity/Entity";
+import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
+import { Column } from "../../../../src/decorator/columns/Column";
 
 @Entity("devices")
 export class Device {
@@ -9,7 +9,7 @@ export class Device {
         type: "char",
         length: "12",
     })
-    id: string
+    id: string;
 
     @Column({
         name: "registration_token",
@@ -17,5 +17,5 @@ export class Device {
         precision: 6,
         scale: 0,
     })
-    registrationToken: string
+    registrationToken: string;
 }

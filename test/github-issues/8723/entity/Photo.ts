@@ -4,18 +4,18 @@ import {
     OneToOne,
     JoinColumn,
     PrimaryColumn,
-} from "../../../../src"
-import { User } from "./User"
+} from "../../../../src";
+import { User } from "./User";
 
 @Entity()
 export class Photo {
     @PrimaryColumn({ nullable: false })
-    id: number
+    id: number;
 
     @OneToOne(() => User, { nullable: true })
     @JoinColumn({ name: "user_id" })
-    public user?: User
+    public user?: User;
 
     @Column({ name: "user_id", nullable: true })
-    public userId?: number
+    public userId?: number;
 }

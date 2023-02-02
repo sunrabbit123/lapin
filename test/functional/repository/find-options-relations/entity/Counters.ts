@@ -1,14 +1,14 @@
-import { Column } from "../../../../../src/decorator/columns/Column"
-import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne"
-import { User } from "./User"
+import { Column } from "../../../../../src/decorator/columns/Column";
+import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
+import { User } from "./User";
 
 export class Counters {
     @Column()
-    stars: number
+    stars: number;
 
     @Column()
-    commentCount: number
+    commentCount: number;
 
     @ManyToOne((type) => User)
-    author: User
+    author: User;
 }

@@ -1,10 +1,10 @@
-import { Name, NameEntitySchema } from "./Name"
-import { EntitySchema } from "../../../../../../src"
+import { Name, NameEntitySchema } from "./Name";
+import { EntitySchema } from "../../../../../../src";
 
 export interface User {
-    id: string
-    name: Name
-    isActive: boolean
+    id: string;
+    name: Name;
+    isActive: boolean;
 }
 
 export const UserEntitySchema = new EntitySchema<User>({
@@ -25,4 +25,4 @@ export const UserEntitySchema = new EntitySchema<User>({
             prefix: "name_",
         },
     },
-})
+});

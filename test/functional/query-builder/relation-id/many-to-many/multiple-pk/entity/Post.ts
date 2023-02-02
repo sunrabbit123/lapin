@@ -1,31 +1,31 @@
-import { ManyToMany } from "../../../../../../../src/decorator/relations/ManyToMany"
-import { Entity } from "../../../../../../../src/decorator/entity/Entity"
-import { Column } from "../../../../../../../src/decorator/columns/Column"
-import { JoinTable } from "../../../../../../../src/decorator/relations/JoinTable"
-import { PrimaryColumn } from "../../../../../../../src/decorator/columns/PrimaryColumn"
-import { Category } from "./Category"
+import { ManyToMany } from "../../../../../../../src/decorator/relations/ManyToMany";
+import { Entity } from "../../../../../../../src/decorator/entity/Entity";
+import { Column } from "../../../../../../../src/decorator/columns/Column";
+import { JoinTable } from "../../../../../../../src/decorator/relations/JoinTable";
+import { PrimaryColumn } from "../../../../../../../src/decorator/columns/PrimaryColumn";
+import { Category } from "./Category";
 
 @Entity()
 export class Post {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @PrimaryColumn()
-    authorId: number
+    authorId: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    isRemoved: boolean = false
+    isRemoved: boolean = false;
 
     @ManyToMany((type) => Category, (category) => category.posts)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 
     @ManyToMany((type) => Category)
     @JoinTable()
-    subcategories: Category[]
+    subcategories: Category[];
 
-    categoryIds: number[]
+    categoryIds: number[];
 }

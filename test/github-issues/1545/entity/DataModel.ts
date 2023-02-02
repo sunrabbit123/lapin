@@ -4,17 +4,17 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryColumn,
-} from "../../../../src/index"
-import { MainModel } from "./MainModel"
-import { ValidationModel } from "./ValidationModel"
+} from "../../../../src/index";
+import { MainModel } from "./MainModel";
+import { ValidationModel } from "./ValidationModel";
 
 @Entity()
 export class DataModel {
     @PrimaryColumn()
-    validation: number
+    validation: number;
 
     @PrimaryColumn()
-    mainId: number
+    mainId: number;
 
     @ManyToOne(
         (type) => ValidationModel,
@@ -25,18 +25,18 @@ export class DataModel {
         name: "validation",
         referencedColumnName: "validation",
     })
-    validations: ValidationModel
+    validations: ValidationModel;
 
     @ManyToOne((type) => MainModel, (main) => main.dataModel)
     @JoinColumn({
         name: "mainId",
         referencedColumnName: "id",
     })
-    main: MainModel
+    main: MainModel;
 
     @Column({
         type: "boolean",
         default: false,
     })
-    active: boolean
+    active: boolean;
 }

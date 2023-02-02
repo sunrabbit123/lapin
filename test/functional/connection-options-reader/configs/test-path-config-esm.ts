@@ -4,4 +4,4 @@ export default [
         name: "file",
         database: "test-js-esm",
     },
-]
+];

@@ -1,19 +1,19 @@
-import { Entity } from "../../../../../../../src/decorator/entity/Entity"
-import { Column } from "../../../../../../../src/decorator/columns/Column"
-import { OneToOne } from "../../../../../../../src/decorator/relations/OneToOne"
-import { Category } from "./Category"
-import { PrimaryColumn } from "../../../../../../../src"
+import { Entity } from "../../../../../../../src/decorator/entity/Entity";
+import { Column } from "../../../../../../../src/decorator/columns/Column";
+import { OneToOne } from "../../../../../../../src/decorator/relations/OneToOne";
+import { Category } from "./Category";
+import { PrimaryColumn } from "../../../../../../../src";
 
 @Entity()
 export class Image {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @OneToOne((type) => Category, (category) => category.image)
-    category: Category
+    category: Category;
 
-    categoryId: number
+    categoryId: number;
 }

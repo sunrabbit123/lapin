@@ -4,18 +4,18 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src"
-import { Photo } from "./Photo"
+} from "../../../../src";
+import { Photo } from "./Photo";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @ManyToMany((type) => Photo)
     @JoinTable()
-    photos: Photo[]
+    photos: Photo[];
 }

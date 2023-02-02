@@ -1,12 +1,17 @@
-import { Entity, JoinColumn, OneToOne, PrimaryColumn } from "../../../../../src"
-import { Category } from "./Category"
+import {
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryColumn,
+} from "../../../../../src";
+import { Category } from "./Category";
 
 @Entity()
 export class RelationAsPrimaryKey {
     @OneToOne(() => Category)
     @JoinColumn()
-    category: Category
+    category: Category;
 
     @PrimaryColumn()
-    categoryId: number
+    categoryId: number;
 }

@@ -1,30 +1,30 @@
-import "reflect-metadata"
-import "../../../utils/test-setup"
-import { DataSource } from "../../../../src"
+import "reflect-metadata";
+import "../../../utils/test-setup";
+import { DataSource } from "../../../../src";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { Post } from "./entity/Post"
-import { prepareData } from "./find-options-test-utils"
-import { expect } from "chai"
+} from "../../../utils/test-utils";
+import { Post } from "./entity/Post";
+import { prepareData } from "./find-options-test-utils";
+import { expect } from "chai";
 
 describe("find options > relations", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 __dirname,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("basic relation", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts1 = await connection
                     .createQueryBuilder(Post, "post")
@@ -36,7 +36,7 @@ describe("find options > relations", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts1.should.be.eql([
                     {
                         id: 1,
@@ -86,7 +86,7 @@ describe("find options > relations", () => {
                             lastName: "Saw",
                         },
                     },
-                ])
+                ]);
 
                 const posts2 = await connection
                     .createQueryBuilder(Post, "post")
@@ -96,7 +96,7 @@ describe("find options > relations", () => {
                             id: "asc",
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts2.should.be.eql([
                     {
                         id: 1,
@@ -146,14 +146,14 @@ describe("find options > relations", () => {
                             lastName: "Saw",
                         },
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("complex relation #1", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -178,7 +178,7 @@ describe("find options > relations", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
 
                 posts.should.have.deep.members([
                     {
@@ -264,19 +264,19 @@ describe("find options > relations", () => {
                             ],
                         },
                     },
-                ])
-                expect(posts[0].id).to.be.eql(3)
-                expect(posts[1].id).to.be.oneOf([1, 2, 4])
-                expect(posts[2].id).to.be.oneOf([1, 2, 4])
-                expect(posts[3].id).to.be.oneOf([1, 2, 4])
-                expect(posts[1].id).to.not.be.eql(posts[2].id)
+                ]);
+                expect(posts[0].id).to.be.eql(3);
+                expect(posts[1].id).to.be.oneOf([1, 2, 4]);
+                expect(posts[2].id).to.be.oneOf([1, 2, 4]);
+                expect(posts[3].id).to.be.oneOf([1, 2, 4]);
+                expect(posts[1].id).to.not.be.eql(posts[2].id);
             }),
-        ))
+        ));
 
     it("complex relation #2", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -304,7 +304,7 @@ describe("find options > relations", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -401,14 +401,14 @@ describe("find options > relations", () => {
                         },
                         tags: [],
                     },
-                ])
+                ]);
             }),
-        ))
+        ));
 
     it("relation in embed", () =>
         Promise.all(
             connections.map(async (connection) => {
-                await prepareData(connection.manager)
+                await prepareData(connection.manager);
 
                 const posts = await connection
                     .createQueryBuilder(Post, "post")
@@ -432,7 +432,7 @@ describe("find options > relations", () => {
                             },
                         },
                     })
-                    .getMany()
+                    .getMany();
                 posts.should.be.eql([
                     {
                         id: 1,
@@ -542,7 +542,7 @@ describe("find options > relations", () => {
                             ],
                         },
                     },
-                ])
+                ]);
             }),
-        ))
-})
+        ));
+});

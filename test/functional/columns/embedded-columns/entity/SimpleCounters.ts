@@ -1,16 +1,16 @@
-import { Column } from "../../../../../src/decorator/columns/Column"
-import { Information } from "./Information"
+import { Column } from "../../../../../src/decorator/columns/Column";
+import { Information } from "./Information";
 
 export class SimpleCounters {
     @Column()
-    likes: number
+    likes: number;
 
     @Column()
-    comments: number
+    comments: number;
 
     @Column()
-    favorites: number
+    favorites: number;
 
     @Column((type) => Information, { prefix: "info" })
-    information: Information
+    information: Information;
 }

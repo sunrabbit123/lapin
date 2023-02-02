@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from "../../../../src"
+import { Entity, Column, PrimaryColumn } from "../../../../src";
 
 enum Singleton {
     EMPTY = "",
@@ -7,8 +7,8 @@ enum Singleton {
 @Entity()
 export class Settings {
     @PrimaryColumn()
-    readonly singleton: Singleton = Singleton.EMPTY
+    readonly singleton: Singleton = Singleton.EMPTY;
 
     @Column()
-    value!: string
+    value!: string;
 }

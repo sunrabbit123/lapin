@@ -1,6 +1,6 @@
-import { MigrationInterface } from "../../../../src/migration/MigrationInterface"
-import { QueryRunner } from "../../../../src/query-runner/QueryRunner"
-import { Table } from "../../../../src/schema-builder/table/Table"
+import { MigrationInterface } from "../../../../src/migration/MigrationInterface";
+import { QueryRunner } from "../../../../src/query-runner/QueryRunner";
+import { Table } from "../../../../src/schema-builder/table/Table";
 
 export class CreateUsers0000000000001 implements MigrationInterface {
     public up(queryRunner: QueryRunner): Promise<any> {
@@ -16,10 +16,10 @@ export class CreateUsers0000000000001 implements MigrationInterface {
                     },
                 ],
             }),
-        )
+        );
     }
 
     public down(queryRunner: QueryRunner): Promise<any> {
-        return queryRunner.dropTable("users")
+        return queryRunner.dropTable("users");
     }
 }

@@ -1,15 +1,15 @@
-import "reflect-metadata"
-import { expect } from "chai"
-import { Post } from "./entity/Post"
-import { DataSource } from "../../../src/data-source/DataSource"
-import { createTestingConnections } from "../../utils/test-utils"
+import "reflect-metadata";
+import { expect } from "chai";
+import { Post } from "./entity/Post";
+import { DataSource } from "../../../src/data-source/DataSource";
+import { createTestingConnections } from "../../utils/test-utils";
 
 describe("sqljs driver > autosave", () => {
-    let connections: DataSource[]
-    let saves = 0
+    let connections: DataSource[];
+    let saves = 0;
     const callback = (database: Uint8Array) => {
-        saves++
-    }
+        saves++;
+    };
 
     before(
         async () =>
@@ -22,7 +22,7 @@ describe("sqljs driver > autosave", () => {
                     autoSave: true,
                 },
             })),
-    )
+    );
 
     it("should call autoSaveCallback on insert, update and delete", () =>
         Promise.all(
@@ -34,54 +34,54 @@ describe("sqljs driver > autosave", () => {
                     {
                         title: "third post",
                     },
-                ]
+                ];
 
                 await connection
                     .createQueryBuilder()
                     .insert()
                     .into(Post)
                     .values(posts)
-                    .execute()
+                    .execute();
                 await connection
                     .createQueryBuilder()
                     .update(Post)
                     .set({ title: "Many posts" })
-                    .execute()
+                    .execute();
                 await connection
                     .createQueryBuilder()
                     .delete()
                     .from(Post)
                     .where("title = ?", { title: "third post" })
-                    .execute()
+                    .execute();
 
-                const repository = connection.getRepository(Post)
-                let post = new Post()
-                post.title = "A post"
-                await repository.save(post)
+                const repository = connection.getRepository(Post);
+                let post = new Post();
+                post.title = "A post";
+                await repository.save(post);
 
-                let savedPost = await repository.findOneBy({ title: "A post" })
+                let savedPost = await repository.findOneBy({ title: "A post" });
 
-                expect(savedPost).not.to.be.null
+                expect(savedPost).not.to.be.null;
 
                 if (savedPost) {
-                    savedPost.title = "A updated post"
-                    await repository.save(savedPost)
-                    await repository.remove(savedPost)
+                    savedPost.title = "A updated post";
+                    await repository.save(savedPost);
+                    await repository.remove(savedPost);
                 }
 
-                await connection.close()
+                await connection.close();
 
-                expect(saves).to.be.equal(8)
+                expect(saves).to.be.equal(8);
             }),
-        ))
-})
+        ));
+});
 
 describe("sqljs driver > autosave off", () => {
-    let connections: DataSource[]
-    let saves = 0
+    let connections: DataSource[];
+    let saves = 0;
     const callback = (database: Uint8Array) => {
-        saves++
-    }
+        saves++;
+    };
 
     before(
         async () =>
@@ -94,29 +94,29 @@ describe("sqljs driver > autosave off", () => {
                     autoSave: false,
                 },
             })),
-    )
+    );
 
     it("should not call autoSaveCallback when autoSave is disabled", () =>
         Promise.all(
             connections.map(async (connection) => {
-                const repository = connection.getRepository(Post)
-                let post = new Post()
-                post.title = "A post"
-                await repository.save(post)
+                const repository = connection.getRepository(Post);
+                let post = new Post();
+                post.title = "A post";
+                await repository.save(post);
 
-                let savedPost = await repository.findOneBy({ title: "A post" })
+                let savedPost = await repository.findOneBy({ title: "A post" });
 
-                expect(savedPost).not.to.be.null
+                expect(savedPost).not.to.be.null;
 
                 if (savedPost) {
-                    savedPost.title = "A updated post"
-                    await repository.save(savedPost)
-                    await repository.remove(savedPost)
+                    savedPost.title = "A updated post";
+                    await repository.save(savedPost);
+                    await repository.remove(savedPost);
                 }
 
-                await connection.close()
+                await connection.close();
 
-                expect(saves).to.be.equal(0)
+                expect(saves).to.be.equal(0);
             }),
-        ))
-})
+        ));
+});

@@ -1,16 +1,16 @@
-import "reflect-metadata"
-import { expect } from "chai"
+import "reflect-metadata";
+import { expect } from "chai";
 import {
     createTestingConnections,
     closeTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { Connection } from "../../../../src/connection/Connection"
-import { Foo } from "./entity/foo"
-import { filterByCteCapabilities } from "./helpers"
+} from "../../../utils/test-utils";
+import { Connection } from "../../../../src/connection/Connection";
+import { Foo } from "./entity/foo";
+import { filterByCteCapabilities } from "./helpers";
 
 describe("query builder > cte > simple", () => {
-    let connections: Connection[]
+    let connections: Connection[];
     before(
         async () =>
             (connections = await createTestingConnections({
@@ -18,9 +18,9 @@ describe("query builder > cte > simple", () => {
                 schemaCreate: true,
                 dropSchema: true,
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("show allow select from CTE", () =>
         Promise.all(
@@ -31,13 +31,13 @@ describe("query builder > cte > simple", () => {
                         .getRepository(Foo)
                         .insert(
                             [1, 2, 3].map((i) => ({ id: i, bar: String(i) })),
-                        )
+                        );
                     const cteQuery = connection
                         .createQueryBuilder()
                         .select()
                         .addSelect(`foo.bar`, "bar")
                         .from(Foo, "foo")
-                        .where(`foo.bar = :value`, { value: "2" })
+                        .where(`foo.bar = :value`, { value: "2" });
 
                     // Spanner does not support column names in CTE
                     const cteOptions =
@@ -45,22 +45,22 @@ describe("query builder > cte > simple", () => {
                             ? undefined
                             : {
                                   columnNames: ["raz"],
-                              }
+                              };
                     const cteSelection =
                         connection.driver.options.type === "spanner"
                             ? "qaz.bar"
-                            : "qaz.raz"
+                            : "qaz.raz";
 
                     const qb = await connection
                         .createQueryBuilder()
                         .addCommonTableExpression(cteQuery, "qaz", cteOptions)
                         .from("qaz", "qaz")
                         .select([])
-                        .addSelect(cteSelection, "raz")
+                        .addSelect(cteSelection, "raz");
 
-                    expect(await qb.getRawMany()).to.deep.equal([{ raz: "2" }])
+                    expect(await qb.getRawMany()).to.deep.equal([{ raz: "2" }]);
                 }),
-        ))
+        ));
 
     it("should allow join with CTE", () =>
         Promise.all(
@@ -71,13 +71,13 @@ describe("query builder > cte > simple", () => {
                         .getRepository(Foo)
                         .insert(
                             [1, 2, 3].map((i) => ({ id: i, bar: String(i) })),
-                        )
+                        );
                     const cteQuery = connection
                         .createQueryBuilder()
                         .select()
                         .addSelect("bar", "bar")
                         .from(Foo, "foo")
-                        .where(`foo.bar = '2'`)
+                        .where(`foo.bar = '2'`);
 
                     // Spanner does not support column names in CTE
                     const cteOptions =
@@ -85,32 +85,32 @@ describe("query builder > cte > simple", () => {
                             ? undefined
                             : {
                                   columnNames: ["raz"],
-                              }
+                              };
                     const cteSelection =
                         connection.driver.options.type === "spanner"
                             ? "qaz.bar"
-                            : "qaz.raz"
+                            : "qaz.raz";
 
                     const results = await connection
                         .createQueryBuilder(Foo, "foo")
                         .addCommonTableExpression(cteQuery, "qaz", cteOptions)
                         .innerJoin("qaz", "qaz", `${cteSelection} = foo.bar`)
-                        .getMany()
+                        .getMany();
 
-                    expect(results).to.have.length(1)
+                    expect(results).to.have.length(1);
 
                     expect(results[0]).to.include({
                         bar: "2",
-                    })
+                    });
                 }),
-        ))
+        ));
 
     it("should allow to use INSERT with RETURNING clause in CTE", () =>
         Promise.all(
             connections
                 .filter(filterByCteCapabilities("writable"))
                 .map(async (connection) => {
-                    const bar = Math.random().toString()
+                    const bar = Math.random().toString();
                     const cteQuery = connection
                         .createQueryBuilder()
                         .insert()
@@ -119,22 +119,22 @@ describe("query builder > cte > simple", () => {
                             id: 7,
                             bar,
                         })
-                        .returning(["id", "bar"])
+                        .returning(["id", "bar"]);
 
                     const results = await connection
                         .createQueryBuilder()
                         .select()
                         .addCommonTableExpression(cteQuery, "insert_result")
                         .from("insert_result", "insert_result")
-                        .getRawMany()
+                        .getRawMany();
 
-                    expect(results).to.have.length(1)
+                    expect(results).to.have.length(1);
 
                     expect(results[0]).to.include({
                         bar,
-                    })
+                    });
                 }),
-        ))
+        ));
 
     it("should allow string for CTE", () =>
         Promise.all(
@@ -143,7 +143,7 @@ describe("query builder > cte > simple", () => {
                 .map(async (connection) => {
                     // Spanner does not support column names in CTE
 
-                    let results: { row: any }[] = []
+                    let results: { row: any }[] = [];
                     if (connection.driver.options.type === "spanner") {
                         results = await connection
                             .createQueryBuilder()
@@ -158,7 +158,7 @@ describe("query builder > cte > simple", () => {
                             )
                             .from("cte", "cte")
                             .addSelect("foo", "row")
-                            .getRawMany<{ row: any }>()
+                            .getRawMany<{ row: any }>();
                     } else {
                         results = await connection
                             .createQueryBuilder()
@@ -174,13 +174,13 @@ describe("query builder > cte > simple", () => {
                             )
                             .from("cte", "cte")
                             .addSelect("foo", "row")
-                            .getRawMany<{ row: any }>()
+                            .getRawMany<{ row: any }>();
                     }
 
-                    const [rowWithOne, rowWithTwo] = results
+                    const [rowWithOne, rowWithTwo] = results;
 
-                    expect(String(rowWithOne.row)).to.equal("1")
-                    expect(String(rowWithTwo.row)).to.equal("2")
+                    expect(String(rowWithOne.row)).to.equal("1");
+                    expect(String(rowWithTwo.row)).to.equal("2");
                 }),
-        ))
-})
+        ));
+});

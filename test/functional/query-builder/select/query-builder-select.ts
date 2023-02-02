@@ -1,35 +1,35 @@
-import "../../../utils/test-setup"
+import "../../../utils/test-setup";
 import {
     closeTestingConnections,
     createTestingConnections,
     reloadTestingDatabases,
-} from "../../../utils/test-utils"
-import { expect } from "chai"
+} from "../../../utils/test-utils";
+import { expect } from "chai";
 import {
     DataSource,
     EntityNotFoundError,
     In,
     IsNull,
     Raw,
-} from "../../../../src"
-import { Category } from "./entity/Category"
-import { Post } from "./entity/Post"
-import { Tag } from "./entity/Tag"
-import { HeroImage } from "./entity/HeroImage"
-import { ExternalPost } from "./entity/ExternalPost"
-import { DriverUtils } from "../../../../src/driver/DriverUtils"
+} from "../../../../src";
+import { Category } from "./entity/Category";
+import { Post } from "./entity/Post";
+import { Tag } from "./entity/Tag";
+import { HeroImage } from "./entity/HeroImage";
+import { ExternalPost } from "./entity/ExternalPost";
+import { DriverUtils } from "../../../../src/driver/DriverUtils";
 
 describe("query builder > select", () => {
-    let connections: DataSource[]
+    let connections: DataSource[];
     before(
         async () =>
             (connections = await createTestingConnections({
                 entities: [Category, Post, Tag, HeroImage, ExternalPost],
                 enabledDrivers: ["sqlite"],
             })),
-    )
-    beforeEach(() => reloadTestingDatabases(connections))
-    after(() => closeTestingConnections(connections))
+    );
+    beforeEach(() => reloadTestingDatabases(connections));
+    after(() => closeTestingConnections(connections));
 
     it("should append all entity mapped columns from main selection to select statement", () =>
         Promise.all(
@@ -37,7 +37,7 @@ describe("query builder > select", () => {
                 const sql = connection.manager
                     .createQueryBuilder(Post, "post")
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT post.id AS post_id, " +
@@ -48,9 +48,9 @@ describe("query builder > select", () => {
                         "post.heroImageId AS post_heroImageId, " +
                         "post.categoryId AS post_categoryId " +
                         "FROM post post",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should append all entity mapped columns from main selection to SELECT DISTINCT statement", () =>
         Promise.all(
@@ -59,7 +59,7 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .distinct()
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT DISTINCT post.id AS post_id, " +
@@ -70,9 +70,9 @@ describe("query builder > select", () => {
                         "post.heroImageId AS post_heroImageId, " +
                         "post.categoryId AS post_categoryId " +
                         "FROM post post",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should append all entity mapped columns from both main selection and join selections to select statement", () =>
         Promise.all(
@@ -81,7 +81,7 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .leftJoinAndSelect("category", "category")
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT post.id AS post_id, " +
@@ -96,9 +96,9 @@ describe("query builder > select", () => {
                         "category.description AS category_description, " +
                         "category.version AS category_version " +
                         "FROM post post LEFT JOIN category category",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should append entity mapped columns from both main alias and join aliases to select statement", () =>
         Promise.all(
@@ -109,15 +109,15 @@ describe("query builder > select", () => {
                     .addSelect("category.name")
                     .leftJoin("category", "category")
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT post.id AS post_id, " +
                         "category.name AS category_name " +
                         "FROM post post LEFT JOIN category category",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should append entity mapped columns to select statement, if they passed as array", () =>
         Promise.all(
@@ -126,13 +126,13 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .select(["post.id", "post.title"])
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT post.id AS post_id, post.title AS post_title FROM post post",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should append raw sql to select statement", () =>
         Promise.all(
@@ -141,11 +141,11 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .select("COUNT(*) as cnt")
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
-                expect(sql).to.equal("SELECT COUNT(*) as cnt FROM post post")
+                expect(sql).to.equal("SELECT COUNT(*) as cnt FROM post post");
             }),
-        ))
+        ));
 
     it("should append raw sql and entity mapped column to select statement", () =>
         Promise.all(
@@ -154,13 +154,13 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .select(["COUNT(*) as cnt", "post.title"])
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
                 expect(sql).to.equal(
                     "SELECT post.title AS post_title, COUNT(*) as cnt FROM post post",
-                )
+                );
             }),
-        ))
+        ));
 
     it("should not create alias for selection, which is not entity mapped column", () =>
         Promise.all(
@@ -169,11 +169,11 @@ describe("query builder > select", () => {
                     .createQueryBuilder(Post, "post")
                     .select("post.name")
                     .disableEscaping()
-                    .getSql()
+                    .getSql();
 
-                expect(sql).to.equal("SELECT post.name FROM post post")
+                expect(sql).to.equal("SELECT post.name FROM post post");
             }),
-        ))
+        ));
 
     describe("with relations and where clause", () => {
         describe("many-to-one", () => {
@@ -191,17 +191,17 @@ describe("query builder > select", () => {
                                     name: "Foo",
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "post"."id" AS "post_id" FROM "post" "post" ' +
                                 'LEFT JOIN "category" "category_join" ON "category_join"."id"="post"."categoryId" ' +
                                 'WHERE "category_join"."name" = ?',
-                        )
+                        );
 
-                        expect(params).to.eql(["Foo"])
+                        expect(params).to.eql(["Foo"]);
                     }),
-                ))
+                ));
 
             it("should craft query with FindOperator", () =>
                 Promise.all(
@@ -215,17 +215,17 @@ describe("query builder > select", () => {
                                     name: IsNull(),
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "post"."id" AS "post_id" FROM "post" "post" ' +
                                 'LEFT JOIN "category" "category_join" ON "category_join"."id"="post"."categoryId" ' +
                                 'WHERE "category_join"."name" IS NULL',
-                        )
+                        );
 
-                        expect(params).to.eql([])
+                        expect(params).to.eql([]);
                     }),
-                ))
+                ));
 
             it("should craft query with Raw", () =>
                 Promise.all(
@@ -242,18 +242,18 @@ describe("query builder > select", () => {
                                     ),
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "post"."id" AS "post_id" FROM "post" "post" ' +
                                 'LEFT JOIN "category" "category_join" ON "category_join"."id"="post"."categoryId" ' +
                                 'WHERE SOME_FUNCTION("category_join"."name")',
-                        )
+                        );
 
-                        expect(params).to.eql([])
+                        expect(params).to.eql([]);
                     }),
-                ))
-        })
+                ));
+        });
 
         describe("one-to-many", () => {
             it("should craft query with exact value", () =>
@@ -269,10 +269,10 @@ describe("query builder > select", () => {
                                         id: 10,
                                     },
                                 })
-                                .getQueryAndParameters()
-                        }).to.throw()
+                                .getQueryAndParameters();
+                        }).to.throw();
                     }),
-                ))
+                ));
 
             it("should craft query with FindOperator", () =>
                 Promise.all(
@@ -289,11 +289,11 @@ describe("query builder > select", () => {
                                         id: IsNull(),
                                     },
                                 })
-                                .getQueryAndParameters()
-                        }).to.throw()
+                                .getQueryAndParameters();
+                        }).to.throw();
                     }),
-                ))
-        })
+                ));
+        });
 
         describe("many-to-many", () => {
             it("should craft query with exact value", () =>
@@ -309,10 +309,10 @@ describe("query builder > select", () => {
                                         name: "Foo",
                                     },
                                 })
-                                .getQueryAndParameters()
-                        }).to.throw()
+                                .getQueryAndParameters();
+                        }).to.throw();
                     }),
-                ))
+                ));
 
             it("should craft query with FindOperator", () =>
                 Promise.all(
@@ -327,11 +327,11 @@ describe("query builder > select", () => {
                                         name: IsNull(),
                                     },
                                 })
-                                .getQueryAndParameters()
-                        }).to.throw()
+                                .getQueryAndParameters();
+                        }).to.throw();
                     }),
-                ))
-        })
+                ));
+        });
 
         describe("one-to-one", () => {
             it("should craft query with exact value", () =>
@@ -346,17 +346,17 @@ describe("query builder > select", () => {
                                     url: "Foo",
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "post"."id" AS "post_id" FROM "post" "post" ' +
                                 'LEFT JOIN "hero_image" "hero_join" ON "hero_join"."id"="post"."heroImageId" ' +
                                 'WHERE "hero_join"."url" = ?',
-                        )
+                        );
 
-                        expect(params).to.eql(["Foo"])
+                        expect(params).to.eql(["Foo"]);
                     }),
-                ))
+                ));
 
             it("should craft query with FindOperator", () =>
                 Promise.all(
@@ -370,18 +370,18 @@ describe("query builder > select", () => {
                                     url: IsNull(),
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "post"."id" AS "post_id" FROM "post" "post" ' +
                                 'LEFT JOIN "hero_image" "hero_join" ON "hero_join"."id"="post"."heroImageId" ' +
                                 'WHERE "hero_join"."url" IS NULL',
-                        )
+                        );
 
-                        expect(params).to.eql([])
+                        expect(params).to.eql([]);
                     }),
-                ))
-        })
+                ));
+        });
 
         describe("deeply nested relations", () => {
             it("should craft query with exact value", () =>
@@ -400,7 +400,7 @@ describe("query builder > select", () => {
                                     },
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "hero"."id" AS "hero_id", "hero"."url" AS "hero_url" ' +
@@ -408,11 +408,11 @@ describe("query builder > select", () => {
                                 'LEFT JOIN "post" "posts" ON "posts"."heroImageId"="hero"."id"  ' +
                                 'LEFT JOIN "category" "category" ON "category"."id"="posts"."categoryId" ' +
                                 'WHERE "category"."name" = ?',
-                        )
+                        );
 
-                        expect(params).to.eql(["Foo"])
+                        expect(params).to.eql(["Foo"]);
                     }),
-                ))
+                ));
 
             it("should craft query with FindOperator", () =>
                 Promise.all(
@@ -430,7 +430,7 @@ describe("query builder > select", () => {
                                     },
                                 },
                             })
-                            .getQueryAndParameters()
+                            .getQueryAndParameters();
 
                         expect(sql).to.equal(
                             'SELECT "hero"."id" AS "hero_id", "hero"."url" AS "hero_url" ' +
@@ -438,13 +438,13 @@ describe("query builder > select", () => {
                                 'LEFT JOIN "post" "posts" ON "posts"."heroImageId"="hero"."id"  ' +
                                 'LEFT JOIN "category" "category" ON "category"."id"="posts"."categoryId" ' +
                                 'WHERE "category"."name" IN (?, ?, ?)',
-                        )
+                        );
 
-                        expect(params).to.eql(["Foo", "Bar", "Baz"])
+                        expect(params).to.eql(["Foo", "Bar", "Baz"]);
                     }),
-                ))
-        })
-    })
+                ));
+        });
+    });
 
     describe("query execution and retrieval", () => {
         it("should return a single entity for getOne when found", () =>
@@ -455,18 +455,18 @@ describe("query builder > select", () => {
                         title: "Hello",
                         description: "World",
                         rating: 0,
-                    })
+                    });
 
                     const entity = await connection
                         .createQueryBuilder(Post, "post")
                         .where("post.id = :id", { id: "1" })
-                        .getOne()
+                        .getOne();
 
-                    expect(entity).not.to.be.null
-                    expect(entity!.id).to.equal("1")
-                    expect(entity!.title).to.equal("Hello")
+                    expect(entity).not.to.be.null;
+                    expect(entity!.id).to.equal("1");
+                    expect(entity!.title).to.equal("Hello");
                 }),
-            ))
+            ));
 
         it("should return undefined for getOne when not found", () =>
             Promise.all(
@@ -476,16 +476,16 @@ describe("query builder > select", () => {
                         title: "Hello",
                         description: "World",
                         rating: 0,
-                    })
+                    });
 
                     const entity = await connection
                         .createQueryBuilder(Post, "post")
                         .where("post.id = :id", { id: "2" })
-                        .getOne()
+                        .getOne();
 
-                    expect(entity).to.be.null
+                    expect(entity).to.be.null;
                 }),
-            ))
+            ));
 
         it("should return a single entity for getOneOrFail when found", () =>
             Promise.all(
@@ -495,17 +495,17 @@ describe("query builder > select", () => {
                         title: "Hello",
                         description: "World",
                         rating: 0,
-                    })
+                    });
 
                     const entity = await connection
                         .createQueryBuilder(Post, "post")
                         .where("post.id = :id", { id: "1" })
-                        .getOneOrFail()
+                        .getOneOrFail();
 
-                    expect(entity.id).to.equal("1")
-                    expect(entity.title).to.equal("Hello")
+                    expect(entity.id).to.equal("1");
+                    expect(entity.title).to.equal("Hello");
                 }),
-            ))
+            ));
 
         it("should throw an Error for getOneOrFail when not found", () =>
             Promise.all(
@@ -515,17 +515,17 @@ describe("query builder > select", () => {
                         title: "Hello",
                         description: "World",
                         rating: 0,
-                    })
+                    });
 
                     await expect(
                         connection
                             .createQueryBuilder(Post, "post")
                             .where("post.id = :id", { id: "2" })
                             .getOneOrFail(),
-                    ).to.be.rejectedWith(EntityNotFoundError)
+                    ).to.be.rejectedWith(EntityNotFoundError);
                 }),
-            ))
-    })
+            ));
+    });
 
     describe("where-in-ids", () => {
         it("should create expected query with simple primary keys", () =>
@@ -536,14 +536,14 @@ describe("query builder > select", () => {
                         .select("post.id")
                         .whereInIds(["1", "2", "5", "9"])
                         .disableEscaping()
-                        .getQueryAndParameters()
+                        .getQueryAndParameters();
 
                     expect(sql).to.equal(
                         "SELECT post.id AS post_id FROM post post WHERE post.id IN (?, ?, ?, ?)",
-                    )
-                    expect(params).to.eql(["1", "2", "5", "9"])
+                    );
+                    expect(params).to.eql(["1", "2", "5", "9"]);
                 }),
-            ))
+            ));
 
         it("should create expected query with composite primary keys", () =>
             Promise.all(
@@ -557,17 +557,17 @@ describe("query builder > select", () => {
                             { outlet: "baz", id: "5" },
                         ])
                         .disableEscaping()
-                        .getQueryAndParameters()
+                        .getQueryAndParameters();
 
                     expect(sql).to.equal(
                         "SELECT post.id AS post_id FROM external_post post WHERE " +
                             "(((post.outlet = ? AND post.id = ?)) OR " +
                             "((post.outlet = ? AND post.id = ?)) OR " +
                             "((post.outlet = ? AND post.id = ?)))",
-                    )
-                    expect(params).to.eql(["foo", "1", "bar", "2", "baz", "5"])
+                    );
+                    expect(params).to.eql(["foo", "1", "bar", "2", "baz", "5"]);
                 }),
-            ))
+            ));
 
         it("should create expected query with composite primary keys with missing value", () =>
             Promise.all(
@@ -581,48 +581,48 @@ describe("query builder > select", () => {
                             { id: "5" },
                         ])
                         .disableEscaping()
-                        .getQueryAndParameters()
+                        .getQueryAndParameters();
 
                     expect(sql).to.equal(
                         "SELECT post.id AS post_id FROM external_post post WHERE " +
                             "(((post.outlet = ? AND post.id = ?)) OR " +
                             "((post.outlet = ? AND post.id = ?)) OR " +
                             "(post.id = ?))",
-                    )
-                    expect(params).to.eql(["foo", "1", "bar", "2", "5"])
+                    );
+                    expect(params).to.eql(["foo", "1", "bar", "2", "5"]);
                 }),
-            ))
-    })
+            ));
+    });
 
     it("Support max execution time", () =>
         Promise.all(
             connections.map(async (connection) => {
                 // MAX_EXECUTION_TIME supports only in MySQL
-                if (!DriverUtils.isMySQLFamily(connection.driver)) return
+                if (!DriverUtils.isMySQLFamily(connection.driver)) return;
 
                 const sql = connection
                     .createQueryBuilder(Post, "post")
                     .maxExecutionTime(1000)
-                    .getSql()
+                    .getSql();
 
-                expect(sql).contains("SELECT /*+ MAX_EXECUTION_TIME(1000) */")
+                expect(sql).contains("SELECT /*+ MAX_EXECUTION_TIME(1000) */");
             }),
-        ))
+        ));
 
     it("Support using certain index", () =>
         Promise.all(
             connections.map(async (connection) => {
                 // `USE INDEX` is only supported in MySQL
                 if (!DriverUtils.isMySQLFamily(connection.driver)) {
-                    return
+                    return;
                 }
 
                 const sql = connection
                     .createQueryBuilder(Post, "post")
                     .useIndex("my_index")
-                    .getSql()
+                    .getSql();
 
-                expect(sql).contains("FROM post USE INDEX (my_index)")
+                expect(sql).contains("FROM post USE INDEX (my_index)");
             }),
-        ))
-})
+        ));
+});

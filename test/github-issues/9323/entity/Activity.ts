@@ -4,17 +4,17 @@ import {
     BaseEntity,
     PrimaryGeneratedColumn,
     Column,
-} from "../../../../src"
-import TimeSheet from "./TimeSheet"
+} from "../../../../src";
+import TimeSheet from "./TimeSheet";
 
 @Entity({ name: "activities" })
 export default class Activity extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column("int")
-    hours: number
+    hours: number;
 
     @ManyToOne((type) => TimeSheet, (timesheet) => timesheet.activities)
-    timesheet: TimeSheet
+    timesheet: TimeSheet;
 }

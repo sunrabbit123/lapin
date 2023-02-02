@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src"
+import { Column, Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class User {
     @PrimaryColumn({ nullable: false })
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 }

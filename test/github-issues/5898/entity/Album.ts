@@ -1,11 +1,11 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src"
-import { Photo } from "./Photo"
+import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
+import { Photo } from "./Photo";
 
 @Entity()
 export class Album {
     @PrimaryGeneratedColumn()
-    id: string
+    id: string;
 
     @OneToMany(() => Photo, (photo) => photo.album, { onDelete: "CASCADE" })
-    photos: Photo[]
+    photos: Photo[];
 }

@@ -1,13 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class TestEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "bigint", nullable: true })
-    big_int: number
+    big_int: number;
 
     @Column({ type: "numeric", nullable: true })
-    big_decimal: number
+    big_decimal: number;
 }

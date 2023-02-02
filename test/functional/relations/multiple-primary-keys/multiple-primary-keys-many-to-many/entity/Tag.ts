@@ -1,28 +1,28 @@
-import { Entity } from "../../../../../../src/decorator/entity/Entity"
-import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany"
-import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable"
-import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn"
-import { Category } from "./Category"
-import { Column } from "../../../../../../src/decorator/columns/Column"
+import { Entity } from "../../../../../../src/decorator/entity/Entity";
+import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany";
+import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
+import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn";
+import { Category } from "./Category";
+import { Column } from "../../../../../../src/decorator/columns/Column";
 
 @Entity()
 export class Tag {
     @Column()
-    code: number
+    code: number;
 
     @PrimaryColumn(String, {
         length: 31,
     })
-    title: string
+    title: string;
 
     @PrimaryColumn(String, {
         length: 31,
     })
-    description: string
+    description: string;
 
     @ManyToMany((type) => Category, (category) => category.tags)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 
     @ManyToMany((type) => Category, (category) => category.tagsWithOptions)
     @JoinTable({
@@ -48,7 +48,7 @@ export class Tag {
             },
         ],
     })
-    categoriesWithOptions: Category[]
+    categoriesWithOptions: Category[];
 
     @ManyToMany((type) => Category, (category) => category.tagsWithNonPKColumns)
     @JoinTable({
@@ -78,5 +78,5 @@ export class Tag {
             },
         ],
     })
-    categoriesWithNonPKColumns: Category[]
+    categoriesWithNonPKColumns: Category[];
 }

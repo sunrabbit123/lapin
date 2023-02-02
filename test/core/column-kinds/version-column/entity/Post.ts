@@ -3,16 +3,16 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     VersionColumn,
-} from "../../../../../src"
+} from "../../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @VersionColumn()
-    version: number
+    version: number;
 }

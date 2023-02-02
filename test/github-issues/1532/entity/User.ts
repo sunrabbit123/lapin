@@ -1,19 +1,19 @@
-import { PrimaryColumn, Column } from "../../../../src"
-import { Entity } from "../../../../src/decorator/entity/Entity"
+import { PrimaryColumn, Column } from "../../../../src";
+import { Entity } from "../../../../src/decorator/entity/Entity";
 
 @Entity()
 export class User {
     @PrimaryColumn()
-    id: number
+    id: number;
 
     @Column({ type: "varchar", array: true })
-    array: string[]
+    array: string[];
 
     @Column({ type: "varchar", array: true, nullable: false })
-    nonNullArray: string[]
+    nonNullArray: string[];
 
     @Column({ type: "varchar", array: true, nullable: false, default: [] })
-    emptyArrayDefault: string[]
+    emptyArrayDefault: string[];
 
     @Column({
         type: "varchar",
@@ -21,10 +21,10 @@ export class User {
         nullable: false,
         default: ["a", "b", "c"],
     })
-    filledArrayDefault: string[]
+    filledArrayDefault: string[];
 
     @Column({ type: "varchar", array: true, nullable: false, default: "{}" })
-    emptyArrayDefaultString: string[]
+    emptyArrayDefaultString: string[];
 
     @Column({
         type: "varchar",
@@ -32,5 +32,5 @@ export class User {
         nullable: false,
         default: "{a,b,c}",
     })
-    filledArrayDefaultString: string[]
+    filledArrayDefaultString: string[];
 }

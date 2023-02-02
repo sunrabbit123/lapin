@@ -1,49 +1,49 @@
-import { DataSource } from "../data-source/DataSource"
-import { FindManyOptions } from "../find-options/FindManyOptions"
-import { EntityTarget } from "../common/EntityTarget"
-import { ObjectType } from "../common/ObjectType"
-import { EntityNotFoundError } from "../error/EntityNotFoundError"
-import { QueryRunnerProviderAlreadyReleasedError } from "../error/QueryRunnerProviderAlreadyReleasedError"
-import { FindOneOptions } from "../find-options/FindOneOptions"
-import { DeepPartial } from "../common/DeepPartial"
-import { RemoveOptions } from "../repository/RemoveOptions"
-import { SaveOptions } from "../repository/SaveOptions"
-import { NoNeedToReleaseEntityManagerError } from "../error/NoNeedToReleaseEntityManagerError"
-import { MongoRepository } from "../repository/MongoRepository"
-import { TreeRepository } from "../repository/TreeRepository"
-import { Repository } from "../repository/Repository"
-import { FindOptionsUtils } from "../find-options/FindOptionsUtils"
-import { PlainObjectToNewEntityTransformer } from "../query-builder/transformer/PlainObjectToNewEntityTransformer"
-import { PlainObjectToDatabaseEntityTransformer } from "../query-builder/transformer/PlainObjectToDatabaseEntityTransformer"
+import { DataSource } from "../data-source/DataSource";
+import { FindManyOptions } from "../find-options/FindManyOptions";
+import { EntityTarget } from "../common/EntityTarget";
+import { ObjectType } from "../common/ObjectType";
+import { EntityNotFoundError } from "../error/EntityNotFoundError";
+import { QueryRunnerProviderAlreadyReleasedError } from "../error/QueryRunnerProviderAlreadyReleasedError";
+import { FindOneOptions } from "../find-options/FindOneOptions";
+import { DeepPartial } from "../common/DeepPartial";
+import { RemoveOptions } from "../repository/RemoveOptions";
+import { SaveOptions } from "../repository/SaveOptions";
+import { NoNeedToReleaseEntityManagerError } from "../error/NoNeedToReleaseEntityManagerError";
+import { MongoRepository } from "../repository/MongoRepository";
+import { TreeRepository } from "../repository/TreeRepository";
+import { Repository } from "../repository/Repository";
+import { FindOptionsUtils } from "../find-options/FindOptionsUtils";
+import { PlainObjectToNewEntityTransformer } from "../query-builder/transformer/PlainObjectToNewEntityTransformer";
+import { PlainObjectToDatabaseEntityTransformer } from "../query-builder/transformer/PlainObjectToDatabaseEntityTransformer";
 import {
     CustomRepositoryCannotInheritRepositoryError,
     CustomRepositoryNotFoundError,
     TreeRepositoryNotSupportedError,
     LapinError,
-} from "../error"
-import { AbstractRepository } from "../repository/AbstractRepository"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity"
-import { EntityPersistExecutor } from "../persistence/EntityPersistExecutor"
-import { ObjectID } from "../driver/mongodb/typings"
-import { InsertResult } from "../query-builder/result/InsertResult"
-import { UpdateResult } from "../query-builder/result/UpdateResult"
-import { DeleteResult } from "../query-builder/result/DeleteResult"
-import { FindOptionsWhere } from "../find-options/FindOptionsWhere"
-import { IsolationLevel } from "../driver/types/IsolationLevel"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { getMetadataArgsStorage } from "../globals"
-import { UpsertOptions } from "../repository/UpsertOptions"
-import { InstanceChecker } from "../util/InstanceChecker"
-import { ObjectLiteral } from "../common/ObjectLiteral"
+} from "../error";
+import { AbstractRepository } from "../repository/AbstractRepository";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity";
+import { EntityPersistExecutor } from "../persistence/EntityPersistExecutor";
+import { ObjectID } from "../driver/mongodb/typings";
+import { InsertResult } from "../query-builder/result/InsertResult";
+import { UpdateResult } from "../query-builder/result/UpdateResult";
+import { DeleteResult } from "../query-builder/result/DeleteResult";
+import { FindOptionsWhere } from "../find-options/FindOptionsWhere";
+import { IsolationLevel } from "../driver/types/IsolationLevel";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { getMetadataArgsStorage } from "../globals";
+import { UpsertOptions } from "../repository/UpsertOptions";
+import { InstanceChecker } from "../util/InstanceChecker";
+import { ObjectLiteral } from "../common/ObjectLiteral";
 
 /**
  * Entity manager supposed to work with any entity, automatically find its repository and call its methods,
  * whatever entity type are you passing.
  */
 export class EntityManager {
-    readonly "@instanceof" = Symbol.for("EntityManager")
+    readonly "@instanceof" = Symbol.for("EntityManager");
 
     // -------------------------------------------------------------------------
     // Public Properties
@@ -52,13 +52,13 @@ export class EntityManager {
     /**
      * Connection used by this entity manager.
      */
-    readonly connection: DataSource
+    readonly connection: DataSource;
 
     /**
      * Custom query runner to be used for operations in this entity manager.
      * Used only in non-global entity manager.
      */
-    readonly queryRunner?: QueryRunner
+    readonly queryRunner?: QueryRunner;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -67,29 +67,29 @@ export class EntityManager {
     /**
      * Once created and then reused by repositories.
      */
-    protected repositories: Repository<any>[] = []
+    protected repositories: Repository<any>[] = [];
 
     /**
      * Once created and then reused by repositories.
      */
-    protected treeRepositories: TreeRepository<any>[] = []
+    protected treeRepositories: TreeRepository<any>[] = [];
 
     /**
      * Plain to object transformer used in create and merge operations.
      */
     protected plainObjectToEntityTransformer =
-        new PlainObjectToNewEntityTransformer()
+        new PlainObjectToNewEntityTransformer();
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource, queryRunner?: QueryRunner) {
-        this.connection = connection
+        this.connection = connection;
         if (queryRunner) {
-            this.queryRunner = queryRunner
+            this.queryRunner = queryRunner;
             // dynamic: this.queryRunner = manager;
-            ObjectUtils.assign(this.queryRunner, { manager: this })
+            ObjectUtils.assign(this.queryRunner, { manager: this });
         }
     }
 
@@ -103,7 +103,7 @@ export class EntityManager {
      */
     async transaction<T>(
         runInTransaction: (entityManager: EntityManager) => Promise<T>,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Wraps given function execution (and all operations made there) in a transaction.
@@ -112,7 +112,7 @@ export class EntityManager {
     async transaction<T>(
         isolationLevel: IsolationLevel,
         runInTransaction: (entityManager: EntityManager) => Promise<T>,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Wraps given function execution (and all operations made there) in a transaction.
@@ -127,41 +127,41 @@ export class EntityManager {
         const isolation =
             typeof isolationOrRunInTransaction === "string"
                 ? isolationOrRunInTransaction
-                : undefined
+                : undefined;
         const runInTransaction =
             typeof isolationOrRunInTransaction === "function"
                 ? isolationOrRunInTransaction
-                : runInTransactionParam
+                : runInTransactionParam;
 
         if (!runInTransaction) {
             throw new LapinError(
                 `Transaction method requires callback in second parameter if isolation level is supplied.`,
-            )
+            );
         }
 
         if (this.queryRunner && this.queryRunner.isReleased)
-            throw new QueryRunnerProviderAlreadyReleasedError()
+            throw new QueryRunnerProviderAlreadyReleasedError();
 
         // if query runner is already defined in this class, it means this entity manager was already created for a single connection
         // if its not defined we create a new query runner - single connection where we'll execute all our operations
         const queryRunner =
-            this.queryRunner || this.connection.createQueryRunner()
+            this.queryRunner || this.connection.createQueryRunner();
 
         try {
-            await queryRunner.startTransaction(isolation)
-            const result = await runInTransaction(queryRunner.manager)
-            await queryRunner.commitTransaction()
-            return result
+            await queryRunner.startTransaction(isolation);
+            const result = await runInTransaction(queryRunner.manager);
+            await queryRunner.commitTransaction();
+            return result;
         } catch (err) {
             try {
                 // we throw original error even if rollback thrown an error
-                await queryRunner.rollbackTransaction()
+                await queryRunner.rollbackTransaction();
             } catch (rollbackError) {}
-            throw err
+            throw err;
         } finally {
             if (!this.queryRunner)
                 // if we used a new query runner provider then release it
-                await queryRunner.release()
+                await queryRunner.release();
         }
     }
 
@@ -169,7 +169,7 @@ export class EntityManager {
      * Executes raw SQL query and returns raw database results.
      */
     async query(query: string, parameters?: any[]): Promise<any> {
-        return this.connection.query(query, parameters, this.queryRunner)
+        return this.connection.query(query, parameters, this.queryRunner);
     }
 
     /**
@@ -179,12 +179,12 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         alias: string,
         queryRunner?: QueryRunner,
-    ): SelectQueryBuilder<Entity>
+    ): SelectQueryBuilder<Entity>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<any>
+    createQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<any>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
@@ -199,56 +199,60 @@ export class EntityManager {
                 entityClass as EntityTarget<Entity>,
                 alias,
                 queryRunner || this.queryRunner,
-            )
+            );
         } else {
             return this.connection.createQueryBuilder(
                 (entityClass as QueryRunner | undefined) ||
                     queryRunner ||
                     this.queryRunner,
-            )
+            );
         }
     }
 
     /**
      * Checks if entity has an id.
      */
-    hasId(entity: any): boolean
+    hasId(entity: any): boolean;
 
     /**
      * Checks if entity of given schema name has an id.
      */
-    hasId(target: Function | string, entity: any): boolean
+    hasId(target: Function | string, entity: any): boolean;
 
     /**
      * Checks if entity has an id by its Function type or schema name.
      */
     hasId(targetOrEntity: any | Function | string, maybeEntity?: any): boolean {
         const target =
-            arguments.length === 2 ? targetOrEntity : targetOrEntity.constructor
-        const entity = arguments.length === 2 ? maybeEntity : targetOrEntity
-        const metadata = this.connection.getMetadata(target)
-        return metadata.hasId(entity)
+            arguments.length === 2
+                ? targetOrEntity
+                : targetOrEntity.constructor;
+        const entity = arguments.length === 2 ? maybeEntity : targetOrEntity;
+        const metadata = this.connection.getMetadata(target);
+        return metadata.hasId(entity);
     }
 
     /**
      * Gets entity mixed id.
      */
-    getId(entity: any): any
+    getId(entity: any): any;
 
     /**
      * Gets entity mixed id.
      */
-    getId(target: EntityTarget<any>, entity: any): any
+    getId(target: EntityTarget<any>, entity: any): any;
 
     /**
      * Gets entity mixed id.
      */
     getId(targetOrEntity: any | EntityTarget<any>, maybeEntity?: any): any {
         const target =
-            arguments.length === 2 ? targetOrEntity : targetOrEntity.constructor
-        const entity = arguments.length === 2 ? maybeEntity : targetOrEntity
-        const metadata = this.connection.getMetadata(target)
-        return metadata.getEntityIdMixedMap(entity)
+            arguments.length === 2
+                ? targetOrEntity
+                : targetOrEntity.constructor;
+        const entity = arguments.length === 2 ? maybeEntity : targetOrEntity;
+        const metadata = this.connection.getMetadata(target);
+        return metadata.getEntityIdMixedMap(entity);
     }
 
     /**
@@ -258,7 +262,7 @@ export class EntityManager {
     create<Entity>(
         entityClass: EntityTarget<Entity>,
         plainObject?: DeepPartial<Entity>,
-    ): Entity
+    ): Entity;
 
     /**
      * Creates a new entities and copies all entity properties from given objects into their new entities.
@@ -267,7 +271,7 @@ export class EntityManager {
     create<Entity>(
         entityClass: EntityTarget<Entity>,
         plainObjects?: DeepPartial<Entity>[],
-    ): Entity[]
+    ): Entity[];
 
     /**
      * Creates a new entity instance or instances.
@@ -277,23 +281,23 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         plainObjectOrObjects?: DeepPartial<Entity> | DeepPartial<Entity>[],
     ): Entity | Entity[] {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
 
-        if (!plainObjectOrObjects) return metadata.create(this.queryRunner)
+        if (!plainObjectOrObjects) return metadata.create(this.queryRunner);
 
         if (Array.isArray(plainObjectOrObjects))
             return (plainObjectOrObjects as DeepPartial<Entity>[]).map(
                 (plainEntityLike) => this.create(entityClass, plainEntityLike),
-            )
+            );
 
-        const mergeIntoEntity = metadata.create(this.queryRunner)
+        const mergeIntoEntity = metadata.create(this.queryRunner);
         this.plainObjectToEntityTransformer.transform(
             mergeIntoEntity,
             plainObjectOrObjects,
             metadata,
             true,
-        )
-        return mergeIntoEntity
+        );
+        return mergeIntoEntity;
     }
 
     /**
@@ -305,15 +309,15 @@ export class EntityManager {
         ...entityLikes: DeepPartial<Entity>[]
     ): Entity {
         // todo: throw exception if entity manager is released
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         entityLikes.forEach((object) =>
             this.plainObjectToEntityTransformer.transform(
                 mergeIntoEntity,
                 object,
                 metadata,
             ),
-        )
-        return mergeIntoEntity
+        );
+        return mergeIntoEntity;
     }
 
     /**
@@ -326,35 +330,35 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         entityLike: DeepPartial<Entity>,
     ): Promise<Entity | undefined> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         const plainObjectToDatabaseEntityTransformer =
-            new PlainObjectToDatabaseEntityTransformer(this.connection.manager)
+            new PlainObjectToDatabaseEntityTransformer(this.connection.manager);
         const transformedEntity =
             await plainObjectToDatabaseEntityTransformer.transform(
                 entityLike,
                 metadata,
-            )
+            );
         if (transformedEntity)
             return this.merge(
                 entityClass as any,
                 transformedEntity as Entity,
                 entityLike,
-            )
+            );
 
-        return undefined
+        return undefined;
     }
 
     /**
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<Entity>(entities: Entity[], options?: SaveOptions): Promise<Entity[]>
+    save<Entity>(entities: Entity[], options?: SaveOptions): Promise<Entity[]>;
 
     /**
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>
+    save<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>;
 
     /**
      * Saves all given entities in the database.
@@ -364,7 +368,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entities: T[],
         options: SaveOptions & { reload: false },
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Saves all given entities in the database.
@@ -374,7 +378,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entities: T[],
         options?: SaveOptions,
-    ): Promise<(T & Entity)[]>
+    ): Promise<(T & Entity)[]>;
 
     /**
      * Saves a given entity in the database.
@@ -384,7 +388,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: T,
         options: SaveOptions & { reload: false },
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Saves a given entity in the database.
@@ -394,7 +398,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: T,
         options?: SaveOptions,
-    ): Promise<T & Entity>
+    ): Promise<T & Entity>;
 
     /**
      * Saves a given entity in the database.
@@ -411,19 +415,20 @@ export class EntityManager {
                 InstanceChecker.isEntitySchema(targetOrEntity) ||
                 typeof targetOrEntity === "string")
                 ? (targetOrEntity as Function | string)
-                : undefined
+                : undefined;
         const entity: T | T[] = target
             ? (maybeEntityOrOptions as T | T[])
-            : (targetOrEntity as T | T[])
+            : (targetOrEntity as T | T[]);
         const options = target
             ? maybeOptions
-            : (maybeEntityOrOptions as SaveOptions)
+            : (maybeEntityOrOptions as SaveOptions);
 
-        if (InstanceChecker.isEntitySchema(target)) target = target.options.name
+        if (InstanceChecker.isEntitySchema(target))
+            target = target.options.name;
 
         // if user passed empty array of entities then we don't need to do anything
         if (Array.isArray(entity) && entity.length === 0)
-            return Promise.resolve(entity)
+            return Promise.resolve(entity);
 
         // execute save operation
         return new EntityPersistExecutor(
@@ -435,13 +440,13 @@ export class EntityManager {
             options,
         )
             .execute()
-            .then(() => entity)
+            .then(() => entity);
     }
 
     /**
      * Removes a given entity from the database.
      */
-    remove<Entity>(entity: Entity, options?: RemoveOptions): Promise<Entity>
+    remove<Entity>(entity: Entity, options?: RemoveOptions): Promise<Entity>;
 
     /**
      * Removes a given entity from the database.
@@ -450,12 +455,12 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: Entity,
         options?: RemoveOptions,
-    ): Promise<Entity>
+    ): Promise<Entity>;
 
     /**
      * Removes a given entity from the database.
      */
-    remove<Entity>(entity: Entity[], options?: RemoveOptions): Promise<Entity>
+    remove<Entity>(entity: Entity[], options?: RemoveOptions): Promise<Entity>;
 
     /**
      * Removes a given entity from the database.
@@ -464,7 +469,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: Entity[],
         options?: RemoveOptions,
-    ): Promise<Entity[]>
+    ): Promise<Entity[]>;
 
     /**
      * Removes a given entity from the database.
@@ -481,17 +486,17 @@ export class EntityManager {
                 InstanceChecker.isEntitySchema(targetOrEntity) ||
                 typeof targetOrEntity === "string")
                 ? (targetOrEntity as Function | string)
-                : undefined
+                : undefined;
         const entity: Entity | Entity[] = target
             ? (maybeEntityOrOptions as Entity | Entity[])
-            : (targetOrEntity as Entity | Entity[])
+            : (targetOrEntity as Entity | Entity[]);
         const options = target
             ? maybeOptions
-            : (maybeEntityOrOptions as SaveOptions)
+            : (maybeEntityOrOptions as SaveOptions);
 
         // if user passed empty array of entities then we don't need to do anything
         if (Array.isArray(entity) && entity.length === 0)
-            return Promise.resolve(entity)
+            return Promise.resolve(entity);
 
         // execute save operation
         return new EntityPersistExecutor(
@@ -503,7 +508,7 @@ export class EntityManager {
             options,
         )
             .execute()
-            .then(() => entity)
+            .then(() => entity);
     }
 
     /**
@@ -512,12 +517,12 @@ export class EntityManager {
     softRemove<Entity>(
         entities: Entity[],
         options?: SaveOptions,
-    ): Promise<Entity[]>
+    ): Promise<Entity[]>;
 
     /**
      * Records the delete date of a given entity.
      */
-    softRemove<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>
+    softRemove<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>;
 
     /**
      * Records the delete date of all given entities.
@@ -526,7 +531,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entities: T[],
         options?: SaveOptions,
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Records the delete date of a given entity.
@@ -535,7 +540,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: T,
         options?: SaveOptions,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Records the delete date of one or many given entities.
@@ -552,19 +557,20 @@ export class EntityManager {
                 InstanceChecker.isEntitySchema(targetOrEntity) ||
                 typeof targetOrEntity === "string")
                 ? (targetOrEntity as Function | string)
-                : undefined
+                : undefined;
         const entity: T | T[] = target
             ? (maybeEntityOrOptions as T | T[])
-            : (targetOrEntity as T | T[])
+            : (targetOrEntity as T | T[]);
         const options = target
             ? maybeOptions
-            : (maybeEntityOrOptions as SaveOptions)
+            : (maybeEntityOrOptions as SaveOptions);
 
-        if (InstanceChecker.isEntitySchema(target)) target = target.options.name
+        if (InstanceChecker.isEntitySchema(target))
+            target = target.options.name;
 
         // if user passed empty array of entities then we don't need to do anything
         if (Array.isArray(entity) && entity.length === 0)
-            return Promise.resolve(entity)
+            return Promise.resolve(entity);
 
         // execute soft-remove operation
         return new EntityPersistExecutor(
@@ -576,7 +582,7 @@ export class EntityManager {
             options,
         )
             .execute()
-            .then(() => entity)
+            .then(() => entity);
     }
 
     /**
@@ -585,12 +591,12 @@ export class EntityManager {
     recover<Entity>(
         entities: Entity[],
         options?: SaveOptions,
-    ): Promise<Entity[]>
+    ): Promise<Entity[]>;
 
     /**
      * Recovers a given entity.
      */
-    recover<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>
+    recover<Entity>(entity: Entity, options?: SaveOptions): Promise<Entity>;
 
     /**
      * Recovers all given entities.
@@ -599,7 +605,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entities: T[],
         options?: SaveOptions,
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Recovers a given entity.
@@ -608,7 +614,7 @@ export class EntityManager {
         targetOrEntity: EntityTarget<Entity>,
         entity: T,
         options?: SaveOptions,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Recovers one or many given entities.
@@ -625,19 +631,20 @@ export class EntityManager {
                 InstanceChecker.isEntitySchema(targetOrEntity) ||
                 typeof targetOrEntity === "string")
                 ? (targetOrEntity as Function | string)
-                : undefined
+                : undefined;
         const entity: T | T[] = target
             ? (maybeEntityOrOptions as T | T[])
-            : (targetOrEntity as T | T[])
+            : (targetOrEntity as T | T[]);
         const options = target
             ? maybeOptions
-            : (maybeEntityOrOptions as SaveOptions)
+            : (maybeEntityOrOptions as SaveOptions);
 
-        if (InstanceChecker.isEntitySchema(target)) target = target.options.name
+        if (InstanceChecker.isEntitySchema(target))
+            target = target.options.name;
 
         // if user passed empty array of entities then we don't need to do anything
         if (Array.isArray(entity) && entity.length === 0)
-            return Promise.resolve(entity)
+            return Promise.resolve(entity);
 
         // execute recover operation
         return new EntityPersistExecutor(
@@ -649,7 +656,7 @@ export class EntityManager {
             options,
         )
             .execute()
-            .then(() => entity)
+            .then(() => entity);
     }
 
     /**
@@ -669,7 +676,7 @@ export class EntityManager {
             .insert()
             .into(target)
             .values(entity)
-            .execute()
+            .execute();
     }
 
     async upsert<Entity extends ObjectLiteral>(
@@ -679,31 +686,31 @@ export class EntityManager {
             | QueryDeepPartialEntity<Entity>[],
         conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     ): Promise<InsertResult> {
-        const metadata = this.connection.getMetadata(target)
+        const metadata = this.connection.getMetadata(target);
 
-        let options: UpsertOptions<Entity>
+        let options: UpsertOptions<Entity>;
 
         if (Array.isArray(conflictPathsOrOptions)) {
             options = {
                 conflictPaths: conflictPathsOrOptions,
-            }
+            };
         } else {
-            options = conflictPathsOrOptions
+            options = conflictPathsOrOptions;
         }
 
-        let entities: QueryDeepPartialEntity<Entity>[]
+        let entities: QueryDeepPartialEntity<Entity>[];
 
         if (!Array.isArray(entityOrEntities)) {
-            entities = [entityOrEntities]
+            entities = [entityOrEntities];
         } else {
-            entities = entityOrEntities
+            entities = entityOrEntities;
         }
 
         const conflictColumns = metadata.mapPropertyPathsToColumns(
             Array.isArray(options.conflictPaths)
                 ? options.conflictPaths
                 : Object.keys(options.conflictPaths),
-        )
+        );
 
         const overwriteColumns = metadata.columns.filter(
             (col) =>
@@ -712,7 +719,7 @@ export class EntityManager {
                     (entity) =>
                         typeof col.getEntityValue(entity) !== "undefined",
                 ),
-        )
+        );
 
         return this.createQueryBuilder()
             .insert()
@@ -732,7 +739,7 @@ export class EntityManager {
                         this.connection.driver.supportedUpsertTypes[0],
                 },
             )
-            .execute()
+            .execute();
     }
 
     /**
@@ -767,7 +774,7 @@ export class EntityManager {
                 new LapinError(
                     `Empty criteria(s) are not allowed for the update method.`,
                 ),
-            )
+            );
         }
 
         if (
@@ -780,13 +787,13 @@ export class EntityManager {
                 .update(target)
                 .set(partialEntity)
                 .whereInIds(criteria)
-                .execute()
+                .execute();
         } else {
             return this.createQueryBuilder()
                 .update(target)
                 .set(partialEntity)
                 .where(criteria)
-                .execute()
+                .execute();
         }
     }
 
@@ -821,7 +828,7 @@ export class EntityManager {
                 new LapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
-            )
+            );
         }
 
         if (
@@ -834,13 +841,13 @@ export class EntityManager {
                 .delete()
                 .from(targetOrEntity)
                 .whereInIds(criteria)
-                .execute()
+                .execute();
         } else {
             return this.createQueryBuilder()
                 .delete()
                 .from(targetOrEntity)
                 .where(criteria)
-                .execute()
+                .execute();
         }
     }
 
@@ -875,7 +882,7 @@ export class EntityManager {
                 new LapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
-            )
+            );
         }
 
         if (
@@ -888,13 +895,13 @@ export class EntityManager {
                 .softDelete()
                 .from(targetOrEntity)
                 .whereInIds(criteria)
-                .execute()
+                .execute();
         } else {
             return this.createQueryBuilder()
                 .softDelete()
                 .from(targetOrEntity)
                 .where(criteria)
-                .execute()
+                .execute();
         }
     }
 
@@ -929,7 +936,7 @@ export class EntityManager {
                 new LapinError(
                     `Empty criteria(s) are not allowed for the delete method.`,
                 ),
-            )
+            );
         }
 
         if (
@@ -942,13 +949,13 @@ export class EntityManager {
                 .restore()
                 .from(targetOrEntity)
                 .whereInIds(criteria)
-                .execute()
+                .execute();
         } else {
             return this.createQueryBuilder()
                 .restore()
                 .from(targetOrEntity)
                 .where(criteria)
-                .execute()
+                .execute();
         }
     }
 
@@ -959,14 +966,14 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<boolean> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder(
             entityClass,
             FindOptionsUtils.extractFindManyOptionsAlias(options) ||
                 metadata.name,
         )
             .setFindOptions(options || {})
-            .getExists()
+            .getExists();
     }
 
     /**
@@ -977,14 +984,14 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<number> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder(
             entityClass,
             FindOptionsUtils.extractFindManyOptionsAlias(options) ||
                 metadata.name,
         )
             .setFindOptions(options || {})
-            .getCount()
+            .getCount();
     }
 
     /**
@@ -995,10 +1002,10 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<number> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder(entityClass, metadata.name)
             .setFindOptions({ where })
-            .getCount()
+            .getCount();
     }
 
     /**
@@ -1008,14 +1015,14 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<Entity[]> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder<Entity>(
             entityClass as any,
             FindOptionsUtils.extractFindManyOptionsAlias(options) ||
                 metadata.name,
         )
             .setFindOptions(options || {})
-            .getMany()
+            .getMany();
     }
 
     /**
@@ -1025,13 +1032,13 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<Entity[]> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder<Entity>(
             entityClass as any,
             metadata.name,
         )
             .setFindOptions({ where: where })
-            .getMany()
+            .getMany();
     }
 
     /**
@@ -1043,14 +1050,14 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<[Entity[], number]> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder<Entity>(
             entityClass as any,
             FindOptionsUtils.extractFindManyOptionsAlias(options) ||
                 metadata.name,
         )
             .setFindOptions(options || {})
-            .getManyAndCount()
+            .getManyAndCount();
     }
 
     /**
@@ -1062,13 +1069,13 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<[Entity[], number]> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder<Entity>(
             entityClass as any,
             metadata.name,
         )
             .setFindOptions({ where })
-            .getManyAndCount()
+            .getManyAndCount();
     }
 
     /**
@@ -1086,15 +1093,15 @@ export class EntityManager {
         ids: any[],
     ): Promise<Entity[]> {
         // if no ids passed, no need to execute a query - just return an empty array of values
-        if (!ids.length) return Promise.resolve([])
+        if (!ids.length) return Promise.resolve([]);
 
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         return this.createQueryBuilder<Entity>(
             entityClass as any,
             metadata.name,
         )
             .andWhereInIds(ids)
-            .getMany()
+            .getMany();
     }
 
     /**
@@ -1105,18 +1112,18 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         options: FindOneOptions<Entity>,
     ): Promise<Entity | null> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
 
         // prepare alias for built query
-        let alias: string = metadata.name
+        let alias: string = metadata.name;
         if (options && options.join) {
-            alias = options.join.alias
+            alias = options.join.alias;
         }
 
         if (!options.where) {
             throw new Error(
                 `You must provide selection conditions in order to find a single row.`,
-            )
+            );
         }
 
         // create query builder and apply find options
@@ -1125,7 +1132,7 @@ export class EntityManager {
                 ...options,
                 take: 1,
             })
-            .getOne()
+            .getOne();
     }
 
     /**
@@ -1136,7 +1143,7 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<Entity | null> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
 
         // create query builder and apply find options
         return this.createQueryBuilder<Entity>(entityClass, metadata.name)
@@ -1144,7 +1151,7 @@ export class EntityManager {
                 where,
                 take: 1,
             })
-            .getOne()
+            .getOne();
     }
 
     /**
@@ -1161,7 +1168,7 @@ export class EntityManager {
         entityClass: EntityTarget<Entity>,
         id: number | string | Date | ObjectID,
     ): Promise<Entity | null> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
 
         // create query builder and apply find options
         return this.createQueryBuilder<Entity>(entityClass, metadata.name)
@@ -1169,7 +1176,7 @@ export class EntityManager {
                 take: 1,
             })
             .whereInIds(metadata.ensureEntityIdMap(id))
-            .getOne()
+            .getOne();
     }
 
     /**
@@ -1185,11 +1192,11 @@ export class EntityManager {
                 if (value === null) {
                     return Promise.reject(
                         new EntityNotFoundError(entityClass, options),
-                    )
+                    );
                 }
-                return Promise.resolve(value)
+                return Promise.resolve(value);
             },
-        )
+        );
     }
 
     /**
@@ -1205,11 +1212,11 @@ export class EntityManager {
                 if (value === null) {
                     return Promise.reject(
                         new EntityNotFoundError(entityClass, where),
-                    )
+                    );
                 }
-                return Promise.resolve(value)
+                return Promise.resolve(value);
             },
-        )
+        );
     }
 
     /**
@@ -1219,13 +1226,13 @@ export class EntityManager {
      * @see https://stackoverflow.com/a/5972738/925151
      */
     async clear<Entity>(entityClass: EntityTarget<Entity>): Promise<void> {
-        const metadata = this.connection.getMetadata(entityClass)
+        const metadata = this.connection.getMetadata(entityClass);
         const queryRunner =
-            this.queryRunner || this.connection.createQueryRunner()
+            this.queryRunner || this.connection.createQueryRunner();
         try {
-            return await queryRunner.clearTable(metadata.tablePath) // await is needed here because we are using finally
+            return await queryRunner.clearTable(metadata.tablePath); // await is needed here because we are using finally
         } finally {
-            if (!this.queryRunner) await queryRunner.release()
+            if (!this.queryRunner) await queryRunner.release();
         }
     }
 
@@ -1238,15 +1245,15 @@ export class EntityManager {
         propertyPath: string,
         value: number | string,
     ): Promise<UpdateResult> {
-        const metadata = this.connection.getMetadata(entityClass)
-        const column = metadata.findColumnWithPropertyPath(propertyPath)
+        const metadata = this.connection.getMetadata(entityClass);
+        const column = metadata.findColumnWithPropertyPath(propertyPath);
         if (!column)
             throw new LapinError(
                 `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
-            )
+            );
 
         if (isNaN(Number(value)))
-            throw new LapinError(`Value "${value}" is not a number.`)
+            throw new LapinError(`Value "${value}" is not a number.`);
 
         // convert possible embeded path "social.likes" into object { social: { like: () => value } }
         const values: QueryDeepPartialEntity<Entity> = propertyPath
@@ -1257,13 +1264,13 @@ export class EntityManager {
                     this.connection.driver.escape(column.databaseName) +
                     " + " +
                     value,
-            )
+            );
 
         return this.createQueryBuilder<Entity>(entityClass as any, "entity")
             .update(entityClass)
             .set(values)
             .where(conditions)
-            .execute()
+            .execute();
     }
 
     /**
@@ -1275,15 +1282,15 @@ export class EntityManager {
         propertyPath: string,
         value: number | string,
     ): Promise<UpdateResult> {
-        const metadata = this.connection.getMetadata(entityClass)
-        const column = metadata.findColumnWithPropertyPath(propertyPath)
+        const metadata = this.connection.getMetadata(entityClass);
+        const column = metadata.findColumnWithPropertyPath(propertyPath);
         if (!column)
             throw new LapinError(
                 `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
-            )
+            );
 
         if (isNaN(Number(value)))
-            throw new LapinError(`Value "${value}" is not a number.`)
+            throw new LapinError(`Value "${value}" is not a number.`);
 
         // convert possible embeded path "social.likes" into object { social: { like: () => value } }
         const values: QueryDeepPartialEntity<Entity> = propertyPath
@@ -1294,13 +1301,13 @@ export class EntityManager {
                     this.connection.driver.escape(column.databaseName) +
                     " - " +
                     value,
-            )
+            );
 
         return this.createQueryBuilder<Entity>(entityClass as any, "entity")
             .update(entityClass)
             .set(values)
             .where(conditions)
-            .execute()
+            .execute();
     }
 
     /**
@@ -1315,8 +1322,8 @@ export class EntityManager {
         // find already created repository instance and return it if found
         const repository = this.repositories.find(
             (repository) => repository.target === target,
-        )
-        if (repository) return repository
+        );
+        if (repository) return repository;
 
         // if repository was not found then create it, store its instance and return it
         if (this.connection.driver.options.type === "mongodb") {
@@ -1324,17 +1331,17 @@ export class EntityManager {
                 target,
                 this,
                 this.queryRunner,
-            )
-            this.repositories.push(newRepository as any)
-            return newRepository
+            );
+            this.repositories.push(newRepository as any);
+            return newRepository;
         } else {
             const newRepository = new Repository<any>(
                 target,
                 this,
                 this.queryRunner,
-            )
-            this.repositories.push(newRepository)
-            return newRepository
+            );
+            this.repositories.push(newRepository);
+            return newRepository;
         }
     }
 
@@ -1349,18 +1356,22 @@ export class EntityManager {
     ): TreeRepository<Entity> {
         // tree tables aren't supported by some drivers (mongodb)
         if (this.connection.driver.treeSupport === false)
-            throw new TreeRepositoryNotSupportedError(this.connection.driver)
+            throw new TreeRepositoryNotSupportedError(this.connection.driver);
 
         // find already created repository instance and return it if found
         const repository = this.treeRepositories.find(
             (repository) => repository.target === target,
-        )
-        if (repository) return repository
+        );
+        if (repository) return repository;
 
         // check if repository is real tree repository
-        const newRepository = new TreeRepository(target, this, this.queryRunner)
-        this.treeRepositories.push(newRepository)
-        return newRepository
+        const newRepository = new TreeRepository(
+            target,
+            this,
+            this.queryRunner,
+        );
+        this.treeRepositories.push(newRepository);
+        return newRepository;
     }
 
     /**
@@ -1369,7 +1380,7 @@ export class EntityManager {
     getMongoRepository<Entity extends ObjectLiteral>(
         target: EntityTarget<Entity>,
     ): MongoRepository<Entity> {
-        return this.connection.getMongoRepository<Entity>(target)
+        return this.connection.getMongoRepository<Entity>(target);
     }
 
     /**
@@ -1381,15 +1392,15 @@ export class EntityManager {
         repository: R & Repository<Entity>,
     ): R {
         const repositoryConstructor =
-            repository.constructor as typeof Repository
+            repository.constructor as typeof Repository;
         const { target, manager, queryRunner, ...otherRepositoryProperties } =
-            repository
+            repository;
         return Object.assign(
             new repositoryConstructor(repository.target, this) as R,
             {
                 ...otherRepositoryProperties,
             },
-        )
+        );
     }
 
     /**
@@ -1405,35 +1416,35 @@ export class EntityManager {
                     (typeof customRepository === "function"
                         ? customRepository
                         : (customRepository as any).constructor)
-                )
-            })
+                );
+            });
         if (!entityRepositoryMetadataArgs)
-            throw new CustomRepositoryNotFoundError(customRepository)
+            throw new CustomRepositoryNotFoundError(customRepository);
 
         const entityMetadata = entityRepositoryMetadataArgs.entity
             ? this.connection.getMetadata(entityRepositoryMetadataArgs.entity)
-            : undefined
+            : undefined;
         const entityRepositoryInstance =
             new (entityRepositoryMetadataArgs.target as any)(
                 this,
                 entityMetadata,
-            )
+            );
 
         // NOTE: dynamic access to protected properties. We need this to prevent unwanted properties in those classes to be exposed,
         // however we need these properties for internal work of the class
         if (entityRepositoryInstance instanceof AbstractRepository) {
             if (!(entityRepositoryInstance as any)["manager"])
-                (entityRepositoryInstance as any)["manager"] = this
+                (entityRepositoryInstance as any)["manager"] = this;
         } else {
             if (!entityMetadata)
                 throw new CustomRepositoryCannotInheritRepositoryError(
                     customRepository,
-                )
-            ;(entityRepositoryInstance as any)["manager"] = this
-            ;(entityRepositoryInstance as any)["metadata"] = entityMetadata
+                );
+            (entityRepositoryInstance as any)["manager"] = this;
+            (entityRepositoryInstance as any)["metadata"] = entityMetadata;
         }
 
-        return entityRepositoryInstance
+        return entityRepositoryInstance;
     }
 
     /**
@@ -1442,8 +1453,8 @@ export class EntityManager {
      * and this single query runner needs to be released after job with entity manager is done.
      */
     async release(): Promise<void> {
-        if (!this.queryRunner) throw new NoNeedToReleaseEntityManagerError()
+        if (!this.queryRunner) throw new NoNeedToReleaseEntityManagerError();
 
-        return this.queryRunner.release()
+        return this.queryRunner.release();
     }
 }

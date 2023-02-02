@@ -2,17 +2,17 @@ import {
     CreateDateColumn,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../../src"
+} from "../../../../src";
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @CreateDateColumn({
         precision: null,
         type: "timestamp",
         default: () => "CURRENT_TIMESTAMP",
     })
-    createDate: Date
+    createDate: Date;
 }

@@ -5,27 +5,27 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
-} from "../../../../src"
-import { Order } from "./Order"
+} from "../../../../src";
+import { Order } from "./Order";
 
 @Entity()
 export class Broker {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({ type: "varchar", nullable: true })
-    name: string
+    name: string;
 
     @OneToMany((type) => Order, (order) => order.company, {
         cascade: ["insert", "update"],
         onDelete: "CASCADE",
         nullable: true,
     })
-    orders?: Order
+    orders?: Order;
 
     @CreateDateColumn()
-    createdDate: Date
+    createdDate: Date;
 
     @UpdateDateColumn()
-    modifiedDate: Date
+    modifiedDate: Date;
 }

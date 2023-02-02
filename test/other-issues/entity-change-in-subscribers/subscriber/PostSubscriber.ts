@@ -1,20 +1,20 @@
-import { Post } from "../entity/Post"
+import { Post } from "../entity/Post";
 import {
     EntitySubscriberInterface,
     EventSubscriber,
     UpdateEvent,
-} from "../../../../src"
+} from "../../../../src";
 
 @EventSubscriber()
 export class PostSubscriber implements EntitySubscriberInterface<Post> {
     listenTo() {
-        return Post
+        return Post;
     }
 
     beforeUpdate(event: UpdateEvent<Post>) {
         if (event.entity) {
-            event.entity.updatedColumns = event.updatedColumns.length
-            event.entity.updatedRelations = event.updatedRelations.length
+            event.entity.updatedColumns = event.updatedColumns.length;
+            event.entity.updatedRelations = event.updatedRelations.length;
         }
     }
 }

@@ -3,25 +3,25 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryColumn,
-} from "../../../../src"
+} from "../../../../src";
 
-import { Bar } from "./Bar"
-import { Entity } from "../../../../src/decorator/entity/Entity"
+import { Bar } from "./Bar";
+import { Entity } from "../../../../src/decorator/entity/Entity";
 
 @Entity("foo")
 export class Foo extends BaseEntity {
-    @PrimaryColumn() id: number
+    @PrimaryColumn() id: number;
 
     @JoinTable()
     @ManyToMany(() => Bar, (bar) => bar.foos, {
         cascade: ["insert", "update"],
         onDelete: "NO ACTION",
     })
-    bars?: Bar[]
+    bars?: Bar[];
 
     @JoinTable()
     @ManyToMany(() => Bar, (bar) => bar.foos, {
         cascade: ["insert", "update"],
     })
-    otherBars?: Bar[]
+    otherBars?: Bar[];
 }
