@@ -15,7 +15,6 @@ import { AuroraMysqlDriver } from "./aurora-mysql/AuroraMysqlDriver";
 import { AuroraPostgresDriver } from "./aurora-postgres/AuroraPostgresDriver";
 import { Driver } from "./Driver";
 import { DataSource } from "../data-source/DataSource";
-import { SapDriver } from "./sap/SapDriver";
 import { BetterSqlite3Driver } from "./better-sqlite3/BetterSqlite3Driver";
 import { CapacitorDriver } from "./capacitor/CapacitorDriver";
 import { SpannerDriver } from "./spanner/SpannerDriver";
@@ -36,8 +35,6 @@ export class DriverFactory {
                 return new PostgresDriver(connection);
             case "cockroachdb":
                 return new CockroachDriver(connection);
-            case "sap":
-                return new SapDriver(connection);
             case "mariadb":
                 return new MysqlDriver(connection);
             case "sqlite":
@@ -85,7 +82,6 @@ export class DriverFactory {
                     "oracle",
                     "postgres",
                     "react-native",
-                    "sap",
                     "sqlite",
                     "sqljs",
                     "spanner",

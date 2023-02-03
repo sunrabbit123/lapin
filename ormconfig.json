@@ -91,21 +91,6 @@
   },
   {
     "skip": false,
-    "name": "sap",
-    "type": "sap",
-    "host": "192.168.56.102",
-    "port": 39015,
-    "username": "SYSTEM",
-    "password": "MySuperHanaPwd123!",
-    "database": "HXE",
-    "logging": false,
-    "pool" : {
-      "requestTimeout" : 20000,
-      "max" : 50
-    }
-  },
-  {
-    "skip": false,
     "disabledIfNotEnabledImplicitly": true,
     "name": "mongodb",
     "type": "mongodb",

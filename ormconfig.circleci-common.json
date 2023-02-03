@@ -89,17 +89,6 @@
   },
   {
     "skip": true,
-    "name": "sap",
-    "type": "sap",
-    "host": "lapin-hana",
-    "port": 39015,
-    "username": "SYSTEM",
-    "password": "MySuperHanaPwd123!",
-    "database": "HXE",
-    "logging": false
-  },
-  {
-    "skip": true,
     "disabledIfNotEnabledImplicitly": true,
     "name": "mongodb",
     "type": "mongodb",

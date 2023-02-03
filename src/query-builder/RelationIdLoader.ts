@@ -622,11 +622,12 @@ export class RelationIdLoader {
         // select all columns we need
         const qb = this.connection.createQueryBuilder();
         relation.entityMetadata.primaryColumns.forEach((primaryColumn) => {
+            console.log(relation);
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
                 primaryColumn.entityMetadata.name +
                     "_" +
-                    relation.inverseRelation!.propertyPath.replace(".", "_") +
+                    relation.inverseRelation?.propertyPath.replace(".", "_") +
                     "_" +
                     primaryColumn.propertyPath.replace(".", "_"),
             );

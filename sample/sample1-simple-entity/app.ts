@@ -3,14 +3,13 @@ import { DataSource, DataSourceOptions } from "../../src/index";
 import { Post } from "./entity/Post";
 
 const options: DataSourceOptions = {
-    name: "sap",
-    type: "sap",
-    host: "192.168.56.102",
-    port: 39015,
-    username: "SYSTEM",
-    password: "MySuperHanaPwd123!",
-    database: "HXE",
-    logging: true,
+    type: "mysql",
+    host: "localhost",
+    port: 3306,
+    username: "root",
+    password: "admin",
+    database: "test",
+    logging: ["query", "error"],
     synchronize: true,
     entities: [Post],
 };
