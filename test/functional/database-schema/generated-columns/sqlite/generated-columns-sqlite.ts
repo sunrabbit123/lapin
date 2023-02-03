@@ -109,9 +109,9 @@ describe("database schema > generated columns > sqlite", () => {
                 expect(table!.findColumnByName("virtualColumn")).to.be
                     .undefined;
 
-                // check if generated column records removed from typeorm_metadata table
+                // check if generated column records removed from lapin_metadata table
                 const metadataRecords = await queryRunner.query(
-                    `SELECT * FROM "typeorm_metadata" WHERE "table" = 'post' AND "name" IN ('storedColumn', 'virtualColumn')`,
+                    `SELECT * FROM "lapin_metadata" WHERE "table" = 'post' AND "name" IN ('storedColumn', 'virtualColumn')`,
                 );
                 metadataRecords.length.should.be.equal(0);
 
@@ -134,9 +134,9 @@ describe("database schema > generated columns > sqlite", () => {
                 expect(table!.findColumnByName("virtualFullName")).to.be
                     .undefined;
 
-                // check if generated column records removed from typeorm_metadata table
+                // check if generated column records removed from lapin_metadata table
                 const metadataRecords = await queryRunner.query(
-                    `SELECT * FROM "typeorm_metadata" WHERE "table" = 'post' AND "name" IN ('storedFullName', 'virtualFullName')`,
+                    `SELECT * FROM "lapin_metadata" WHERE "table" = 'post' AND "name" IN ('storedFullName', 'virtualFullName')`,
                 );
                 metadataRecords.length.should.be.equal(0);
 
@@ -200,9 +200,9 @@ describe("database schema > generated columns > sqlite", () => {
                 expect(name!.generatedType).to.be.undefined;
                 expect(name!.asExpression).to.be.undefined;
 
-                // check if generated column records removed from typeorm_metadata table
+                // check if generated column records removed from lapin_metadata table
                 const metadataRecords = await queryRunner.query(
-                    `SELECT * FROM "typeorm_metadata" WHERE "table" = 'post' AND "name" = 'name'`,
+                    `SELECT * FROM "lapin_metadata" WHERE "table" = 'post' AND "name" = 'name'`,
                 );
                 metadataRecords.length.should.be.equal(0);
 
@@ -224,7 +224,7 @@ describe("database schema > generated columns > sqlite", () => {
             }),
         ));
 
-    it("should remove data from 'typeorm_metadata' when table dropped", () =>
+    it("should remove data from 'lapin_metadata' when table dropped", () =>
         Promise.all(
             dataSources.map(async (dataSource) => {
                 const queryRunner = dataSource.createQueryRunner();
@@ -235,9 +235,9 @@ describe("database schema > generated columns > sqlite", () => {
 
                 await queryRunner.dropTable(table!);
 
-                // check if generated column records removed from typeorm_metadata table
+                // check if generated column records removed from lapin_metadata table
                 let metadataRecords = await queryRunner.query(
-                    `SELECT * FROM "typeorm_metadata" WHERE "table" = 'post'`,
+                    `SELECT * FROM "lapin_metadata" WHERE "table" = 'post'`,
                 );
                 metadataRecords.length.should.be.equal(0);
 
@@ -245,7 +245,7 @@ describe("database schema > generated columns > sqlite", () => {
                 await queryRunner.executeMemoryDownSql();
 
                 metadataRecords = await queryRunner.query(
-                    `SELECT * FROM "typeorm_metadata" WHERE "table" = 'post'`,
+                    `SELECT * FROM "lapin_metadata" WHERE "table" = 'post'`,
                 );
                 metadataRecords.length.should.be.equal(generatedColumns.length);
 

@@ -157,7 +157,7 @@ describe("query runner > add column", () => {
                     }
 
                     if (isMySQL || isSpanner || postgresSupported) {
-                        // create typeorm_metadata table manually
+                        // create lapin_metadata table manually
                         await createTypeormMetadataTable(
                             connection.driver,
                             queryRunner,

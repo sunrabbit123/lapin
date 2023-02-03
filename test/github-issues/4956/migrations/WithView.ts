@@ -11,14 +11,14 @@ export class WithView1623518107000 implements MigrationInterface {
             "CREATE VIEW `foo_view` AS  SELECT updated_at FROM `foo`",
         );
         await queryRunner.query(
-            "INSERT INTO `typeorm_metadata`(`type`, `schema`, `name`, `value`) VALUES (?, ?, ?, ?)",
+            "INSERT INTO `lapin_metadata`(`type`, `schema`, `name`, `value`) VALUES (?, ?, ?, ?)",
             ["VIEW", null, "foo_view", "SELECT `updated_at` FROM `foo`"],
         );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            "DELETE FROM `typeorm_metadata` WHERE `type` = 'VIEW' AND `schema` = ? AND `name` = ?",
+            "DELETE FROM `lapin_metadata` WHERE `type` = 'VIEW' AND `schema` = ? AND `name` = ?",
             [null, "foo_view"],
         );
 

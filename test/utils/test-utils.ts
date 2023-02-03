@@ -95,7 +95,7 @@ export interface TestingOptions {
     namingStrategy?: NamingStrategyInterface;
 
     /**
-     * Typeorm metadata table name, in case of different name from "typeorm_metadata".
+     * Typeorm metadata table name, in case of different name from "lapin_metadata".
      * Accepts single string name.
      */
     metadataTableName?: string;
@@ -532,7 +532,7 @@ export async function createTypeormMetadataTable(
     const schema = driver.schema;
     const database = driver.database;
     const typeormMetadataTable = driver.buildTableName(
-        "typeorm_metadata",
+        "lapin_metadata",
         schema,
         database,
     );

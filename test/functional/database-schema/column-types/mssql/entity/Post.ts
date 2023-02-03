@@ -130,7 +130,7 @@ export class Post {
     geometry3: string;
 
     // -------------------------------------------------------------------------
-    // TypeOrm Specific Types
+    // Lapin Specific Types
     // -------------------------------------------------------------------------
 
     @Column("simple-array")

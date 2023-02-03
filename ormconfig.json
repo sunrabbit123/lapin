@@ -35,7 +35,7 @@
     "type": "sqlite",
     "database": "./temp/sqlitedb-2.db",
     "logging": false,
-    "relationLoadStrategy": "query"
+    "relationLoadStrategy": "join"
   },
   {
     "skip": false,

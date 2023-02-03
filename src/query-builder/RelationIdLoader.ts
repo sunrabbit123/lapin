@@ -186,6 +186,14 @@ export class RelationIdLoader {
         });
     }
 
+    private generateSnakeColumnName(...str: (string | undefined)[]): string {
+        return str.reduce((prev: string, curr) => {
+            if (!curr) {
+                return `${prev}`;
+            }
+            return `${prev}_${curr}`;
+        }, "");
+    }
     /**
      * Loads relation ids of the given entities and maps them into the given entity property.
      async loadManyToManyRelationIdsAndMap(
@@ -247,7 +255,7 @@ export class RelationIdLoader {
         columns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
-                column.referencedColumn!.entityMetadata.name +
+                column.referencedColumn?.entityMetadata.name +
                     "_" +
                     column.referencedColumn!.propertyPath.replace(".", "_"),
             );
@@ -256,11 +264,11 @@ export class RelationIdLoader {
         inverseColumns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
-                column.referencedColumn!.entityMetadata.name +
-                    "_" +
-                    relation.propertyPath.replace(".", "_") +
-                    "_" +
-                    column.referencedColumn!.propertyPath.replace(".", "_"),
+                this.generateSnakeColumnName(
+                    column.referencedColumn?.entityMetadata.name,
+                    relation.propertyPath?.replace(".", "_"),
+                    column.referencedColumn?.propertyPath.replace(".", "_"),
+                ),
             );
             qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
         });
@@ -268,8 +276,9 @@ export class RelationIdLoader {
         // add conditions for the given entities
         let condition1 = "";
         if (columns.length === 1) {
-            const values = entities.map((entity) =>
-                columns[0].referencedColumn!.getEntityValue(entity),
+            const values = entities.map(
+                (entity) =>
+                    columns[0].referencedColumn?.getEntityValue(entity) ?? {},
             );
             const areAllNumbers = values.every(
                 (value) => typeof value === "number",
@@ -301,7 +310,7 @@ export class RelationIdLoader {
                                     column.propertyName;
                                 qb.setParameter(
                                     paramName,
-                                    column.referencedColumn!.getEntityValue(
+                                    column.referencedColumn?.getEntityValue(
                                         entity,
                                     ),
                                 );
@@ -454,16 +463,15 @@ export class RelationIdLoader {
                             return;
 
                         if (entityColumnValue === relatedEntityColumnValue) {
-                            const key =
-                                joinColumn.referencedColumn!.entityMetadata
-                                    .name +
-                                "_" +
-                                relation.propertyPath.replace(".", "_") +
-                                "_" +
-                                joinColumn.referencedColumn!.propertyPath.replace(
+                            const key = this.generateSnakeColumnName(
+                                joinColumn.referencedColumn?.entityMetadata
+                                    .name,
+                                relation.propertyPath.replace(".", "_"),
+                                joinColumn.referencedColumn?.propertyPath.replace(
                                     ".",
                                     "_",
-                                );
+                                ),
+                            );
                             relationIdMap[key] = relatedEntityColumnValue;
                         }
                     });
@@ -499,11 +507,11 @@ export class RelationIdLoader {
         relation.joinColumns.forEach((column) => {
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
-                column.referencedColumn!.entityMetadata.name +
-                    "_" +
-                    relation.propertyPath.replace(".", "_") +
-                    "_" +
-                    column.referencedColumn!.propertyPath.replace(".", "_"),
+                this.generateSnakeColumnName(
+                    column.referencedColumn?.entityMetadata.name,
+                    relation.propertyPath.replace(".", "_"),
+                    column.referencedColumn?.propertyPath.replace(".", "_"),
+                ),
             );
             qb.addSelect(mainAlias + "." + column.propertyPath, columnName);
         });
@@ -622,7 +630,6 @@ export class RelationIdLoader {
         // select all columns we need
         const qb = this.connection.createQueryBuilder();
         relation.entityMetadata.primaryColumns.forEach((primaryColumn) => {
-            console.log(relation);
             const columnName = DriverUtils.buildAlias(
                 this.connection.driver,
                 primaryColumn.entityMetadata.name +

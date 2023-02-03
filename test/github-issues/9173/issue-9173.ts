@@ -8,7 +8,7 @@ import { DataSource, Table } from "../../../src";
 import { View } from "../../../src/schema-builder/view/View";
 import { expect } from "chai";
 
-describe("github issues > #9173 missing typeorm_metadata", () => {
+describe("github issues > #9173 missing lapin_metadata", () => {
     let connections: DataSource[];
     before(
         async () =>

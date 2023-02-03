@@ -1,12 +1,12 @@
-import * as TypeOrm from "../../../../../../src";
+import * as Lapin from "../../../../../../src";
 import { Note } from "./Note";
 import { Employee } from "./Employee";
 
-@TypeOrm.ChildEntity()
+@Lapin.ChildEntity()
 export class PostItNote extends Note {
-    @TypeOrm.Column()
+    @Lapin.Column()
     public postItNoteLabel: string;
 
-    @TypeOrm.ManyToOne(() => Employee, (person) => person.notes)
+    @Lapin.ManyToOne(() => Employee, (person) => person.notes)
     public owner: Employee;
 }

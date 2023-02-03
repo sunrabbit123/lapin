@@ -9,9 +9,9 @@ import { expect } from "chai";
 import { Foo } from "./entities/Foo";
 import { FooView } from "./entities/FooView";
 
-const customTypeormMetadataTableName = "custom_typeorm_metadata_table_name";
+const customTypeormMetadataTableName = "custom_lapin_metadata_table_name";
 
-describe("github issues > #7266 rename table typeorm_metadata name.", () => {
+describe("github issues > #7266 rename table lapin_metadata name.", () => {
     let connections: DataSource[];
 
     before(
@@ -41,7 +41,7 @@ describe("github issues > #7266 rename table typeorm_metadata name.", () => {
                 expect(hasCustomMetadataTableName).to.be.true;
 
                 const hasDefaultMetadataTableName = await queryRunner.hasTable(
-                    "typeorm_metadata",
+                    "lapin_metadata",
                 );
 
                 expect(hasDefaultMetadataTableName).to.be.false;

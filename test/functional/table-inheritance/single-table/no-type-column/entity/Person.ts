@@ -1,14 +1,14 @@
-import * as TypeOrm from "../../../../../../src";
+import * as Lapin from "../../../../../../src";
 import { Note } from "./Note";
 
-@TypeOrm.Entity({ name: "person" })
+@Lapin.Entity({ name: "person" })
 export class Person {
-    @TypeOrm.PrimaryGeneratedColumn()
+    @Lapin.PrimaryGeneratedColumn()
     public id: number;
 
-    @TypeOrm.Column()
+    @Lapin.Column()
     public name: string;
 
-    @TypeOrm.OneToMany(() => Note, (note) => note.owner)
+    @Lapin.OneToMany(() => Note, (note) => note.owner)
     public notes: Note[];
 }

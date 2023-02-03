@@ -142,8 +142,8 @@ export class ConnectionOptionsReader {
 
         // try to find connection options from any of available sources of configuration
         if (
-            PlatformTools.getEnvVariable("lapin_CONNECTION") ||
-            PlatformTools.getEnvVariable("lapin_URL")
+            PlatformTools.getEnvVariable("LAPIN_CONNECTION") ||
+            PlatformTools.getEnvVariable("LAPIN_URL")
         ) {
             connectionOptions = await new ConnectionOptionsEnvReader().read();
         } else if (

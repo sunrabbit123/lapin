@@ -1,8 +1,8 @@
-import * as TypeOrm from "../../../../../../src";
+import * as Lapin from "../../../../../../src";
 import { Person } from "./Person";
 
-@TypeOrm.Entity({ name: "person" })
+@Lapin.Entity({ name: "person" })
 export class Employee extends Person {
-    @TypeOrm.Column({ default: null })
+    @Lapin.Column({ default: null })
     public employeeName: string;
 }

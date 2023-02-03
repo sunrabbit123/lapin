@@ -242,7 +242,7 @@ export class Post {
     array: number[];
 
     // -------------------------------------------------------------------------
-    // TypeOrm Specific Types
+    // Lapin Specific Types
     // -------------------------------------------------------------------------
 
     @Column("simple-array")

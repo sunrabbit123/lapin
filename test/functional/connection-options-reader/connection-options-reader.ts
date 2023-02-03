@@ -8,11 +8,11 @@ async function createDotenvFiles() {
     // These files may not always exist
     await fs.writeFile(
         path.join(__dirname, "configs/.env"),
-        "TYPEORM_CONNECTION = mysql\nTYPEORM_DATABASE = test-env",
+        "LAPIN_CONNECTION = mysql\nLAPIN_DATABASE = test-env",
     );
     await fs.writeFile(
         path.join(__dirname, "configs/ormconfig.env"),
-        "TYPEORM_CONNECTION = mysql\nTYPEORM_DATABASE = test-ormconfig-env",
+        "LAPIN_CONNECTION = mysql\nLAPIN_DATABASE = test-ormconfig-env",
     );
 }
 
@@ -28,13 +28,13 @@ async function createYamlFiles() {
 
 describe("ConnectionOptionsReader", () => {
     beforeEach(() => {
-        delete process.env["TYPEORM_CONNECTION"];
-        delete process.env["TYPEORM_DATABASE"];
+        delete process.env["LAPIN_CONNECTION"];
+        delete process.env["LAPIN_DATABASE"];
     });
 
     after(() => {
-        delete process.env.TYPEORM_CONNECTION;
-        delete process.env.TYPEORM_DATABASE;
+        delete process.env.LAPIN_CONNECTION;
+        delete process.env.LAPIN_DATABASE;
     });
 
     it("properly loads config with entities specified", async () => {
@@ -103,8 +103,9 @@ describe("ConnectionOptionsReader", () => {
         });
         const [fileOptions]: DataSourceOptions[] =
             await connectionOptionsReader.all();
+
         expect(fileOptions.database).to.have.string("test-env");
-        expect(process.env.TYPEORM_DATABASE).to.equal("test-env");
+        expect(process.env.LAPIN_DATABASE).to.equal("test-env");
     });
 
     it("properly loads config from ormconfig.env file", async () => {
@@ -117,7 +118,7 @@ describe("ConnectionOptionsReader", () => {
         const [fileOptions]: DataSourceOptions[] =
             await connectionOptionsReader.all();
         expect(fileOptions.database).to.have.string("test-ormconfig-env");
-        expect(process.env.TYPEORM_DATABASE).to.equal("test-ormconfig-env");
+        expect(process.env.LAPIN_DATABASE).to.equal("test-ormconfig-env");
     });
 
     it("properly loads config ormconfig.env when given multiple choices", async () => {
@@ -129,7 +130,7 @@ describe("ConnectionOptionsReader", () => {
         const [fileOptions]: DataSourceOptions[] =
             await connectionOptionsReader.all();
         expect(fileOptions.database).to.have.string("test-ormconfig-env");
-        expect(process.env.TYPEORM_DATABASE).to.equal("test-ormconfig-env");
+        expect(process.env.LAPIN_DATABASE).to.equal("test-ormconfig-env");
     });
 
     it("properly loads config from yaml", async () => {

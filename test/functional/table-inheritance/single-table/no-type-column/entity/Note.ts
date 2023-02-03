@@ -1,15 +1,15 @@
-import * as TypeOrm from "../../../../../../src";
+import * as Lapin from "../../../../../../src";
 import { Person } from "./Person";
 
-@TypeOrm.Entity()
-@TypeOrm.TableInheritance({ column: { type: String, name: "type" } })
+@Lapin.Entity()
+@Lapin.TableInheritance({ column: { type: String, name: "type" } })
 export class Note {
-    @TypeOrm.PrimaryGeneratedColumn()
+    @Lapin.PrimaryGeneratedColumn()
     public id: number;
 
-    @TypeOrm.Column({ default: null })
+    @Lapin.Column({ default: null })
     public label?: string;
 
-    @TypeOrm.ManyToOne(() => Person)
+    @Lapin.ManyToOne(() => Person)
     public owner: Person;
 }

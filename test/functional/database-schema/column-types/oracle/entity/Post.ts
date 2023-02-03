@@ -99,7 +99,7 @@ export class Post {
     nclob: string;
 
     // -------------------------------------------------------------------------
-    // TypeOrm Specific Type
+    // Lapin Specific Type
     // -------------------------------------------------------------------------
 
     @Column("simple-array")

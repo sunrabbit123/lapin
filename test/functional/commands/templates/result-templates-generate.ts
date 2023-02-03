@@ -1,5 +1,5 @@
 export const resultsTemplates: Record<string, any> = {
-    control: `import {MigrationInterface, QueryRunner} from "typeorm";
+    control: `import {MigrationInterface, QueryRunner} from "lapin";
 
 export class testMigration1610975184784 implements MigrationInterface {
     name = 'testMigration1610975184784'
@@ -13,7 +13,7 @@ export class testMigration1610975184784 implements MigrationInterface {
     }
 
 }`,
-    javascript: `const { MigrationInterface, QueryRunner } = require("typeorm");
+    javascript: `const { MigrationInterface, QueryRunner } = require("lapin");
 
 module.exports = class testMigration1610975184784 {
     name = 'testMigration1610975184784'
@@ -26,7 +26,7 @@ module.exports = class testMigration1610975184784 {
         await queryRunner.query(\`DROP TABLE \\\`post\\\`\`);
     }
 }`,
-    timestamp: `import {MigrationInterface, QueryRunner} from "typeorm";
+    timestamp: `import {MigrationInterface, QueryRunner} from "lapin";
 
 export class testMigration1641163894670 implements MigrationInterface {
     name = 'testMigration1641163894670'

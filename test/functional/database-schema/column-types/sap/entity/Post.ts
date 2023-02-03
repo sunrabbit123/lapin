@@ -121,7 +121,7 @@ export class Post {
     varbinary: Buffer;
 
     // -------------------------------------------------------------------------
-    // TypeOrm Specific Type
+    // Lapin Specific Type
     // -------------------------------------------------------------------------
 
     @Column("simple-array")

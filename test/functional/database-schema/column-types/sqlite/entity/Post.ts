@@ -107,7 +107,7 @@ export class Post {
     datetime: Date;
 
     // -------------------------------------------------------------------------
-    // TypeOrm Specific Types
+    // Lapin Specific Types
     // -------------------------------------------------------------------------
 
     @Column("simple-array")
