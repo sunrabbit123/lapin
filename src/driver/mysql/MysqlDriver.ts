@@ -1249,7 +1249,6 @@ export class MysqlDriver implements Driver {
         return new Promise<void>((ok, fail) => {
             // (issue #610) we make first connection to database to make sure if connection credentials are wrong
             // we give error before calling any other method that creates actual query runner
-            console.log(pool);
             pool.getConnection((err: any, connection: any) => {
                 if (err) return pool.end(() => fail(err));
 
