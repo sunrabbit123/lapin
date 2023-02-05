@@ -1,9 +1,12 @@
 name: CI
 
 on:
-  - push
-  - pull_request
-
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - 'main'
 jobs:
   check-lint:
     name: Check fmt with Prettier
