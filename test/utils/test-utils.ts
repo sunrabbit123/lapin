@@ -273,8 +273,8 @@ export function setupTestingConnections(
             if (options && options.driverSpecific)
                 newOptions = Object.assign(
                     {},
-                    options.driverSpecific,
                     newOptions,
+                    options.driverSpecific,
                 );
             if (options && options.schemaCreate)
                 newOptions.synchronize = options.schemaCreate;
@@ -493,11 +493,11 @@ export function closeTestingConnections(connections: DataSource[]) {
 /**
  * Reloads all databases for all given connections.
  */
-export function reloadTestingDatabases(connections: DataSource[]) {
+export async function reloadTestingDatabases(connections: DataSource[]) {
     GeneratedColumnReplacerSubscriber.globalIncrementValues = {};
-    return Promise.all(
-        connections.map((connection) => connection.synchronize(true)),
-    );
+    for await (const connection of connections) {
+        await connection.synchronize(true);
+    }
 }
 
 /**

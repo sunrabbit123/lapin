@@ -27,7 +27,8 @@
     "type": "sqlite",
     "database": "./temp/sqlitedb-1.db",
     "logging": false,
-    "relationLoadStrategy": "join"
+    "relationLoadStrategy": "join",
+    "busyTimeout": 5000
   },
   {
     "skip": false,
@@ -35,7 +36,8 @@
     "type": "sqlite",
     "database": "./temp/sqlitedb-2.db",
     "logging": false,
-    "relationLoadStrategy": "join"
+    "relationLoadStrategy": "join",
+    "busyTimeout": 5000
   },
   {
     "skip": false,
