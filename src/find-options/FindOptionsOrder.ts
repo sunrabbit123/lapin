@@ -40,13 +40,12 @@ export type FindOptionsOrder<Entity> = {
  * Value of order by in find options.
  */
 export type FindOptionsOrderValue =
-    | "ASC"
-    | "DESC"
-    | "asc"
-    | "desc"
+    | OrderValue
     | 1
     | -1
     | {
-          direction?: "asc" | "desc" | "ASC" | "DESC";
+          direction?: OrderValue;
           nulls?: "first" | "last" | "FIRST" | "LAST";
       };
+
+type OrderValue = "ASC" | "DESC" | "asc" | "desc";

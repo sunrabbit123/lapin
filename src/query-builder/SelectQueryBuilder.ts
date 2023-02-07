@@ -43,11 +43,12 @@ import { OrmUtils } from "../util/OrmUtils";
 import { EntityPropertyNotFoundError } from "../error/EntityPropertyNotFoundError";
 import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver";
 import { InstanceChecker } from "../util/InstanceChecker";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class SelectQueryBuilder<Entity extends ObjectLiteral>
+export class SelectQueryBuilder<Entity extends BaseEntity>
     extends QueryBuilder<Entity>
     implements WhereExpressionBuilder
 {
@@ -124,8 +125,8 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Creates SELECT query.
      * Replaces all previous selections if they exist.
      */
-    select(
-        selection: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>,
+    select<T extends BaseEntity>(
+        selection: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
         selectionAliasName?: string,
     ): this;
 
@@ -145,11 +146,11 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Creates SELECT query and selects given data.
      * Replaces all previous selections if they exist.
      */
-    select(
+    select<T extends BaseEntity>(
         selection?:
             | string
             | string[]
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         selectionAliasName?: string,
     ): SelectQueryBuilder<Entity> {
         this.expressionMap.queryType = "select";
@@ -262,7 +263,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Also sets a main string alias of the selection data.
      * Removes all previously set from-s.
      */
-    from<T extends ObjectLiteral>(
+    from<T extends BaseEntity>(
         entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>,
         aliasName: string,
     ): SelectQueryBuilder<T>;
@@ -272,7 +273,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Also sets a main string alias of the selection data.
      * Removes all previously set from-s.
      */
-    from<T extends ObjectLiteral>(
+    from<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName: string,
     ): SelectQueryBuilder<T>;
@@ -282,7 +283,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Also sets a main string alias of the selection data.
      * Removes all previously set from-s.
      */
-    from<T extends ObjectLiteral>(
+    from<T extends BaseEntity>(
         entityTarget:
             | EntityTarget<T>
             | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
@@ -297,7 +298,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    addFrom<T extends ObjectLiteral>(
+    addFrom<T extends BaseEntity>(
         entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>,
         aliasName: string,
     ): SelectQueryBuilder<T>;
@@ -306,7 +307,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    addFrom<T extends ObjectLiteral>(
+    addFrom<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName: string,
     ): SelectQueryBuilder<T>;
@@ -315,7 +316,7 @@ export class SelectQueryBuilder<Entity extends ObjectLiteral>
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    addFrom<T extends ObjectLiteral>(
+    addFrom<T extends BaseEntity>(
         entityTarget:
             | EntityTarget<T>
             | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
