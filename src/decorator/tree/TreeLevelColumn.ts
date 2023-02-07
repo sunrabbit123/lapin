@@ -1,5 +1,5 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs"
+import { getMetadataArgsStorage } from "../../globals";
+import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs";
 
 /**
  * Creates a "level"/"length" column to the table that holds a closure table.
@@ -11,6 +11,6 @@ export function TreeLevelColumn(): PropertyDecorator | Function {
             propertyName: propertyName,
             mode: "treeLevel",
             options: {},
-        } as ColumnMetadataArgs)
-    }
+        } as ColumnMetadataArgs);
+    };
 }

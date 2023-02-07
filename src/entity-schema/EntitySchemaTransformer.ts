@@ -1,22 +1,22 @@
-import { EntitySchema } from "./EntitySchema"
-import { MetadataArgsStorage } from "../metadata-args/MetadataArgsStorage"
-import { TableMetadataArgs } from "../metadata-args/TableMetadataArgs"
-import { ColumnMetadataArgs } from "../metadata-args/ColumnMetadataArgs"
-import { IndexMetadataArgs } from "../metadata-args/IndexMetadataArgs"
-import { RelationMetadataArgs } from "../metadata-args/RelationMetadataArgs"
-import { JoinColumnMetadataArgs } from "../metadata-args/JoinColumnMetadataArgs"
-import { JoinTableMetadataArgs } from "../metadata-args/JoinTableMetadataArgs"
-import { JoinTableOptions } from "../decorator/options/JoinTableOptions"
-import { JoinTableMultipleColumnsOptions } from "../decorator/options/JoinTableMultipleColumnsOptions"
-import { ColumnMode } from "../metadata-args/types/ColumnMode"
-import { GeneratedMetadataArgs } from "../metadata-args/GeneratedMetadataArgs"
-import { UniqueMetadataArgs } from "../metadata-args/UniqueMetadataArgs"
-import { CheckMetadataArgs } from "../metadata-args/CheckMetadataArgs"
-import { ExclusionMetadataArgs } from "../metadata-args/ExclusionMetadataArgs"
-import { EntitySchemaColumnOptions } from "./EntitySchemaColumnOptions"
-import { EntitySchemaOptions } from "./EntitySchemaOptions"
-import { EntitySchemaEmbeddedError } from "./EntitySchemaEmbeddedError"
-import { RelationIdMetadataArgs } from "../metadata-args/RelationIdMetadataArgs"
+import { EntitySchema } from "./EntitySchema";
+import { MetadataArgsStorage } from "../metadata-args/MetadataArgsStorage";
+import { TableMetadataArgs } from "../metadata-args/TableMetadataArgs";
+import { ColumnMetadataArgs } from "../metadata-args/ColumnMetadataArgs";
+import { IndexMetadataArgs } from "../metadata-args/IndexMetadataArgs";
+import { RelationMetadataArgs } from "../metadata-args/RelationMetadataArgs";
+import { JoinColumnMetadataArgs } from "../metadata-args/JoinColumnMetadataArgs";
+import { JoinTableMetadataArgs } from "../metadata-args/JoinTableMetadataArgs";
+import { JoinTableOptions } from "../decorator/options/JoinTableOptions";
+import { JoinTableMultipleColumnsOptions } from "../decorator/options/JoinTableMultipleColumnsOptions";
+import { ColumnMode } from "../metadata-args/types/ColumnMode";
+import { GeneratedMetadataArgs } from "../metadata-args/GeneratedMetadataArgs";
+import { UniqueMetadataArgs } from "../metadata-args/UniqueMetadataArgs";
+import { CheckMetadataArgs } from "../metadata-args/CheckMetadataArgs";
+import { ExclusionMetadataArgs } from "../metadata-args/ExclusionMetadataArgs";
+import { EntitySchemaColumnOptions } from "./EntitySchemaColumnOptions";
+import { EntitySchemaOptions } from "./EntitySchemaOptions";
+import { EntitySchemaEmbeddedError } from "./EntitySchemaEmbeddedError";
+import { RelationIdMetadataArgs } from "../metadata-args/RelationIdMetadataArgs";
 
 /**
  * Transforms entity schema into metadata args storage.
@@ -31,10 +31,10 @@ export class EntitySchemaTransformer {
      * Transforms entity schema into new metadata args storage object.
      */
     transform(schemas: EntitySchema<any>[]): MetadataArgsStorage {
-        const metadataArgsStorage = new MetadataArgsStorage()
+        const metadataArgsStorage = new MetadataArgsStorage();
 
         schemas.forEach((entitySchema) => {
-            const options = entitySchema.options
+            const options = entitySchema.options;
 
             // add table metadata args from the schema
             const tableMetadata: TableMetadataArgs = {
@@ -47,13 +47,13 @@ export class EntitySchemaTransformer {
                 synchronize: options.synchronize,
                 withoutRowid: !!options.withoutRowid,
                 expression: options.expression,
-            }
-            metadataArgsStorage.tables.push(tableMetadata)
+            };
+            metadataArgsStorage.tables.push(tableMetadata);
 
-            this.transformColumnsRecursive(options, metadataArgsStorage)
-        })
+            this.transformColumnsRecursive(options, metadataArgsStorage);
+        });
 
-        return metadataArgsStorage
+        return metadataArgsStorage;
     }
 
     private transformColumnsRecursive(
@@ -62,17 +62,17 @@ export class EntitySchemaTransformer {
     ): void {
         // add columns metadata args from the schema
         Object.keys(options.columns).forEach((columnName) => {
-            const column = options.columns[columnName]!
+            const column = options.columns[columnName]!;
 
-            const regularColumn = column as EntitySchemaColumnOptions
-            let mode: ColumnMode = "regular"
-            if (regularColumn.createDate) mode = "createDate"
-            if (regularColumn.updateDate) mode = "updateDate"
-            if (regularColumn.deleteDate) mode = "deleteDate"
-            if (regularColumn.version) mode = "version"
-            if (regularColumn.treeChildrenCount) mode = "treeChildrenCount"
-            if (regularColumn.treeLevel) mode = "treeLevel"
-            if (regularColumn.objectId) mode = "objectId"
+            const regularColumn = column as EntitySchemaColumnOptions;
+            let mode: ColumnMode = "regular";
+            if (regularColumn.createDate) mode = "createDate";
+            if (regularColumn.updateDate) mode = "updateDate";
+            if (regularColumn.deleteDate) mode = "deleteDate";
+            if (regularColumn.version) mode = "version";
+            if (regularColumn.treeChildrenCount) mode = "treeChildrenCount";
+            if (regularColumn.treeLevel) mode = "treeLevel";
+            if (regularColumn.objectId) mode = "objectId";
 
             const columnArgs: ColumnMetadataArgs = {
                 target: options.target || options.name,
@@ -111,8 +111,8 @@ export class EntitySchemaTransformer {
                     spatialFeatureType: regularColumn.spatialFeatureType,
                     srid: regularColumn.srid,
                 },
-            }
-            metadataArgsStorage.columns.push(columnArgs)
+            };
+            metadataArgsStorage.columns.push(columnArgs);
 
             if (regularColumn.generated) {
                 const generationArgs: GeneratedMetadataArgs = {
@@ -122,21 +122,21 @@ export class EntitySchemaTransformer {
                         typeof regularColumn.generated === "string"
                             ? regularColumn.generated
                             : "increment",
-                }
-                metadataArgsStorage.generations.push(generationArgs)
+                };
+                metadataArgsStorage.generations.push(generationArgs);
             }
 
             if (regularColumn.unique)
                 metadataArgsStorage.uniques.push({
                     target: options.target || options.name,
                     columns: [columnName],
-                })
-        })
+                });
+        });
 
         // add relation metadata args from the schema
         if (options.relations) {
             Object.keys(options.relations).forEach((relationName) => {
-                const relationSchema = options.relations![relationName]!
+                const relationSchema = options.relations![relationName]!;
                 const relation: RelationMetadataArgs = {
                     target: options.target || options.name,
                     propertyName: relationName,
@@ -159,9 +159,9 @@ export class EntitySchemaTransformer {
                         persistence: relationSchema.persistence,
                         orphanedRowAction: relationSchema.orphanedRowAction,
                     },
-                }
+                };
 
-                metadataArgsStorage.relations.push(relation)
+                metadataArgsStorage.relations.push(relation);
 
                 // add join column
                 if (relationSchema.joinColumn) {
@@ -169,14 +169,14 @@ export class EntitySchemaTransformer {
                         const joinColumn: JoinColumnMetadataArgs = {
                             target: options.target || options.name,
                             propertyName: relationName,
-                        }
-                        metadataArgsStorage.joinColumns.push(joinColumn)
+                        };
+                        metadataArgsStorage.joinColumns.push(joinColumn);
                     } else {
                         const joinColumnsOptions = Array.isArray(
                             relationSchema.joinColumn,
                         )
                             ? relationSchema.joinColumn
-                            : [relationSchema.joinColumn]
+                            : [relationSchema.joinColumn];
 
                         for (const joinColumnOption of joinColumnsOptions) {
                             const joinColumn: JoinColumnMetadataArgs = {
@@ -187,8 +187,8 @@ export class EntitySchemaTransformer {
                                     joinColumnOption.referencedColumnName,
                                 foreignKeyConstraintName:
                                     joinColumnOption.foreignKeyConstraintName,
-                            }
-                            metadataArgsStorage.joinColumns.push(joinColumn)
+                            };
+                            metadataArgsStorage.joinColumns.push(joinColumn);
                         }
                     }
                 }
@@ -199,8 +199,8 @@ export class EntitySchemaTransformer {
                         const joinTable: JoinTableMetadataArgs = {
                             target: options.target || options.name,
                             propertyName: relationName,
-                        }
-                        metadataArgsStorage.joinTables.push(joinTable)
+                        };
+                        metadataArgsStorage.joinTables.push(joinTable);
                     } else {
                         const joinTable: JoinTableMetadataArgs = {
                             target: options.target || options.name,
@@ -230,26 +230,26 @@ export class EntitySchemaTransformer {
                                 : (
                                       relationSchema.joinTable as JoinTableMultipleColumnsOptions
                                   ).inverseJoinColumns) as any,
-                        }
-                        metadataArgsStorage.joinTables.push(joinTable)
+                        };
+                        metadataArgsStorage.joinTables.push(joinTable);
                     }
                 }
-            })
+            });
         }
 
         // add relation id metadata args from the schema
         if (options.relationIds) {
             Object.keys(options.relationIds).forEach((relationIdName) => {
-                const relationIdOptions = options.relationIds![relationIdName]!
+                const relationIdOptions = options.relationIds![relationIdName]!;
                 const relationId: RelationIdMetadataArgs = {
                     propertyName: relationIdName,
                     relation: relationIdOptions.relationName,
                     target: options.target || options.name,
                     alias: relationIdOptions.alias,
                     queryBuilderFactory: relationIdOptions.queryBuilderFactory,
-                }
-                metadataArgsStorage.relationIds.push(relationId)
-            })
+                };
+                metadataArgsStorage.relationIds.push(relationId);
+            });
         }
 
         // add index metadata args from the schema
@@ -267,9 +267,9 @@ export class EntitySchemaTransformer {
                     where: index.where,
                     sparse: index.sparse,
                     columns: index.columns,
-                }
-                metadataArgsStorage.indices.push(indexArgs)
-            })
+                };
+                metadataArgsStorage.indices.push(indexArgs);
+            });
         }
 
         // add unique metadata args from the schema
@@ -280,9 +280,9 @@ export class EntitySchemaTransformer {
                     name: unique.name,
                     columns: unique.columns,
                     deferrable: unique.deferrable,
-                }
-                metadataArgsStorage.uniques.push(uniqueArgs)
-            })
+                };
+                metadataArgsStorage.uniques.push(uniqueArgs);
+            });
         }
 
         // add check metadata args from the schema
@@ -292,9 +292,9 @@ export class EntitySchemaTransformer {
                     target: options.target || options.name,
                     name: check.name,
                     expression: check.expression,
-                }
-                metadataArgsStorage.checks.push(checkArgs)
-            })
+                };
+                metadataArgsStorage.checks.push(checkArgs);
+            });
         }
 
         // add exclusion metadata args from the schema
@@ -304,21 +304,21 @@ export class EntitySchemaTransformer {
                     target: options.target || options.name,
                     name: exclusion.name,
                     expression: exclusion.expression,
-                }
-                metadataArgsStorage.exclusions.push(exclusionArgs)
-            })
+                };
+                metadataArgsStorage.exclusions.push(exclusionArgs);
+            });
         }
 
         if (options.embeddeds) {
             Object.keys(options.embeddeds).forEach((columnName) => {
-                const embeddedOptions = options.embeddeds![columnName]
+                const embeddedOptions = options.embeddeds![columnName];
 
                 if (!embeddedOptions.schema)
                     throw EntitySchemaEmbeddedError.createEntitySchemaIsRequiredException(
                         columnName,
-                    )
+                    );
 
-                const embeddedSchema = embeddedOptions.schema.options
+                const embeddedSchema = embeddedOptions.schema.options;
 
                 metadataArgsStorage.embeddeds.push({
                     target: options.target || options.name,
@@ -329,13 +329,13 @@ export class EntitySchemaTransformer {
                             ? embeddedOptions.prefix
                             : undefined,
                     type: () => embeddedSchema?.target || embeddedSchema.name,
-                })
+                });
 
                 this.transformColumnsRecursive(
                     embeddedSchema,
                     metadataArgsStorage,
-                )
-            })
+                );
+            });
         }
     }
 }

@@ -4,21 +4,21 @@ import {
     ManyToMany,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index"
-import { Post } from "./Post"
-import { PostDetails } from "./PostDetails"
+} from "../../../src/index";
+import { Post } from "./Post";
+import { PostDetails } from "./PostDetails";
 
 @Entity("sample10_category")
 export class Category {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    description: string
+    description: string;
 
     @ManyToMany((type) => Post, (post) => post.categories)
-    posts: Post[]
+    posts: Post[];
 
     @ManyToOne((type) => PostDetails, (postDetails) => postDetails.categories)
-    details: PostDetails
+    details: PostDetails;
 }

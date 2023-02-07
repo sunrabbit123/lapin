@@ -1,20 +1,20 @@
-import { CommandUtils } from "./CommandUtils"
-import * as path from "path"
-import * as yargs from "yargs"
-import chalk from "chalk"
-import { exec } from "child_process"
-import { LapinError } from "../error"
-import { PlatformTools } from "../platform/PlatformTools"
+import { CommandUtils } from "./CommandUtils";
+import * as path from "path";
+import * as yargs from "yargs";
+import chalk from "chalk";
+import { exec } from "child_process";
+import { LapinError } from "../error";
+import { PlatformTools } from "../platform/PlatformTools";
 
 /**
  * Generates a new project with lapin.
  */
 export class InitCommand implements yargs.CommandModule {
-    command = "init"
+    command = "init";
     describe =
         "Generates initial lapin project structure. " +
         "If name specified then creates files inside directory called as name. " +
-        "If its not specified then creates files inside current directory."
+        "If its not specified then creates files inside current directory.";
 
     builder(args: yargs.Argv) {
         return args
@@ -46,73 +46,73 @@ export class InitCommand implements yargs.CommandModule {
                 default: "commonjs",
                 describe:
                     "Module system to use for project, expected values are commonjs or esm.",
-            })
+            });
     }
 
     async handler(args: yargs.Arguments) {
         try {
-            const database: string = (args.database as any) || "postgres"
-            const isExpress = args.express !== undefined ? true : false
-            const isDocker = args.docker !== undefined ? true : false
-            const basePath = process.cwd() + (args.name ? "/" + args.name : "")
+            const database: string = (args.database as any) || "postgres";
+            const isExpress = args.express !== undefined ? true : false;
+            const isDocker = args.docker !== undefined ? true : false;
+            const basePath = process.cwd() + (args.name ? "/" + args.name : "");
             const projectName = args.name
                 ? path.basename(args.name as any)
-                : undefined
-            const installNpm = args.pm === "yarn" ? false : true
-            const projectIsEsm = args.ms === "esm"
+                : undefined;
+            const installNpm = args.pm === "yarn" ? false : true;
+            const projectIsEsm = args.ms === "esm";
             await CommandUtils.createFile(
                 basePath + "/package.json",
                 InitCommand.getPackageJsonTemplate(projectName, projectIsEsm),
                 false,
-            )
+            );
             if (isDocker)
                 await CommandUtils.createFile(
                     basePath + "/docker-compose.yml",
                     InitCommand.getDockerComposeTemplate(database),
                     false,
-                )
+                );
             await CommandUtils.createFile(
                 basePath + "/.gitignore",
                 InitCommand.getGitIgnoreFile(),
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/README.md",
                 InitCommand.getReadmeTemplate({ docker: isDocker }),
                 false,
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/tsconfig.json",
                 InitCommand.getTsConfigTemplate(projectIsEsm),
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/src/entity/User.ts",
                 InitCommand.getUserEntityTemplate(database),
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/src/data-source.ts",
                 InitCommand.getAppDataSourceTemplate(projectIsEsm, database),
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/src/index.ts",
                 InitCommand.getAppIndexTemplate(isExpress, projectIsEsm),
-            )
-            await CommandUtils.createDirectories(basePath + "/src/migration")
+            );
+            await CommandUtils.createDirectories(basePath + "/src/migration");
 
             // generate extra files for express application
             if (isExpress) {
                 await CommandUtils.createFile(
                     basePath + "/src/routes.ts",
                     InitCommand.getRoutesTemplate(projectIsEsm),
-                )
+                );
                 await CommandUtils.createFile(
                     basePath + "/src/controller/UserController.ts",
                     InitCommand.getControllerTemplate(projectIsEsm),
-                )
+                );
             }
 
             const packageJsonContents = await CommandUtils.readFile(
                 basePath + "/package.json",
-            )
+            );
             await CommandUtils.createFile(
                 basePath + "/package.json",
                 InitCommand.appendPackageJson(
@@ -121,7 +121,7 @@ export class InitCommand implements yargs.CommandModule {
                     isExpress,
                     projectIsEsm,
                 ),
-            )
+            );
 
             if (args.name) {
                 console.log(
@@ -130,24 +130,27 @@ export class InitCommand implements yargs.CommandModule {
                             basePath,
                         )} directory.`,
                     ),
-                )
+                );
             } else {
                 console.log(
                     chalk.green(`Project created inside current directory.`),
-                )
+                );
             }
 
-            console.log(chalk.green(`Please wait, installing dependencies...`))
+            console.log(chalk.green(`Please wait, installing dependencies...`));
             if (args.pm && installNpm) {
-                await InitCommand.executeCommand("npm install", basePath)
+                await InitCommand.executeCommand("npm install", basePath);
             } else {
-                await InitCommand.executeCommand("yarn install", basePath)
+                await InitCommand.executeCommand("yarn install", basePath);
             }
 
-            console.log(chalk.green(`Done! Start playing with a new project!`))
+            console.log(chalk.green(`Done! Start playing with a new project!`));
         } catch (err) {
-            PlatformTools.logCmdErr("Error during project initialization:", err)
-            process.exit(1)
+            PlatformTools.logCmdErr(
+                "Error during project initialization:",
+                err,
+            );
+            process.exit(1);
         }
     }
 
@@ -158,12 +161,12 @@ export class InitCommand implements yargs.CommandModule {
     protected static executeCommand(command: string, cwd: string) {
         return new Promise<string>((ok, fail) => {
             exec(command, { cwd }, (error: any, stdout: any, stderr: any) => {
-                if (stdout) return ok(stdout)
-                if (stderr) return fail(stderr)
-                if (error) return fail(error)
-                ok("")
-            })
-        })
+                if (stdout) return ok(stdout);
+                if (stderr) return fail(stderr);
+                if (error) return fail(error);
+                ok("");
+            });
+        });
     }
 
     /**
@@ -173,7 +176,7 @@ export class InitCommand implements yargs.CommandModule {
         isEsm: boolean,
         database: string,
     ): string {
-        let dbSettings = ""
+        let dbSettings = "";
         switch (database) {
             case "mysql":
                 dbSettings = `type: "mysql",
@@ -181,65 +184,65 @@ export class InitCommand implements yargs.CommandModule {
     port: 3306,
     username: "test",
     password: "test",
-    database: "test",`
-                break
+    database: "test",`;
+                break;
             case "mariadb":
                 dbSettings = `type: "mariadb",
     host: "localhost",
     port: 3306,
     username: "test",
     password: "test",
-    database: "test",`
-                break
+    database: "test",`;
+                break;
             case "sqlite":
                 dbSettings = `type: "sqlite",
-    database: "database.sqlite",`
-                break
+    database: "database.sqlite",`;
+                break;
             case "better-sqlite3":
                 dbSettings = `type: "better-sqlite3",
-    database: "database.sqlite",`
-                break
+    database: "database.sqlite",`;
+                break;
             case "postgres":
                 dbSettings = `type: "postgres",
     host: "localhost",
     port: 5432,
     username: "test",
     password: "test",
-    database: "test",`
-                break
+    database: "test",`;
+                break;
             case "cockroachdb":
                 dbSettings = `type: "cockroachdb",
     host: "localhost",
     port: 26257,
     username: "root",
     password: "",
-    database: "defaultdb",`
-                break
+    database: "defaultdb",`;
+                break;
             case "mssql":
                 dbSettings = `type: "mssql",
     host: "localhost",
     username: "sa",
     password: "Admin12345",
-    database: "tempdb",`
-                break
+    database: "tempdb",`;
+                break;
             case "oracle":
                 dbSettings = `type: "oracle",
 host: "localhost",
 username: "system",
 password: "oracle",
 port: 1521,
-sid: "xe.oracle.docker",`
-                break
+sid: "xe.oracle.docker",`;
+                break;
             case "mongodb":
                 dbSettings = `type: "mongodb",
-    database: "test",`
-                break
+    database: "test",`;
+                break;
             case "spanner":
                 dbSettings = `type: "spanner",
     projectId: "test",
     instanceId: "test",
-    databaseId: "test",`
-                break
+    databaseId: "test",`;
+                break;
         }
         return `import "reflect-metadata"
 import { DataSource } from "lapin"
@@ -253,7 +256,7 @@ export const AppDataSource = new DataSource({
     migrations: [],
     subscribers: [],
 })
-`
+`;
     }
 
     /**
@@ -277,7 +280,7 @@ export const AppDataSource = new DataSource({
                 },
                 undefined,
                 3,
-            )
+            );
         else
             return JSON.stringify(
                 {
@@ -294,7 +297,7 @@ export const AppDataSource = new DataSource({
                 },
                 undefined,
                 3,
-            )
+            );
     }
 
     /**
@@ -306,7 +309,7 @@ export const AppDataSource = new DataSource({
 node_modules/
 build/
 tmp/
-temp/`
+temp/`;
     }
 
     /**
@@ -339,7 +342,7 @@ export class User {
     age: number
 
 }
-`
+`;
     }
 
     /**
@@ -370,7 +373,7 @@ export const Routes = [{
     route: "/users/:id",
     controller: UserController,
     action: "remove"
-}]`
+}]`;
     }
 
     /**
@@ -429,7 +432,7 @@ export class UserController {
         return "user has been removed"
     }
 
-}`
+}`;
     }
 
     /**
@@ -492,7 +495,7 @@ AppDataSource.initialize().then(async () => {
     console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results")
 
 }).catch(error => console.log(error))
-`
+`;
         } else {
             return `import { AppDataSource } from "./data-source${
                 isEsm ? ".js" : ""
@@ -516,7 +519,7 @@ AppDataSource.initialize().then(async () => {
     console.log("Here you can setup and run express / fastify / any other framework.")
 
 }).catch(error => console.log(error))
-`
+`;
         }
     }
 
@@ -539,7 +542,7 @@ AppDataSource.initialize().then(async () => {
             },
             undefined,
             3,
-        )
+        );
     }
 
     /**
@@ -561,7 +564,7 @@ services:
       MYSQL_PASSWORD: "test"
       MYSQL_DATABASE: "test"
 
-`
+`;
             case "mariadb":
                 return `version: '3'
 services:
@@ -576,7 +579,7 @@ services:
       MYSQL_PASSWORD: "test"
       MYSQL_DATABASE: "test"
 
-`
+`;
             case "postgres":
                 return `version: '3'
 services:
@@ -590,7 +593,7 @@ services:
       POSTGRES_PASSWORD: "test"
       POSTGRES_DB: "test"
 
-`
+`;
             case "cockroachdb":
                 return `version: '3'
 services:
@@ -601,16 +604,16 @@ services:
     ports:
       - "26257:26257"
 
-`
+`;
             case "sqlite":
             case "better-sqlite3":
                 return `version: '3'
 services:
-`
+`;
             case "oracle":
                 throw new LapinError(
                     `You cannot initialize a project with docker for Oracle driver yet.`,
-                ) // todo: implement for oracle as well
+                ); // todo: implement for oracle as well
 
             case "mssql":
                 return `version: '3'
@@ -624,7 +627,7 @@ services:
       SA_PASSWORD: "Admin12345"
       ACCEPT_EULA: "Y"
 
-`
+`;
             case "mongodb":
                 return `version: '3'
 services:
@@ -635,7 +638,7 @@ services:
     ports:
       - "27017:27017"
 
-`
+`;
             case "spanner":
                 return `version: '3'
 services:
@@ -646,9 +649,9 @@ services:
       - "9010:9010"
       - "9020:9020"
 
-`
+`;
         }
-        return ""
+        return "";
     }
 
     /**
@@ -660,19 +663,19 @@ services:
 Steps to run this project:
 
 1. Run \`npm i\` command
-`
+`;
 
         if (options.docker) {
             template += `2. Run \`docker-compose up\` command
-`
+`;
         } else {
             template += `2. Setup database settings inside \`data-source.ts\` file
-`
+`;
         }
 
         template += `3. Run \`npm start\` command
-`
-        return template
+`;
+        return template;
     }
 
     /**
@@ -684,68 +687,68 @@ Steps to run this project:
         express: boolean,
         projectIsEsm: boolean /*, docker: boolean*/,
     ): string {
-        const packageJson = JSON.parse(packageJsonContents)
+        const packageJson = JSON.parse(packageJsonContents);
 
-        if (!packageJson.devDependencies) packageJson.devDependencies = {}
+        if (!packageJson.devDependencies) packageJson.devDependencies = {};
         Object.assign(packageJson.devDependencies, {
             "ts-node": "10.7.0",
             "@types/node": "^16.11.10",
             typescript: "4.5.2",
-        })
+        });
 
-        if (!packageJson.dependencies) packageJson.dependencies = {}
+        if (!packageJson.dependencies) packageJson.dependencies = {};
         Object.assign(packageJson.dependencies, {
             lapin: require("../package.json").version,
             "reflect-metadata": "^0.1.13",
-        })
+        });
 
         switch (database) {
             case "mysql":
             case "mariadb":
-                packageJson.dependencies["mysql"] = "^2.14.1"
-                break
+                packageJson.dependencies["mysql"] = "^2.14.1";
+                break;
             case "postgres":
             case "cockroachdb":
-                packageJson.dependencies["pg"] = "^8.4.0"
-                break
+                packageJson.dependencies["pg"] = "^8.4.0";
+                break;
             case "sqlite":
-                packageJson.dependencies["sqlite3"] = "^5.0.2"
-                break
+                packageJson.dependencies["sqlite3"] = "^5.0.2";
+                break;
             case "better-sqlite3":
-                packageJson.dependencies["better-sqlite3"] = "^7.0.0"
-                break
+                packageJson.dependencies["better-sqlite3"] = "^7.0.0";
+                break;
             case "oracle":
-                packageJson.dependencies["oracledb"] = "^5.1.0"
-                break
+                packageJson.dependencies["oracledb"] = "^5.1.0";
+                break;
             case "mssql":
-                packageJson.dependencies["mssql"] = "^7.3.0"
-                break
+                packageJson.dependencies["mssql"] = "^7.3.0";
+                break;
             case "mongodb":
-                packageJson.dependencies["mongodb"] = "^3.0.8"
-                break
+                packageJson.dependencies["mongodb"] = "^3.0.8";
+                break;
             case "spanner":
-                packageJson.dependencies["@google-cloud/spanner"] = "^5.18.0"
-                break
+                packageJson.dependencies["@google-cloud/spanner"] = "^5.18.0";
+                break;
         }
 
         if (express) {
-            packageJson.dependencies["express"] = "^4.17.2"
-            packageJson.dependencies["body-parser"] = "^1.19.1"
+            packageJson.dependencies["express"] = "^4.17.2";
+            packageJson.dependencies["body-parser"] = "^1.19.1";
         }
 
-        if (!packageJson.scripts) packageJson.scripts = {}
+        if (!packageJson.scripts) packageJson.scripts = {};
 
         if (projectIsEsm)
             Object.assign(packageJson.scripts, {
                 start: /*(docker ? "docker-compose up && " : "") + */ "node --loader ts-node/esm src/index.ts",
                 lapin: "lapin-ts-node-esm",
-            })
+            });
         else
             Object.assign(packageJson.scripts, {
                 start: /*(docker ? "docker-compose up && " : "") + */ "ts-node src/index.ts",
                 lapin: "lapin-ts-node-commonjs",
-            })
+            });
 
-        return JSON.stringify(packageJson, undefined, 3)
+        return JSON.stringify(packageJson, undefined, 3);
     }
 }

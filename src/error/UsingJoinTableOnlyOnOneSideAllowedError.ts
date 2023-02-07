@@ -1,6 +1,6 @@
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { RelationMetadata } from "../metadata/RelationMetadata"
-import { LapinError } from "./LapinError"
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { RelationMetadata } from "../metadata/RelationMetadata";
+import { LapinError } from "./LapinError";
 
 export class UsingJoinTableOnlyOnOneSideAllowedError extends LapinError {
     constructor(entityMetadata: EntityMetadata, relation: RelationMetadata) {
@@ -10,6 +10,6 @@ export class UsingJoinTableOnlyOnOneSideAllowedError extends LapinError {
                     relation.inverseEntityMetadata.name
                 }#${relation.inverseRelation!.propertyName} ` +
                 `has JoinTable decorators. Choose one of them and left JoinColumn decorator only on it.`,
-        )
+        );
     }
 }

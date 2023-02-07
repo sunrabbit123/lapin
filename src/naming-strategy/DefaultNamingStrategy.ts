@@ -1,7 +1,7 @@
-import { NamingStrategyInterface } from "./NamingStrategyInterface"
-import { RandomGenerator } from "../util/RandomGenerator"
-import { camelCase, snakeCase, titleCase } from "../util/StringUtils"
-import { Table } from "../schema-builder/table/Table"
+import { NamingStrategyInterface } from "./NamingStrategyInterface";
+import { RandomGenerator } from "../util/RandomGenerator";
+import { camelCase, snakeCase, titleCase } from "../util/StringUtils";
+import { Table } from "../schema-builder/table/Table";
 
 /**
  * Naming strategy that is used by default.
@@ -9,10 +9,10 @@ import { Table } from "../schema-builder/table/Table"
 export class DefaultNamingStrategy implements NamingStrategyInterface {
     protected getTableName(tableOrName: Table | string): string {
         if (typeof tableOrName !== "string") {
-            tableOrName = tableOrName.name
+            tableOrName = tableOrName.name;
         }
 
-        return tableOrName.split(".").pop()!
+        return tableOrName.split(".").pop()!;
     }
     /**
      * Normalizes table name.
@@ -24,7 +24,7 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         targetName: string,
         userSpecifiedName: string | undefined,
     ): string {
-        return userSpecifiedName ? userSpecifiedName : snakeCase(targetName)
+        return userSpecifiedName ? userSpecifiedName : snakeCase(targetName);
     }
 
     /**
@@ -33,7 +33,7 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
      * @param originalClosureTableName Name of the closure table which owns this junction table.
      */
     closureJunctionTableName(originalClosureTableName: string): string {
-        return originalClosureTableName + "_closure"
+        return originalClosureTableName + "_closure";
     }
 
     columnName(
@@ -41,26 +41,26 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         customName: string,
         embeddedPrefixes: string[],
     ): string {
-        const name = customName || propertyName
+        const name = customName || propertyName;
 
         if (embeddedPrefixes.length)
-            return camelCase(embeddedPrefixes.join("_")) + titleCase(name)
+            return camelCase(embeddedPrefixes.join("_")) + titleCase(name);
 
-        return name
+        return name;
     }
 
     relationName(propertyName: string): string {
-        return propertyName
+        return propertyName;
     }
 
     primaryKeyName(tableOrName: Table | string, columnNames: string[]): string {
         // sort incoming column names to avoid issue when ["id", "name"] and ["name", "id"] arrays
-        const clonedColumnNames = [...columnNames]
-        clonedColumnNames.sort()
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`
-        return "PK_" + RandomGenerator.sha1(key).substr(0, 27)
+        const clonedColumnNames = [...columnNames];
+        clonedColumnNames.sort();
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`;
+        return "PK_" + RandomGenerator.sha1(key).substr(0, 27);
     }
 
     uniqueConstraintName(
@@ -68,12 +68,12 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         columnNames: string[],
     ): string {
         // sort incoming column names to avoid issue when ["id", "name"] and ["name", "id"] arrays
-        const clonedColumnNames = [...columnNames]
-        clonedColumnNames.sort()
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`
-        return "UQ_" + RandomGenerator.sha1(key).substr(0, 27)
+        const clonedColumnNames = [...columnNames];
+        clonedColumnNames.sort();
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`;
+        return "UQ_" + RandomGenerator.sha1(key).substr(0, 27);
     }
 
     relationConstraintName(
@@ -82,24 +82,24 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         where?: string,
     ): string {
         // sort incoming column names to avoid issue when ["id", "name"] and ["name", "id"] arrays
-        const clonedColumnNames = [...columnNames]
-        clonedColumnNames.sort()
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        let key = `${replacedTableName}_${clonedColumnNames.join("_")}`
-        if (where) key += `_${where}`
+        const clonedColumnNames = [...columnNames];
+        clonedColumnNames.sort();
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        let key = `${replacedTableName}_${clonedColumnNames.join("_")}`;
+        if (where) key += `_${where}`;
 
-        return "REL_" + RandomGenerator.sha1(key).substr(0, 26)
+        return "REL_" + RandomGenerator.sha1(key).substr(0, 26);
     }
 
     defaultConstraintName(
         tableOrName: Table | string,
         columnName: string,
     ): string {
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${columnName}`
-        return "DF_" + RandomGenerator.sha1(key).substr(0, 27)
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${columnName}`;
+        return "DF_" + RandomGenerator.sha1(key).substr(0, 27);
     }
 
     foreignKeyName(
@@ -109,12 +109,12 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         _referencedColumnNames?: string[],
     ): string {
         // sort incoming column names to avoid issue when ["id", "name"] and ["name", "id"] arrays
-        const clonedColumnNames = [...columnNames]
-        clonedColumnNames.sort()
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`
-        return "FK_" + RandomGenerator.sha1(key).substr(0, 27)
+        const clonedColumnNames = [...columnNames];
+        clonedColumnNames.sort();
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${clonedColumnNames.join("_")}`;
+        return "FK_" + RandomGenerator.sha1(key).substr(0, 27);
     }
 
     indexName(
@@ -123,14 +123,14 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         where?: string,
     ): string {
         // sort incoming column names to avoid issue when ["id", "name"] and ["name", "id"] arrays
-        const clonedColumnNames = [...columnNames]
-        clonedColumnNames.sort()
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        let key = `${replacedTableName}_${clonedColumnNames.join("_")}`
-        if (where) key += `_${where}`
+        const clonedColumnNames = [...columnNames];
+        clonedColumnNames.sort();
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        let key = `${replacedTableName}_${clonedColumnNames.join("_")}`;
+        if (where) key += `_${where}`;
 
-        return "IDX_" + RandomGenerator.sha1(key).substr(0, 26)
+        return "IDX_" + RandomGenerator.sha1(key).substr(0, 26);
     }
 
     checkConstraintName(
@@ -138,25 +138,25 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         expression: string,
         isEnum?: boolean,
     ): string {
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${expression}`
-        const name = "CHK_" + RandomGenerator.sha1(key).substr(0, 26)
-        return isEnum ? `${name}_ENUM` : name
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${expression}`;
+        const name = "CHK_" + RandomGenerator.sha1(key).substr(0, 26);
+        return isEnum ? `${name}_ENUM` : name;
     }
 
     exclusionConstraintName(
         tableOrName: Table | string,
         expression: string,
     ): string {
-        const tableName = this.getTableName(tableOrName)
-        const replacedTableName = tableName.replace(".", "_")
-        const key = `${replacedTableName}_${expression}`
-        return "XCL_" + RandomGenerator.sha1(key).substr(0, 26)
+        const tableName = this.getTableName(tableOrName);
+        const replacedTableName = tableName.replace(".", "_");
+        const key = `${replacedTableName}_${expression}`;
+        return "XCL_" + RandomGenerator.sha1(key).substr(0, 26);
     }
 
     joinColumnName(relationName: string, referencedColumnName: string): string {
-        return camelCase(relationName + "_" + referencedColumnName)
+        return camelCase(relationName + "_" + referencedColumnName);
     }
 
     joinTableName(
@@ -171,14 +171,14 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
                 firstPropertyName.replace(/\./gi, "_") +
                 "_" +
                 secondTableName,
-        )
+        );
     }
 
     joinTableColumnDuplicationPrefix(
         columnName: string,
         index: number,
     ): string {
-        return columnName + "_" + index
+        return columnName + "_" + index;
     }
 
     joinTableColumnName(
@@ -188,7 +188,7 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
     ): string {
         return camelCase(
             tableName + "_" + (columnName ? columnName : propertyName),
-        )
+        );
     }
 
     joinTableInverseColumnName(
@@ -196,7 +196,7 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
         propertyName: string,
         columnName?: string,
     ): string {
-        return this.joinTableColumnName(tableName, propertyName, columnName)
+        return this.joinTableColumnName(tableName, propertyName, columnName);
     }
 
     /**
@@ -206,13 +206,13 @@ export class DefaultNamingStrategy implements NamingStrategyInterface {
      * Note that table name comes here already normalized by #tableName method.
      */
     prefixTableName(prefix: string, tableName: string): string {
-        return prefix + tableName
+        return prefix + tableName;
     }
 
     eagerJoinRelationAlias(alias: string, propertyPath: string): string {
-        return alias + "_" + propertyPath.replace(".", "_")
+        return alias + "_" + propertyPath.replace(".", "_");
     }
 
-    nestedSetColumnNames = { left: "nsleft", right: "nsright" }
-    materializedPathColumnName = "mpath"
+    nestedSetColumnNames = { left: "nsleft", right: "nsright" };
+    materializedPathColumnName = "mpath";
 }

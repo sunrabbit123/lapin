@@ -1,26 +1,26 @@
-import { EntityTarget } from "../common/EntityTarget"
-import { LapinError } from "./LapinError"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { InstanceChecker } from "../util/InstanceChecker"
+import { EntityTarget } from "../common/EntityTarget";
+import { LapinError } from "./LapinError";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { InstanceChecker } from "../util/InstanceChecker";
 
 export class EntityMetadataNotFoundError extends LapinError {
     constructor(target: EntityTarget<any>) {
-        super()
+        super();
 
         this.message = `No metadata for "${this.stringifyTarget(
             target,
-        )}" was found.`
+        )}" was found.`;
     }
 
     private stringifyTarget(target: EntityTarget<any>): string {
         if (InstanceChecker.isEntitySchema(target)) {
-            return target.options.name
+            return target.options.name;
         } else if (typeof target === "function") {
-            return target.name
+            return target.name;
         } else if (ObjectUtils.isObject(target) && "name" in (target as any)) {
-            return (target as any).name
+            return (target as any).name;
         } else {
-            return target as any
+            return target as any;
         }
     }
 }

@@ -1,5 +1,5 @@
-import { RelationMetadata } from "../metadata/RelationMetadata"
-import { LapinError } from "./LapinError"
+import { RelationMetadata } from "../metadata/RelationMetadata";
+import { LapinError } from "./LapinError";
 
 /**
  * Thrown when relation has array initialized which is forbidden my ORM.
@@ -13,6 +13,6 @@ export class InitializedRelationError extends LapinError {
             `Array initializations are not allowed in entity relations. ` +
                 `Please remove array initialization (= []) from "${relation.entityMetadata.targetName}#${relation.propertyPath}". ` +
                 `This is ORM requirement to make relations to work properly. Refer docs for more information.`,
-        )
+        );
     }
 }

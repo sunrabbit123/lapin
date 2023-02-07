@@ -1,4 +1,4 @@
-import { LapinError } from "./LapinError"
+import { LapinError } from "./LapinError";
 
 /**
  * Thrown when ORM cannot get column's type automatically.
@@ -11,6 +11,6 @@ export class ColumnTypeUndefinedError extends LapinError {
                 `Make sure you have turned on an "emitDecoratorMetadata": true option in tsconfig.json. ` +
                 `Also make sure you have imported "reflect-metadata" on top of the main entry file in your application (before any entity imported).` +
                 `If you are using JavaScript instead of TypeScript you must explicitly provide a column type.`,
-        )
+        );
     }
 }

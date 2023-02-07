@@ -1,9 +1,9 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { PostCategory } from "./entity/PostCategory"
-import { PostAuthor } from "./entity/PostAuthor"
-import { EverythingSubscriber } from "./subscriber/EverythingSubscriber"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { PostCategory } from "./entity/PostCategory";
+import { PostAuthor } from "./entity/PostAuthor";
+import { EverythingSubscriber } from "./subscriber/EverythingSubscriber";
 
 // first create a connection
 const options: DataSourceOptions = {
@@ -16,67 +16,67 @@ const options: DataSourceOptions = {
     synchronize: true,
     entities: [Post, PostAuthor, PostCategory],
     subscribers: [EverythingSubscriber],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let category1 = new PostCategory()
-        category1.name = "post category #1"
+        let category1 = new PostCategory();
+        category1.name = "post category #1";
 
-        let category2 = new PostCategory()
-        category2.name = "post category #2"
+        let category2 = new PostCategory();
+        category2.name = "post category #2";
 
-        let author = new PostAuthor()
-        author.name = "Umed"
+        let author = new PostAuthor();
+        author.name = "Umed";
 
-        let post = new Post()
-        post.text = "Hello how are you?"
-        post.title = "hello"
-        post.categories.push(category1, category2)
-        post.author = author
+        let post = new Post();
+        post.text = "Hello how are you?";
+        post.title = "hello";
+        post.categories.push(category1, category2);
+        post.author = author;
 
-        let postRepository = dataSource.getRepository(Post)
+        let postRepository = dataSource.getRepository(Post);
 
         postRepository
             .save(post)
             .then((post) => {
-                console.log("Post has been saved")
-                return postRepository.findOneBy({ id: post.id })
+                console.log("Post has been saved");
+                return postRepository.findOneBy({ id: post.id });
             })
             .then((loadedPost) => {
-                console.log("---------------------------")
-                console.log("post is loaded. Lets now load it with relations.")
+                console.log("---------------------------");
+                console.log("post is loaded. Lets now load it with relations.");
                 return postRepository
                     .createQueryBuilder("p")
                     .leftJoinAndSelect("p.author", "author")
                     .leftJoinAndSelect("p.categories", "categories")
                     .where("p.id = :id", { id: loadedPost!.id })
-                    .getOne()
+                    .getOne();
             })
             .then((loadedPost) => {
-                console.log("---------------------------")
-                console.log("load finished. Now lets update entity")
-                loadedPost!.text = "post updated"
-                loadedPost!.author.name = "Bakha"
-                return postRepository.save(loadedPost!)
+                console.log("---------------------------");
+                console.log("load finished. Now lets update entity");
+                loadedPost!.text = "post updated";
+                loadedPost!.author.name = "Bakha";
+                return postRepository.save(loadedPost!);
             })
             .then((loadedPost) => {
-                console.log("---------------------------")
-                console.log("update finished. Now lets remove entity")
-                return postRepository.remove(loadedPost)
+                console.log("---------------------------");
+                console.log("update finished. Now lets remove entity");
+                return postRepository.remove(loadedPost);
             })
             .then((loadedPost) => {
-                console.log("---------------------------")
-                console.log("post removed.")
+                console.log("---------------------------");
+                console.log("post removed.");
             })
             .catch((error) =>
                 console.log(
                     "Cannot save. Error: ",
                     error.stack ? error.stack : error,
                 ),
-            )
+            );
     },
     (error) =>
         console.log("Cannot connect: ", error.stack ? error.stack : error),
-)
+);

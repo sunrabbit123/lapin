@@ -9,15 +9,15 @@ export interface TableCheckOptions {
     /**
      * Constraint name.
      */
-    name?: string
+    name?: string;
 
     /**
      * Column that contains this constraint.
      */
-    columnNames?: string[]
+    columnNames?: string[];
 
     /**
      * Check expression.
      */
-    expression?: string
+    expression?: string;
 }

@@ -1,4 +1,4 @@
-import shajs from "sha.js"
+import shajs from "sha.js";
 
 /**
  * Converts string into camelCase.
@@ -9,11 +9,11 @@ export function camelCase(str: string, firstCapital: boolean = false): string {
     return str.replace(
         /^([A-Z])|[\s-_](\w)/g,
         function (match, p1, p2, offset) {
-            if (firstCapital === true && offset === 0) return p1
-            if (p2) return p2.toUpperCase()
-            return p1.toLowerCase()
+            if (firstCapital === true && offset === 0) return p1;
+            if (p2) return p2.toUpperCase();
+            return p1.toLowerCase();
         },
-    )
+    );
 }
 
 /**
@@ -28,7 +28,7 @@ export function snakeCase(str: string): string {
             // aC -> a_c
             .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
             .toLowerCase()
-    )
+    );
 }
 
 /**
@@ -40,7 +40,7 @@ export function titleCase(str: string): string {
     return str.replace(
         /\w\S*/g,
         (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
-    )
+    );
 }
 
 /**
@@ -49,20 +49,20 @@ export function titleCase(str: string): string {
 export function abbreviate(str: string, abbrLettersCount: number = 1): string {
     const words = str
         .replace(/([a-z\xE0-\xFF])([A-Z\xC0\xDF])/g, "$1 $2")
-        .split(" ")
+        .split(" ");
     return words.reduce((res, word) => {
-        res += word.substr(0, abbrLettersCount)
-        return res
-    }, "")
+        res += word.substr(0, abbrLettersCount);
+        return res;
+    }, "");
 }
 
 export interface IShortenOptions {
     /** String used to split "segments" of the alias/column name */
-    separator?: string
+    separator?: string;
     /** Maximum length of any "segment" */
-    segmentLength?: number
+    segmentLength?: number;
     /** Length of any "term" in a "segment"; "OrderItem" is a segment, "Order" and "Items" are terms */
-    termLength?: number
+    termLength?: number;
 }
 
 /**
@@ -88,29 +88,29 @@ export interface IShortenOptions {
  * `${shorten('UserShoppingCart__order__market')}_market_id`
  */
 export function shorten(input: string, options: IShortenOptions = {}): string {
-    const { segmentLength = 4, separator = "__", termLength = 2 } = options
+    const { segmentLength = 4, separator = "__", termLength = 2 } = options;
 
-    const segments = input.split(separator)
+    const segments = input.split(separator);
     const shortSegments = segments.reduce((acc: string[], val: string) => {
         // split the given segment into many terms based on an eventual camel cased name
         const segmentTerms = val
             .replace(/([a-z\xE0-\xFF])([A-Z\xC0-\xDF])/g, "$1 $2")
-            .split(" ")
+            .split(" ");
         // "OrderItemList" becomes "OrItLi", while "company" becomes "comp"
-        const length = segmentTerms.length > 1 ? termLength : segmentLength
+        const length = segmentTerms.length > 1 ? termLength : segmentLength;
         const shortSegment = segmentTerms
             .map((term) => term.substr(0, length))
-            .join("")
+            .join("");
 
-        acc.push(shortSegment)
-        return acc
-    }, [])
+        acc.push(shortSegment);
+        return acc;
+    }, []);
 
-    return shortSegments.join(separator)
+    return shortSegments.join(separator);
 }
 
 interface IHashOptions {
-    length?: number
+    length?: number;
 }
 
 /**
@@ -120,15 +120,15 @@ interface IHashOptions {
  * @param options.length Optionally, shorten the output to desired length.
  */
 export function hash(input: string, options: IHashOptions = {}): string {
-    const hashFunction = shajs("sha256")
+    const hashFunction = shajs("sha256");
 
-    hashFunction.update(input, "utf8")
+    hashFunction.update(input, "utf8");
 
-    const hashedInput = hashFunction.digest("hex")
+    const hashedInput = hashFunction.digest("hex");
 
     if (options.length) {
-        return hashedInput.slice(0, options.length)
+        return hashedInput.slice(0, options.length);
     }
 
-    return hashedInput
+    return hashedInput;
 }

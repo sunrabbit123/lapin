@@ -1,38 +1,38 @@
-import * as yargs from "yargs"
-import chalk from "chalk"
-import path from "path"
-import { PlatformTools } from "../platform/PlatformTools"
-import { CommandUtils } from "./CommandUtils"
+import * as yargs from "yargs";
+import chalk from "chalk";
+import path from "path";
+import { PlatformTools } from "../platform/PlatformTools";
+import { CommandUtils } from "./CommandUtils";
 
 /**
  * Generates a new subscriber.
  */
 export class SubscriberCreateCommand implements yargs.CommandModule {
-    command = "subscriber:create <path>"
-    describe = "Generates a new subscriber."
+    command = "subscriber:create <path>";
+    describe = "Generates a new subscriber.";
 
     async handler(args: yargs.Arguments) {
         try {
             const fullPath = (args.path as string).startsWith("/")
                 ? (args.path as string)
-                : path.resolve(process.cwd(), args.path as string)
-            const filename = path.basename(fullPath)
-            const fileContent = SubscriberCreateCommand.getTemplate(filename)
-            const fileExists = await CommandUtils.fileExists(fullPath + ".ts")
+                : path.resolve(process.cwd(), args.path as string);
+            const filename = path.basename(fullPath);
+            const fileContent = SubscriberCreateCommand.getTemplate(filename);
+            const fileExists = await CommandUtils.fileExists(fullPath + ".ts");
             if (fileExists) {
-                throw `File ${chalk.blue(fullPath + ".ts")} already exists`
+                throw `File ${chalk.blue(fullPath + ".ts")} already exists`;
             }
-            await CommandUtils.createFile(fullPath + ".ts", fileContent)
+            await CommandUtils.createFile(fullPath + ".ts", fileContent);
             console.log(
                 chalk.green(
                     `Subscriber ${chalk.blue(
                         fullPath,
                     )} has been created successfully.`,
                 ),
-            )
+            );
         } catch (err) {
-            PlatformTools.logCmdErr("Error during subscriber creation:")
-            process.exit(1)
+            PlatformTools.logCmdErr("Error during subscriber creation:");
+            process.exit(1);
         }
     }
 
@@ -50,6 +50,6 @@ export class SubscriberCreateCommand implements yargs.CommandModule {
 export class ${name} implements EntitySubscriberInterface {
 
 }
-`
+`;
     }
 }

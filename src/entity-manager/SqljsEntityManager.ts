@@ -1,24 +1,24 @@
-import { DataSource } from "../data-source/DataSource"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { EntityManager } from "./EntityManager"
-import { SqljsDriver } from "../driver/sqljs/SqljsDriver"
+import { DataSource } from "../data-source/DataSource";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { EntityManager } from "./EntityManager";
+import { SqljsDriver } from "../driver/sqljs/SqljsDriver";
 
 /**
  * A special EntityManager that includes import/export and load/save function
  * that are unique to Sql.js.
  */
 export class SqljsEntityManager extends EntityManager {
-    readonly "@instanceof" = Symbol.for("SqljsEntityManager")
+    readonly "@instanceof" = Symbol.for("SqljsEntityManager");
 
-    private driver: SqljsDriver
+    private driver: SqljsDriver;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource, queryRunner?: QueryRunner) {
-        super(connection, queryRunner)
-        this.driver = connection.driver as SqljsDriver
+        super(connection, queryRunner);
+        this.driver = connection.driver as SqljsDriver;
     }
 
     // -------------------------------------------------------------------------
@@ -32,7 +32,7 @@ export class SqljsEntityManager extends EntityManager {
     async loadDatabase(
         fileNameOrLocalStorageOrData: string | Uint8Array,
     ): Promise<void> {
-        await this.driver.load(fileNameOrLocalStorageOrData)
+        await this.driver.load(fileNameOrLocalStorageOrData);
     }
 
     /**
@@ -40,13 +40,13 @@ export class SqljsEntityManager extends EntityManager {
      * if fileNameOrLocalStorage is not set options.location is used.
      */
     async saveDatabase(fileNameOrLocalStorage?: string): Promise<void> {
-        await this.driver.save(fileNameOrLocalStorage)
+        await this.driver.save(fileNameOrLocalStorage);
     }
 
     /**
      * Returns the current database definition.
      */
     exportDatabase(): Uint8Array {
-        return this.driver.export()
+        return this.driver.export();
     }
 }

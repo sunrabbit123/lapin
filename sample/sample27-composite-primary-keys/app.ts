@@ -1,6 +1,6 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -12,28 +12,28 @@ const options: DataSourceOptions = {
     logging: ["query", "error"],
     synchronize: true,
     entities: [Post],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     async (dataSource) => {
-        let postRepository = dataSource.getRepository(Post)
+        let postRepository = dataSource.getRepository(Post);
 
-        const post = new Post()
-        post.id = 1
-        post.type = "person"
-        post.text = "this is test post!"
+        const post = new Post();
+        post.id = 1;
+        post.type = "person";
+        post.text = "this is test post!";
 
-        console.log("saving the post: ")
-        await postRepository.save(post)
-        console.log("Post has been saved: ", post)
+        console.log("saving the post: ");
+        await postRepository.save(post);
+        console.log("Post has been saved: ", post);
 
-        console.log("now loading the post: ")
+        console.log("now loading the post: ");
         const loadedPost = await postRepository.findOneBy({
             id: 1,
             type: "person",
-        })
-        console.log("loaded post: ", loadedPost)
+        });
+        console.log("loaded post: ", loadedPost);
     },
     (error) => console.log("Error: ", error),
-)
+);

@@ -1,5 +1,5 @@
-import { getMetadataArgsStorage } from "../globals"
-import { GeneratedMetadataArgs } from "../metadata-args/GeneratedMetadataArgs"
+import { getMetadataArgsStorage } from "../globals";
+import { GeneratedMetadataArgs } from "../metadata-args/GeneratedMetadataArgs";
 
 /**
  * Marks a column to generate a value on entity insertion.
@@ -18,6 +18,6 @@ export function Generated(
             target: object.constructor,
             propertyName: propertyName,
             strategy: strategy,
-        } as GeneratedMetadataArgs)
-    }
+        } as GeneratedMetadataArgs);
+    };
 }

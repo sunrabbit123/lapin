@@ -1,5 +1,5 @@
-import { AuroraMysqlConnectionCredentialsOptions } from "./AuroraMysqlConnectionCredentialsOptions"
-import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions"
+import { AuroraMysqlConnectionCredentialsOptions } from "./AuroraMysqlConnectionCredentialsOptions";
+import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions";
 
 /**
  * MySQL specific connection options.
@@ -12,31 +12,31 @@ export interface AuroraMysqlConnectionOptions
     /**
      * Database type.
      */
-    readonly type: "aurora-mysql"
+    readonly type: "aurora-mysql";
 
-    readonly region: string
+    readonly region: string;
 
-    readonly secretArn: string
+    readonly secretArn: string;
 
-    readonly resourceArn: string
+    readonly resourceArn: string;
 
-    readonly database: string
+    readonly database: string;
 
     /**
      * The driver object
      * This defaults to require("lapin-aurora-data-api-driver")
      */
-    readonly driver?: any
+    readonly driver?: any;
 
-    readonly serviceConfigOptions?: { [key: string]: any } // pass optional AWS.ConfigurationOptions here
+    readonly serviceConfigOptions?: { [key: string]: any }; // pass optional AWS.ConfigurationOptions here
 
-    readonly formatOptions?: { [key: string]: any; castParameters: boolean }
+    readonly formatOptions?: { [key: string]: any; castParameters: boolean };
 
     /**
      * Use spatial functions like GeomFromText and AsText which are removed in MySQL 8.
      * (Default: true)
      */
-    readonly legacySpatialSupport?: boolean
+    readonly legacySpatialSupport?: boolean;
 
-    readonly poolSize?: never
+    readonly poolSize?: never;
 }

@@ -6,4 +6,4 @@ export type OnDeleteType =
     | "CASCADE"
     | "SET NULL"
     | "DEFAULT"
-    | "NO ACTION"
+    | "NO ACTION";

@@ -1,4 +1,4 @@
-import { FindOperator } from "../FindOperator"
+import { FindOperator } from "../FindOperator";
 
 /**
  * FindOptions Operator.
@@ -7,5 +7,5 @@ import { FindOperator } from "../FindOperator"
 export function ArrayContains<T>(
     value: readonly T[] | FindOperator<T>,
 ): FindOperator<any> {
-    return new FindOperator("arrayContains", value as any)
+    return new FindOperator("arrayContains", value as any);
 }

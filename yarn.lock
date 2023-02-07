@@ -325,6 +325,13 @@
   resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.4.0.tgz#2c91791a9ba6ca0a0f4aaac5e45d58df13639ac8"
   integrity sha512-IgMK9i3sFGNUqPMbjABm0G26g0QCKCUBfglhQ7rQq6WcxbKfEHRcmwsoER4hZcuYqJgkYn2OeuoJIv7Jsftp7g==
 
+"@sap/hana-client@^2.15.19":
+  version "2.15.19"
+  resolved "https://registry.yarnpkg.com/@sap/hana-client/-/hana-client-2.15.19.tgz#7a8b5987cd002160d6f1aa5964c8aeb3a9d3cb42"
+  integrity sha512-DJKkAvJf8ZpkTIZlxi29d/jRvraweA2I2KIqa7eSNhXuDnau8bIQBkOhSpnhVUckR8i/W8SNYdqwiHlUm5t9Lw==
+  dependencies:
+    debug "3.1.0"
+
 "@sinonjs/commons@^1.6.0", "@sinonjs/commons@^1.7.0", "@sinonjs/commons@^1.8.1":
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.6.tgz#80c516a4dc264c2a69115e7578d62581ff455ed9"
@@ -1780,6 +1787,13 @@ debug-fabulous@^1.0.0:
     memoizee "0.4.X"
     object-assign "4.X"
 
+debug@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
+
 debug@3.X:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
@@ -2926,6 +2940,11 @@ has@^1.0.3:
   integrity sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==
   dependencies:
     function-bind "^1.1.1"
+
+hdb-pool@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/hdb-pool/-/hdb-pool-0.1.6.tgz#75fe7b90f98b25e301fc8b6693a62ef2c37c2842"
+  integrity sha512-8VZOLn1EHamm1NmTFQj2iqjVcfonYIsD7F5DU2bz2N+gF+knp6/MbAVeRXkJtya717IBkPeA5iv0/1iPuYo4ZA==
 
 he@1.2.0:
   version "1.2.0"

@@ -1,8 +1,8 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { RelationMetadataArgs } from "../../metadata-args/RelationMetadataArgs"
-import { ObjectType } from "../../common/ObjectType"
-import { RelationOptions } from "../options/RelationOptions"
-import { ObjectUtils } from "../../util/ObjectUtils"
+import { getMetadataArgsStorage } from "../../globals";
+import { RelationMetadataArgs } from "../../metadata-args/RelationMetadataArgs";
+import { ObjectType } from "../../common/ObjectType";
+import { RelationOptions } from "../options/RelationOptions";
+import { ObjectUtils } from "../../util/ObjectUtils";
 
 /**
  * One-to-one relation allows to create direct relation between two entities. Entity1 have only one Entity2.
@@ -11,7 +11,7 @@ import { ObjectUtils } from "../../util/ObjectUtils"
 export function OneToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     options?: RelationOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * One-to-one relation allows to create direct relation between two entities. Entity1 have only one Entity2.
@@ -21,7 +21,7 @@ export function OneToOne<T>(
     typeFunctionOrTarget: string | ((type?: any) => ObjectType<T>),
     inverseSide?: string | ((object: T) => any),
     options?: RelationOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * One-to-one relation allows to create direct relation between two entities. Entity1 have only one Entity2.
@@ -33,31 +33,31 @@ export function OneToOne<T>(
     options?: RelationOptions,
 ): PropertyDecorator | Function {
     // normalize parameters
-    let inverseSideProperty: string | ((object: T) => any)
+    let inverseSideProperty: string | ((object: T) => any);
     if (ObjectUtils.isObject(inverseSideOrOptions)) {
-        options = <RelationOptions>inverseSideOrOptions
+        options = <RelationOptions>inverseSideOrOptions;
     } else {
-        inverseSideProperty = inverseSideOrOptions as any
+        inverseSideProperty = inverseSideOrOptions as any;
     }
 
     return function (object: Object, propertyName: string) {
-        if (!options) options = {} as RelationOptions
+        if (!options) options = {} as RelationOptions;
 
         // now try to determine it its lazy relation
-        let isLazy = options && options.lazy === true ? true : false
+        let isLazy = options && options.lazy === true ? true : false;
         if (!isLazy && Reflect && (Reflect as any).getMetadata) {
             // automatic determination
             const reflectedType = (Reflect as any).getMetadata(
                 "design:type",
                 object,
                 propertyName,
-            )
+            );
             if (
                 reflectedType &&
                 typeof reflectedType.name === "string" &&
                 reflectedType.name.toLowerCase() === "promise"
             )
-                isLazy = true
+                isLazy = true;
         }
 
         getMetadataArgsStorage().relations.push({
@@ -69,6 +69,6 @@ export function OneToOne<T>(
             type: typeFunctionOrTarget,
             inverseSideProperty: inverseSideProperty,
             options: options,
-        } as RelationMetadataArgs)
-    }
+        } as RelationMetadataArgs);
+    };
 }

@@ -1,4 +1,4 @@
-import { FindOperator } from "../FindOperator"
+import { FindOperator } from "../FindOperator";
 
 /**
  * FindOptions Operator.
@@ -7,5 +7,5 @@ import { FindOperator } from "../FindOperator"
 export function ArrayContainedBy<T>(
     value: readonly T[] | FindOperator<T>,
 ): FindOperator<any> {
-    return new FindOperator("arrayContainedBy", value as any)
+    return new FindOperator("arrayContainedBy", value as any);
 }

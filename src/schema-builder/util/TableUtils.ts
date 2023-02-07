@@ -1,6 +1,6 @@
-import { TableColumnOptions } from "../options/TableColumnOptions"
-import { ColumnMetadata } from "../../metadata/ColumnMetadata"
-import { Driver } from "../../driver/Driver"
+import { TableColumnOptions } from "../options/TableColumnOptions";
+import { ColumnMetadata } from "../../metadata/ColumnMetadata";
+import { Driver } from "../../driver/Driver";
 
 export class TableUtils {
     static createTableColumnOptions(
@@ -37,6 +37,6 @@ export class TableUtils {
             primaryKeyConstraintName: columnMetadata.primaryKeyConstraintName,
             spatialFeatureType: columnMetadata.spatialFeatureType,
             srid: columnMetadata.srid,
-        }
+        };
     }
 }

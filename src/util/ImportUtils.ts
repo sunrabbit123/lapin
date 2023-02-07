@@ -1,6 +1,6 @@
-import fs from "fs"
-import path from "path"
-import { pathToFileURL } from "url"
+import fs from "fs";
+import path from "path";
+import { pathToFileURL } from "url";
 
 export async function importOrRequireFile(
     filePath: string,
@@ -15,69 +15,71 @@ export async function importOrRequireFile(
                     : pathToFileURL(filePath).toString(),
             ),
             "esm",
-        ]
-    }
+        ];
+    };
     const tryToRequire = async (): Promise<[any, "commonjs"]> => {
-        return [require(filePath), "commonjs"]
-    }
+        return [require(filePath), "commonjs"];
+    };
 
-    const extension = filePath.substring(filePath.lastIndexOf(".") + ".".length)
+    const extension = filePath.substring(
+        filePath.lastIndexOf(".") + ".".length,
+    );
 
-    if (extension === "mjs" || extension === "mts") return tryToImport()
-    else if (extension === "cjs" || extension === "cts") return tryToRequire()
+    if (extension === "mjs" || extension === "mts") return tryToImport();
+    else if (extension === "cjs" || extension === "cts") return tryToRequire();
     else if (extension === "js" || extension === "ts") {
-        const packageJson = await getNearestPackageJson(filePath)
+        const packageJson = await getNearestPackageJson(filePath);
 
         if (packageJson != null) {
-            const isModule = (packageJson as any)?.type === "module"
+            const isModule = (packageJson as any)?.type === "module";
 
-            if (isModule) return tryToImport()
-            else return tryToRequire()
-        } else return tryToRequire()
+            if (isModule) return tryToImport();
+            else return tryToRequire();
+        } else return tryToRequire();
     }
 
-    return tryToRequire()
+    return tryToRequire();
 }
 
 function getNearestPackageJson(filePath: string): Promise<object | null> {
     return new Promise((accept) => {
-        let currentPath = filePath
+        let currentPath = filePath;
 
         function searchPackageJson() {
-            const nextPath = path.dirname(currentPath)
+            const nextPath = path.dirname(currentPath);
 
             if (currentPath === nextPath)
                 // the top of the file tree is reached
-                accept(null)
+                accept(null);
             else {
-                currentPath = nextPath
+                currentPath = nextPath;
                 const potentialPackageJson = path.join(
                     currentPath,
                     "package.json",
-                )
+                );
 
                 fs.stat(potentialPackageJson, (err, stats) => {
-                    if (err != null) searchPackageJson()
+                    if (err != null) searchPackageJson();
                     else if (stats.isFile()) {
                         fs.readFile(
                             potentialPackageJson,
                             "utf8",
                             (err, data) => {
-                                if (err != null) accept(null)
+                                if (err != null) accept(null);
                                 else {
                                     try {
-                                        accept(JSON.parse(data))
+                                        accept(JSON.parse(data));
                                     } catch (err) {
-                                        accept(null)
+                                        accept(null);
                                     }
                                 }
                             },
-                        )
-                    } else searchPackageJson()
-                })
+                        );
+                    } else searchPackageJson();
+                });
             }
         }
 
-        searchPackageJson()
-    })
+        searchPackageJson();
+    });
 }

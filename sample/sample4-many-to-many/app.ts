@@ -1,7 +1,7 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { PostDetails } from "./entity/PostDetails"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { PostDetails } from "./entity/PostDetails";
 
 const options: DataSourceOptions = {
     type: "mssql",
@@ -12,28 +12,28 @@ const options: DataSourceOptions = {
     logging: ["query", "error"],
     synchronize: true,
     entities: [__dirname + "/entity/*"],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let details1 = new PostDetails()
-        details1.comment = "People"
+        let details1 = new PostDetails();
+        details1.comment = "People";
 
-        let details2 = new PostDetails()
-        details2.comment = "Human"
+        let details2 = new PostDetails();
+        details2.comment = "Human";
 
-        let post = new Post()
-        post.text = "Hello how are you?"
-        post.title = "hello"
-        post.details = [details1, details2]
+        let post = new Post();
+        post.text = "Hello how are you?";
+        post.title = "hello";
+        post.details = [details1, details2];
 
-        let postRepository = dataSource.getRepository(Post)
+        let postRepository = dataSource.getRepository(Post);
 
         postRepository
             .save(post)
             .then((post) => console.log("Post has been saved"))
-            .catch((error) => console.log("Cannot save. Error: ", error))
+            .catch((error) => console.log("Cannot save. Error: ", error));
     },
     (error) => console.log("Cannot connect: ", error),
-)
+);

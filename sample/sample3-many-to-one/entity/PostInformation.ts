@@ -3,19 +3,19 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index"
-import { Post } from "./Post"
+} from "../../../src/index";
+import { Post } from "./Post";
 
 @Entity("sample3_post_information")
 export class PostInformation {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    text: string
+    text: string;
 
     @OneToMany((type) => Post, (post) => post.information, {
         cascade: ["update"],
     })
-    posts: Post[]
+    posts: Post[];
 }

@@ -1,36 +1,36 @@
-import { Driver } from "../Driver"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { ColumnMetadata } from "../../metadata/ColumnMetadata"
-import { DateUtils } from "../../util/DateUtils"
-import { DataSource } from "../../data-source/DataSource"
-import { RdbmsSchemaBuilder } from "../../schema-builder/RdbmsSchemaBuilder"
-import { CteCapabilities } from "../types/CteCapabilities"
-import { MappedColumnTypes } from "../types/MappedColumnTypes"
-import { ColumnType } from "../types/ColumnTypes"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { DataTypeDefaults } from "../types/DataTypeDefaults"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions"
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { OrmUtils } from "../../util/OrmUtils"
-import { ApplyValueTransformers } from "../../util/ApplyValueTransformers"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { DriverUtils } from "../DriverUtils"
-import { LapinError } from "../../error"
-import { Table } from "../../schema-builder/table/Table"
-import { View } from "../../schema-builder/view/View"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { InstanceChecker } from "../../util/InstanceChecker"
-import { UpsertType } from "../types/UpsertType"
+import { Driver } from "../Driver";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { ColumnMetadata } from "../../metadata/ColumnMetadata";
+import { DateUtils } from "../../util/DateUtils";
+import { DataSource } from "../../data-source/DataSource";
+import { RdbmsSchemaBuilder } from "../../schema-builder/RdbmsSchemaBuilder";
+import { CteCapabilities } from "../types/CteCapabilities";
+import { MappedColumnTypes } from "../types/MappedColumnTypes";
+import { ColumnType } from "../types/ColumnTypes";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { DataTypeDefaults } from "../types/DataTypeDefaults";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions";
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { OrmUtils } from "../../util/OrmUtils";
+import { ApplyValueTransformers } from "../../util/ApplyValueTransformers";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { DriverUtils } from "../DriverUtils";
+import { LapinError } from "../../error";
+import { Table } from "../../schema-builder/table/Table";
+import { View } from "../../schema-builder/view/View";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { InstanceChecker } from "../../util/InstanceChecker";
+import { UpsertType } from "../types/UpsertType";
 
 type DatabasesMap = Record<
     string,
     {
-        attachFilepathAbsolute: string
-        attachFilepathRelative: string
-        attachHandle: string
+        attachFilepathAbsolute: string;
+        attachFilepathRelative: string;
+        attachHandle: string;
     }
->
+>;
 
 /**
  * Organizes communication with sqlite DBMS.
@@ -43,17 +43,17 @@ export abstract class AbstractSqliteDriver implements Driver {
     /**
      * Connection used by driver.
      */
-    connection: DataSource
+    connection: DataSource;
 
     /**
      * Sqlite has a single QueryRunner because it works on a single database connection.
      */
-    queryRunner?: QueryRunner
+    queryRunner?: QueryRunner;
 
     /**
      * Real database connection with sqlite database.
      */
-    databaseConnection: any
+    databaseConnection: any;
 
     // -------------------------------------------------------------------------
     // Public Implemented Properties
@@ -62,32 +62,32 @@ export abstract class AbstractSqliteDriver implements Driver {
     /**
      * Connection options.
      */
-    options: BaseDataSourceOptions
+    options: BaseDataSourceOptions;
 
     /**
      * Master database used to perform all write queries.
      */
-    database?: string
+    database?: string;
 
     /**
      * Indicates if replication is enabled.
      */
-    isReplicated: boolean = false
+    isReplicated: boolean = false;
 
     /**
      * SQLite underlying library.
      */
-    sqlite: any
+    sqlite: any;
 
     /**
      * Indicates if tree tables are supported by this driver.
      */
-    treeSupport = true
+    treeSupport = true;
 
     /**
      * Represent transaction support by this driver
      */
-    transactionSupport: "simple" | "nested" | "none" = "nested"
+    transactionSupport: "simple" | "nested" | "none" = "nested";
 
     /**
      * Gets list of supported column data types by a driver.
@@ -127,12 +127,12 @@ export abstract class AbstractSqliteDriver implements Driver {
         "date",
         "time",
         "datetime",
-    ]
+    ];
 
     /**
      * Returns type of upsert supported by driver if any
      */
-    supportedUpsertTypes: UpsertType[] = ["on-conflict-do-update"]
+    supportedUpsertTypes: UpsertType[] = ["on-conflict-do-update"];
 
     /**
      * Gets list of column data types that support length by a driver.
@@ -147,12 +147,12 @@ export abstract class AbstractSqliteDriver implements Driver {
         "text",
         "blob",
         "clob",
-    ]
+    ];
 
     /**
      * Gets list of spatial column data types.
      */
-    spatialTypes: ColumnType[] = []
+    spatialTypes: ColumnType[] = [];
 
     /**
      * Gets list of column data types that support precision by a driver.
@@ -168,7 +168,7 @@ export abstract class AbstractSqliteDriver implements Driver {
         "date",
         "time",
         "datetime",
-    ]
+    ];
 
     /**
      * Gets list of column data types that support scale by a driver.
@@ -181,7 +181,7 @@ export abstract class AbstractSqliteDriver implements Driver {
         "real",
         "numeric",
         "decimal",
-    ]
+    ];
 
     /**
      * Orm has special columns and we need to know what database column types should be for those types.
@@ -211,24 +211,24 @@ export abstract class AbstractSqliteDriver implements Driver {
         metadataTable: "varchar",
         metadataName: "varchar",
         metadataValue: "text",
-    }
+    };
 
     /**
      * Default values of length, precision and scale depends on column data type.
      * Used in the cases when length/precision/scale is not specified by user.
      */
-    dataTypeDefaults: DataTypeDefaults
+    dataTypeDefaults: DataTypeDefaults;
 
     /**
      * No documentation specifying a maximum length for identifiers could be found
      * for SQLite.
      */
-    maxAliasLength?: number
+    maxAliasLength?: number;
 
     cteCapabilities: CteCapabilities = {
         enabled: true,
         requiresRecursiveHint: true,
-    }
+    };
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -237,17 +237,17 @@ export abstract class AbstractSqliteDriver implements Driver {
     /**
      * Any attached databases (excepting default 'main')
      */
-    attachedDatabases: DatabasesMap = {}
+    attachedDatabases: DatabasesMap = {};
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        this.connection = connection
-        this.options = connection.options as BaseDataSourceOptions
+        this.connection = connection;
+        this.options = connection.options as BaseDataSourceOptions;
 
-        this.database = DriverUtils.buildDriverOptions(this.options).database
+        this.database = DriverUtils.buildDriverOptions(this.options).database;
     }
 
     // -------------------------------------------------------------------------
@@ -257,7 +257,7 @@ export abstract class AbstractSqliteDriver implements Driver {
     /**
      * Creates a query runner used to execute database queries.
      */
-    abstract createQueryRunner(mode: ReplicationMode): QueryRunner
+    abstract createQueryRunner(mode: ReplicationMode): QueryRunner;
 
     // -------------------------------------------------------------------------
     // Public Methods
@@ -267,14 +267,14 @@ export abstract class AbstractSqliteDriver implements Driver {
      * Performs connection to the database.
      */
     async connect(): Promise<void> {
-        this.databaseConnection = await this.createDatabaseConnection()
+        this.databaseConnection = await this.createDatabaseConnection();
     }
 
     /**
      * Makes any action after connection (e.g. create extensions in Postgres driver).
      */
     afterConnect(): Promise<void> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -282,19 +282,19 @@ export abstract class AbstractSqliteDriver implements Driver {
      */
     async disconnect(): Promise<void> {
         return new Promise<void>((ok, fail) => {
-            this.queryRunner = undefined
+            this.queryRunner = undefined;
             this.databaseConnection.close((err: any) =>
                 err ? fail(err) : ok(),
-            )
-        })
+            );
+        });
     }
 
     hasAttachedDatabases(): boolean {
-        return !!Object.keys(this.attachedDatabases).length
+        return !!Object.keys(this.attachedDatabases).length;
     }
 
     getAttachedDatabaseHandleByRelativePath(path: string): string | undefined {
-        return this.attachedDatabases?.[path]?.attachHandle
+        return this.attachedDatabases?.[path]?.attachHandle;
     }
 
     getAttachedDatabasePathRelativeByHandle(
@@ -302,14 +302,14 @@ export abstract class AbstractSqliteDriver implements Driver {
     ): string | undefined {
         return Object.values(this.attachedDatabases).find(
             ({ attachHandle }) => handle === attachHandle,
-        )?.attachFilepathRelative
+        )?.attachFilepathRelative;
     }
 
     /**
      * Creates a schema builder used to build and sync a schema.
      */
     createSchemaBuilder() {
-        return new RdbmsSchemaBuilder(this.connection)
+        return new RdbmsSchemaBuilder(this.connection);
     }
 
     /**
@@ -320,35 +320,35 @@ export abstract class AbstractSqliteDriver implements Driver {
             value = ApplyValueTransformers.transformTo(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        if (value === null || value === undefined) return value
+        if (value === null || value === undefined) return value;
 
         if (
             columnMetadata.type === Boolean ||
             columnMetadata.type === "boolean"
         ) {
-            return value === true ? 1 : 0
+            return value === true ? 1 : 0;
         } else if (columnMetadata.type === "date") {
-            return DateUtils.mixedDateToDateString(value)
+            return DateUtils.mixedDateToDateString(value);
         } else if (columnMetadata.type === "time") {
-            return DateUtils.mixedDateToTimeString(value)
+            return DateUtils.mixedDateToTimeString(value);
         } else if (
             columnMetadata.type === "datetime" ||
             columnMetadata.type === Date
         ) {
             // to string conversation needs because SQLite stores date as integer number, when date came as Object
             // TODO: think about `toUTC` conversion
-            return DateUtils.mixedDateToUtcDatetimeString(value)
+            return DateUtils.mixedDateToUtcDatetimeString(value);
         } else if (columnMetadata.type === "simple-array") {
-            return DateUtils.simpleArrayToString(value)
+            return DateUtils.simpleArrayToString(value);
         } else if (columnMetadata.type === "simple-json") {
-            return DateUtils.simpleJsonToString(value)
+            return DateUtils.simpleJsonToString(value);
         } else if (columnMetadata.type === "simple-enum") {
-            return DateUtils.simpleEnumToString(value)
+            return DateUtils.simpleEnumToString(value);
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -361,13 +361,13 @@ export abstract class AbstractSqliteDriver implements Driver {
                       columnMetadata.transformer,
                       value,
                   )
-                : value
+                : value;
 
         if (
             columnMetadata.type === Boolean ||
             columnMetadata.type === "boolean"
         ) {
-            value = value ? true : false
+            value = value ? true : false;
         } else if (
             columnMetadata.type === "datetime" ||
             columnMetadata.type === Date
@@ -389,40 +389,40 @@ export abstract class AbstractSqliteDriver implements Driver {
                 //   2) Add 'Z' UTC suffix if no timezone or offset specified
 
                 if (/^\d\d\d\d-\d\d-\d\d \d\d:\d\d/.test(value)) {
-                    value = value.replace(" ", "T")
+                    value = value.replace(" ", "T");
                 }
                 if (
                     /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d(:\d\d(\.\d\d\d)?)?$/.test(
                         value,
                     )
                 ) {
-                    value += "Z"
+                    value += "Z";
                 }
             }
 
-            value = DateUtils.normalizeHydratedDate(value)
+            value = DateUtils.normalizeHydratedDate(value);
         } else if (columnMetadata.type === "date") {
-            value = DateUtils.mixedDateToDateString(value)
+            value = DateUtils.mixedDateToDateString(value);
         } else if (columnMetadata.type === "time") {
-            value = DateUtils.mixedTimeToString(value)
+            value = DateUtils.mixedTimeToString(value);
         } else if (columnMetadata.type === "simple-array") {
-            value = DateUtils.stringToSimpleArray(value)
+            value = DateUtils.stringToSimpleArray(value);
         } else if (columnMetadata.type === "simple-json") {
-            value = DateUtils.stringToSimpleJson(value)
+            value = DateUtils.stringToSimpleJson(value);
         } else if (columnMetadata.type === "simple-enum") {
-            value = DateUtils.stringToSimpleEnum(value, columnMetadata)
+            value = DateUtils.stringToSimpleEnum(value, columnMetadata);
         } else if (columnMetadata.type === Number) {
             // convert to number if number
-            value = !isNaN(+value) ? parseInt(value) : value
+            value = !isNaN(+value) ? parseInt(value) : value;
         }
 
         if (columnMetadata.transformer)
             value = ApplyValueTransformers.transformFrom(
                 columnMetadata.transformer,
                 value,
-            )
+            );
 
-        return value
+        return value;
     }
 
     /**
@@ -438,81 +438,81 @@ export abstract class AbstractSqliteDriver implements Driver {
             (key) => {
                 // Mapping boolean values to their numeric representation
                 if (typeof nativeParameters[key] === "boolean") {
-                    return nativeParameters[key] === true ? 1 : 0
+                    return nativeParameters[key] === true ? 1 : 0;
                 }
 
                 if (nativeParameters[key] instanceof Date) {
                     return DateUtils.mixedDateToUtcDatetimeString(
                         nativeParameters[key],
-                    )
+                    );
                 }
 
-                return nativeParameters[key]
+                return nativeParameters[key];
             },
-        )
+        );
 
         if (!parameters || !Object.keys(parameters).length)
-            return [sql, escapedParameters]
+            return [sql, escapedParameters];
 
         sql = sql.replace(
             /:(\.\.\.)?([A-Za-z0-9_.]+)/g,
             (full, isArray: string, key: string): string => {
                 if (!parameters.hasOwnProperty(key)) {
-                    return full
+                    return full;
                 }
 
-                let value: any = parameters[key]
+                let value: any = parameters[key];
 
                 if (isArray) {
                     return value
                         .map((v: any) => {
-                            escapedParameters.push(v)
+                            escapedParameters.push(v);
                             return this.createParameter(
                                 key,
                                 escapedParameters.length - 1,
-                            )
+                            );
                         })
-                        .join(", ")
+                        .join(", ");
                 }
 
                 if (typeof value === "function") {
-                    return value()
+                    return value();
                 } else if (typeof value === "number") {
-                    return String(value)
+                    return String(value);
                 }
 
                 // Sqlite does not have a boolean data type so we have to transform
                 // it to 1 or 0
                 if (typeof value === "boolean") {
-                    escapedParameters.push(+value)
+                    escapedParameters.push(+value);
                     return this.createParameter(
                         key,
                         escapedParameters.length - 1,
-                    )
+                    );
                 }
 
                 if (value instanceof Date) {
                     escapedParameters.push(
                         DateUtils.mixedDateToUtcDatetimeString(value),
-                    )
+                    );
                     return this.createParameter(
                         key,
                         escapedParameters.length - 1,
-                    )
+                    );
                 }
 
-                escapedParameters.push(value)
-                return this.createParameter(key, escapedParameters.length - 1)
+                escapedParameters.push(value);
+                return this.createParameter(key, escapedParameters.length - 1);
             },
-        ) // todo: make replace only in value statements, otherwise problems
-        return [sql, escapedParameters]
+        ); // todo: make replace only in value statements, otherwise problems
+        return [sql, escapedParameters];
     }
 
     /**
      * Escapes a column name.
      */
     escape(columnName: string): string {
-        return '"' + columnName + '"'
+        return '"' + columnName + '"';
     }
 
     /**
@@ -526,7 +526,7 @@ export abstract class AbstractSqliteDriver implements Driver {
         schema?: string,
         database?: string,
     ): string {
-        return tableName
+        return tableName;
     }
 
     /**
@@ -535,25 +535,25 @@ export abstract class AbstractSqliteDriver implements Driver {
     parseTableName(
         target: EntityMetadata | Table | View | TableForeignKey | string,
     ): { database?: string; schema?: string; tableName: string } {
-        const driverDatabase = this.database
-        const driverSchema = undefined
+        const driverDatabase = this.database;
+        const driverSchema = undefined;
 
         if (InstanceChecker.isTable(target) || InstanceChecker.isView(target)) {
             const parsed = this.parseTableName(
                 target.schema
                     ? `"${target.schema}"."${target.name}"`
                     : target.name,
-            )
+            );
 
             return {
                 database: target.database || parsed.database || driverDatabase,
                 schema: target.schema || parsed.schema || driverSchema,
                 tableName: parsed.tableName,
-            }
+            };
         }
 
         if (InstanceChecker.isTableForeignKey(target)) {
-            const parsed = this.parseTableName(target.referencedTableName)
+            const parsed = this.parseTableName(target.referencedTableName);
 
             return {
                 database:
@@ -563,7 +563,7 @@ export abstract class AbstractSqliteDriver implements Driver {
                 schema:
                     target.referencedSchema || parsed.schema || driverSchema,
                 tableName: parsed.tableName,
-            }
+            };
         }
 
         if (InstanceChecker.isEntityMetadata(target)) {
@@ -573,32 +573,32 @@ export abstract class AbstractSqliteDriver implements Driver {
                 database: target.database || driverDatabase,
                 schema: target.schema || driverSchema,
                 tableName: target.tableName,
-            }
+            };
         }
 
-        const parts = target.split(".")
+        const parts = target.split(".");
 
         if (parts.length === 3) {
             return {
                 database: parts[0] || driverDatabase,
                 schema: parts[1] || driverSchema,
                 tableName: parts[2],
-            }
+            };
         } else if (parts.length === 2) {
             const database =
                 this.getAttachedDatabasePathRelativeByHandle(parts[0]) ??
-                driverDatabase
+                driverDatabase;
             return {
                 database: database,
                 schema: parts[0],
                 tableName: parts[1],
-            }
+            };
         } else {
             return {
                 database: driverDatabase,
                 schema: driverSchema,
                 tableName: target,
-            }
+            };
         }
     }
 
@@ -606,29 +606,29 @@ export abstract class AbstractSqliteDriver implements Driver {
      * Creates a database type from a given column metadata.
      */
     normalizeType(column: {
-        type?: ColumnType
-        length?: number | string
-        precision?: number | null
-        scale?: number
+        type?: ColumnType;
+        length?: number | string;
+        precision?: number | null;
+        scale?: number;
     }): string {
         if (column.type === Number || column.type === "int") {
-            return "integer"
+            return "integer";
         } else if (column.type === String) {
-            return "varchar"
+            return "varchar";
         } else if (column.type === Date) {
-            return "datetime"
+            return "datetime";
         } else if (column.type === Boolean) {
-            return "boolean"
+            return "boolean";
         } else if (column.type === "uuid") {
-            return "varchar"
+            return "varchar";
         } else if (column.type === "simple-array") {
-            return "text"
+            return "text";
         } else if (column.type === "simple-json") {
-            return "text"
+            return "text";
         } else if (column.type === "simple-enum") {
-            return "varchar"
+            return "varchar";
         } else {
-            return (column.type as string) || ""
+            return (column.type as string) || "";
         }
     }
 
@@ -636,29 +636,29 @@ export abstract class AbstractSqliteDriver implements Driver {
      * Normalizes "default" value of the column.
      */
     normalizeDefault(columnMetadata: ColumnMetadata): string | undefined {
-        const defaultValue = columnMetadata.default
+        const defaultValue = columnMetadata.default;
 
         if (typeof defaultValue === "number") {
-            return "" + defaultValue
+            return "" + defaultValue;
         }
 
         if (typeof defaultValue === "boolean") {
-            return defaultValue ? "1" : "0"
+            return defaultValue ? "1" : "0";
         }
 
         if (typeof defaultValue === "function") {
-            return defaultValue()
+            return defaultValue();
         }
 
         if (typeof defaultValue === "string") {
-            return `'${defaultValue}'`
+            return `'${defaultValue}'`;
         }
 
         if (defaultValue === null || defaultValue === undefined) {
-            return undefined
+            return undefined;
         }
 
-        return `${defaultValue}`
+        return `${defaultValue}`;
     }
 
     /**
@@ -667,43 +667,43 @@ export abstract class AbstractSqliteDriver implements Driver {
     normalizeIsUnique(column: ColumnMetadata): boolean {
         return column.entityMetadata.uniques.some(
             (uq) => uq.columns.length === 1 && uq.columns[0] === column,
-        )
+        );
     }
 
     /**
      * Calculates column length taking into account the default length values.
      */
     getColumnLength(column: ColumnMetadata): string {
-        return column.length ? column.length.toString() : ""
+        return column.length ? column.length.toString() : "";
     }
 
     /**
      * Normalizes "default" value of the column.
      */
     createFullType(column: TableColumn): string {
-        let type = column.type
+        let type = column.type;
         if (column.enum) {
-            return "varchar"
+            return "varchar";
         }
         if (column.length) {
-            type += "(" + column.length + ")"
+            type += "(" + column.length + ")";
         } else if (
             column.precision !== null &&
             column.precision !== undefined &&
             column.scale !== null &&
             column.scale !== undefined
         ) {
-            type += "(" + column.precision + "," + column.scale + ")"
+            type += "(" + column.precision + "," + column.scale + ")";
         } else if (
             column.precision !== null &&
             column.precision !== undefined
         ) {
-            type += "(" + column.precision + ")"
+            type += "(" + column.precision + ")";
         }
 
-        if (column.isArray) type += " array"
+        if (column.isArray) type += " array";
 
-        return type
+        return type;
     }
 
     /**
@@ -712,7 +712,7 @@ export abstract class AbstractSqliteDriver implements Driver {
      * If replication is not setup then returns default connection's database connection.
      */
     obtainMasterConnection(): Promise<any> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -721,7 +721,7 @@ export abstract class AbstractSqliteDriver implements Driver {
      * If replication is not setup then returns master (default) connection's database connection.
      */
     obtainSlaveConnection(): Promise<any> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     /**
@@ -735,28 +735,28 @@ export abstract class AbstractSqliteDriver implements Driver {
     ) {
         const generatedMap = metadata.generatedColumns.reduce(
             (map, generatedColumn) => {
-                let value: any
+                let value: any;
                 if (
                     generatedColumn.generationStrategy === "increment" &&
                     insertResult
                 ) {
                     // NOTE: When INSERT statement is successfully completed, the last inserted row ID is returned.
                     // see also: SqliteQueryRunner.query()
-                    value = insertResult - entityNum + entityIndex + 1
+                    value = insertResult - entityNum + entityIndex + 1;
                     // } else if (generatedColumn.generationStrategy === "uuid") {
                     //     value = insertValue[generatedColumn.databaseName];
                 }
 
-                if (!value) return map
+                if (!value) return map;
                 return OrmUtils.mergeDeep(
                     map,
                     generatedColumn.createValueMap(value),
-                )
+                );
             },
             {} as ObjectLiteral,
-        )
+        );
 
-        return Object.keys(generatedMap).length > 0 ? generatedMap : undefined
+        return Object.keys(generatedMap).length > 0 ? generatedMap : undefined;
     }
 
     /**
@@ -770,8 +770,8 @@ export abstract class AbstractSqliteDriver implements Driver {
         return columnMetadatas.filter((columnMetadata) => {
             const tableColumn = tableColumns.find(
                 (c) => c.name === columnMetadata.databaseName,
-            )
-            if (!tableColumn) return false // we don't need new columns, we only need exist and changed
+            );
+            if (!tableColumn) return false; // we don't need new columns, we only need exist and changed
 
             const isColumnChanged =
                 tableColumn.name !== columnMetadata.databaseName ||
@@ -787,7 +787,7 @@ export abstract class AbstractSqliteDriver implements Driver {
                 tableColumn.isUnique !==
                     this.normalizeIsUnique(columnMetadata) ||
                 (columnMetadata.generationStrategy !== "uuid" &&
-                    tableColumn.isGenerated !== columnMetadata.isGenerated)
+                    tableColumn.isGenerated !== columnMetadata.isGenerated);
 
             // DEBUG SECTION
             // if (isColumnChanged) {
@@ -850,29 +850,29 @@ export abstract class AbstractSqliteDriver implements Driver {
             //     )
             // }
 
-            return isColumnChanged
-        })
+            return isColumnChanged;
+        });
     }
 
     /**
      * Returns true if driver supports RETURNING / OUTPUT statement.
      */
     isReturningSqlSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Returns true if driver supports uuid values generation on its own.
      */
     isUUIDGenerationSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
      * Returns true if driver supports fulltext indices.
      */
     isFullTextColumnTypeSupported(): boolean {
-        return false
+        return false;
     }
 
     /**
@@ -880,7 +880,7 @@ export abstract class AbstractSqliteDriver implements Driver {
      */
     createParameter(parameterName: string, index: number): string {
         // return "$" + (index + 1);
-        return "?"
+        return "?";
         // return "$" + parameterName;
     }
 
@@ -894,7 +894,7 @@ export abstract class AbstractSqliteDriver implements Driver {
     protected createDatabaseConnection() {
         throw new LapinError(
             "Do not use AbstractSqlite directly, it has to be used with one of the sqlite drivers",
-        )
+        );
     }
 
     /**

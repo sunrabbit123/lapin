@@ -1,22 +1,22 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { PrimaryGeneratedColumnNumericOptions } from "../options/PrimaryGeneratedColumnNumericOptions"
-import { PrimaryGeneratedColumnUUIDOptions } from "../options/PrimaryGeneratedColumnUUIDOptions"
-import { GeneratedMetadataArgs } from "../../metadata-args/GeneratedMetadataArgs"
-import { ColumnOptions } from "../options/ColumnOptions"
-import { PrimaryGeneratedColumnIdentityOptions } from "../options/PrimaryGeneratedColumnIdentityOptions"
-import { ObjectUtils } from "../../util/ObjectUtils"
+import { getMetadataArgsStorage } from "../../globals";
+import { PrimaryGeneratedColumnNumericOptions } from "../options/PrimaryGeneratedColumnNumericOptions";
+import { PrimaryGeneratedColumnUUIDOptions } from "../options/PrimaryGeneratedColumnUUIDOptions";
+import { GeneratedMetadataArgs } from "../../metadata-args/GeneratedMetadataArgs";
+import { ColumnOptions } from "../options/ColumnOptions";
+import { PrimaryGeneratedColumnIdentityOptions } from "../options/PrimaryGeneratedColumnIdentityOptions";
+import { ObjectUtils } from "../../util/ObjectUtils";
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
  */
-export function PrimaryGeneratedColumn(): PropertyDecorator
+export function PrimaryGeneratedColumn(): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
  */
 export function PrimaryGeneratedColumn(
     options: PrimaryGeneratedColumnNumericOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -24,7 +24,7 @@ export function PrimaryGeneratedColumn(
 export function PrimaryGeneratedColumn(
     strategy: "increment",
     options?: PrimaryGeneratedColumnNumericOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -32,7 +32,7 @@ export function PrimaryGeneratedColumn(
 export function PrimaryGeneratedColumn(
     strategy: "uuid",
     options?: PrimaryGeneratedColumnUUIDOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -40,12 +40,12 @@ export function PrimaryGeneratedColumn(
 export function PrimaryGeneratedColumn(
     strategy: "rowid",
     options?: PrimaryGeneratedColumnUUIDOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 export function PrimaryGeneratedColumn(
     strategy: "identity",
     options?: PrimaryGeneratedColumnIdentityOptions,
-): PropertyDecorator
+): PropertyDecorator;
 
 /**
  * Column decorator is used to mark a specific class property as a table column.
@@ -67,39 +67,40 @@ export function PrimaryGeneratedColumn(
         | PrimaryGeneratedColumnIdentityOptions,
 ): PropertyDecorator | Function {
     // normalize parameters
-    const options: ColumnOptions = {}
-    let strategy: "increment" | "uuid" | "rowid" | "identity"
+    const options: ColumnOptions = {};
+    let strategy: "increment" | "uuid" | "rowid" | "identity";
     if (strategyOrOptions) {
         if (typeof strategyOrOptions === "string")
             strategy = strategyOrOptions as
                 | "increment"
                 | "uuid"
                 | "rowid"
-                | "identity"
+                | "identity";
 
         if (ObjectUtils.isObject(strategyOrOptions)) {
-            strategy = "increment"
-            Object.assign(options, strategyOrOptions)
+            strategy = "increment";
+            Object.assign(options, strategyOrOptions);
         }
     } else {
-        strategy = "increment"
+        strategy = "increment";
     }
-    if (ObjectUtils.isObject(maybeOptions)) Object.assign(options, maybeOptions)
+    if (ObjectUtils.isObject(maybeOptions))
+        Object.assign(options, maybeOptions);
 
     return function (object: Object, propertyName: string) {
         // if column type is not explicitly set then determine it based on generation strategy
         if (!options.type) {
             if (strategy === "increment" || strategy === "identity") {
-                options.type = Number
+                options.type = Number;
             } else if (strategy === "uuid") {
-                options.type = "uuid"
+                options.type = "uuid";
             } else if (strategy === "rowid") {
-                options.type = "int"
+                options.type = "int";
             }
         }
 
         // explicitly set a primary and generated to column options
-        options.primary = true
+        options.primary = true;
 
         // register column metadata args
         getMetadataArgsStorage().columns.push({
@@ -107,13 +108,13 @@ export function PrimaryGeneratedColumn(
             propertyName: propertyName,
             mode: "regular",
             options: options,
-        })
+        });
 
         // register generated metadata args
         getMetadataArgsStorage().generations.push({
             target: object.constructor,
             propertyName: propertyName,
             strategy: strategy,
-        } as GeneratedMetadataArgs)
-    }
+        } as GeneratedMetadataArgs);
+    };
 }

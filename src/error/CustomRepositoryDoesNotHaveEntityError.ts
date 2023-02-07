@@ -1,4 +1,4 @@
-import { LapinError } from "./LapinError"
+import { LapinError } from "./LapinError";
 
 /**
  * Thrown if custom repositories that extend AbstractRepository classes does not have managed entity.
@@ -12,6 +12,6 @@ export class CustomRepositoryDoesNotHaveEntityError extends LapinError {
                     : repository.constructor.name
             } does not have managed entity. ` +
                 `Did you forget to specify entity for it @EntityRepository(MyEntity)? `,
-        )
+        );
     }
 }

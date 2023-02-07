@@ -1,21 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index"
-import { Author } from "./Author"
-import { ManyToOne } from "../../../src/decorator/relations/ManyToOne"
-import { Category } from "./Category"
-import { ManyToMany } from "../../../src/decorator/relations/ManyToMany"
-import { JoinTable } from "../../../src/decorator/relations/JoinTable"
-import { JoinColumn } from "../../../src/decorator/relations/JoinColumn"
+import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import { Author } from "./Author";
+import { ManyToOne } from "../../../src/decorator/relations/ManyToOne";
+import { Category } from "./Category";
+import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
+import { JoinTable } from "../../../src/decorator/relations/JoinTable";
+import { JoinColumn } from "../../../src/decorator/relations/JoinColumn";
 
 @Entity("sample21_post")
 export class Post {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    title: string
+    title: string;
 
     @Column()
-    text: string
+    text: string;
 
     @ManyToOne((type) => Author, (author) => author.posts, {
         cascade: true,
@@ -24,7 +24,7 @@ export class Post {
         // todo: not yet fixed
         name: "user",
     })
-    author: Author
+    author: Author;
 
     @ManyToMany((type) => Category, (category) => category.posts, {
         cascade: true,
@@ -32,5 +32,5 @@ export class Post {
     @JoinTable({
         name: "_post_categories",
     })
-    categories: Category[]
+    categories: Category[];
 }

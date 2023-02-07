@@ -1,4 +1,4 @@
-import { FindOperator } from "../FindOperator"
+import { FindOperator } from "../FindOperator";
 
 /**
  * Find Options Operator.
@@ -7,5 +7,5 @@ import { FindOperator } from "../FindOperator"
 export function In<T>(
     value: readonly T[] | FindOperator<T>,
 ): FindOperator<any> {
-    return new FindOperator("in", value as any, true, true)
+    return new FindOperator("in", value as any, true, true);
 }

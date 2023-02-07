@@ -1,17 +1,17 @@
-import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
-import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { IsolationLevel } from "../types/IsolationLevel"
-import { AuroraPostgresDriver } from "./AuroraPostgresDriver"
-import { PostgresQueryRunner } from "../postgres/PostgresQueryRunner"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { QueryResult } from "../../query-runner/QueryResult"
+import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError";
+import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { IsolationLevel } from "../types/IsolationLevel";
+import { AuroraPostgresDriver } from "./AuroraPostgresDriver";
+import { PostgresQueryRunner } from "../postgres/PostgresQueryRunner";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { QueryResult } from "../../query-runner/QueryResult";
 
 class PostgresQueryRunnerWrapper extends PostgresQueryRunner {
-    driver: any
+    driver: any;
 
     constructor(driver: any, mode: ReplicationMode) {
-        super(driver, mode)
+        super(driver, mode);
     }
 }
 
@@ -29,9 +29,9 @@ export class AuroraPostgresQueryRunner
     /**
      * Database driver used by connection.
      */
-    driver: AuroraPostgresDriver
+    driver: AuroraPostgresDriver;
 
-    protected client: any
+    protected client: any;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -40,7 +40,7 @@ export class AuroraPostgresQueryRunner
     /**
      * Promise used to obtain a database connection for a first time.
      */
-    protected databaseConnectionPromise: Promise<any>
+    protected databaseConnectionPromise: Promise<any>;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -51,9 +51,9 @@ export class AuroraPostgresQueryRunner
         client: any,
         mode: ReplicationMode,
     ) {
-        super(driver, mode)
+        super(driver, mode);
 
-        this.client = client
+        this.client = client;
     }
 
     // -------------------------------------------------------------------------
@@ -66,55 +66,55 @@ export class AuroraPostgresQueryRunner
      */
     connect(): Promise<any> {
         if (this.databaseConnection)
-            return Promise.resolve(this.databaseConnection)
+            return Promise.resolve(this.databaseConnection);
 
         if (this.databaseConnectionPromise)
-            return this.databaseConnectionPromise
+            return this.databaseConnectionPromise;
 
         if (this.mode === "slave" && this.driver.isReplicated) {
             this.databaseConnectionPromise = this.driver
                 .obtainSlaveConnection()
                 .then(([connection, release]: any[]) => {
-                    this.driver.connectedQueryRunners.push(this)
-                    this.databaseConnection = connection
-                    this.releaseCallback = release
-                    return this.databaseConnection
-                })
+                    this.driver.connectedQueryRunners.push(this);
+                    this.databaseConnection = connection;
+                    this.releaseCallback = release;
+                    return this.databaseConnection;
+                });
         } else {
             // master
             this.databaseConnectionPromise = this.driver
                 .obtainMasterConnection()
                 .then(([connection, release]: any[]) => {
-                    this.driver.connectedQueryRunners.push(this)
-                    this.databaseConnection = connection
-                    this.releaseCallback = release
-                    return this.databaseConnection
-                })
+                    this.driver.connectedQueryRunners.push(this);
+                    this.databaseConnection = connection;
+                    this.releaseCallback = release;
+                    return this.databaseConnection;
+                });
         }
 
-        return this.databaseConnectionPromise
+        return this.databaseConnectionPromise;
     }
 
     /**
      * Starts transaction on the current connection.
      */
     async startTransaction(isolationLevel?: IsolationLevel): Promise<void> {
-        this.isTransactionActive = true
+        this.isTransactionActive = true;
         try {
-            await this.broadcaster.broadcast("BeforeTransactionStart")
+            await this.broadcaster.broadcast("BeforeTransactionStart");
         } catch (err) {
-            this.isTransactionActive = false
-            throw err
+            this.isTransactionActive = false;
+            throw err;
         }
 
         if (this.transactionDepth === 0) {
-            await this.client.startTransaction()
+            await this.client.startTransaction();
         } else {
-            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`);
         }
-        this.transactionDepth += 1
+        this.transactionDepth += 1;
 
-        await this.broadcaster.broadcast("AfterTransactionStart")
+        await this.broadcaster.broadcast("AfterTransactionStart");
     }
 
     /**
@@ -122,21 +122,21 @@ export class AuroraPostgresQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async commitTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionCommit")
+        await this.broadcaster.broadcast("BeforeTransactionCommit");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.client.commitTransaction()
-            this.isTransactionActive = false
+            await this.client.commitTransaction();
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionCommit")
+        await this.broadcaster.broadcast("AfterTransactionCommit");
     }
 
     /**
@@ -144,21 +144,21 @@ export class AuroraPostgresQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async rollbackTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionRollback")
+        await this.broadcaster.broadcast("BeforeTransactionRollback");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.client.rollbackTransaction()
-            this.isTransactionActive = false
+            await this.client.rollbackTransaction();
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionRollback")
+        await this.broadcaster.broadcast("AfterTransactionRollback");
     }
 
     /**
@@ -169,26 +169,26 @@ export class AuroraPostgresQueryRunner
         parameters?: any[],
         useStructuredResult = false,
     ): Promise<any> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
-        const raw = await this.client.query(query, parameters)
+        const raw = await this.client.query(query, parameters);
 
-        const result = new QueryResult()
+        const result = new QueryResult();
 
-        result.raw = raw
+        result.raw = raw;
 
         if (raw?.hasOwnProperty("records") && Array.isArray(raw.records)) {
-            result.records = raw.records
+            result.records = raw.records;
         }
 
         if (raw?.hasOwnProperty("numberOfRecordsUpdated")) {
-            result.affected = raw.numberOfRecordsUpdated
+            result.affected = raw.numberOfRecordsUpdated;
         }
 
         if (!useStructuredResult) {
-            return result.raw
+            return result.raw;
         }
 
-        return result
+        return result;
     }
 }

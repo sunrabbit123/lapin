@@ -15,4 +15,4 @@ export type ColumnMode =
     | "treeChildrenCount"
     | "treeLevel"
     | "objectId"
-    | "array"
+    | "array";

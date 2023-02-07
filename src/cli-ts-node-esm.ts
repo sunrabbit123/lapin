@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { spawnSync } from "child_process"
+import { spawnSync } from "child_process";
 
 if ((process.env["NODE_OPTIONS"] || "").includes("--loader ts-node"))
-    require("./cli")
+    require("./cli");
 else
     spawnSync(process.argv[0], process.argv.slice(1), {
         stdio: "inherit",
@@ -17,4 +17,4 @@ else
                 .join(" "),
         },
         windowsHide: true,
-    })
+    });

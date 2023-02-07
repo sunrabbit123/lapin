@@ -1,8 +1,8 @@
-import { FileLoggerOptions, LoggerOptions } from "./LoggerOptions"
-import appRootPath from "app-root-path"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { Logger } from "./Logger"
-import { PlatformTools } from "../platform/PlatformTools"
+import { FileLoggerOptions, LoggerOptions } from "./LoggerOptions";
+import appRootPath from "app-root-path";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { Logger } from "./Logger";
+import { PlatformTools } from "../platform/PlatformTools";
 
 /**
  * Performs logging of the events in lapin.
@@ -36,8 +36,8 @@ export class FileLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
-            this.write("[QUERY]: " + sql)
+                    : "");
+            this.write("[QUERY]: " + sql);
         }
     }
 
@@ -60,8 +60,8 @@ export class FileLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
-            this.write([`[FAILED QUERY]: ${sql}`, `[QUERY ERROR]: ${error}`])
+                    : "");
+            this.write([`[FAILED QUERY]: ${sql}`, `[QUERY ERROR]: ${error}`]);
         }
     }
 
@@ -78,8 +78,8 @@ export class FileLogger implements Logger {
             query +
             (parameters && parameters.length
                 ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                : "")
-        this.write(`[SLOW QUERY: ${time} ms]: ` + sql)
+                : "");
+        this.write(`[SLOW QUERY: ${time} ms]: ` + sql);
     }
 
     /**
@@ -91,7 +91,7 @@ export class FileLogger implements Logger {
             (Array.isArray(this.options) &&
                 this.options.indexOf("schema") !== -1)
         ) {
-            this.write(message)
+            this.write(message);
         }
     }
 
@@ -99,7 +99,7 @@ export class FileLogger implements Logger {
      * Logs events from the migrations run process.
      */
     logMigration(message: string, queryRunner?: QueryRunner) {
-        this.write(message)
+        this.write(message);
     }
 
     /**
@@ -118,24 +118,24 @@ export class FileLogger implements Logger {
                     (Array.isArray(this.options) &&
                         this.options.indexOf("log") !== -1)
                 )
-                    this.write("[LOG]: " + message)
-                break
+                    this.write("[LOG]: " + message);
+                break;
             case "info":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("info") !== -1)
                 )
-                    this.write("[INFO]: " + message)
-                break
+                    this.write("[INFO]: " + message);
+                break;
             case "warn":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("warn") !== -1)
                 )
-                    this.write("[WARN]: " + message)
-                break
+                    this.write("[WARN]: " + message);
+                break;
         }
     }
 
@@ -147,21 +147,21 @@ export class FileLogger implements Logger {
      * Writes given strings into the log file.
      */
     protected write(strings: string | string[]) {
-        strings = Array.isArray(strings) ? strings : [strings]
-        const basePath = appRootPath.path + "/"
-        let logPath = "ormlogs.log"
+        strings = Array.isArray(strings) ? strings : [strings];
+        const basePath = appRootPath.path + "/";
+        let logPath = "ormlogs.log";
         if (this.fileLoggerOptions && this.fileLoggerOptions.logPath) {
             logPath = PlatformTools.pathNormalize(
                 this.fileLoggerOptions.logPath,
-            )
+            );
         }
         strings = (strings as string[]).map(
             (str) => "[" + new Date().toISOString() + "]" + str,
-        )
+        );
         PlatformTools.appendFileSync(
             basePath + logPath,
             strings.join("\r\n") + "\r\n",
-        ) // todo: use async or implement promises?
+        ); // todo: use async or implement promises?
     }
 
     /**
@@ -170,10 +170,10 @@ export class FileLogger implements Logger {
      */
     protected stringifyParams(parameters: any[]) {
         try {
-            return JSON.stringify(parameters)
+            return JSON.stringify(parameters);
         } catch (error) {
             // most probably circular objects in parameters
-            return parameters
+            return parameters;
         }
     }
 }

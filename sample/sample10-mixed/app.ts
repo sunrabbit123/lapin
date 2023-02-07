@@ -1,10 +1,10 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { PostDetails } from "./entity/PostDetails"
-import { Image } from "./entity/Image"
-import { Cover } from "./entity/Cover"
-import { Category } from "./entity/Category"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { PostDetails } from "./entity/PostDetails";
+import { Image } from "./entity/Image";
+import { Cover } from "./entity/Cover";
+import { Category } from "./entity/Category";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -15,37 +15,37 @@ const options: DataSourceOptions = {
     database: "test",
     synchronize: true,
     entities: [__dirname + "/entity/*"],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource
     .initialize()
     .then((dataSource) => {
-        let postRepository = dataSource.getRepository(Post)
+        let postRepository = dataSource.getRepository(Post);
 
-        let postCover = new Cover()
-        postCover.url = "http://covers.com/post.jpg"
+        let postCover = new Cover();
+        postCover.url = "http://covers.com/post.jpg";
 
-        let details = new PostDetails()
-        details.meta = "hello"
-        details.comment = "wow"
+        let details = new PostDetails();
+        details.meta = "hello";
+        details.comment = "wow";
 
-        let category1 = new Category()
-        category1.description = "about post1"
+        let category1 = new Category();
+        category1.description = "about post1";
 
-        let category2 = new Category()
-        category2.description = "about post2"
+        let category2 = new Category();
+        category2.description = "about post2";
 
-        let image = new Image()
-        image.name = "post.jpg"
+        let image = new Image();
+        image.name = "post.jpg";
 
-        let post = new Post()
-        post.title = "Hello post"
-        post.text = "Hello world of post#1"
-        post.cover = postCover
-        post.details = details
-        post.images.push(image)
-        post.categories = [category1, category2]
+        let post = new Post();
+        post.title = "Hello post";
+        post.text = "Hello world of post#1";
+        post.cover = postCover;
+        post.details = details;
+        post.images.push(image);
+        post.categories = [category1, category2];
 
         postRepository
             .save(post)
@@ -86,9 +86,9 @@ dataSource
             .then(reloadedPost => console.log("reloadedPost: ", reloadedPost));*/
             })
             .then((result) => console.log(result))
-            .catch((error) => console.log(error.stack ? error.stack : error))
+            .catch((error) => console.log(error.stack ? error.stack : error));
 
-        return
+        return;
 
         /*const postJson = {
         id: 1,  // changed
@@ -181,4 +181,4 @@ dataSource
         .then(post => console.log("Post has been saved"))
         .catch(error => console.log("Cannot save. Error: ", error));*/
     })
-    .catch((error) => console.log(error.stack ? error.stack : error))
+    .catch((error) => console.log(error.stack ? error.stack : error));

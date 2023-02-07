@@ -1,11 +1,11 @@
-import { FindManyOptions } from "./FindManyOptions"
-import { FindOneOptions } from "./FindOneOptions"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { FindRelationsNotFoundError } from "../error/FindRelationsNotFoundError"
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { DriverUtils } from "../driver/DriverUtils"
-import { FindTreeOptions } from "./FindTreeOptions"
-import { ObjectLiteral } from "../common/ObjectLiteral"
+import { FindManyOptions } from "./FindManyOptions";
+import { FindOneOptions } from "./FindOneOptions";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { FindRelationsNotFoundError } from "../error/FindRelationsNotFoundError";
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { DriverUtils } from "../driver/DriverUtils";
+import { FindTreeOptions } from "./FindTreeOptions";
+import { ObjectLiteral } from "../common/ObjectLiteral";
 
 /**
  * Utilities to work with FindOptions.
@@ -21,7 +21,7 @@ export class FindOptionsUtils {
     static isFindOneOptions<Entity = any>(
         obj: any,
     ): obj is FindOneOptions<Entity> {
-        const possibleOptions: FindOneOptions<Entity> = obj
+        const possibleOptions: FindOneOptions<Entity> = obj;
         return (
             possibleOptions &&
             (Array.isArray(possibleOptions.select) ||
@@ -43,7 +43,7 @@ export class FindOptionsUtils {
                 typeof possibleOptions.withDeleted === "boolean" ||
                 typeof possibleOptions.relationLoadStrategy === "string" ||
                 typeof possibleOptions.transaction === "boolean")
-        )
+        );
     }
 
     /**
@@ -52,7 +52,7 @@ export class FindOptionsUtils {
     static isFindManyOptions<Entity = any>(
         obj: any,
     ): obj is FindManyOptions<Entity> {
-        const possibleOptions: FindManyOptions<Entity> = obj
+        const possibleOptions: FindManyOptions<Entity> = obj;
         return (
             possibleOptions &&
             (this.isFindOneOptions(possibleOptions) ||
@@ -64,7 +64,7 @@ export class FindOptionsUtils {
                     "string" ||
                 typeof (possibleOptions as FindManyOptions<any>).take ===
                     "string")
-        )
+        );
     }
 
     /**
@@ -72,9 +72,9 @@ export class FindOptionsUtils {
      */
     static extractFindManyOptionsAlias(object: any): string | undefined {
         if (this.isFindManyOptions(object) && object.join)
-            return object.join.alias
+            return object.join.alias;
 
-        return undefined
+        return undefined;
     }
 
     /**
@@ -246,7 +246,7 @@ export class FindOptionsUtils {
     ): SelectQueryBuilder<T> {
         if (options?.relations) {
             // Copy because `applyRelationsRecursively` modifies it
-            const allRelations = [...options.relations]
+            const allRelations = [...options.relations];
 
             FindOptionsUtils.applyRelationsRecursively(
                 qb,
@@ -254,16 +254,16 @@ export class FindOptionsUtils {
                 qb.expressionMap.mainAlias!.name,
                 qb.expressionMap.mainAlias!.metadata,
                 "",
-            )
+            );
 
             // recursive removes found relations from allRelations array
             // if there are relations left in this array it means those relations were not found in the entity structure
             // so, we give an exception about not found relations
             if (allRelations.length > 0)
-                throw new FindRelationsNotFoundError(allRelations)
+                throw new FindRelationsNotFoundError(allRelations);
         }
 
-        return qb
+        return qb;
     }
 
     // -------------------------------------------------------------------------
@@ -281,19 +281,19 @@ export class FindOptionsUtils {
         prefix: string,
     ): void {
         // find all relations that match given prefix
-        let matchedBaseRelations: string[] = []
+        let matchedBaseRelations: string[] = [];
         if (prefix) {
-            const regexp = new RegExp("^" + prefix.replace(".", "\\.") + "\\.")
+            const regexp = new RegExp("^" + prefix.replace(".", "\\.") + "\\.");
             matchedBaseRelations = allRelations
                 .filter((relation) => relation.match(regexp))
                 .map((relation) => relation.replace(regexp, ""))
                 .filter((relation) =>
                     metadata.findRelationWithPropertyPath(relation),
-                )
+                );
         } else {
             matchedBaseRelations = allRelations.filter((relation) =>
                 metadata.findRelationWithPropertyPath(relation),
-            )
+            );
         }
 
         // go through all matched relations and add join for them
@@ -304,11 +304,11 @@ export class FindOptionsUtils {
                 { joiner: "__" },
                 alias,
                 relation,
-            )
+            );
 
             // add a join for the found relation
-            const selection = alias + "." + relation
-            qb.leftJoinAndSelect(selection, relationAlias)
+            const selection = alias + "." + relation;
+            qb.leftJoinAndSelect(selection, relationAlias);
 
             // remove added relations from the allRelations array, this is needed to find all not found relations at the end
             allRelations.splice(
@@ -316,32 +316,32 @@ export class FindOptionsUtils {
                     prefix ? prefix + "." + relation : relation,
                 ),
                 1,
-            )
+            );
 
             // try to find sub-relations
             const join = qb.expressionMap.joinAttributes.find(
                 (join) => join.entityOrProperty === selection,
-            )
+            );
             this.applyRelationsRecursively(
                 qb,
                 allRelations,
                 join!.alias.name,
                 join!.metadata!,
                 prefix ? prefix + "." + relation : relation,
-            )
+            );
 
             // join the eager relations of the found relation
             const relMetadata = metadata.relations.find(
                 (metadata) => metadata.propertyName === relation,
-            )
+            );
             if (relMetadata) {
                 this.joinEagerRelations(
                     qb,
                     relationAlias,
                     relMetadata.inverseEntityMetadata,
-                )
+                );
             }
-        })
+        });
     }
 
     public static joinEagerRelations(
@@ -357,11 +357,11 @@ export class FindOptionsUtils {
                     alias,
                     relation.propertyPath,
                 ),
-            )
+            );
 
             // add a join for the relation
             // Checking whether the relation wasn't joined yet.
-            let addJoin = true
+            let addJoin = true;
             for (const join of qb.expressionMap.joinAttributes) {
                 if (
                     join.condition !== undefined ||
@@ -371,34 +371,34 @@ export class FindOptionsUtils {
                     join.entityOrProperty !==
                         `${alias}.${relation.propertyPath}`
                 ) {
-                    continue
+                    continue;
                 }
-                addJoin = false
-                relationAlias = join.alias.name
-                break
+                addJoin = false;
+                relationAlias = join.alias.name;
+                break;
             }
 
             if (addJoin) {
-                qb.leftJoin(alias + "." + relation.propertyPath, relationAlias)
+                qb.leftJoin(alias + "." + relation.propertyPath, relationAlias);
             }
 
             // Checking whether the relation wasn't selected yet.
             // This check shall be after the join check to detect relationAlias.
-            let addSelect = true
+            let addSelect = true;
             for (const select of qb.expressionMap.selects) {
                 if (
                     select.aliasName !== undefined ||
                     select.virtual !== undefined ||
                     select.selection !== relationAlias
                 ) {
-                    continue
+                    continue;
                 }
-                addSelect = false
-                break
+                addSelect = false;
+                break;
             }
 
             if (addSelect) {
-                qb.addSelect(relationAlias)
+                qb.addSelect(relationAlias);
             }
 
             // (recursive) join the eager relations
@@ -406,7 +406,7 @@ export class FindOptionsUtils {
                 qb,
                 relationAlias,
                 relation.inverseEntityMetadata,
-            )
-        })
+            );
+        });
     }
 }

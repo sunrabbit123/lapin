@@ -5,4 +5,4 @@ export type RelationType =
     | "one-to-one"
     | "one-to-many"
     | "many-to-one"
-    | "many-to-many"
+    | "many-to-many";

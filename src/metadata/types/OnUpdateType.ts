@@ -6,4 +6,4 @@ export type OnUpdateType =
     | "CASCADE"
     | "SET NULL"
     | "DEFAULT"
-    | "NO ACTION"
+    | "NO ACTION";

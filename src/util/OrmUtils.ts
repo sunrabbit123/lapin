@@ -1,4 +1,4 @@
-import { ObjectLiteral } from "../common/ObjectLiteral"
+import { ObjectLiteral } from "../common/ObjectLiteral";
 
 export class OrmUtils {
     // -------------------------------------------------------------------------
@@ -10,8 +10,8 @@ export class OrmUtils {
      */
     static chunk<T>(array: T[], size: number): T[][] {
         return Array.from(Array(Math.ceil(array.length / size)), (_, i) => {
-            return array.slice(i * size, i * size + size)
-        })
+            return array.slice(i * size, i * size + size);
+        });
     }
 
     static splitClassesAndStrings<T>(
@@ -24,7 +24,7 @@ export class OrmUtils {
             classesAndStrings.filter(
                 (str): str is string => typeof str === "string",
             ),
-        ]
+        ];
     }
 
     static groupBy<T, R>(
@@ -32,54 +32,54 @@ export class OrmUtils {
         propertyCallback: (item: T) => R,
     ): { id: R; items: T[] }[] {
         return array.reduce((groupedArray, value) => {
-            const key = propertyCallback(value)
-            let grouped = groupedArray.find((i) => i.id === key)
+            const key = propertyCallback(value);
+            let grouped = groupedArray.find((i) => i.id === key);
             if (!grouped) {
-                grouped = { id: key, items: [] }
-                groupedArray.push(grouped)
+                grouped = { id: key, items: [] };
+                groupedArray.push(grouped);
             }
-            grouped.items.push(value)
-            return groupedArray
-        }, [] as Array<{ id: R; items: T[] }>)
+            grouped.items.push(value);
+            return groupedArray;
+        }, [] as Array<{ id: R; items: T[] }>);
     }
 
-    static uniq<T>(array: T[], criteria?: (item: T) => any): T[]
-    static uniq<T, K extends keyof T>(array: T[], property: K): T[]
+    static uniq<T>(array: T[], criteria?: (item: T) => any): T[];
+    static uniq<T, K extends keyof T>(array: T[], property: K): T[];
     static uniq<T, K extends keyof T>(
         array: T[],
         criteriaOrProperty?: ((item: T) => any) | K,
     ): T[] {
         return array.reduce((uniqueArray, item) => {
-            let found: boolean = false
+            let found: boolean = false;
             if (typeof criteriaOrProperty === "function") {
-                const itemValue = criteriaOrProperty(item)
+                const itemValue = criteriaOrProperty(item);
                 found = !!uniqueArray.find(
                     (uniqueItem) =>
                         criteriaOrProperty(uniqueItem) === itemValue,
-                )
+                );
             } else if (typeof criteriaOrProperty === "string") {
                 found = !!uniqueArray.find(
                     (uniqueItem) =>
                         uniqueItem[criteriaOrProperty] ===
                         item[criteriaOrProperty],
-                )
+                );
             } else {
-                found = uniqueArray.indexOf(item) !== -1
+                found = uniqueArray.indexOf(item) !== -1;
             }
 
-            if (!found) uniqueArray.push(item)
+            if (!found) uniqueArray.push(item);
 
-            return uniqueArray
-        }, [] as T[])
+            return uniqueArray;
+        }, [] as T[]);
     }
 
     // Checks if it's an object made by Object.create(null), {} or new Object()
     private static isPlainObject(item: any) {
         if (item === null || item === undefined) {
-            return false
+            return false;
         }
 
-        return !item.constructor || item.constructor === Object
+        return !item.constructor || item.constructor === Object;
     }
 
     private static mergeArrayKey(
@@ -90,8 +90,8 @@ export class OrmUtils {
     ) {
         // Have we seen this before?  Prevent infinite recursion.
         if (memo.has(value)) {
-            target[key] = memo.get(value)
-            return
+            target[key] = memo.get(value);
+            return;
         }
 
         if (value instanceof Promise) {
@@ -99,21 +99,21 @@ export class OrmUtils {
             // This is a hold-over from the old code & is because we don't want to pull in
             // the lazy fields.  Ideally we'd remove these promises via another function first
             // but for now we have to do it here.
-            return
+            return;
         }
 
         if (!this.isPlainObject(value) && !Array.isArray(value)) {
-            target[key] = value
-            return
+            target[key] = value;
+            return;
         }
 
         if (!target[key]) {
-            target[key] = Array.isArray(value) ? [] : {}
+            target[key] = Array.isArray(value) ? [] : {};
         }
 
-        memo.set(value, target[key])
-        this.merge(target[key], value, memo)
-        memo.delete(value)
+        memo.set(value, target[key]);
+        this.merge(target[key], value, memo);
+        memo.delete(value);
     }
 
     private static mergeObjectKey(
@@ -124,8 +124,8 @@ export class OrmUtils {
     ) {
         // Have we seen this before?  Prevent infinite recursion.
         if (memo.has(value)) {
-            Object.assign(target, { [key]: memo.get(value) })
-            return
+            Object.assign(target, { [key]: memo.get(value) });
+            return;
         }
 
         if (value instanceof Promise) {
@@ -133,21 +133,21 @@ export class OrmUtils {
             // This is a hold-over from the old code & is because we don't want to pull in
             // the lazy fields.  Ideally we'd remove these promises via another function first
             // but for now we have to do it here.
-            return
+            return;
         }
 
         if (!this.isPlainObject(value) && !Array.isArray(value)) {
-            Object.assign(target, { [key]: value })
-            return
+            Object.assign(target, { [key]: value });
+            return;
         }
 
         if (!target[key]) {
-            Object.assign(target, { [key]: Array.isArray(value) ? [] : {} })
+            Object.assign(target, { [key]: Array.isArray(value) ? [] : {} });
         }
 
-        memo.set(value, target[key])
-        this.merge(target[key], value, memo)
-        memo.delete(value)
+        memo.set(value, target[key]);
+        this.merge(target[key], value, memo);
+        memo.delete(value);
     }
 
     private static merge(
@@ -157,14 +157,14 @@ export class OrmUtils {
     ): any {
         if (this.isPlainObject(target) && this.isPlainObject(source)) {
             for (const key of Object.keys(source)) {
-                if (key === "__proto__") continue
-                this.mergeObjectKey(target, key, source[key], memo)
+                if (key === "__proto__") continue;
+                this.mergeObjectKey(target, key, source[key], memo);
             }
         }
 
         if (Array.isArray(target) && Array.isArray(source)) {
             for (let key = 0; key < source.length; key++) {
-                this.mergeArrayKey(target, key, source[key], memo)
+                this.mergeArrayKey(target, key, source[key], memo);
             }
         }
     }
@@ -174,14 +174,14 @@ export class OrmUtils {
      */
     static mergeDeep(target: any, ...sources: any[]): any {
         if (!sources.length) {
-            return target
+            return target;
         }
 
         for (const source of sources) {
-            OrmUtils.merge(target, source)
+            OrmUtils.merge(target, source);
         }
 
-        return target
+        return target;
     }
 
     /**
@@ -190,16 +190,16 @@ export class OrmUtils {
      * @see http://stackoverflow.com/a/1144249
      */
     static deepCompare(...args: any[]): boolean {
-        let i: any, l: any, leftChain: any, rightChain: any
+        let i: any, l: any, leftChain: any, rightChain: any;
 
         if (arguments.length < 1) {
-            return true // Die silently? Don't know how to handle such case, please help...
+            return true; // Die silently? Don't know how to handle such case, please help...
             // throw "Need two or more arguments to compare";
         }
 
         for (i = 1, l = arguments.length; i < l; i++) {
-            leftChain = [] // Todo: this can be cached
-            rightChain = []
+            leftChain = []; // Todo: this can be cached
+            rightChain = [];
 
             if (
                 !this.compare2Objects(
@@ -209,62 +209,62 @@ export class OrmUtils {
                     arguments[i],
                 )
             ) {
-                return false
+                return false;
             }
         }
 
-        return true
+        return true;
     }
 
     /**
      * Gets deeper value of object.
      */
     static deepValue(obj: ObjectLiteral, path: string) {
-        const segments = path.split(".")
+        const segments = path.split(".");
         for (let i = 0, len = segments.length; i < len; i++) {
-            obj = obj[segments[i]]
+            obj = obj[segments[i]];
         }
-        return obj
+        return obj;
     }
 
     static replaceEmptyObjectsWithBooleans(obj: any) {
         for (let key in obj) {
             if (obj[key] && typeof obj[key] === "object") {
                 if (Object.keys(obj[key]).length === 0) {
-                    obj[key] = true
+                    obj[key] = true;
                 } else {
-                    this.replaceEmptyObjectsWithBooleans(obj[key])
+                    this.replaceEmptyObjectsWithBooleans(obj[key]);
                 }
             }
         }
     }
 
     static propertyPathsToTruthyObject(paths: string[]) {
-        let obj: any = {}
+        let obj: any = {};
         for (let path of paths) {
-            const props = path.split(".")
-            if (!props.length) continue
+            const props = path.split(".");
+            if (!props.length) continue;
 
             if (!obj[props[0]] || obj[props[0]] === true) {
-                obj[props[0]] = {}
+                obj[props[0]] = {};
             }
-            let recursiveChild = obj[props[0]]
+            let recursiveChild = obj[props[0]];
             for (let [key, prop] of props.entries()) {
-                if (key === 0) continue
+                if (key === 0) continue;
 
                 if (recursiveChild[prop]) {
-                    recursiveChild = recursiveChild[prop]
+                    recursiveChild = recursiveChild[prop];
                 } else if (key === props.length - 1) {
-                    recursiveChild[prop] = {}
-                    recursiveChild = null
+                    recursiveChild[prop] = {};
+                    recursiveChild = null;
                 } else {
-                    recursiveChild[prop] = {}
-                    recursiveChild = recursiveChild[prop]
+                    recursiveChild[prop] = {};
+                    recursiveChild = recursiveChild[prop];
                 }
             }
         }
-        this.replaceEmptyObjectsWithBooleans(obj)
-        return obj
+        this.replaceEmptyObjectsWithBooleans(obj);
+        return obj;
     }
 
     /**
@@ -280,7 +280,7 @@ export class OrmUtils {
             secondId === undefined ||
             secondId === null
         )
-            return false
+            return false;
 
         // Optimized version for the common case
         if (
@@ -291,23 +291,23 @@ export class OrmUtils {
             Object.keys(firstId).length === 1 &&
             Object.keys(secondId).length === 1
         ) {
-            return firstId.id === secondId.id
+            return firstId.id === secondId.id;
         }
 
-        return OrmUtils.deepCompare(firstId, secondId)
+        return OrmUtils.deepCompare(firstId, secondId);
     }
 
     /**
      * Transforms given value into boolean value.
      */
     static toBoolean(value: any): boolean {
-        if (typeof value === "boolean") return value
+        if (typeof value === "boolean") return value;
 
-        if (typeof value === "string") return value === "true" || value === "1"
+        if (typeof value === "string") return value === "true" || value === "1";
 
-        if (typeof value === "number") return value > 0
+        if (typeof value === "number") return value > 0;
 
-        return false
+        return false;
     }
 
     /**
@@ -315,29 +315,29 @@ export class OrmUtils {
      */
     static zipObject(keys: any[], values: any[]): ObjectLiteral {
         return keys.reduce((object, column, index) => {
-            object[column] = values[index]
-            return object
-        }, {} as ObjectLiteral)
+            object[column] = values[index];
+            return object;
+        }, {} as ObjectLiteral);
     }
 
     /**
      * Compares two arrays.
      */
     static isArraysEqual(arr1: any[], arr2: any[]): boolean {
-        if (arr1.length !== arr2.length) return false
+        if (arr1.length !== arr2.length) return false;
         return arr1.every((element) => {
-            return arr2.indexOf(element) !== -1
-        })
+            return arr2.indexOf(element) !== -1;
+        });
     }
 
     static areMutuallyExclusive<T>(...lists: T[][]): boolean {
         const haveSharedObjects = lists.some((list) => {
-            const otherLists = lists.filter((otherList) => otherList !== list)
+            const otherLists = lists.filter((otherList) => otherList !== list);
             return list.some((item) =>
                 otherLists.some((otherList) => otherList.includes(item)),
-            )
-        })
-        return !haveSharedObjects
+            );
+        });
+        return !haveSharedObjects;
     }
 
     // -------------------------------------------------------------------------
@@ -350,21 +350,21 @@ export class OrmUtils {
         x: any,
         y: any,
     ) {
-        let p
+        let p;
 
         // remember that NaN === NaN returns false
         // and isNaN(undefined) returns true
-        if (Number.isNaN(x) && Number.isNaN(y)) return true
+        if (Number.isNaN(x) && Number.isNaN(y)) return true;
 
         // Compare primitives and functions.
         // Check if both arguments link to the same object.
         // Especially useful on the step where we compare prototypes
-        if (x === y) return true
+        if (x === y) return true;
 
         // Unequal, but either is null or undefined (use case: jsonb comparison)
         // PR #3776, todo: add tests
         if (x === null || y === null || x === undefined || y === undefined)
-            return false
+            return false;
 
         // Fix the buffer compare bug.
         // See: https://github.com/lapin/lapin/issues/3654
@@ -373,7 +373,7 @@ export class OrmUtils {
                 typeof x.equals === "function") &&
             x.equals(y)
         )
-            return true
+            return true;
 
         // Works in case when functions are created in constructor.
         // Comparing dates is a common scenario. Another built-ins?
@@ -385,66 +385,66 @@ export class OrmUtils {
             (typeof x === "string" && typeof y === "string") ||
             (typeof x === "number" && typeof y === "number")
         )
-            return x.toString() === y.toString()
+            return x.toString() === y.toString();
 
         // At last checking prototypes as good as we can
-        if (!(typeof x === "object" && typeof y === "object")) return false
+        if (!(typeof x === "object" && typeof y === "object")) return false;
 
         if (
             Object.prototype.isPrototypeOf.call(x, y) ||
             Object.prototype.isPrototypeOf.call(y, x)
         )
-            return false
+            return false;
 
-        if (x.constructor !== y.constructor) return false
+        if (x.constructor !== y.constructor) return false;
 
-        if (x.prototype !== y.prototype) return false
+        if (x.prototype !== y.prototype) return false;
 
         // Check for infinitive linking loops
         if (leftChain.indexOf(x) > -1 || rightChain.indexOf(y) > -1)
-            return false
+            return false;
 
         // Quick checking of one object being a subset of another.
         // todo: cache the structure of arguments[0] for performance
         for (p in y) {
             if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-                return false
+                return false;
             } else if (typeof y[p] !== typeof x[p]) {
-                return false
+                return false;
             }
         }
 
         for (p in x) {
             if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-                return false
+                return false;
             } else if (typeof y[p] !== typeof x[p]) {
-                return false
+                return false;
             }
 
             switch (typeof x[p]) {
                 case "object":
                 case "function":
-                    leftChain.push(x)
-                    rightChain.push(y)
+                    leftChain.push(x);
+                    rightChain.push(y);
 
                     if (
                         !this.compare2Objects(leftChain, rightChain, x[p], y[p])
                     ) {
-                        return false
+                        return false;
                     }
 
-                    leftChain.pop()
-                    rightChain.pop()
-                    break
+                    leftChain.pop();
+                    rightChain.pop();
+                    break;
 
                 default:
                     if (x[p] !== y[p]) {
-                        return false
+                        return false;
                     }
-                    break
+                    break;
             }
         }
 
-        return true
+        return true;
     }
 }

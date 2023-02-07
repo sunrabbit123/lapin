@@ -1,13 +1,13 @@
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { EntityManager } from "../entity-manager/EntityManager"
-import { Repository } from "./Repository"
-import { TreeRepository } from "./TreeRepository"
-import { EntityTarget } from "../common/EntityTarget"
-import { ObjectType } from "../common/ObjectType"
-import { CustomRepositoryDoesNotHaveEntityError } from "../error/CustomRepositoryDoesNotHaveEntityError"
-import { getMetadataArgsStorage } from "../globals"
-import { CustomRepositoryNotFoundError } from "../error/CustomRepositoryNotFoundError"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { EntityManager } from "../entity-manager/EntityManager";
+import { Repository } from "./Repository";
+import { TreeRepository } from "./TreeRepository";
+import { EntityTarget } from "../common/EntityTarget";
+import { ObjectType } from "../common/ObjectType";
+import { CustomRepositoryDoesNotHaveEntityError } from "../error/CustomRepositoryDoesNotHaveEntityError";
+import { getMetadataArgsStorage } from "../globals";
+import { CustomRepositoryNotFoundError } from "../error/CustomRepositoryNotFoundError";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 
 /**
  * Provides abstract class for custom repositories that do not inherit from original orm Repository.
@@ -24,7 +24,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     /**
      * Gets entity manager that allows to perform repository operations with any entity.
      */
-    protected manager: EntityManager
+    protected manager: EntityManager;
 
     // -------------------------------------------------------------------------
     // Protected Accessors
@@ -35,11 +35,11 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
      * If current repository does not manage any entity, then exception will be thrown.
      */
     protected get repository(): Repository<Entity> {
-        const target = this.getCustomRepositoryTarget(this as any)
+        const target = this.getCustomRepositoryTarget(this as any);
         if (!target)
-            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor)
+            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor);
 
-        return this.manager.getRepository<Entity>(target)
+        return this.manager.getRepository<Entity>(target);
     }
 
     /**
@@ -47,11 +47,11 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
      * If current repository does not manage any entity, then exception will be thrown.
      */
     protected get treeRepository(): TreeRepository<Entity> {
-        const target = this.getCustomRepositoryTarget(this as any)
+        const target = this.getCustomRepositoryTarget(this as any);
         if (!target)
-            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor)
+            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor);
 
-        return this.manager.getTreeRepository<Entity>(target)
+        return this.manager.getTreeRepository<Entity>(target);
     }
 
     // -------------------------------------------------------------------------
@@ -63,13 +63,13 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
      * If current repository does not manage any entity, then exception will be thrown.
      */
     protected createQueryBuilder(alias: string): SelectQueryBuilder<Entity> {
-        const target = this.getCustomRepositoryTarget(this.constructor)
+        const target = this.getCustomRepositoryTarget(this.constructor);
         if (!target)
-            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor)
+            throw new CustomRepositoryDoesNotHaveEntityError(this.constructor);
 
         return this.manager
             .getRepository<Entity>(target)
-            .createQueryBuilder(alias)
+            .createQueryBuilder(alias);
     }
 
     /**
@@ -79,7 +79,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
         entity: ObjectType<T>,
         alias: string,
     ): SelectQueryBuilder<T> {
-        return this.getRepositoryFor(entity).createQueryBuilder(alias)
+        return this.getRepositoryFor(entity).createQueryBuilder(alias);
     }
 
     /**
@@ -88,7 +88,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     protected getRepositoryFor<T extends ObjectLiteral>(
         entity: ObjectType<T>,
     ): Repository<T> {
-        return this.manager.getRepository(entity)
+        return this.manager.getRepository(entity);
     }
 
     /**
@@ -97,7 +97,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     protected getTreeRepositoryFor<T extends ObjectLiteral>(
         entity: ObjectType<T>,
     ): TreeRepository<T> {
-        return this.manager.getTreeRepository(entity)
+        return this.manager.getTreeRepository(entity);
     }
 
     // -------------------------------------------------------------------------
@@ -118,11 +118,11 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
                     (typeof customRepository === "function"
                         ? customRepository
                         : (customRepository as any).constructor)
-                )
-            })
+                );
+            });
         if (!entityRepositoryMetadataArgs)
-            throw new CustomRepositoryNotFoundError(customRepository)
+            throw new CustomRepositoryNotFoundError(customRepository);
 
-        return entityRepositoryMetadataArgs.entity
+        return entityRepositoryMetadataArgs.entity;
     }
 }

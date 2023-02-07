@@ -1,7 +1,7 @@
-import { LoggerOptions } from "./LoggerOptions"
-import { PlatformTools } from "../platform/PlatformTools"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { Logger } from "./Logger"
+import { LoggerOptions } from "./LoggerOptions";
+import { PlatformTools } from "../platform/PlatformTools";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { Logger } from "./Logger";
 
 /**
  * Performs logging of the events in lapin.
@@ -32,8 +32,8 @@ export class AdvancedConsoleLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
-            PlatformTools.logInfo("query:", PlatformTools.highlightSql(sql))
+                    : "");
+            PlatformTools.logInfo("query:", PlatformTools.highlightSql(sql));
         }
     }
 
@@ -56,12 +56,12 @@ export class AdvancedConsoleLogger implements Logger {
                 query +
                 (parameters && parameters.length
                     ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                    : "")
+                    : "");
             PlatformTools.logError(
                 `query failed:`,
                 PlatformTools.highlightSql(sql),
-            )
-            PlatformTools.logError(`error:`, error)
+            );
+            PlatformTools.logError(`error:`, error);
         }
     }
 
@@ -78,9 +78,12 @@ export class AdvancedConsoleLogger implements Logger {
             query +
             (parameters && parameters.length
                 ? " -- PARAMETERS: " + this.stringifyParams(parameters)
-                : "")
-        PlatformTools.logWarn(`query is slow:`, PlatformTools.highlightSql(sql))
-        PlatformTools.logWarn(`execution time:`, time)
+                : "");
+        PlatformTools.logWarn(
+            `query is slow:`,
+            PlatformTools.highlightSql(sql),
+        );
+        PlatformTools.logWarn(`execution time:`, time);
     }
 
     /**
@@ -92,7 +95,7 @@ export class AdvancedConsoleLogger implements Logger {
             (Array.isArray(this.options) &&
                 this.options.indexOf("schema") !== -1)
         ) {
-            PlatformTools.log(message)
+            PlatformTools.log(message);
         }
     }
 
@@ -100,7 +103,7 @@ export class AdvancedConsoleLogger implements Logger {
      * Logs events from the migration run process.
      */
     logMigration(message: string, queryRunner?: QueryRunner) {
-        PlatformTools.log(message)
+        PlatformTools.log(message);
     }
 
     /**
@@ -119,24 +122,24 @@ export class AdvancedConsoleLogger implements Logger {
                     (Array.isArray(this.options) &&
                         this.options.indexOf("log") !== -1)
                 )
-                    PlatformTools.log(message)
-                break
+                    PlatformTools.log(message);
+                break;
             case "info":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("info") !== -1)
                 )
-                    PlatformTools.logInfo("INFO:", message)
-                break
+                    PlatformTools.logInfo("INFO:", message);
+                break;
             case "warn":
                 if (
                     this.options === "all" ||
                     (Array.isArray(this.options) &&
                         this.options.indexOf("warn") !== -1)
                 )
-                    console.warn(PlatformTools.warn(message))
-                break
+                    console.warn(PlatformTools.warn(message));
+                break;
         }
     }
 
@@ -150,10 +153,10 @@ export class AdvancedConsoleLogger implements Logger {
      */
     protected stringifyParams(parameters: any[]) {
         try {
-            return JSON.stringify(parameters)
+            return JSON.stringify(parameters);
         } catch (error) {
             // most probably circular objects in parameters
-            return parameters
+            return parameters;
         }
     }
 }

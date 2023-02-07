@@ -1,20 +1,20 @@
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 
 export interface EntitySchemaRelationIdOptions {
     /**
      * Name of relation.
      */
-    relationName: string
+    relationName: string;
 
     /**
      * Alias of the joined (destination) table.
      */
-    alias?: string
+    alias?: string;
 
     /**
      * Extra condition applied to "ON" section of join.
      */
     queryBuilderFactory?: (
         qb: SelectQueryBuilder<any>,
-    ) => SelectQueryBuilder<any>
+    ) => SelectQueryBuilder<any>;
 }

@@ -1,6 +1,6 @@
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { EmbeddedMetadata } from "../../metadata/EmbeddedMetadata"
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { EmbeddedMetadata } from "../../metadata/EmbeddedMetadata";
 
 /**
  * Transforms raw document into entity object.
@@ -23,14 +23,14 @@ export class DocumentToEntityTransformer {
     // -------------------------------------------------------------------------
 
     transformAll(documents: ObjectLiteral[], metadata: EntityMetadata) {
-        return documents.map((document) => this.transform(document, metadata))
+        return documents.map((document) => this.transform(document, metadata));
     }
 
     transform(document: any, metadata: EntityMetadata) {
         const entity: any = metadata.create(undefined, {
             fromDeserializer: true,
-        })
-        let hasData = false
+        });
+        let hasData = false;
 
         // handle _id property the special way
         if (
@@ -41,8 +41,8 @@ export class DocumentToEntityTransformer {
             // do we really need prepare hydrated value here? If no then no problem. If yes then think maybe prepareHydratedValue process should be extracted out of driver class?
             // entity[metadata.objectIdColumn.propertyName] = this.driver.prepareHydratedValue(document[metadata.objectIdColumn.name"], metadata.objectIdColumn);
             entity[metadata.objectIdColumn.propertyName] =
-                document[metadata.objectIdColumn.databaseNameWithoutPrefixes]
-            hasData = true
+                document[metadata.objectIdColumn.databaseNameWithoutPrefixes];
+            hasData = true;
         }
 
         // add special columns that contains relation ids
@@ -51,7 +51,7 @@ export class DocumentToEntityTransformer {
                 .filter((column) => !!column.relationMetadata)
                 .forEach((column) => {
                     const valueInObject =
-                        document[column.databaseNameWithoutPrefixes]
+                        document[column.databaseNameWithoutPrefixes];
                     if (
                         valueInObject !== undefined &&
                         valueInObject !== null &&
@@ -59,10 +59,10 @@ export class DocumentToEntityTransformer {
                     ) {
                         // todo: we can't use driver in this class
                         // const value = this.driver.prepareHydratedValue(valueInObject, column);
-                        entity[column.propertyName] = valueInObject
-                        hasData = true
+                        entity[column.propertyName] = valueInObject;
+                        hasData = true;
                     }
-                })
+                });
         }
 
         /*this.joinMappings
@@ -80,7 +80,7 @@ export class DocumentToEntityTransformer {
 
         // get value from columns selections and put them into object
         metadata.ownColumns.forEach((column) => {
-            const valueInObject = document[column.databaseNameWithoutPrefixes]
+            const valueInObject = document[column.databaseNameWithoutPrefixes];
             if (
                 valueInObject !== undefined &&
                 column.propertyName &&
@@ -88,10 +88,10 @@ export class DocumentToEntityTransformer {
             ) {
                 // const value = this.driver.prepareHydratedValue(valueInObject, column);
 
-                entity[column.propertyName] = valueInObject
-                hasData = true
+                entity[column.propertyName] = valueInObject;
+                hasData = true;
             }
-        })
+        });
 
         const addEmbeddedValuesRecursively = (
             entity: any,
@@ -99,7 +99,7 @@ export class DocumentToEntityTransformer {
             embeddeds: EmbeddedMetadata[],
         ) => {
             embeddeds.forEach((embedded) => {
-                if (!document[embedded.prefix]) return
+                if (!document[embedded.prefix]) return;
 
                 if (embedded.isArray) {
                     entity[embedded.propertyName] = (
@@ -107,18 +107,18 @@ export class DocumentToEntityTransformer {
                     ).map((subValue: any, index: number) => {
                         const newItem = embedded.create({
                             fromDeserializer: true,
-                        })
+                        });
                         embedded.columns.forEach((column) => {
                             newItem[column.propertyName] =
-                                subValue[column.databaseNameWithoutPrefixes]
-                        })
+                                subValue[column.databaseNameWithoutPrefixes];
+                        });
                         addEmbeddedValuesRecursively(
                             newItem,
                             document[embedded.prefix][index],
                             embedded.embeddeds,
-                        )
-                        return newItem
-                    })
+                        );
+                        return newItem;
+                    });
                 } else {
                     if (
                         embedded.embeddeds.length &&
@@ -126,34 +126,34 @@ export class DocumentToEntityTransformer {
                     )
                         entity[embedded.propertyName] = embedded.create({
                             fromDeserializer: true,
-                        })
+                        });
 
                     embedded.columns.forEach((column) => {
                         const value =
                             document[embedded.prefix][
                                 column.databaseNameWithoutPrefixes
-                            ]
-                        if (value === undefined) return
+                            ];
+                        if (value === undefined) return;
 
                         if (!entity[embedded.propertyName])
                             entity[embedded.propertyName] = embedded.create({
                                 fromDeserializer: true,
-                            })
+                            });
 
                         entity[embedded.propertyName][column.propertyName] =
-                            value
-                    })
+                            value;
+                    });
 
                     addEmbeddedValuesRecursively(
                         entity[embedded.propertyName],
                         document[embedded.prefix],
                         embedded.embeddeds,
-                    )
+                    );
                 }
-            })
-        }
+            });
+        };
 
-        addEmbeddedValuesRecursively(entity, document, metadata.embeddeds)
+        addEmbeddedValuesRecursively(entity, document, metadata.embeddeds);
 
         // if relation is loaded then go into it recursively and transform its values too
         /*metadata.relations.forEach(relation => {
@@ -222,6 +222,6 @@ export class DocumentToEntityTransformer {
             });
         });*/
 
-        return hasData ? entity : null
+        return hasData ? entity : null;
     }
 }

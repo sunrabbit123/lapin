@@ -3,17 +3,17 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index"
-import { Post } from "./Post"
+} from "../../../src/index";
+import { Post } from "./Post";
 
 @Entity("sample3_post_metadata")
 export class PostMetadata {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    description: string
+    description: string;
 
     @OneToMany((type) => Post, (post) => post.metadata)
-    posts: Post[]
+    posts: Post[];
 }

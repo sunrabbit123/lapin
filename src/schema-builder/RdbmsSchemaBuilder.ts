@@ -1,22 +1,22 @@
-import { Table } from "./table/Table"
-import { TableColumn } from "./table/TableColumn"
-import { TableForeignKey } from "./table/TableForeignKey"
-import { TableIndex } from "./table/TableIndex"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { DataSource } from "../data-source/DataSource"
-import { SchemaBuilder } from "./SchemaBuilder"
-import { SqlInMemory } from "../driver/SqlInMemory"
-import { TableUtils } from "./util/TableUtils"
-import { TableColumnOptions } from "./options/TableColumnOptions"
-import { TableUnique } from "./table/TableUnique"
-import { TableCheck } from "./table/TableCheck"
-import { TableExclusion } from "./table/TableExclusion"
-import { View } from "./view/View"
-import { ViewUtils } from "./util/ViewUtils"
-import { DriverUtils } from "../driver/DriverUtils"
-import { PostgresQueryRunner } from "../driver/postgres/PostgresQueryRunner"
+import { Table } from "./table/Table";
+import { TableColumn } from "./table/TableColumn";
+import { TableForeignKey } from "./table/TableForeignKey";
+import { TableIndex } from "./table/TableIndex";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { DataSource } from "../data-source/DataSource";
+import { SchemaBuilder } from "./SchemaBuilder";
+import { SqlInMemory } from "../driver/SqlInMemory";
+import { TableUtils } from "./util/TableUtils";
+import { TableColumnOptions } from "./options/TableColumnOptions";
+import { TableUnique } from "./table/TableUnique";
+import { TableCheck } from "./table/TableCheck";
+import { TableExclusion } from "./table/TableExclusion";
+import { View } from "./view/View";
+import { ViewUtils } from "./util/ViewUtils";
+import { DriverUtils } from "../driver/DriverUtils";
+import { PostgresQueryRunner } from "../driver/postgres/PostgresQueryRunner";
 
 /**
  * Creates complete tables schemas in the database based on the entity metadatas.
@@ -33,16 +33,16 @@ import { PostgresQueryRunner } from "../driver/postgres/PostgresQueryRunner"
  * 9. create indices which are missing in db yet, and drops indices which exist in the db, but does not exist in the metadata anymore
  */
 export class RdbmsSchemaBuilder implements SchemaBuilder {
-    readonly "@instanceof" = Symbol.for("RdbmsSchemaBuilder")
+    readonly "@instanceof" = Symbol.for("RdbmsSchemaBuilder");
 
     /**
      * Used to execute schema creation queries in a single connection.
      */
-    protected queryRunner: QueryRunner
+    protected queryRunner: QueryRunner;
 
-    private currentDatabase?: string
+    private currentDatabase?: string;
 
-    private currentSchema?: string
+    private currentSchema?: string;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -58,11 +58,11 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
      * Creates complete schemas for the given entity metadatas.
      */
     async build(): Promise<void> {
-        this.queryRunner = this.connection.createQueryRunner()
+        this.queryRunner = this.connection.createQueryRunner();
 
         // this.connection.driver.database || this.currentDatabase;
-        this.currentDatabase = this.connection.driver.database
-        this.currentSchema = this.connection.driver.schema
+        this.currentDatabase = this.connection.driver.database;
+        this.currentSchema = this.connection.driver.schema;
 
         // CockroachDB implements asynchronous schema sync operations which can not been executed in transaction.
         // E.g. if you try to DROP column and ADD it again in the same transaction, crdb throws error.
@@ -71,50 +71,50 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
         const isUsingTransactions =
             !(this.connection.driver.options.type === "cockroachdb") &&
             !(this.connection.driver.options.type === "spanner") &&
-            this.connection.options.migrationsTransactionMode !== "none"
+            this.connection.options.migrationsTransactionMode !== "none";
 
-        await this.queryRunner.beforeMigration()
+        await this.queryRunner.beforeMigration();
 
         if (isUsingTransactions) {
-            await this.queryRunner.startTransaction()
+            await this.queryRunner.startTransaction();
         }
 
         try {
-            await this.createMetadataTableIfNecessary(this.queryRunner)
+            await this.createMetadataTableIfNecessary(this.queryRunner);
             // Flush the queryrunner table & view cache
             const tablePaths = this.entityToSyncMetadatas.map((metadata) =>
                 this.getTablePath(metadata),
-            )
+            );
             const viewPaths = this.viewEntityToSyncMetadatas.map((metadata) =>
                 this.getTablePath(metadata),
-            )
+            );
 
-            await this.queryRunner.getTables(tablePaths)
-            await this.queryRunner.getViews(viewPaths)
+            await this.queryRunner.getTables(tablePaths);
+            await this.queryRunner.getViews(viewPaths);
 
-            await this.executeSchemaSyncOperationsInProperOrder()
+            await this.executeSchemaSyncOperationsInProperOrder();
 
             // if cache is enabled then perform cache-synchronization as well
             if (this.connection.queryResultCache)
                 await this.connection.queryResultCache.synchronize(
                     this.queryRunner,
-                )
+                );
 
             if (isUsingTransactions) {
-                await this.queryRunner.commitTransaction()
+                await this.queryRunner.commitTransaction();
             }
         } catch (error) {
             try {
                 // we throw original error even if rollback thrown an error
                 if (isUsingTransactions) {
-                    await this.queryRunner.rollbackTransaction()
+                    await this.queryRunner.rollbackTransaction();
                 }
             } catch (rollbackError) {}
-            throw error
+            throw error;
         } finally {
-            await this.queryRunner.afterMigration()
+            await this.queryRunner.afterMigration();
 
-            await this.queryRunner.release()
+            await this.queryRunner.release();
         }
     }
 
@@ -128,7 +128,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             this.viewEntityToSyncMetadatas.length > 0 ||
             this.hasGeneratedColumns()
         ) {
-            await this.createlapinMetadataTable(queryRunner)
+            await this.createlapinMetadataTable(queryRunner);
         }
     }
 
@@ -136,35 +136,35 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
      * Returns sql queries to be executed by schema builder.
      */
     async log(): Promise<SqlInMemory> {
-        this.queryRunner = this.connection.createQueryRunner()
+        this.queryRunner = this.connection.createQueryRunner();
         try {
             // Flush the queryrunner table & view cache
             const tablePaths = this.entityToSyncMetadatas.map((metadata) =>
                 this.getTablePath(metadata),
-            )
+            );
             const viewPaths = this.viewEntityToSyncMetadatas.map((metadata) =>
                 this.getTablePath(metadata),
-            )
-            await this.queryRunner.getTables(tablePaths)
-            await this.queryRunner.getViews(viewPaths)
+            );
+            await this.queryRunner.getTables(tablePaths);
+            await this.queryRunner.getViews(viewPaths);
 
-            this.queryRunner.enableSqlMemory()
-            await this.executeSchemaSyncOperationsInProperOrder()
+            this.queryRunner.enableSqlMemory();
+            await this.executeSchemaSyncOperationsInProperOrder();
 
             // if cache is enabled then perform cache-synchronization as well
             if (this.connection.queryResultCache)
                 // todo: check this functionality
                 await this.connection.queryResultCache.synchronize(
                     this.queryRunner,
-                )
+                );
 
-            return this.queryRunner.getMemorySql()
+            return this.queryRunner.getMemorySql();
         } finally {
             // its important to disable this mode despite the fact we are release query builder
             // because there exist drivers which reuse same query runner. Also its important to disable
             // sql memory after call of getMemorySql() method because last one flushes sql memory.
-            this.queryRunner.disableSqlMemory()
-            await this.queryRunner.release()
+            this.queryRunner.disableSqlMemory();
+            await this.queryRunner.release();
         }
     }
 
@@ -181,7 +181,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 metadata.synchronize &&
                 metadata.tableType !== "entity-child" &&
                 metadata.tableType !== "view",
-        )
+        );
     }
 
     /**
@@ -196,7 +196,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 )
                 // sort views in creation order by dependencies
                 .sort(ViewUtils.viewMetadataCmp)
-        )
+        );
     }
 
     /**
@@ -204,8 +204,10 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
      */
     protected hasGeneratedColumns(): boolean {
         return this.connection.entityMetadatas.some((entityMetadata) => {
-            return entityMetadata.columns.some((column) => column.generatedType)
-        })
+            return entityMetadata.columns.some(
+                (column) => column.generatedType,
+            );
+        });
     }
 
     /**
@@ -213,38 +215,38 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
      * Order of operations matter here.
      */
     protected async executeSchemaSyncOperationsInProperOrder(): Promise<void> {
-        await this.dropOldViews()
-        await this.dropOldForeignKeys()
-        await this.dropOldIndices()
-        await this.dropOldChecks()
-        await this.dropOldExclusions()
-        await this.dropCompositeUniqueConstraints()
+        await this.dropOldViews();
+        await this.dropOldForeignKeys();
+        await this.dropOldIndices();
+        await this.dropOldChecks();
+        await this.dropOldExclusions();
+        await this.dropCompositeUniqueConstraints();
         // await this.renameTables();
-        await this.renameColumns()
-        await this.createNewTables()
-        await this.dropRemovedColumns()
-        await this.addNewColumns()
-        await this.updatePrimaryKeys()
-        await this.updateExistColumns()
-        await this.createNewIndices()
-        await this.createNewChecks()
-        await this.createNewExclusions()
-        await this.createCompositeUniqueConstraints()
-        await this.createForeignKeys()
-        await this.createViews()
-        await this.createNewViewIndices()
+        await this.renameColumns();
+        await this.createNewTables();
+        await this.dropRemovedColumns();
+        await this.addNewColumns();
+        await this.updatePrimaryKeys();
+        await this.updateExistColumns();
+        await this.createNewIndices();
+        await this.createNewChecks();
+        await this.createNewExclusions();
+        await this.createCompositeUniqueConstraints();
+        await this.createForeignKeys();
+        await this.createViews();
+        await this.createNewViewIndices();
     }
 
     private getTablePath(
         target: EntityMetadata | Table | View | TableForeignKey | string,
     ): string {
-        const parsed = this.connection.driver.parseTableName(target)
+        const parsed = this.connection.driver.parseTableName(target);
 
         return this.connection.driver.buildTableName(
             parsed.tableName,
             parsed.schema || this.currentSchema,
             parsed.database || this.currentDatabase,
-        )
+        );
     }
 
     /**
@@ -255,8 +257,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             // find foreign keys that exist in the schemas but does not exist in the entity metadata
             const tableForeignKeysToDrop = table.foreignKeys.filter(
@@ -268,17 +270,17 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 this.getTablePath(
                                     metadataForeignKey.referencedEntityMetadata,
                                 ),
-                    )
+                    );
                     return (
                         !metadataFK ||
                         (metadataFK.onDelete &&
                             metadataFK.onDelete !== tableForeignKey.onDelete) ||
                         (metadataFK.onUpdate &&
                             metadataFK.onUpdate !== tableForeignKey.onUpdate)
-                    )
+                    );
                 },
-            )
-            if (tableForeignKeysToDrop.length === 0) continue
+            );
+            if (tableForeignKeysToDrop.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `dropping old foreign keys of ${
@@ -286,13 +288,13 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 }: ${tableForeignKeysToDrop
                     .map((dbForeignKey) => dbForeignKey.name)
                     .join(", ")}`,
-            )
+            );
 
             // drop foreign keys from the database
             await this.queryRunner.dropForeignKeys(
                 table,
                 tableForeignKeysToDrop,
-            )
+            );
         }
     }
 
@@ -315,10 +317,10 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
-            if (metadata.columns.length !== table.columns.length) continue
+            if (metadata.columns.length !== table.columns.length) continue;
 
             const renamedMetadataColumns = metadata.columns
                 .filter((c) => !c.isVirtualProperty)
@@ -331,15 +333,15 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                             tableColumn.isNullable === column.isNullable &&
                             tableColumn.isUnique ===
                                 this.connection.driver.normalizeIsUnique(column)
-                        )
-                    })
-                })
+                        );
+                    });
+                });
 
             if (
                 renamedMetadataColumns.length === 0 ||
                 renamedMetadataColumns.length > 1
             )
-                continue
+                continue;
 
             const renamedTableColumns = table.columns.filter((tableColumn) => {
                 return !metadata.columns.find((column) => {
@@ -351,27 +353,27 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                         column.isNullable === tableColumn.isNullable &&
                         this.connection.driver.normalizeIsUnique(column) ===
                             tableColumn.isUnique
-                    )
-                })
-            })
+                    );
+                });
+            });
 
             if (
                 renamedTableColumns.length === 0 ||
                 renamedTableColumns.length > 1
             )
-                continue
+                continue;
 
-            const renamedColumn = renamedTableColumns[0].clone()
-            renamedColumn.name = renamedMetadataColumns[0].databaseName
+            const renamedColumn = renamedTableColumns[0].clone();
+            renamedColumn.name = renamedMetadataColumns[0].databaseName;
 
             this.connection.logger.logSchemaBuild(
                 `renaming column "${renamedTableColumns[0].name}" in to "${renamedColumn.name}"`,
-            )
+            );
             await this.queryRunner.renameColumn(
                 table,
                 renamedTableColumns[0],
                 renamedColumn,
-            )
+            );
         }
     }
 
@@ -380,116 +382,116 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const dropQueries = table.indices
                 .filter((tableIndex) => {
                     const indexMetadata = metadata.indices.find(
                         (index) => index.name === tableIndex.name,
-                    )
+                    );
                     if (indexMetadata) {
-                        if (indexMetadata.synchronize === false) return false
+                        if (indexMetadata.synchronize === false) return false;
 
                         if (indexMetadata.isUnique !== tableIndex.isUnique)
-                            return true
+                            return true;
 
                         if (indexMetadata.isSpatial !== tableIndex.isSpatial)
-                            return true
+                            return true;
 
                         if (
                             this.connection.driver.isFullTextColumnTypeSupported() &&
                             indexMetadata.isFulltext !== tableIndex.isFulltext
                         )
-                            return true
+                            return true;
 
                         if (
                             indexMetadata.columns.length !==
                             tableIndex.columnNames.length
                         )
-                            return true
+                            return true;
 
                         return !indexMetadata.columns.every(
                             (column) =>
                                 tableIndex.columnNames.indexOf(
                                     column.databaseName,
                                 ) !== -1,
-                        )
+                        );
                     }
 
-                    return true
+                    return true;
                 })
                 .map(async (tableIndex) => {
                     this.connection.logger.logSchemaBuild(
                         `dropping an index: "${tableIndex.name}" from table ${table.name}`,
-                    )
-                    await this.queryRunner.dropIndex(table, tableIndex)
-                })
+                    );
+                    await this.queryRunner.dropIndex(table, tableIndex);
+                });
 
-            await Promise.all(dropQueries)
+            await Promise.all(dropQueries);
         }
         if (this.connection.options.type === "postgres") {
             const postgresQueryRunner: PostgresQueryRunner = <
                 PostgresQueryRunner
-            >this.queryRunner
+            >this.queryRunner;
             for (const metadata of this.viewEntityToSyncMetadatas) {
                 const view = this.queryRunner.loadedViews.find(
                     (view) =>
                         this.getTablePath(view) === this.getTablePath(metadata),
-                )
-                if (!view) continue
+                );
+                if (!view) continue;
 
                 const dropQueries = view.indices
                     .filter((tableIndex) => {
                         const indexMetadata = metadata.indices.find(
                             (index) => index.name === tableIndex.name,
-                        )
+                        );
                         if (indexMetadata) {
                             if (indexMetadata.synchronize === false)
-                                return false
+                                return false;
 
                             if (indexMetadata.isUnique !== tableIndex.isUnique)
-                                return true
+                                return true;
 
                             if (
                                 indexMetadata.isSpatial !== tableIndex.isSpatial
                             )
-                                return true
+                                return true;
 
                             if (
                                 this.connection.driver.isFullTextColumnTypeSupported() &&
                                 indexMetadata.isFulltext !==
                                     tableIndex.isFulltext
                             )
-                                return true
+                                return true;
 
                             if (
                                 indexMetadata.columns.length !==
                                 tableIndex.columnNames.length
                             )
-                                return true
+                                return true;
 
                             return !indexMetadata.columns.every(
                                 (column) =>
                                     tableIndex.columnNames.indexOf(
                                         column.databaseName,
                                     ) !== -1,
-                            )
+                            );
                         }
 
-                        return true
+                        return true;
                     })
                     .map(async (tableIndex) => {
                         this.connection.logger.logSchemaBuild(
                             `dropping an index: "${tableIndex.name}" from view ${view.name}`,
-                        )
+                        );
                         await postgresQueryRunner.dropViewIndex(
                             view,
                             tableIndex,
-                        )
-                    })
+                        );
+                    });
 
-                await Promise.all(dropQueries)
+                await Promise.all(dropQueries);
             }
         }
     }
@@ -500,29 +502,29 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             DriverUtils.isMySQLFamily(this.connection.driver) ||
             this.connection.driver.options.type === "aurora-mysql"
         )
-            return
+            return;
 
         for (const metadata of this.entityToSyncMetadatas) {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const oldChecks = table.checks.filter((tableCheck) => {
                 return !metadata.checks.find(
                     (checkMetadata) => checkMetadata.name === tableCheck.name,
-                )
-            })
+                );
+            });
 
-            if (oldChecks.length === 0) continue
+            if (oldChecks.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `dropping old check constraint: ${oldChecks
                     .map((check) => `"${check.name}"`)
                     .join(", ")} from table "${table.name}"`,
-            )
-            await this.queryRunner.dropCheckConstraints(table, oldChecks)
+            );
+            await this.queryRunner.dropCheckConstraints(table, oldChecks);
         }
     }
 
@@ -531,8 +533,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const compositeUniques = table.uniques.filter((tableUnique) => {
                 return (
@@ -541,52 +543,52 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                         (uniqueMetadata) =>
                             uniqueMetadata.name === tableUnique.name,
                     )
-                )
-            })
+                );
+            });
 
-            if (compositeUniques.length === 0) continue
+            if (compositeUniques.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `dropping old unique constraint: ${compositeUniques
                     .map((unique) => `"${unique.name}"`)
                     .join(", ")} from table "${table.name}"`,
-            )
+            );
             await this.queryRunner.dropUniqueConstraints(
                 table,
                 compositeUniques,
-            )
+            );
         }
     }
 
     protected async dropOldExclusions(): Promise<void> {
         // Only PostgreSQL supports exclusion constraints
-        if (!(this.connection.driver.options.type === "postgres")) return
+        if (!(this.connection.driver.options.type === "postgres")) return;
 
         for (const metadata of this.entityToSyncMetadatas) {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const oldExclusions = table.exclusions.filter((tableExclusion) => {
                 return !metadata.exclusions.find(
                     (exclusionMetadata) =>
                         exclusionMetadata.name === tableExclusion.name,
-                )
-            })
+                );
+            });
 
-            if (oldExclusions.length === 0) continue
+            if (oldExclusions.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `dropping old exclusion constraint: ${oldExclusions
                     .map((exclusion) => `"${exclusion.name}"`)
                     .join(", ")} from table "${table.name}"`,
-            )
+            );
             await this.queryRunner.dropExclusionConstraints(
                 table,
                 oldExclusions,
-            )
+            );
         }
     }
 
@@ -601,17 +603,17 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const existTable = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (existTable) continue
+            );
+            if (existTable) continue;
 
             this.connection.logger.logSchemaBuild(
                 `creating a new table: ${this.getTablePath(metadata)}`,
-            )
+            );
 
             // create a new table and sync it in the database
-            const table = Table.create(metadata, this.connection.driver)
-            await this.queryRunner.createTable(table, false, false)
-            this.queryRunner.loadedTables.push(table)
+            const table = Table.create(metadata, this.connection.driver);
+            await this.queryRunner.createTable(table, false, false);
+            this.queryRunner.loadedTables.push(table);
         }
     }
 
@@ -622,75 +624,75 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 const viewExpression =
                     typeof view.expression === "string"
                         ? view.expression.trim()
-                        : view.expression(this.connection).getQuery()
+                        : view.expression(this.connection).getQuery();
                 const metadataExpression =
                     typeof metadata.expression === "string"
                         ? metadata.expression.trim()
-                        : metadata.expression!(this.connection).getQuery()
+                        : metadata.expression!(this.connection).getQuery();
                 return (
                     this.getTablePath(view) === this.getTablePath(metadata) &&
                     viewExpression === metadataExpression
-                )
-            })
-            if (existView) continue
+                );
+            });
+            if (existView) continue;
 
             this.connection.logger.logSchemaBuild(
                 `creating a new view: ${this.getTablePath(metadata)}`,
-            )
+            );
 
             // create a new view and sync it in the database
-            const view = View.create(metadata, this.connection.driver)
-            await this.queryRunner.createView(view, true)
-            this.queryRunner.loadedViews.push(view)
+            const view = View.create(metadata, this.connection.driver);
+            await this.queryRunner.createView(view, true);
+            this.queryRunner.loadedViews.push(view);
         }
     }
 
     protected async dropOldViews(): Promise<void> {
-        const droppedViews: Array<View> = []
-        const viewEntityToSyncMetadatas = this.viewEntityToSyncMetadatas
+        const droppedViews: Array<View> = [];
+        const viewEntityToSyncMetadatas = this.viewEntityToSyncMetadatas;
         // BuIld lookup cache for finding views metadata
-        const viewToMetadata = new Map<View, EntityMetadata>()
+        const viewToMetadata = new Map<View, EntityMetadata>();
         for (const view of this.queryRunner.loadedViews) {
             const viewMetadata = viewEntityToSyncMetadatas.find((metadata) => {
-                return this.getTablePath(view) === this.getTablePath(metadata)
-            })
+                return this.getTablePath(view) === this.getTablePath(metadata);
+            });
             if (viewMetadata) {
-                viewToMetadata.set(view, viewMetadata)
+                viewToMetadata.set(view, viewMetadata);
             }
         }
         // Gather all changed view, that need a drop
         for (const view of this.queryRunner.loadedViews) {
-            const viewMetadata = viewToMetadata.get(view)
+            const viewMetadata = viewToMetadata.get(view);
             if (!viewMetadata) {
-                continue
+                continue;
             }
             const viewExpression =
                 typeof view.expression === "string"
                     ? view.expression.trim()
-                    : view.expression(this.connection).getQuery()
+                    : view.expression(this.connection).getQuery();
             const metadataExpression =
                 typeof viewMetadata.expression === "string"
                     ? viewMetadata.expression.trim()
-                    : viewMetadata.expression!(this.connection).getQuery()
+                    : viewMetadata.expression!(this.connection).getQuery();
 
-            if (viewExpression === metadataExpression) continue
+            if (viewExpression === metadataExpression) continue;
 
             this.connection.logger.logSchemaBuild(
                 `dropping an old view: ${view.name}`,
-            )
+            );
 
             // Collect view to be dropped
-            droppedViews.push(view)
+            droppedViews.push(view);
         }
 
         // Helper function that for a given view, will recursively return list of the view and all views that depend on it
         const viewDependencyChain = (view: View): View[] => {
             // Get the view metadata
-            const viewMetadata = viewToMetadata.get(view)
-            let viewWithDependencies = [view]
+            const viewMetadata = viewToMetadata.get(view);
+            let viewWithDependencies = [view];
             // If no metadata is known for the view, simply return the view itself
             if (!viewMetadata) {
-                return viewWithDependencies
+                return viewWithDependencies;
             }
             // Iterate over all known views
             for (const [
@@ -699,7 +701,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             ] of viewToMetadata.entries()) {
                 // Ignore self reference
                 if (currentView === view) {
-                    continue
+                    continue;
                 }
                 // If the currently iterated view depends on the passed in view
                 if (
@@ -710,12 +712,12 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                     // Recursively add currently iterate view and its dependents
                     viewWithDependencies = viewWithDependencies.concat(
                         viewDependencyChain(currentView),
-                    )
+                    );
                 }
             }
             // Return all collected views
-            return viewWithDependencies
-        }
+            return viewWithDependencies;
+        };
 
         // Collect final list of views to be dropped in a Set so there are no duplicates
         const droppedViewsWithDependencies: Set<View> = new Set(
@@ -724,26 +726,26 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 .map((view) => viewDependencyChain(view))
                 // Flattened to single Array ( can be replaced with flatMap, once supported)
                 .reduce((all, segment) => {
-                    return all.concat(segment)
+                    return all.concat(segment);
                 }, [])
                 // Sort the views to be dropped in creation order
                 .sort((a, b) => {
                     return ViewUtils.viewMetadataCmp(
                         viewToMetadata.get(a),
                         viewToMetadata.get(b),
-                    )
+                    );
                 })
                 // reverse order to get drop order
                 .reverse(),
-        )
+        );
 
         // Finally emit all drop views
         for (const view of droppedViewsWithDependencies) {
-            await this.queryRunner.dropView(view)
+            await this.queryRunner.dropView(view);
         }
         this.queryRunner.loadedViews = this.queryRunner.loadedViews.filter(
             (view) => !droppedViewsWithDependencies.has(view),
-        )
+        );
     }
 
     /**
@@ -755,8 +757,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             // find columns that exist in the database but does not exist in the metadata
             const droppedTableColumns = table.columns.filter((tableColumn) => {
@@ -764,17 +766,17 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                     (columnMetadata) =>
                         columnMetadata.isVirtualProperty ||
                         columnMetadata.databaseName === tableColumn.name,
-                )
-            })
-            if (droppedTableColumns.length === 0) continue
+                );
+            });
+            if (droppedTableColumns.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `columns dropped in ${table.name}: ` +
                     droppedTableColumns.map((column) => column.name).join(", "),
-            )
+            );
 
             // drop columns from the database
-            await this.queryRunner.dropColumns(table, droppedTableColumns)
+            await this.queryRunner.dropColumns(table, droppedTableColumns);
         }
     }
 
@@ -787,8 +789,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             // find which columns are new
             const newColumnMetadatas = metadata.columns.filter(
@@ -800,27 +802,27 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 tableColumn.name ===
                                 columnMetadata.databaseName,
                         )
-                    )
+                    );
                 },
-            )
-            if (newColumnMetadatas.length === 0) continue
+            );
+            if (newColumnMetadatas.length === 0) continue;
 
             // create columns in the database
             const newTableColumnOptions =
-                this.metadataColumnsToTableColumnOptions(newColumnMetadatas)
+                this.metadataColumnsToTableColumnOptions(newColumnMetadatas);
             const newTableColumns = newTableColumnOptions.map(
                 (option) => new TableColumn(option),
-            )
+            );
 
-            if (newTableColumns.length === 0) continue
+            if (newTableColumns.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `new columns added: ` +
                     newColumnMetadatas
                         .map((column) => column.databaseName)
                         .join(", "),
-            )
-            await this.queryRunner.addColumns(table, newTableColumns)
+            );
+            await this.queryRunner.addColumns(table, newTableColumns);
         }
     }
 
@@ -832,15 +834,15 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const primaryMetadataColumns = metadata.columns.filter(
                 (column) => column.isPrimary,
-            )
+            );
             const primaryTableColumns = table.columns.filter(
                 (column) => column.isPrimary,
-            )
+            );
             if (
                 primaryTableColumns.length !== primaryMetadataColumns.length &&
                 primaryMetadataColumns.length > 1
@@ -852,13 +854,13 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 primaryMetadataColumn,
                                 this.connection.driver,
                             ),
-                        )
+                        );
                     },
-                )
+                );
                 await this.queryRunner.updatePrimaryKeys(
                     table,
                     changedPrimaryColumns,
-                )
+                );
             }
         }
     }
@@ -872,21 +874,21 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const changedColumns = this.connection.driver.findChangedColumns(
                 table.columns,
                 metadata.columns,
-            )
-            if (changedColumns.length === 0) continue
+            );
+            if (changedColumns.length === 0) continue;
 
             // drop all foreign keys that point to this column
             for (const changedColumn of changedColumns) {
                 await this.dropColumnReferencedForeignKeys(
                     this.getTablePath(metadata),
                     changedColumn.databaseName,
-                )
+                );
             }
 
             // drop all composite indices related to this column
@@ -894,7 +896,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 await this.dropColumnCompositeIndices(
                     this.getTablePath(metadata),
                     changedColumn.databaseName,
-                )
+                );
             }
 
             // drop all composite uniques related to this column
@@ -910,7 +912,7 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                     await this.dropColumnCompositeUniques(
                         this.getTablePath(metadata),
                         changedColumn.databaseName,
-                    )
+                    );
                 }
             }
 
@@ -919,32 +921,32 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 (changedColumn) => {
                     const oldTableColumn = table.columns.find(
                         (column) => column.name === changedColumn.databaseName,
-                    )!
+                    )!;
                     const newTableColumnOptions =
                         TableUtils.createTableColumnOptions(
                             changedColumn,
                             this.connection.driver,
-                        )
+                        );
                     const newTableColumn = new TableColumn(
                         newTableColumnOptions,
-                    )
+                    );
 
                     return {
                         oldColumn: oldTableColumn,
                         newColumn: newTableColumn,
-                    }
+                    };
                 },
-            )
+            );
 
-            if (newAndOldTableColumns.length === 0) continue
+            if (newAndOldTableColumns.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `columns changed in "${table.name}". updating: ` +
                     changedColumns
                         .map((column) => column.databaseName)
                         .join(", "),
-            )
-            await this.queryRunner.changeColumns(table, newAndOldTableColumns)
+            );
+            await this.queryRunner.changeColumns(table, newAndOldTableColumns);
         }
     }
 
@@ -956,8 +958,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const newIndices = metadata.indices
                 .filter(
@@ -967,16 +969,16 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 tableIndex.name === indexMetadata.name,
                         ) && indexMetadata.synchronize === true,
                 )
-                .map((indexMetadata) => TableIndex.create(indexMetadata))
+                .map((indexMetadata) => TableIndex.create(indexMetadata));
 
-            if (newIndices.length === 0) continue
+            if (newIndices.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `adding new indices ${newIndices
                     .map((index) => `"${index.name}"`)
                     .join(", ")} in table "${table.name}"`,
-            )
-            await this.queryRunner.createIndices(table, newIndices)
+            );
+            await this.queryRunner.createIndices(table, newIndices);
         }
     }
 
@@ -989,28 +991,28 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             this.connection.options.type !== "postgres" ||
             !DriverUtils.isPostgresFamily(this.connection.driver)
         ) {
-            return
+            return;
         }
         const postgresQueryRunner: PostgresQueryRunner = <PostgresQueryRunner>(
             this.queryRunner
-        )
+        );
         for (const metadata of this.viewEntityToSyncMetadatas) {
             // check if view does not exist yet
             const view = this.queryRunner.loadedViews.find((view) => {
                 const viewExpression =
                     typeof view.expression === "string"
                         ? view.expression.trim()
-                        : view.expression(this.connection).getQuery()
+                        : view.expression(this.connection).getQuery();
                 const metadataExpression =
                     typeof metadata.expression === "string"
                         ? metadata.expression.trim()
-                        : metadata.expression!(this.connection).getQuery()
+                        : metadata.expression!(this.connection).getQuery();
                 return (
                     this.getTablePath(view) === this.getTablePath(metadata) &&
                     viewExpression === metadataExpression
-                )
-            })
-            if (!view || !view.materialized) continue
+                );
+            });
+            if (!view || !view.materialized) continue;
 
             const newIndices = metadata.indices
                 .filter(
@@ -1020,16 +1022,16 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 tableIndex.name === indexMetadata.name,
                         ) && indexMetadata.synchronize === true,
                 )
-                .map((indexMetadata) => TableIndex.create(indexMetadata))
+                .map((indexMetadata) => TableIndex.create(indexMetadata));
 
-            if (newIndices.length === 0) continue
+            if (newIndices.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `adding new indices ${newIndices
                     .map((index) => `"${index.name}"`)
                     .join(", ")} in view "${view.name}"`,
-            )
-            await postgresQueryRunner.createViewIndices(view, newIndices)
+            );
+            await postgresQueryRunner.createViewIndices(view, newIndices);
         }
     }
 
@@ -1039,14 +1041,14 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             DriverUtils.isMySQLFamily(this.connection.driver) ||
             this.connection.driver.options.type === "aurora-mysql"
         )
-            return
+            return;
 
         for (const metadata of this.entityToSyncMetadatas) {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const newChecks = metadata.checks
                 .filter(
@@ -1056,16 +1058,16 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 tableCheck.name === checkMetadata.name,
                         ),
                 )
-                .map((checkMetadata) => TableCheck.create(checkMetadata))
+                .map((checkMetadata) => TableCheck.create(checkMetadata));
 
-            if (newChecks.length === 0) continue
+            if (newChecks.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `adding new check constraints: ${newChecks
                     .map((index) => `"${index.name}"`)
                     .join(", ")} in table "${table.name}"`,
-            )
-            await this.queryRunner.createCheckConstraints(table, newChecks)
+            );
+            await this.queryRunner.createCheckConstraints(table, newChecks);
         }
     }
 
@@ -1077,8 +1079,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const compositeUniques = metadata.uniques
                 .filter(
@@ -1089,19 +1091,19 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                                 tableUnique.name === uniqueMetadata.name,
                         ),
                 )
-                .map((uniqueMetadata) => TableUnique.create(uniqueMetadata))
+                .map((uniqueMetadata) => TableUnique.create(uniqueMetadata));
 
-            if (compositeUniques.length === 0) continue
+            if (compositeUniques.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `adding new unique constraints: ${compositeUniques
                     .map((unique) => `"${unique.name}"`)
                     .join(", ")} in table "${table.name}"`,
-            )
+            );
             await this.queryRunner.createUniqueConstraints(
                 table,
                 compositeUniques,
-            )
+            );
         }
     }
 
@@ -1110,14 +1112,14 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
      */
     protected async createNewExclusions(): Promise<void> {
         // Only PostgreSQL supports exclusion constraints
-        if (!(this.connection.driver.options.type === "postgres")) return
+        if (!(this.connection.driver.options.type === "postgres")) return;
 
         for (const metadata of this.entityToSyncMetadatas) {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const newExclusions = metadata.exclusions
                 .filter(
@@ -1129,19 +1131,19 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 )
                 .map((exclusionMetadata) =>
                     TableExclusion.create(exclusionMetadata),
-                )
+                );
 
-            if (newExclusions.length === 0) continue
+            if (newExclusions.length === 0) continue;
 
             this.connection.logger.logSchemaBuild(
                 `adding new exclusion constraints: ${newExclusions
                     .map((exclusion) => `"${exclusion.name}"`)
                     .join(", ")} in table "${table.name}"`,
-            )
+            );
             await this.queryRunner.createExclusionConstraints(
                 table,
                 newExclusions,
-            )
+            );
         }
     }
 
@@ -1153,8 +1155,8 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
             const table = this.queryRunner.loadedTables.find(
                 (table) =>
                     this.getTablePath(table) === this.getTablePath(metadata),
-            )
-            if (!table) continue
+            );
+            if (!table) continue;
 
             const newKeys = metadata.foreignKeys.filter((foreignKey) => {
                 return !table.foreignKeys.find(
@@ -1164,22 +1166,22 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                             this.getTablePath(
                                 foreignKey.referencedEntityMetadata,
                             ),
-                )
-            })
-            if (newKeys.length === 0) continue
+                );
+            });
+            if (newKeys.length === 0) continue;
 
             const dbForeignKeys = newKeys.map((foreignKeyMetadata) =>
                 TableForeignKey.create(
                     foreignKeyMetadata,
                     this.connection.driver,
                 ),
-            )
+            );
             this.connection.logger.logSchemaBuild(
                 `creating a foreign keys: ${newKeys
                     .map((key) => key.name)
                     .join(", ")} on table "${table.name}"`,
-            )
-            await this.queryRunner.createForeignKeys(table, dbForeignKeys)
+            );
+            await this.queryRunner.createForeignKeys(table, dbForeignKeys);
         }
     }
 
@@ -1192,18 +1194,18 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
     ): Promise<void> {
         const table = this.queryRunner.loadedTables.find(
             (table) => this.getTablePath(table) === tablePath,
-        )
-        if (!table) return
+        );
+        if (!table) return;
 
-        const tablesWithFK: Table[] = []
+        const tablesWithFK: Table[] = [];
         const columnForeignKey = table.foreignKeys.find(
             (foreignKey) => foreignKey.columnNames.indexOf(columnName) !== -1,
-        )
+        );
         if (columnForeignKey) {
-            const clonedTable = table.clone()
-            clonedTable.foreignKeys = [columnForeignKey]
-            tablesWithFK.push(clonedTable)
-            table.removeForeignKey(columnForeignKey)
+            const clonedTable = table.clone();
+            clonedTable.foreignKeys = [columnForeignKey];
+            tablesWithFK.push(clonedTable);
+            table.removeForeignKey(columnForeignKey);
         }
 
         for (const loadedTable of this.queryRunner.loadedTables) {
@@ -1213,17 +1215,17 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                         this.getTablePath(foreignKey) === tablePath &&
                         foreignKey.referencedColumnNames.indexOf(columnName) !==
                             -1
-                    )
+                    );
                 },
-            )
+            );
 
             if (dependForeignKeys.length > 0) {
-                const clonedTable = loadedTable.clone()
-                clonedTable.foreignKeys = dependForeignKeys
-                tablesWithFK.push(clonedTable)
+                const clonedTable = loadedTable.clone();
+                clonedTable.foreignKeys = dependForeignKeys;
+                tablesWithFK.push(clonedTable);
                 dependForeignKeys.forEach((dependForeignKey) =>
                     loadedTable.removeForeignKey(dependForeignKey),
-                )
+                );
             }
         }
 
@@ -1235,11 +1237,11 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                     }: ${tableWithFK.foreignKeys
                         .map((foreignKey) => foreignKey.name)
                         .join(", ")}`,
-                )
+                );
                 await this.queryRunner.dropForeignKeys(
                     tableWithFK,
                     tableWithFK.foreignKeys,
-                )
+                );
             }
         }
     }
@@ -1253,22 +1255,22 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
     ): Promise<void> {
         const table = this.queryRunner.loadedTables.find(
             (table) => this.getTablePath(table) === tablePath,
-        )
-        if (!table) return
+        );
+        if (!table) return;
 
         const relatedIndices = table.indices.filter(
             (index) =>
                 index.columnNames.length > 1 &&
                 index.columnNames.indexOf(columnName) !== -1,
-        )
-        if (relatedIndices.length === 0) return
+        );
+        if (relatedIndices.length === 0) return;
 
         this.connection.logger.logSchemaBuild(
             `dropping related indices of "${tablePath}"."${columnName}": ${relatedIndices
                 .map((index) => index.name)
                 .join(", ")}`,
-        )
-        await this.queryRunner.dropIndices(table, relatedIndices)
+        );
+        await this.queryRunner.dropIndices(table, relatedIndices);
     }
 
     /**
@@ -1280,22 +1282,22 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
     ): Promise<void> {
         const table = this.queryRunner.loadedTables.find(
             (table) => this.getTablePath(table) === tablePath,
-        )
-        if (!table) return
+        );
+        if (!table) return;
 
         const relatedUniques = table.uniques.filter(
             (unique) =>
                 unique.columnNames.length > 1 &&
                 unique.columnNames.indexOf(columnName) !== -1,
-        )
-        if (relatedUniques.length === 0) return
+        );
+        if (relatedUniques.length === 0) return;
 
         this.connection.logger.logSchemaBuild(
             `dropping related unique constraints of "${tablePath}"."${columnName}": ${relatedUniques
                 .map((unique) => unique.name)
                 .join(", ")}`,
-        )
-        await this.queryRunner.dropUniqueConstraints(table, relatedUniques)
+        );
+        await this.queryRunner.dropUniqueConstraints(table, relatedUniques);
     }
 
     /**
@@ -1309,25 +1311,25 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 columnMetadata,
                 this.connection.driver,
             ),
-        )
+        );
     }
 
     /**
      * Creates lapin service table for storing user defined Views and generate columns.
      */
     protected async createlapinMetadataTable(queryRunner: QueryRunner) {
-        const schema = this.currentSchema
-        const database = this.currentDatabase
+        const schema = this.currentSchema;
+        const database = this.currentDatabase;
         const lapinMetadataTable = this.connection.driver.buildTableName(
             this.connection.metadataTableName,
             schema,
             database,
-        )
+        );
 
         // Spanner requires at least one primary key in a table.
         // Since we don't have unique column in "lapin_metadata" table
         // and we should avoid breaking changes, we mark all columns as primary for Spanner driver.
-        const isPrimary = this.connection.driver.options.type === "spanner"
+        const isPrimary = this.connection.driver.options.type === "spanner";
         await queryRunner.createTable(
             new Table({
                 database: database,
@@ -1391,6 +1393,6 @@ export class RdbmsSchemaBuilder implements SchemaBuilder {
                 ],
             }),
             true,
-        )
+        );
     }
 }
