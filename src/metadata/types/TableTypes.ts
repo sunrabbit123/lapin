@@ -7,4 +7,4 @@ export type TableType =
     | "junction"
     | "closure"
     | "closure-junction"
-    | "entity-child"
+    | "entity-child";

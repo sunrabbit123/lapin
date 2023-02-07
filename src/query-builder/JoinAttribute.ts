@@ -1,12 +1,12 @@
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { DataSource } from "../data-source/DataSource"
-import { RelationMetadata } from "../metadata/RelationMetadata"
-import { QueryBuilderUtils } from "./QueryBuilderUtils"
-import { QueryExpressionMap } from "./QueryExpressionMap"
-import { Alias } from "./Alias"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { LapinError } from "../error"
-import { DriverUtils } from "../driver/DriverUtils"
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { DataSource } from "../data-source/DataSource";
+import { RelationMetadata } from "../metadata/RelationMetadata";
+import { QueryBuilderUtils } from "./QueryBuilderUtils";
+import { QueryExpressionMap } from "./QueryExpressionMap";
+import { Alias } from "./Alias";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { LapinError } from "../error";
+import { DriverUtils } from "../driver/DriverUtils";
 
 /**
  * Stores all join attributes which will be used to build a JOIN query.
@@ -19,32 +19,32 @@ export class JoinAttribute {
     /**
      * Join direction.
      */
-    direction: "LEFT" | "INNER"
+    direction: "LEFT" | "INNER";
 
     /**
      * Alias of the joined (destination) table.
      */
-    alias: Alias
+    alias: Alias;
 
     /**
      * Joined table, entity target, or relation in "post.category" format.
      */
-    entityOrProperty: Function | string
+    entityOrProperty: Function | string;
 
     /**
      * Extra condition applied to "ON" section of join.
      */
-    condition?: string
+    condition?: string;
 
     /**
      * Property + alias of the object where to joined data should be mapped.
      */
-    mapToProperty?: string
+    mapToProperty?: string;
 
     /**
      * Indicates if user maps one or many objects from the join.
      */
-    isMappingMany?: boolean
+    isMappingMany?: boolean;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -55,7 +55,7 @@ export class JoinAttribute {
         private queryExpressionMap: QueryExpressionMap,
         joinAttribute?: JoinAttribute,
     ) {
-        ObjectUtils.assign(this, joinAttribute || {})
+        ObjectUtils.assign(this, joinAttribute || {});
     }
 
     // -------------------------------------------------------------------------
@@ -63,16 +63,16 @@ export class JoinAttribute {
     // -------------------------------------------------------------------------
 
     get isMany(): boolean {
-        if (this.isMappingMany !== undefined) return this.isMappingMany
+        if (this.isMappingMany !== undefined) return this.isMappingMany;
 
         if (this.relation)
-            return this.relation.isManyToMany || this.relation.isOneToMany
+            return this.relation.isManyToMany || this.relation.isOneToMany;
 
-        return false
+        return false;
     }
 
-    isSelectedCache: boolean
-    isSelectedEvaluated: boolean = false
+    isSelectedCache: boolean;
+    isSelectedEvaluated: boolean = false;
     /**
      * Indicates if this join is selected.
      */
@@ -80,7 +80,7 @@ export class JoinAttribute {
         if (!this.isSelectedEvaluated) {
             let getValue = () => {
                 for (const select of this.queryExpressionMap.selects) {
-                    if (select.selection === this.alias.name) return true
+                    if (select.selection === this.alias.name) return true;
 
                     if (
                         this.metadata &&
@@ -90,15 +90,15 @@ export class JoinAttribute {
                                 this.alias.name + "." + column.propertyPath,
                         )
                     )
-                        return true
+                        return true;
                 }
 
-                return false
-            }
-            this.isSelectedCache = getValue()
-            this.isSelectedEvaluated = true
+                return false;
+            };
+            this.isSelectedCache = getValue();
+            this.isSelectedEvaluated = true;
         }
-        return this.isSelectedCache
+        return this.isSelectedCache;
     }
 
     /**
@@ -107,7 +107,7 @@ export class JoinAttribute {
     get tablePath(): string {
         return this.metadata
             ? this.metadata.tablePath
-            : (this.entityOrProperty as string)
+            : (this.entityOrProperty as string);
     }
 
     /**
@@ -118,12 +118,12 @@ export class JoinAttribute {
      */
     get parentAlias(): string | undefined {
         if (!QueryBuilderUtils.isAliasProperty(this.entityOrProperty))
-            return undefined
+            return undefined;
 
         return this.entityOrProperty.substr(
             0,
             this.entityOrProperty.indexOf("."),
-        )
+        );
     }
 
     /**
@@ -135,15 +135,15 @@ export class JoinAttribute {
      */
     get relationPropertyPath(): string | undefined {
         if (!QueryBuilderUtils.isAliasProperty(this.entityOrProperty))
-            return undefined
+            return undefined;
 
         return this.entityOrProperty.substr(
             this.entityOrProperty.indexOf(".") + 1,
-        )
+        );
     }
 
-    relationCache: RelationMetadata | undefined
-    relationEvaluated: boolean = false
+    relationCache: RelationMetadata | undefined;
+    relationEvaluated: boolean = false;
     /**
      * Relation of the parent.
      * This is used to understand what is joined.
@@ -154,37 +154,37 @@ export class JoinAttribute {
         if (!this.relationEvaluated) {
             let getValue = () => {
                 if (!QueryBuilderUtils.isAliasProperty(this.entityOrProperty))
-                    return undefined
+                    return undefined;
 
                 const relationOwnerSelection =
-                    this.queryExpressionMap.findAliasByName(this.parentAlias!)
+                    this.queryExpressionMap.findAliasByName(this.parentAlias!);
                 let relation =
                     relationOwnerSelection.metadata.findRelationWithPropertyPath(
                         this.relationPropertyPath!,
-                    )
+                    );
 
                 if (relation) {
-                    return relation
+                    return relation;
                 }
 
                 if (relationOwnerSelection.metadata.parentEntityMetadata) {
                     relation =
                         relationOwnerSelection.metadata.parentEntityMetadata.findRelationWithPropertyPath(
                             this.relationPropertyPath!,
-                        )
+                        );
                     if (relation) {
-                        return relation
+                        return relation;
                     }
                 }
 
                 throw new LapinError(
                     `Relation with property path ${this.relationPropertyPath} in entity was not found.`,
-                )
-            }
-            this.relationCache = getValue.bind(this)()
-            this.relationEvaluated = true
+                );
+            };
+            this.relationCache = getValue.bind(this)();
+            this.relationEvaluated = true;
         }
-        return this.relationCache
+        return this.relationCache;
     }
 
     /**
@@ -193,13 +193,13 @@ export class JoinAttribute {
      */
     get metadata(): EntityMetadata | undefined {
         // entityOrProperty is relation, e.g. "post.category"
-        if (this.relation) return this.relation.inverseEntityMetadata
+        if (this.relation) return this.relation.inverseEntityMetadata;
 
         // entityOrProperty is Entity class
         if (this.connection.hasMetadata(this.entityOrProperty))
-            return this.connection.getMetadata(this.entityOrProperty)
+            return this.connection.getMetadata(this.entityOrProperty);
 
-        return undefined
+        return undefined;
 
         /*if (typeof this.entityOrProperty === "string") { // entityOrProperty is a custom table
 
@@ -221,32 +221,32 @@ export class JoinAttribute {
         if (!this.relation)
             throw new LapinError(
                 `Cannot get junction table for join without relation.`,
-            )
+            );
 
         if (this.relation.isOwning) {
             return DriverUtils.buildAlias(
                 this.connection.driver,
                 this.parentAlias!,
                 this.alias.name,
-            )
+            );
         } else {
             return DriverUtils.buildAlias(
                 this.connection.driver,
                 this.alias.name,
                 this.parentAlias!,
-            )
+            );
         }
     }
 
     get mapToPropertyParentAlias(): string | undefined {
-        if (!this.mapToProperty) return undefined
+        if (!this.mapToProperty) return undefined;
 
-        return this.mapToProperty!.split(".")[0]
+        return this.mapToProperty!.split(".")[0];
     }
 
     get mapToPropertyPropertyName(): string | undefined {
-        if (!this.mapToProperty) return undefined
+        if (!this.mapToProperty) return undefined;
 
-        return this.mapToProperty!.split(".")[1]
+        return this.mapToProperty!.split(".")[1];
     }
 }

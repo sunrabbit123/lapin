@@ -1,7 +1,7 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { CustomNamingStrategy } from "./naming-strategy/CustomNamingStrategy"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { CustomNamingStrategy } from "./naming-strategy/CustomNamingStrategy";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -13,21 +13,21 @@ const options: DataSourceOptions = {
     synchronize: true,
     namingStrategy: new CustomNamingStrategy(),
     entities: [Post],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let post = new Post()
-        post.text = "Hello how are you?"
-        post.title = "hello"
+        let post = new Post();
+        post.text = "Hello how are you?";
+        post.title = "hello";
 
-        let postRepository = dataSource.getRepository(Post)
+        let postRepository = dataSource.getRepository(Post);
 
         postRepository
             .save(post)
             .then((post) => console.log("Post has been saved"))
-            .catch((error) => console.log("Cannot save. Error: ", error))
+            .catch((error) => console.log("Cannot save. Error: ", error));
     },
     (error) => console.log("Cannot connect: ", error),
-)
+);

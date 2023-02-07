@@ -1,20 +1,20 @@
-import { CommandUtils } from "./CommandUtils"
-import { camelCase } from "../util/StringUtils"
-import * as yargs from "yargs"
-import chalk from "chalk"
-import { format } from "@sqltools/formatter/lib/sqlFormatter"
-import { PlatformTools } from "../platform/PlatformTools"
-import { DataSource } from "../data-source"
-import * as path from "path"
-import process from "process"
+import { CommandUtils } from "./CommandUtils";
+import { camelCase } from "../util/StringUtils";
+import * as yargs from "yargs";
+import chalk from "chalk";
+import { format } from "@sqltools/formatter/lib/sqlFormatter";
+import { PlatformTools } from "../platform/PlatformTools";
+import { DataSource } from "../data-source";
+import * as path from "path";
+import process from "process";
 
 /**
  * Generates a new migration file with sql needs to be executed to update schema.
  */
 export class MigrationGenerateCommand implements yargs.CommandModule {
-    command = "migration:generate <path>"
+    command = "migration:generate <path>";
     describe =
-        "Generates a new migration file with sql needs to be executed to update schema."
+        "Generates a new migration file with sql needs to be executed to update schema.";
 
     builder(args: yargs.Argv) {
         return args
@@ -57,50 +57,50 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                 type: "number",
                 default: false,
                 describe: "Custom timestamp for the migration name",
-            })
+            });
     }
 
     async handler(args: yargs.Arguments) {
-        const timestamp = CommandUtils.getTimestamp(args.timestamp)
-        const extension = args.outputJs ? ".js" : ".ts"
+        const timestamp = CommandUtils.getTimestamp(args.timestamp);
+        const extension = args.outputJs ? ".js" : ".ts";
         const fullPath = (args.path as string).startsWith("/")
             ? (args.path as string)
-            : path.resolve(process.cwd(), args.path as string)
-        const filename = timestamp + "-" + path.basename(fullPath) + extension
+            : path.resolve(process.cwd(), args.path as string);
+        const filename = timestamp + "-" + path.basename(fullPath) + extension;
 
-        let dataSource: DataSource | undefined = undefined
+        let dataSource: DataSource | undefined = undefined;
         try {
             dataSource = await CommandUtils.loadDataSource(
                 path.resolve(process.cwd(), args.dataSource as string),
-            )
+            );
             dataSource.setOptions({
                 synchronize: false,
                 migrationsRun: false,
                 dropSchema: false,
                 logging: false,
-            })
-            await dataSource.initialize()
+            });
+            await dataSource.initialize();
 
             const upSqls: string[] = [],
-                downSqls: string[] = []
+                downSqls: string[] = [];
 
             try {
                 const sqlInMemory = await dataSource.driver
                     .createSchemaBuilder()
-                    .log()
+                    .log();
 
                 if (args.pretty) {
                     sqlInMemory.upQueries.forEach((upQuery) => {
                         upQuery.query = MigrationGenerateCommand.prettifyQuery(
                             upQuery.query,
-                        )
-                    })
+                        );
+                    });
                     sqlInMemory.downQueries.forEach((downQuery) => {
                         downQuery.query =
                             MigrationGenerateCommand.prettifyQuery(
                                 downQuery.query,
-                            )
-                    })
+                            );
+                    });
                 }
 
                 sqlInMemory.upQueries.forEach((upQuery) => {
@@ -112,8 +112,8 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                                 upQuery.parameters,
                             ) +
                             ");",
-                    )
-                })
+                    );
+                });
                 sqlInMemory.downQueries.forEach((downQuery) => {
                     downSqls.push(
                         "        await queryRunner.query(`" +
@@ -126,29 +126,29 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                                 downQuery.parameters,
                             ) +
                             ");",
-                    )
-                })
+                    );
+                });
             } finally {
-                await dataSource.destroy()
+                await dataSource.destroy();
             }
 
             if (!upSqls.length) {
                 if (args.check) {
                     console.log(
                         chalk.green(`No changes in database schema were found`),
-                    )
-                    process.exit(0)
+                    );
+                    process.exit(0);
                 } else {
                     console.log(
                         chalk.yellow(
                             `No changes in database schema were found - cannot generate a migration. To create a new empty migration use "lapin migration:create" command`,
                         ),
-                    )
-                    process.exit(1)
+                    );
+                    process.exit(1);
                 }
             } else if (!args.path) {
-                console.log(chalk.yellow("Please specify a migration path"))
-                process.exit(1)
+                console.log(chalk.yellow("Please specify a migration path"));
+                process.exit(1);
             }
 
             const fileContent = args.outputJs
@@ -163,7 +163,7 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                       timestamp,
                       upSqls,
                       downSqls.reverse(),
-                  )
+                  );
 
             if (args.check) {
                 console.log(
@@ -172,8 +172,8 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                             fileContent,
                         )}`,
                     ),
-                )
-                process.exit(1)
+                );
+                process.exit(1);
             }
 
             if (args.dryrun) {
@@ -183,11 +183,11 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                             fullPath + extension,
                         )} has content:\n\n${chalk.white(fileContent)}`,
                     ),
-                )
+                );
             } else {
                 const migrationFileName =
-                    path.dirname(fullPath) + "/" + filename
-                await CommandUtils.createFile(migrationFileName, fileContent)
+                    path.dirname(fullPath) + "/" + filename;
+                await CommandUtils.createFile(migrationFileName, fileContent);
 
                 console.log(
                     chalk.green(
@@ -195,12 +195,12 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
                             migrationFileName,
                         )} has been generated successfully.`,
                     ),
-                )
-                process.exit(0)
+                );
+                process.exit(0);
             }
         } catch (err) {
-            PlatformTools.logCmdErr("Error during migration generation:", err)
-            process.exit(1)
+            PlatformTools.logCmdErr("Error during migration generation:", err);
+            process.exit(1);
         }
     }
 
@@ -213,10 +213,10 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
      */
     protected static queryParams(parameters: any[] | undefined): string {
         if (!parameters || !parameters.length) {
-            return ""
+            return "";
         }
 
-        return `, ${JSON.stringify(parameters)}`
+        return `, ${JSON.stringify(parameters)}`;
     }
 
     /**
@@ -228,7 +228,7 @@ export class MigrationGenerateCommand implements yargs.CommandModule {
         upSqls: string[],
         downSqls: string[],
     ): string {
-        const migrationName = `${camelCase(name, true)}${timestamp}`
+        const migrationName = `${camelCase(name, true)}${timestamp}`;
 
         return `import { MigrationInterface, QueryRunner } from "lapin";
 
@@ -246,7 +246,7 @@ ${downSqls.join(`
     }
 
 }
-`
+`;
     }
 
     /**
@@ -258,7 +258,7 @@ ${downSqls.join(`
         upSqls: string[],
         downSqls: string[],
     ): string {
-        const migrationName = `${camelCase(name, true)}${timestamp}`
+        const migrationName = `${camelCase(name, true)}${timestamp}`;
 
         return `const { MigrationInterface, QueryRunner } = require("lapin");
 
@@ -275,16 +275,16 @@ ${downSqls.join(`
 `)}
     }
 }
-`
+`;
     }
 
     /**
      *
      */
     protected static prettifyQuery(query: string) {
-        const formattedQuery = format(query, { indent: "    " })
+        const formattedQuery = format(query, { indent: "    " });
         return (
             "\n" + formattedQuery.replace(/^/gm, "            ") + "\n        "
-        )
+        );
     }
 }

@@ -1,4 +1,4 @@
-import { QueryRunner } from "../query-runner/QueryRunner"
+import { QueryRunner } from "../query-runner/QueryRunner";
 
 /**
  * Performs logging of the events in lapin.
@@ -7,7 +7,7 @@ export interface Logger {
     /**
      * Logs query and parameters used in it.
      */
-    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner): any
+    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner): any;
 
     /**
      * Logs query that is failed.
@@ -17,7 +17,7 @@ export interface Logger {
         query: string,
         parameters?: any[],
         queryRunner?: QueryRunner,
-    ): any
+    ): any;
 
     /**
      * Logs query that is slow.
@@ -27,17 +27,17 @@ export interface Logger {
         query: string,
         parameters?: any[],
         queryRunner?: QueryRunner,
-    ): any
+    ): any;
 
     /**
      * Logs events from the schema build process.
      */
-    logSchemaBuild(message: string, queryRunner?: QueryRunner): any
+    logSchemaBuild(message: string, queryRunner?: QueryRunner): any;
 
     /**
      * Logs events from the migrations run process.
      */
-    logMigration(message: string, queryRunner?: QueryRunner): any
+    logMigration(message: string, queryRunner?: QueryRunner): any;
 
     /**
      * Perform logging using given logger, or by default to the console.
@@ -47,5 +47,5 @@ export interface Logger {
         level: "log" | "info" | "warn",
         message: any,
         queryRunner?: QueryRunner,
-    ): any
+    ): any;
 }

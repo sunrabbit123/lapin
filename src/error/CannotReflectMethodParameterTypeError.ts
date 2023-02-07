@@ -1,4 +1,4 @@
-import { LapinError } from "./LapinError"
+import { LapinError } from "./LapinError";
 
 /**
  * Thrown when ORM cannot get method parameter's type.
@@ -10,6 +10,6 @@ export class CannotReflectMethodParameterTypeError extends LapinError {
             `Cannot get reflected type for a "${methodName}" method's parameter of "${target.name}" class. ` +
                 `Make sure you have turned on an "emitDecoratorMetadata": true option in tsconfig.json. ` +
                 `Also make sure you have imported "reflect-metadata" on top of the main entry file in your application.`,
-        )
+        );
     }
 }

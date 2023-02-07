@@ -13,7 +13,7 @@ export type OrderByCondition = {
     [columnName: string]:
         | ("ASC" | "DESC")
         | {
-              order: "ASC" | "DESC"
-              nulls?: "NULLS FIRST" | "NULLS LAST"
-          }
-}
+              order: "ASC" | "DESC";
+              nulls?: "NULLS FIRST" | "NULLS LAST";
+          };
+};

@@ -1,6 +1,6 @@
-import { RelationIdAttribute } from "./RelationIdAttribute"
-import { QueryExpressionMap } from "../QueryExpressionMap"
-import { RelationIdMetadata } from "../../metadata/RelationIdMetadata"
+import { RelationIdAttribute } from "./RelationIdAttribute";
+import { QueryExpressionMap } from "../QueryExpressionMap";
+import { RelationIdMetadata } from "../../metadata/RelationIdMetadata";
 
 export class RelationIdMetadataToAttributeTransformer {
     // -------------------------------------------------------------------------
@@ -29,25 +29,25 @@ export class RelationIdMetadataToAttributeTransformer {
                     const attribute = this.metadataToAttribute(
                         this.expressionMap.mainAlias!.name,
                         relationId,
-                    )
-                    this.expressionMap.relationIdAttributes.push(attribute)
+                    );
+                    this.expressionMap.relationIdAttributes.push(attribute);
                 },
-            )
+            );
         }
 
         // second create relation id attributes for all relation id metadatas of all joined objects (category from example)
         this.expressionMap.joinAttributes.forEach((join) => {
             // ensure this join has a metadata, because relation id can only work for real orm entities
-            if (!join.metadata || join.metadata.isJunction) return
+            if (!join.metadata || join.metadata.isJunction) return;
 
             join.metadata.relationIds.forEach((relationId) => {
                 const attribute = this.metadataToAttribute(
                     join.alias.name,
                     relationId,
-                )
-                this.expressionMap.relationIdAttributes.push(attribute)
-            })
-        })
+                );
+                this.expressionMap.relationIdAttributes.push(attribute);
+            });
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -64,6 +64,6 @@ export class RelationIdMetadataToAttributeTransformer {
             mapToProperty: parentAliasName + "." + relationId.propertyName, // category.imageIds
             alias: relationId.alias,
             queryBuilderFactory: relationId.queryBuilderFactory,
-        })
+        });
     }
 }

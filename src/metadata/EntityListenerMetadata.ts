@@ -1,8 +1,8 @@
-import { EventListenerType } from "./types/EventListenerTypes"
-import { EntityListenerMetadataArgs } from "../metadata-args/EntityListenerMetadataArgs"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { EntityMetadata } from "./EntityMetadata"
-import { EmbeddedMetadata } from "./EmbeddedMetadata"
+import { EventListenerType } from "./types/EventListenerTypes";
+import { EntityListenerMetadataArgs } from "../metadata-args/EntityListenerMetadataArgs";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { EntityMetadata } from "./EntityMetadata";
+import { EmbeddedMetadata } from "./EmbeddedMetadata";
 
 /**
  * This metadata contains all information about entity's listeners.
@@ -15,43 +15,43 @@ export class EntityListenerMetadata {
     /**
      * Entity metadata of the listener.
      */
-    entityMetadata: EntityMetadata
+    entityMetadata: EntityMetadata;
 
     /**
      * Embedded metadata of the listener, in the case if listener is in embedded.
      */
-    embeddedMetadata?: EmbeddedMetadata
+    embeddedMetadata?: EmbeddedMetadata;
 
     /**
      * Target class to which metadata is applied.
      * This can be different then entityMetadata.target in the case if listener is in the embedded.
      */
-    target: Function | string
+    target: Function | string;
 
     /**
      * Target's property name to which this metadata is applied.
      */
-    propertyName: string
+    propertyName: string;
 
     /**
      * The type of the listener.
      */
-    type: EventListenerType
+    type: EventListenerType;
 
     // ---------------------------------------------------------------------
     // Constructor
     // ---------------------------------------------------------------------
 
     constructor(options: {
-        entityMetadata: EntityMetadata
-        embeddedMetadata?: EmbeddedMetadata
-        args: EntityListenerMetadataArgs
+        entityMetadata: EntityMetadata;
+        embeddedMetadata?: EmbeddedMetadata;
+        args: EntityListenerMetadataArgs;
     }) {
-        this.entityMetadata = options.entityMetadata
-        this.embeddedMetadata = options.embeddedMetadata
-        this.target = options.args.target
-        this.propertyName = options.args.propertyName
-        this.type = options.args.type
+        this.entityMetadata = options.entityMetadata;
+        this.embeddedMetadata = options.embeddedMetadata;
+        this.target = options.args.target;
+        this.propertyName = options.args.propertyName;
+        this.type = options.args.type;
     }
 
     // ---------------------------------------------------------------------
@@ -68,19 +68,19 @@ export class EntityListenerMetadata {
             (typeof this.entityMetadata.target === "function" &&
                 entity.constructor.prototype instanceof
                     this.entityMetadata.target)
-        ) // todo: also need to implement entity schema inheritance
+        ); // todo: also need to implement entity schema inheritance
     }
 
     /**
      * Executes listener method of the given entity.
      */
     execute(entity: ObjectLiteral) {
-        if (!this.embeddedMetadata) return entity[this.propertyName]()
+        if (!this.embeddedMetadata) return entity[this.propertyName]();
 
         this.callEntityEmbeddedMethod(
             entity,
             this.embeddedMetadata.propertyPath.split("."),
-        )
+        );
     }
 
     // ---------------------------------------------------------------------
@@ -94,23 +94,23 @@ export class EntityListenerMetadata {
         entity: ObjectLiteral,
         propertyPaths: string[],
     ): void {
-        const propertyPath = propertyPaths.shift()
-        if (!propertyPath || !entity[propertyPath]) return
+        const propertyPath = propertyPaths.shift();
+        if (!propertyPath || !entity[propertyPath]) return;
 
         if (propertyPaths.length === 0) {
             if (Array.isArray(entity[propertyPath])) {
                 entity[propertyPath].map((embedded: ObjectLiteral) =>
                     embedded[this.propertyName](),
-                )
+                );
             } else {
-                entity[propertyPath][this.propertyName]()
+                entity[propertyPath][this.propertyName]();
             }
         } else {
             if (entity[propertyPath])
                 this.callEntityEmbeddedMethod(
                     entity[propertyPath],
                     propertyPaths,
-                )
+                );
         }
     }
 }

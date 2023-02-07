@@ -6,5 +6,5 @@ export interface ColumnHstoreOptions {
      * Return type of HSTORE column.
      * Returns value as string or as object.
      */
-    hstoreType?: "object" | "string"
+    hstoreType?: "object" | "string";
 }

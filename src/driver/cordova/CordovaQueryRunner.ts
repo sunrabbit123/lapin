@@ -1,11 +1,11 @@
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
-import { QueryFailedError } from "../../error/QueryFailedError"
-import { AbstractSqliteQueryRunner } from "../sqlite-abstract/AbstractSqliteQueryRunner"
-import { CordovaDriver } from "./CordovaDriver"
-import { Broadcaster } from "../../subscriber/Broadcaster"
-import { LapinError } from "../../error"
-import { QueryResult } from "../../query-runner/QueryResult"
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError";
+import { QueryFailedError } from "../../error/QueryFailedError";
+import { AbstractSqliteQueryRunner } from "../sqlite-abstract/AbstractSqliteQueryRunner";
+import { CordovaDriver } from "./CordovaDriver";
+import { Broadcaster } from "../../subscriber/Broadcaster";
+import { LapinError } from "../../error";
+import { QueryResult } from "../../query-runner/QueryResult";
 
 /**
  * Runs queries on a single sqlite database connection.
@@ -14,31 +14,31 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
     /**
      * Database driver used by connection.
      */
-    driver: CordovaDriver
+    driver: CordovaDriver;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(driver: CordovaDriver) {
-        super()
-        this.driver = driver
-        this.connection = driver.connection
-        this.broadcaster = new Broadcaster(this)
+        super();
+        this.driver = driver;
+        this.connection = driver.connection;
+        this.broadcaster = new Broadcaster(this);
     }
 
     /**
      * Called before migrations are run.
      */
     async beforeMigration(): Promise<void> {
-        await this.query(`PRAGMA foreign_keys = OFF`)
+        await this.query(`PRAGMA foreign_keys = OFF`);
     }
 
     /**
      * Called after migrations are run.
      */
     async afterMigration(): Promise<void> {
-        await this.query(`PRAGMA foreign_keys = ON`)
+        await this.query(`PRAGMA foreign_keys = ON`);
     }
 
     /**
@@ -49,11 +49,11 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
         parameters?: any[],
         useStructuredResult = false,
     ): Promise<any> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
-        const databaseConnection = await this.connect()
-        this.driver.connection.logger.logQuery(query, parameters, this)
-        const queryStartTime = +new Date()
+        const databaseConnection = await this.connect();
+        this.driver.connection.logger.logQuery(query, parameters, this);
+        const queryStartTime = +new Date();
 
         try {
             const raw = await new Promise<any>(async (ok, fail) => {
@@ -62,14 +62,14 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
                     parameters,
                     (raw: any) => ok(raw),
                     (err: any) => fail(err),
-                )
-            })
+                );
+            });
 
             // log slow queries if maxQueryExecution time is set
             const maxQueryExecutionTime =
-                this.driver.options.maxQueryExecutionTime
-            const queryEndTime = +new Date()
-            const queryExecutionTime = queryEndTime - queryStartTime
+                this.driver.options.maxQueryExecutionTime;
+            const queryEndTime = +new Date();
+            const queryExecutionTime = queryEndTime - queryStartTime;
             if (
                 maxQueryExecutionTime &&
                 queryExecutionTime > maxQueryExecutionTime
@@ -79,27 +79,27 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
                     query,
                     parameters,
                     this,
-                )
+                );
             }
 
-            const result = new QueryResult()
+            const result = new QueryResult();
 
             if (query.substr(0, 11) === "INSERT INTO") {
-                result.raw = raw.insertId
+                result.raw = raw.insertId;
             } else {
-                let resultSet = []
+                let resultSet = [];
                 for (let i = 0; i < raw.rows.length; i++) {
-                    resultSet.push(raw.rows.item(i))
+                    resultSet.push(raw.rows.item(i));
                 }
 
-                result.records = resultSet
-                result.raw = resultSet
+                result.records = resultSet;
+                result.raw = resultSet;
             }
 
             if (useStructuredResult) {
-                return result
+                return result;
             } else {
-                return result.raw
+                return result.raw;
             }
         } catch (err) {
             this.driver.connection.logger.logQueryError(
@@ -107,8 +107,8 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
                 query,
                 parameters,
                 this,
-            )
-            throw new QueryFailedError(query, parameters, err)
+            );
+            throw new QueryFailedError(query, parameters, err);
         }
     }
 
@@ -152,7 +152,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
     async startTransaction(): Promise<void> {
         throw new LapinError(
             "Transactions are not supported by the Cordova driver",
-        )
+        );
     }
 
     /**
@@ -161,7 +161,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
     async commitTransaction(): Promise<void> {
         throw new LapinError(
             "Transactions are not supported by the Cordova driver",
-        )
+        );
     }
 
     /**
@@ -170,7 +170,7 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
     async rollbackTransaction(): Promise<void> {
         throw new LapinError(
             "Transactions are not supported by the Cordova driver",
-        )
+        );
     }
 
     /**
@@ -179,26 +179,26 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
      * (because it can clear all your database).
      */
     async clearDatabase(): Promise<void> {
-        await this.query(`PRAGMA foreign_keys = OFF`)
+        await this.query(`PRAGMA foreign_keys = OFF`);
         try {
-            const selectViewDropsQuery = `SELECT 'DROP VIEW "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'view'`
+            const selectViewDropsQuery = `SELECT 'DROP VIEW "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'view'`;
             const dropViewQueries: ObjectLiteral[] = await this.query(
                 selectViewDropsQuery,
-            )
+            );
 
-            const selectTableDropsQuery = `SELECT 'DROP TABLE "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'table' AND "name" != 'sqlite_sequence'`
+            const selectTableDropsQuery = `SELECT 'DROP TABLE "' || name || '";' as query FROM "sqlite_master" WHERE "type" = 'table' AND "name" != 'sqlite_sequence'`;
             const dropTableQueries: ObjectLiteral[] = await this.query(
                 selectTableDropsQuery,
-            )
+            );
 
             await Promise.all(
                 dropViewQueries.map((q) => this.query(q["query"])),
-            )
+            );
             await Promise.all(
                 dropTableQueries.map((q) => this.query(q["query"])),
-            )
+            );
         } finally {
-            await this.query(`PRAGMA foreign_keys = ON`)
+            await this.query(`PRAGMA foreign_keys = ON`);
         }
     }
 
@@ -213,6 +213,8 @@ export class CordovaQueryRunner extends AbstractSqliteQueryRunner {
         objectLiteral: ObjectLiteral,
         startIndex: number = 0,
     ): string[] {
-        return Object.keys(objectLiteral).map((key, index) => `"${key}"` + "=?")
+        return Object.keys(objectLiteral).map(
+            (key, index) => `"${key}"` + "=?",
+        );
     }
 }

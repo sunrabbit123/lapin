@@ -1,36 +1,36 @@
-import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver"
-import { CordovaConnectionOptions } from "./CordovaConnectionOptions"
-import { CordovaQueryRunner } from "./CordovaQueryRunner"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { DataSource } from "../../data-source/DataSource"
-import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
-import { ReplicationMode } from "../types/ReplicationMode"
+import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver";
+import { CordovaConnectionOptions } from "./CordovaConnectionOptions";
+import { CordovaQueryRunner } from "./CordovaQueryRunner";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { DataSource } from "../../data-source/DataSource";
+import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
+import { ReplicationMode } from "../types/ReplicationMode";
 
 // needed for typescript compiler
 interface Window {
-    sqlitePlugin: any
+    sqlitePlugin: any;
 }
 
-declare let window: Window
+declare let window: Window;
 
 export class CordovaDriver extends AbstractSqliteDriver {
-    options: CordovaConnectionOptions
+    options: CordovaConnectionOptions;
 
-    transactionSupport = "none" as const
+    transactionSupport = "none" as const;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        super(connection)
+        super(connection);
 
         // this.connection = connection;
         // this.options = connection.options as CordovaConnectionOptions;
-        this.database = this.options.database
+        this.database = this.options.database;
 
         // load sqlite package
-        this.loadDependencies()
+        this.loadDependencies();
     }
 
     // -------------------------------------------------------------------------
@@ -41,20 +41,20 @@ export class CordovaDriver extends AbstractSqliteDriver {
      * Closes connection with database.
      */
     async disconnect(): Promise<void> {
-        this.queryRunner = undefined
+        this.queryRunner = undefined;
 
         return new Promise<void>((ok, fail) => {
-            this.databaseConnection.close(ok, fail)
-        })
+            this.databaseConnection.close(ok, fail);
+        });
     }
 
     /**
      * Creates a query runner used to execute database queries.
      */
     createQueryRunner(mode: ReplicationMode): QueryRunner {
-        if (!this.queryRunner) this.queryRunner = new CordovaQueryRunner(this)
+        if (!this.queryRunner) this.queryRunner = new CordovaQueryRunner(this);
 
-        return this.queryRunner
+        return this.queryRunner;
     }
 
     // -------------------------------------------------------------------------
@@ -72,11 +72,11 @@ export class CordovaDriver extends AbstractSqliteDriver {
                 location: this.options.location,
             },
             this.options.extra || {},
-        )
+        );
 
         const connection = await new Promise<any>((resolve) => {
-            this.sqlite.openDatabase(options, (db: any) => resolve(db))
-        })
+            this.sqlite.openDatabase(options, (db: any) => resolve(db));
+        });
 
         await new Promise<void>((ok, fail) => {
             // we need to enable foreign keys in sqlite to make sure all foreign key related features
@@ -86,10 +86,10 @@ export class CordovaDriver extends AbstractSqliteDriver {
                 [],
                 () => ok(),
                 (err: any) => fail(err),
-            )
-        })
+            );
+        });
 
-        return connection
+        return connection;
     }
 
     /**
@@ -97,13 +97,13 @@ export class CordovaDriver extends AbstractSqliteDriver {
      */
     protected loadDependencies(): void {
         try {
-            const sqlite = this.options.driver || window.sqlitePlugin
-            this.sqlite = sqlite
+            const sqlite = this.options.driver || window.sqlitePlugin;
+            this.sqlite = sqlite;
         } catch (e) {
             throw new DriverPackageNotInstalledError(
                 "Cordova-SQLite",
                 "cordova-sqlite-storage",
-            )
+            );
         }
     }
 }

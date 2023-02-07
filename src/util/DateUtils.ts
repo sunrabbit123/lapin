@@ -1,5 +1,5 @@
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { parseISO } from "date-fns"
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { parseISO } from "date-fns";
 
 /**
  * Provides utilities to transform hydrated and persisted data.
@@ -15,11 +15,11 @@ export class DateUtils {
     static normalizeHydratedDate(
         mixedDate: Date | string | undefined,
     ): Date | string | undefined {
-        if (!mixedDate) return mixedDate
+        if (!mixedDate) return mixedDate;
 
         return typeof mixedDate === "string"
             ? new Date(mixedDate)
-            : (mixedDate as Date)
+            : (mixedDate as Date);
     }
 
     /**
@@ -33,10 +33,10 @@ export class DateUtils {
                 this.formatZerolessValue(value.getMonth() + 1) +
                 "-" +
                 this.formatZerolessValue(value.getDate())
-            )
+            );
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -62,7 +62,7 @@ export class DateUtils {
          * https://stackoverflow.com/a/2587398
          */
         let date =
-            typeof mixedDate === "string" ? parseISO(mixedDate) : mixedDate
+            typeof mixedDate === "string" ? parseISO(mixedDate) : mixedDate;
 
         if (toUtc)
             date = new Date(
@@ -73,11 +73,11 @@ export class DateUtils {
                 date.getUTCMinutes(),
                 date.getUTCSeconds(),
                 date.getUTCMilliseconds(),
-            )
+            );
 
-        if (!useMilliseconds) date.setUTCMilliseconds(0)
+        if (!useMilliseconds) date.setUTCMilliseconds(0);
 
-        return date
+        return date;
     }
 
     /**
@@ -95,9 +95,9 @@ export class DateUtils {
                 (!skipSeconds
                     ? ":" + this.formatZerolessValue(value.getSeconds())
                     : "")
-            )
+            );
 
-        return value
+        return value;
     }
 
     /**
@@ -105,15 +105,15 @@ export class DateUtils {
      */
     static mixedTimeToDate(value: Date | any): string | any {
         if (typeof value === "string") {
-            const [hours, minutes, seconds] = value.split(":")
-            const date = new Date()
-            if (hours) date.setHours(parseInt(hours))
-            if (minutes) date.setMinutes(parseInt(minutes))
-            if (seconds) date.setSeconds(parseInt(seconds))
-            return date
+            const [hours, minutes, seconds] = value.split(":");
+            const date = new Date();
+            if (hours) date.setHours(parseInt(hours));
+            if (minutes) date.setMinutes(parseInt(minutes));
+            if (seconds) date.setSeconds(parseInt(seconds));
+            return date;
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -129,15 +129,15 @@ export class DateUtils {
                   ":" +
                   value.getMinutes() +
                   (!skipSeconds ? ":" + value.getSeconds() : "")
-                : value
+                : value;
         if (typeof value === "string") {
             return value
                 .split(":")
                 .map((v) => (v.length === 1 ? "0" + v : v)) // append zero at beginning if we have a first-zero-less number
-                .join(":")
+                .join(":");
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -148,7 +148,7 @@ export class DateUtils {
         useMilliseconds?: boolean,
     ): string | any {
         if (typeof value === "string") {
-            value = new Date(value)
+            value = new Date(value);
         }
         if (value instanceof Date) {
             let finalValue =
@@ -162,17 +162,17 @@ export class DateUtils {
                 ":" +
                 this.formatZerolessValue(value.getMinutes()) +
                 ":" +
-                this.formatZerolessValue(value.getSeconds())
+                this.formatZerolessValue(value.getSeconds());
 
             if (useMilliseconds)
                 finalValue += `.${this.formatMilliseconds(
                     value.getMilliseconds(),
-                )}`
+                )}`;
 
-            value = finalValue
+            value = finalValue;
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -180,7 +180,7 @@ export class DateUtils {
      */
     static mixedDateToUtcDatetimeString(value: Date | any): string | any {
         if (typeof value === "string") {
-            value = new Date(value)
+            value = new Date(value);
         }
         if (value instanceof Date) {
             return (
@@ -197,10 +197,10 @@ export class DateUtils {
                 this.formatZerolessValue(value.getUTCSeconds()) +
                 "." +
                 this.formatMilliseconds(value.getUTCMilliseconds())
-            )
+            );
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -208,10 +208,10 @@ export class DateUtils {
      */
     static simpleArrayToString(value: any[] | any): string[] | any {
         if (Array.isArray(value)) {
-            return (value as any[]).map((i) => String(i)).join(",")
+            return (value as any[]).map((i) => String(i)).join(",");
         }
 
-        return value
+        return value;
     }
 
     /**
@@ -220,25 +220,25 @@ export class DateUtils {
     static stringToSimpleArray(value: string | any): string | any {
         if (typeof value === "string") {
             if (value.length > 0) {
-                return value.split(",")
+                return value.split(",");
             } else {
-                return []
+                return [];
             }
         }
 
-        return value
+        return value;
     }
 
     static simpleJsonToString(value: any): string {
-        return JSON.stringify(value)
+        return JSON.stringify(value);
     }
 
     static stringToSimpleJson(value: any) {
-        return typeof value === "string" ? JSON.parse(value) : value
+        return typeof value === "string" ? JSON.parse(value) : value;
     }
 
     static simpleEnumToString(value: any) {
-        return "" + value
+        return "" + value;
     }
 
     static stringToSimpleEnum(value: any, columnMetadata: ColumnMetadata) {
@@ -248,10 +248,10 @@ export class DateUtils {
             columnMetadata.enum.indexOf(parseInt(value)) >= 0
         ) {
             // convert to number if that exists in poosible enum options
-            value = parseInt(value)
+            value = parseInt(value);
         }
 
-        return value
+        return value;
     }
 
     // -------------------------------------------------------------------------
@@ -262,9 +262,9 @@ export class DateUtils {
      * Formats given number to "0x" format, e.g. if the totalLength = 2 and the value is 1 then it will return "01".
      */
     private static formatZerolessValue(value: number, totalLength = 2): string {
-        const pad = "0".repeat(totalLength)
+        const pad = "0".repeat(totalLength);
 
-        return String(`${pad}${value}`).slice(-totalLength)
+        return String(`${pad}${value}`).slice(-totalLength);
     }
 
     /**
@@ -272,11 +272,11 @@ export class DateUtils {
      */
     private static formatMilliseconds(value: number): string {
         if (value < 10) {
-            return "00" + value
+            return "00" + value;
         } else if (value < 100) {
-            return "0" + value
+            return "0" + value;
         } else {
-            return String(value)
+            return String(value);
         }
     }
 }

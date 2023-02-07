@@ -1,8 +1,8 @@
-import { QueryBuilder } from "./QueryBuilder"
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { QueryExpressionMap } from "./QueryExpressionMap"
-import { LapinError } from "../error"
-import { ObjectUtils } from "../util/ObjectUtils"
+import { QueryBuilder } from "./QueryBuilder";
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { QueryExpressionMap } from "./QueryExpressionMap";
+import { LapinError } from "../error";
+import { ObjectUtils } from "../util/ObjectUtils";
 
 /**
  * Allows to work with entity relations and perform specific operations with those relations.
@@ -27,67 +27,67 @@ export class RelationUpdater {
      * Performs set or add operation on a relation.
      */
     async update(value: any | any[]): Promise<void> {
-        const relation = this.expressionMap.relationMetadata
+        const relation = this.expressionMap.relationMetadata;
 
         if (relation.isManyToOne || relation.isOneToOneOwner) {
             const updateSet = relation.joinColumns.reduce(
                 (updateSet, joinColumn) => {
                     const relationValue = ObjectUtils.isObject(value)
                         ? joinColumn.referencedColumn!.getEntityValue(value)
-                        : value
-                    joinColumn.setEntityValue(updateSet, relationValue)
-                    return updateSet
+                        : value;
+                    joinColumn.setEntityValue(updateSet, relationValue);
+                    return updateSet;
                 },
                 {} as any,
-            )
+            );
 
             if (
                 !this.expressionMap.of ||
                 (Array.isArray(this.expressionMap.of) &&
                     !this.expressionMap.of.length)
             )
-                return
+                return;
 
             await this.queryBuilder
                 .createQueryBuilder()
                 .update(relation.entityMetadata.target)
                 .set(updateSet)
                 .whereInIds(this.expressionMap.of)
-                .execute()
+                .execute();
         } else if (
             (relation.isOneToOneNotOwner || relation.isOneToMany) &&
             value === null
         ) {
             // we handle null a bit different way
 
-            const updateSet: ObjectLiteral = {}
+            const updateSet: ObjectLiteral = {};
             relation.inverseRelation!.joinColumns.forEach((column) => {
-                updateSet[column.propertyName] = null
-            })
+                updateSet[column.propertyName] = null;
+            });
 
             const ofs = Array.isArray(this.expressionMap.of)
                 ? this.expressionMap.of
-                : [this.expressionMap.of]
-            const parameters: ObjectLiteral = {}
-            const conditions: string[] = []
+                : [this.expressionMap.of];
+            const parameters: ObjectLiteral = {};
+            const conditions: string[] = [];
             ofs.forEach((of, ofIndex) => {
                 relation.inverseRelation!.joinColumns.map(
                     (column, columnIndex) => {
                         const parameterName =
-                            "joinColumn_" + ofIndex + "_" + columnIndex
+                            "joinColumn_" + ofIndex + "_" + columnIndex;
                         parameters[parameterName] = ObjectUtils.isObject(of)
                             ? column.referencedColumn!.getEntityValue(of)
-                            : of
+                            : of;
                         conditions.push(
                             `${column.propertyPath} = :${parameterName}`,
-                        )
+                        );
                     },
-                )
-            })
+                );
+            });
             const condition = conditions
                 .map((str) => "(" + str + ")")
-                .join(" OR ")
-            if (!condition) return
+                .join(" OR ");
+            if (!condition) return;
 
             await this.queryBuilder
                 .createQueryBuilder()
@@ -95,47 +95,49 @@ export class RelationUpdater {
                 .set(updateSet)
                 .where(condition)
                 .setParameters(parameters)
-                .execute()
+                .execute();
         } else if (relation.isOneToOneNotOwner || relation.isOneToMany) {
             if (Array.isArray(this.expressionMap.of))
                 throw new LapinError(
                     `You cannot update relations of multiple entities with the same related object. Provide a single entity into .of method.`,
-                )
+                );
 
-            const of = this.expressionMap.of
+            const of = this.expressionMap.of;
             const updateSet = relation.inverseRelation!.joinColumns.reduce(
                 (updateSet, joinColumn) => {
                     const relationValue = ObjectUtils.isObject(of)
                         ? joinColumn.referencedColumn!.getEntityValue(of)
-                        : of
-                    joinColumn.setEntityValue(updateSet, relationValue)
-                    return updateSet
+                        : of;
+                    joinColumn.setEntityValue(updateSet, relationValue);
+                    return updateSet;
                 },
                 {} as any,
-            )
+            );
 
-            if (!value || (Array.isArray(value) && !value.length)) return
+            if (!value || (Array.isArray(value) && !value.length)) return;
 
             await this.queryBuilder
                 .createQueryBuilder()
                 .update(relation.inverseEntityMetadata.target)
                 .set(updateSet)
                 .whereInIds(value)
-                .execute()
+                .execute();
         } else {
             // many to many
-            const junctionMetadata = relation.junctionEntityMetadata!
+            const junctionMetadata = relation.junctionEntityMetadata!;
             const ofs = Array.isArray(this.expressionMap.of)
                 ? this.expressionMap.of
-                : [this.expressionMap.of]
-            const values = Array.isArray(value) ? value : [value]
-            const firstColumnValues = relation.isManyToManyOwner ? ofs : values
-            const secondColumnValues = relation.isManyToManyOwner ? values : ofs
+                : [this.expressionMap.of];
+            const values = Array.isArray(value) ? value : [value];
+            const firstColumnValues = relation.isManyToManyOwner ? ofs : values;
+            const secondColumnValues = relation.isManyToManyOwner
+                ? values
+                : ofs;
 
-            const bulkInserted: ObjectLiteral[] = []
+            const bulkInserted: ObjectLiteral[] = [];
             firstColumnValues.forEach((firstColumnVal) => {
                 secondColumnValues.forEach((secondColumnVal) => {
-                    const inserted: ObjectLiteral = {}
+                    const inserted: ObjectLiteral = {};
                     junctionMetadata.ownerColumns.forEach((column) => {
                         inserted[column.databaseName] = ObjectUtils.isObject(
                             firstColumnVal,
@@ -143,8 +145,8 @@ export class RelationUpdater {
                             ? column.referencedColumn!.getEntityValue(
                                   firstColumnVal,
                               )
-                            : firstColumnVal
-                    })
+                            : firstColumnVal;
+                    });
                     junctionMetadata.inverseColumns.forEach((column) => {
                         inserted[column.databaseName] = ObjectUtils.isObject(
                             secondColumnVal,
@@ -152,13 +154,13 @@ export class RelationUpdater {
                             ? column.referencedColumn!.getEntityValue(
                                   secondColumnVal,
                               )
-                            : secondColumnVal
-                    })
-                    bulkInserted.push(inserted)
-                })
-            })
+                            : secondColumnVal;
+                    });
+                    bulkInserted.push(inserted);
+                });
+            });
 
-            if (!bulkInserted.length) return
+            if (!bulkInserted.length) return;
 
             if (
                 this.queryBuilder.connection.driver.options.type === "oracle" ||
@@ -171,16 +173,16 @@ export class RelationUpdater {
                             .insert()
                             .into(junctionMetadata.tableName)
                             .values(value)
-                            .execute()
+                            .execute();
                     }),
-                )
+                );
             } else {
                 await this.queryBuilder
                     .createQueryBuilder()
                     .insert()
                     .into(junctionMetadata.tableName)
                     .values(bulkInserted)
-                    .execute()
+                    .execute();
             }
         }
     }

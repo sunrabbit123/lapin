@@ -2,10 +2,10 @@ export interface EntitySchemaExclusionOptions {
     /**
      * Exclusion constraint name.
      */
-    name?: string
+    name?: string;
 
     /**
      * Exclusion expression.
      */
-    expression: string
+    expression: string;
 }

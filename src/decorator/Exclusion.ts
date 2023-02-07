@@ -1,6 +1,6 @@
-import { getMetadataArgsStorage } from "../globals"
-import { ExclusionMetadataArgs } from "../metadata-args/ExclusionMetadataArgs"
-import { LapinError } from "../error"
+import { getMetadataArgsStorage } from "../globals";
+import { ExclusionMetadataArgs } from "../metadata-args/ExclusionMetadataArgs";
+import { LapinError } from "../error";
 
 /**
  * Creates a database exclusion.
@@ -9,7 +9,7 @@ import { LapinError } from "../error"
  */
 export function Exclusion(
     expression: string,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database exclusion.
@@ -19,7 +19,7 @@ export function Exclusion(
 export function Exclusion(
     name: string,
     expression: string,
-): ClassDecorator & PropertyDecorator
+): ClassDecorator & PropertyDecorator;
 
 /**
  * Creates a database exclusion.
@@ -30,10 +30,10 @@ export function Exclusion(
     nameOrExpression: string,
     maybeExpression?: string,
 ): ClassDecorator & PropertyDecorator {
-    const name = maybeExpression ? nameOrExpression : undefined
-    const expression = maybeExpression ? maybeExpression : nameOrExpression
+    const name = maybeExpression ? nameOrExpression : undefined;
+    const expression = maybeExpression ? maybeExpression : nameOrExpression;
 
-    if (!expression) throw new LapinError(`Exclusion expression is required`)
+    if (!expression) throw new LapinError(`Exclusion expression is required`);
 
     return function (
         clsOrObject: Function | Object,
@@ -45,6 +45,6 @@ export function Exclusion(
                 : (clsOrObject as Function),
             name: name,
             expression: expression,
-        } as ExclusionMetadataArgs)
-    }
+        } as ExclusionMetadataArgs);
+    };
 }

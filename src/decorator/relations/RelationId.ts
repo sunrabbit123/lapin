@@ -1,6 +1,6 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { RelationIdMetadataArgs } from "../../metadata-args/RelationIdMetadataArgs"
-import { SelectQueryBuilder } from "../../query-builder/SelectQueryBuilder"
+import { getMetadataArgsStorage } from "../../globals";
+import { RelationIdMetadataArgs } from "../../metadata-args/RelationIdMetadataArgs";
+import { SelectQueryBuilder } from "../../query-builder/SelectQueryBuilder";
 
 /**
  * Special decorator used to extract relation id into separate entity property.
@@ -21,6 +21,6 @@ export function RelationId<T>(
             relation: relation,
             alias: alias,
             queryBuilderFactory: queryBuilderFactory,
-        } as RelationIdMetadataArgs)
-    }
+        } as RelationIdMetadataArgs);
+    };
 }

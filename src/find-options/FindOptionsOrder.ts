@@ -1,4 +1,4 @@
-import { ObjectID } from "../driver/mongodb/typings"
+import { ObjectID } from "../driver/mongodb/typings";
 
 /**
  * A single property handler for FindOptionsOrder.
@@ -25,7 +25,7 @@ export type FindOptionsOrderProperty<Property> = Property extends Promise<
     ? FindOptionsOrderValue
     : Property extends object
     ? FindOptionsOrder<Property>
-    : FindOptionsOrderValue
+    : FindOptionsOrderValue;
 
 /**
  * Order by find options.
@@ -33,8 +33,8 @@ export type FindOptionsOrderProperty<Property> = Property extends Promise<
 export type FindOptionsOrder<Entity> = {
     [P in keyof Entity]?: P extends "toString"
         ? unknown
-        : FindOptionsOrderProperty<NonNullable<Entity[P]>>
-}
+        : FindOptionsOrderProperty<NonNullable<Entity[P]>>;
+};
 
 /**
  * Value of order by in find options.
@@ -47,6 +47,6 @@ export type FindOptionsOrderValue =
     | 1
     | -1
     | {
-          direction?: "asc" | "desc" | "ASC" | "DESC"
-          nulls?: "first" | "last" | "FIRST" | "LAST"
-      }
+          direction?: "asc" | "desc" | "ASC" | "DESC";
+          nulls?: "first" | "last" | "FIRST" | "LAST";
+      };

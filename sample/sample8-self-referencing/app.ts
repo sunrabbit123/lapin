@@ -1,6 +1,6 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Category } from "./entity/Category"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Category } from "./entity/Category";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -11,35 +11,35 @@ const options: DataSourceOptions = {
     database: "test",
     synchronize: true,
     entities: [__dirname + "/entity/*"],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let categoryRepository = dataSource.getRepository(Category)
+        let categoryRepository = dataSource.getRepository(Category);
 
-        let category1 = new Category()
-        category1.name = "category #1"
+        let category1 = new Category();
+        category1.name = "category #1";
 
-        let mainCategory = new Category()
-        mainCategory.manyCategories = []
-        mainCategory.name = "main category"
-        mainCategory.oneCategory = category1
-        mainCategory.manyCategories.push(category1)
-        mainCategory.oneManyCategory = category1
+        let mainCategory = new Category();
+        mainCategory.manyCategories = [];
+        mainCategory.name = "main category";
+        mainCategory.oneCategory = category1;
+        mainCategory.manyCategories.push(category1);
+        mainCategory.oneManyCategory = category1;
 
         categoryRepository
             .save(mainCategory)
             .then((savedCategory) => {
-                console.log("saved category: ", savedCategory)
+                console.log("saved category: ", savedCategory);
             })
             .catch((error) =>
                 console.log(
                     "Cannot save. Error: ",
                     error.stack ? error.stack : error,
                 ),
-            )
+            );
     },
     (error) =>
         console.log("Cannot connect: ", error.stack ? error.stack : error),
-)
+);

@@ -1,34 +1,34 @@
-import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver"
-import { SqljsConnectionOptions } from "./SqljsConnectionOptions"
-import { SqljsQueryRunner } from "./SqljsQueryRunner"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { DataSource } from "../../data-source/DataSource"
-import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError"
-import { DriverOptionNotSetError } from "../../error/DriverOptionNotSetError"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { OrmUtils } from "../../util/OrmUtils"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { LapinError } from "../../error"
+import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver";
+import { SqljsConnectionOptions } from "./SqljsConnectionOptions";
+import { SqljsQueryRunner } from "./SqljsQueryRunner";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { DataSource } from "../../data-source/DataSource";
+import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
+import { DriverOptionNotSetError } from "../../error/DriverOptionNotSetError";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { OrmUtils } from "../../util/OrmUtils";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { LapinError } from "../../error";
 
 // This is needed to satisfy the typescript compiler.
 interface Window {
-    SQL: any
-    localforage: any
+    SQL: any;
+    localforage: any;
 }
-declare let window: Window
+declare let window: Window;
 
 export class SqljsDriver extends AbstractSqliteDriver {
     // The driver specific options.
-    options: SqljsConnectionOptions
+    options: SqljsConnectionOptions;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        super(connection)
+        super(connection);
 
         // If autoSave is enabled by user, location or autoSaveCallback have to be set
         // because either autoSave saves to location or calls autoSaveCallback.
@@ -37,11 +37,11 @@ export class SqljsDriver extends AbstractSqliteDriver {
             !this.options.location &&
             !this.options.autoSaveCallback
         ) {
-            throw new DriverOptionNotSetError(`location or autoSaveCallback`)
+            throw new DriverOptionNotSetError(`location or autoSaveCallback`);
         }
 
         // load sql.js package
-        this.loadDependencies()
+        this.loadDependencies();
     }
 
     // -------------------------------------------------------------------------
@@ -52,24 +52,24 @@ export class SqljsDriver extends AbstractSqliteDriver {
      * Performs connection to the database.
      */
     async connect(): Promise<void> {
-        this.databaseConnection = await this.createDatabaseConnection()
+        this.databaseConnection = await this.createDatabaseConnection();
     }
 
     /**
      * Closes connection with database.
      */
     async disconnect(): Promise<void> {
-        this.queryRunner = undefined
-        this.databaseConnection.close()
+        this.queryRunner = undefined;
+        this.databaseConnection.close();
     }
 
     /**
      * Creates a query runner used to execute database queries.
      */
     createQueryRunner(mode: ReplicationMode): QueryRunner {
-        if (!this.queryRunner) this.queryRunner = new SqljsQueryRunner(this)
+        if (!this.queryRunner) this.queryRunner = new SqljsQueryRunner(this);
 
-        return this.queryRunner
+        return this.queryRunner;
     }
 
     /**
@@ -88,59 +88,59 @@ export class SqljsDriver extends AbstractSqliteDriver {
                 if (PlatformTools.fileExist(fileNameOrLocalStorageOrData)) {
                     const database = PlatformTools.readFileSync(
                         fileNameOrLocalStorageOrData,
-                    )
-                    return this.createDatabaseConnectionWithImport(database)
+                    );
+                    return this.createDatabaseConnectionWithImport(database);
                 } else if (checkIfFileOrLocalStorageExists) {
                     throw new LapinError(
                         `File ${fileNameOrLocalStorageOrData} does not exist`,
-                    )
+                    );
                 } else {
                     // File doesn't exist and checkIfFileOrLocalStorageExists is set to false.
                     // Therefore open a database without importing an existing file.
                     // File will be written on first write operation.
-                    return this.createDatabaseConnectionWithImport()
+                    return this.createDatabaseConnectionWithImport();
                 }
             } else {
                 // browser
                 // fileNameOrLocalStorageOrData should be a local storage / indexedDB key
-                let localStorageContent = null
+                let localStorageContent = null;
                 if (this.options.useLocalForage) {
                     if (window.localforage) {
                         localStorageContent = await window.localforage.getItem(
                             fileNameOrLocalStorageOrData,
-                        )
+                        );
                     } else {
                         throw new LapinError(
                             `localforage is not defined - please import localforage.js into your site`,
-                        )
+                        );
                     }
                 } else {
                     localStorageContent =
                         PlatformTools.getGlobalVariable().localStorage.getItem(
                             fileNameOrLocalStorageOrData,
-                        )
+                        );
                 }
 
                 if (localStorageContent != null) {
                     // localStorage value exists.
                     return this.createDatabaseConnectionWithImport(
                         JSON.parse(localStorageContent),
-                    )
+                    );
                 } else if (checkIfFileOrLocalStorageExists) {
                     throw new LapinError(
                         `File ${fileNameOrLocalStorageOrData} does not exist`,
-                    )
+                    );
                 } else {
                     // localStorage value doesn't exist and checkIfFileOrLocalStorageExists is set to false.
                     // Therefore open a database without importing anything.
                     // localStorage value will be written on first write operation.
-                    return this.createDatabaseConnectionWithImport()
+                    return this.createDatabaseConnectionWithImport();
                 }
             }
         } else {
             return this.createDatabaseConnectionWithImport(
                 fileNameOrLocalStorageOrData,
-            )
+            );
         }
     }
 
@@ -153,43 +153,43 @@ export class SqljsDriver extends AbstractSqliteDriver {
         if (!location && !this.options.location) {
             throw new LapinError(
                 `No location is set, specify a location parameter or add the location option to your configuration`,
-            )
+            );
         }
 
-        let path = ""
+        let path = "";
         if (location) {
-            path = location
+            path = location;
         } else if (this.options.location) {
-            path = this.options.location
+            path = this.options.location;
         }
 
         if (PlatformTools.type === "node") {
             try {
-                const content = Buffer.from(this.databaseConnection.export())
-                await PlatformTools.writeFile(path, content)
+                const content = Buffer.from(this.databaseConnection.export());
+                await PlatformTools.writeFile(path, content);
             } catch (e) {
-                throw new LapinError(`Could not save database, error: ${e}`)
+                throw new LapinError(`Could not save database, error: ${e}`);
             }
         } else {
-            const database: Uint8Array = this.databaseConnection.export()
+            const database: Uint8Array = this.databaseConnection.export();
             // convert Uint8Array to number array to improve local-storage storage
-            const databaseArray = [].slice.call(database)
+            const databaseArray = [].slice.call(database);
             if (this.options.useLocalForage) {
                 if (window.localforage) {
                     await window.localforage.setItem(
                         path,
                         JSON.stringify(databaseArray),
-                    )
+                    );
                 } else {
                     throw new LapinError(
                         `localforage is not defined - please import localforage.js into your site`,
-                    )
+                    );
                 }
             } else {
                 PlatformTools.getGlobalVariable().localStorage.setItem(
                     path,
                     JSON.stringify(databaseArray),
-                )
+                );
             }
         }
     }
@@ -204,9 +204,9 @@ export class SqljsDriver extends AbstractSqliteDriver {
     async autoSave() {
         if (this.options.autoSave && !this.queryRunner?.isTransactionActive) {
             if (this.options.autoSaveCallback) {
-                await this.options.autoSaveCallback(this.export())
+                await this.options.autoSaveCallback(this.export());
             } else {
-                await this.save()
+                await this.save();
             }
         }
     }
@@ -215,7 +215,7 @@ export class SqljsDriver extends AbstractSqliteDriver {
      * Returns the current database as Uint8Array.
      */
     export(): Uint8Array {
-        return this.databaseConnection.export()
+        return this.databaseConnection.export();
     }
 
     /**
@@ -229,27 +229,27 @@ export class SqljsDriver extends AbstractSqliteDriver {
                     generatedColumn.isPrimary &&
                     generatedColumn.generationStrategy === "increment"
                 ) {
-                    const query = "SELECT last_insert_rowid()"
+                    const query = "SELECT last_insert_rowid()";
                     try {
-                        let result = this.databaseConnection.exec(query)
-                        this.connection.logger.logQuery(query)
+                        let result = this.databaseConnection.exec(query);
+                        this.connection.logger.logQuery(query);
                         return OrmUtils.mergeDeep(
                             map,
                             generatedColumn.createValueMap(
                                 result[0].values[0][0],
                             ),
-                        )
+                        );
                     } catch (e) {
-                        this.connection.logger.logQueryError(e, query, [])
+                        this.connection.logger.logQueryError(e, query, []);
                     }
                 }
 
-                return map
+                return map;
             },
             {} as ObjectLiteral,
-        )
+        );
 
-        return Object.keys(generatedMap).length > 0 ? generatedMap : undefined
+        return Object.keys(generatedMap).length > 0 ? generatedMap : undefined;
     }
 
     // -------------------------------------------------------------------------
@@ -262,10 +262,10 @@ export class SqljsDriver extends AbstractSqliteDriver {
      */
     protected createDatabaseConnection(): Promise<any> {
         if (this.options.location) {
-            return this.load(this.options.location, false)
+            return this.load(this.options.location, false);
         }
 
-        return this.createDatabaseConnectionWithImport(this.options.database)
+        return this.createDatabaseConnectionWithImport(this.options.database);
     }
 
     /**
@@ -276,19 +276,19 @@ export class SqljsDriver extends AbstractSqliteDriver {
         database?: Uint8Array,
     ): Promise<any> {
         // sql.js < 1.0 exposes an object with a `Database` method.
-        const isLegacyVersion = typeof this.sqlite.Database === "function"
+        const isLegacyVersion = typeof this.sqlite.Database === "function";
         const sqlite = isLegacyVersion
             ? this.sqlite
-            : await this.sqlite(this.options.sqlJsConfig)
+            : await this.sqlite(this.options.sqlJsConfig);
         if (database && database.length > 0) {
-            this.databaseConnection = new sqlite.Database(database)
+            this.databaseConnection = new sqlite.Database(database);
         } else {
-            this.databaseConnection = new sqlite.Database()
+            this.databaseConnection = new sqlite.Database();
         }
 
-        this.databaseConnection.exec(`PRAGMA foreign_keys = ON`)
+        this.databaseConnection.exec(`PRAGMA foreign_keys = ON`);
 
-        return this.databaseConnection
+        return this.databaseConnection;
     }
 
     /**
@@ -296,15 +296,15 @@ export class SqljsDriver extends AbstractSqliteDriver {
      */
     protected loadDependencies(): void {
         if (PlatformTools.type === "browser") {
-            const sqlite = this.options.driver || window.SQL
-            this.sqlite = sqlite
+            const sqlite = this.options.driver || window.SQL;
+            this.sqlite = sqlite;
         } else {
             try {
                 const sqlite =
-                    this.options.driver || PlatformTools.load("sql.js")
-                this.sqlite = sqlite
+                    this.options.driver || PlatformTools.load("sql.js");
+                this.sqlite = sqlite;
             } catch (e) {
-                throw new DriverPackageNotInstalledError("sql.js", "sql.js")
+                throw new DriverPackageNotInstalledError("sql.js", "sql.js");
             }
         }
     }

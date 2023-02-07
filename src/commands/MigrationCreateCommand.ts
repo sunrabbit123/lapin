@@ -1,16 +1,16 @@
-import { CommandUtils } from "./CommandUtils"
-import { camelCase } from "../util/StringUtils"
-import * as yargs from "yargs"
-import chalk from "chalk"
-import { PlatformTools } from "../platform/PlatformTools"
-import path from "path"
+import { CommandUtils } from "./CommandUtils";
+import { camelCase } from "../util/StringUtils";
+import * as yargs from "yargs";
+import chalk from "chalk";
+import { PlatformTools } from "../platform/PlatformTools";
+import path from "path";
 
 /**
  * Creates a new migration file.
  */
 export class MigrationCreateCommand implements yargs.CommandModule {
-    command = "migration:create <path>"
-    describe = "Creates a new migration file."
+    command = "migration:create <path>";
+    describe = "Creates a new migration file.";
 
     builder(args: yargs.Argv) {
         return args
@@ -26,38 +26,38 @@ export class MigrationCreateCommand implements yargs.CommandModule {
                 type: "number",
                 default: false,
                 describe: "Custom timestamp for the migration name",
-            })
+            });
     }
 
     async handler(args: yargs.Arguments) {
         try {
-            const timestamp = CommandUtils.getTimestamp(args.timestamp)
+            const timestamp = CommandUtils.getTimestamp(args.timestamp);
             const inputPath = (args.path as string).startsWith("/")
                 ? (args.path as string)
-                : path.resolve(process.cwd(), args.path as string)
-            const filename = path.basename(inputPath)
+                : path.resolve(process.cwd(), args.path as string);
+            const filename = path.basename(inputPath);
             const fullPath =
-                path.dirname(inputPath) + "/" + timestamp + "-" + filename
+                path.dirname(inputPath) + "/" + timestamp + "-" + filename;
 
             const fileContent = args.outputJs
                 ? MigrationCreateCommand.getJavascriptTemplate(
                       filename,
                       timestamp,
                   )
-                : MigrationCreateCommand.getTemplate(filename, timestamp)
+                : MigrationCreateCommand.getTemplate(filename, timestamp);
 
             await CommandUtils.createFile(
                 fullPath + (args.outputJs ? ".js" : ".ts"),
                 fileContent,
-            )
+            );
             console.log(
                 `Migration ${chalk.blue(
                     fullPath + (args.outputJs ? ".js" : ".ts"),
                 )} has been generated successfully.`,
-            )
+            );
         } catch (err) {
-            PlatformTools.logCmdErr("Error during migration creation:", err)
-            process.exit(1)
+            PlatformTools.logCmdErr("Error during migration creation:", err);
+            process.exit(1);
         }
     }
 
@@ -83,7 +83,7 @@ export class ${camelCase(
     }
 
 }
-`
+`;
     }
 
     /**
@@ -104,6 +104,6 @@ module.exports = class ${camelCase(name, true)}${timestamp} {
     }
 
 }
-`
+`;
     }
 }

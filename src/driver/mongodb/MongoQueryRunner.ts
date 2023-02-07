@@ -1,10 +1,10 @@
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { Table } from "../../schema-builder/table/Table"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { TableIndex } from "../../schema-builder/table/TableIndex"
-import { View } from "../../schema-builder/view/View"
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { Table } from "../../schema-builder/table/Table";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { TableIndex } from "../../schema-builder/table/TableIndex";
+import { View } from "../../schema-builder/view/View";
 import {
     AggregationCursor,
     BulkWriteOpResultObject,
@@ -37,17 +37,17 @@ import {
     ReplaceOneOptions,
     UnorderedBulkOperation,
     UpdateWriteOpResult,
-} from "./typings"
-import { DataSource } from "../../data-source/DataSource"
-import { ReadStream } from "../../platform/PlatformTools"
-import { MongoEntityManager } from "../../entity-manager/MongoEntityManager"
-import { SqlInMemory } from "../SqlInMemory"
-import { TableUnique } from "../../schema-builder/table/TableUnique"
-import { Broadcaster } from "../../subscriber/Broadcaster"
-import { TableCheck } from "../../schema-builder/table/TableCheck"
-import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { LapinError } from "../../error"
-import { ReplicationMode } from "../types/ReplicationMode"
+} from "./typings";
+import { DataSource } from "../../data-source/DataSource";
+import { ReadStream } from "../../platform/PlatformTools";
+import { MongoEntityManager } from "../../entity-manager/MongoEntityManager";
+import { SqlInMemory } from "../SqlInMemory";
+import { TableUnique } from "../../schema-builder/table/TableUnique";
+import { Broadcaster } from "../../subscriber/Broadcaster";
+import { TableCheck } from "../../schema-builder/table/TableCheck";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
+import { LapinError } from "../../error";
+import { ReplicationMode } from "../types/ReplicationMode";
 
 /**
  * Runs queries on a single MongoDB connection.
@@ -60,60 +60,60 @@ export class MongoQueryRunner implements QueryRunner {
     /**
      * Connection used by this query runner.
      */
-    connection: DataSource
+    connection: DataSource;
 
     /**
      * Broadcaster used on this query runner to broadcast entity events.
      */
-    broadcaster: Broadcaster
+    broadcaster: Broadcaster;
 
     /**
      * Entity manager working only with current query runner.
      */
-    manager: MongoEntityManager
+    manager: MongoEntityManager;
 
     /**
      * Indicates if connection for this query runner is released.
      * Once its released, query runner cannot run queries anymore.
      * Always false for mongodb since mongodb has a single query executor instance.
      */
-    isReleased = false
+    isReleased = false;
 
     /**
      * Indicates if transaction is active in this query executor.
      * Always false for mongodb since mongodb does not support transactions.
      */
-    isTransactionActive = false
+    isTransactionActive = false;
 
     /**
      * Stores temporarily user data.
      * Useful for sharing data with subscribers.
      */
-    data = {}
+    data = {};
 
     /**
      * All synchronized tables in the database.
      */
-    loadedTables: Table[]
+    loadedTables: Table[];
 
     /**
      * All synchronized views in the database.
      */
-    loadedViews: View[]
+    loadedViews: View[];
 
     /**
      * Real database connection from a connection pool used to perform queries.
      */
-    databaseConnection: MongoClient
+    databaseConnection: MongoClient;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource, databaseConnection: MongoClient) {
-        this.connection = connection
-        this.databaseConnection = databaseConnection
-        this.broadcaster = new Broadcaster(this)
+        this.connection = connection;
+        this.databaseConnection = databaseConnection;
+        this.broadcaster = new Broadcaster(this);
     }
 
     // -------------------------------------------------------------------------
@@ -138,7 +138,7 @@ export class MongoQueryRunner implements QueryRunner {
      * Creates a cursor for a query that can be used to iterate over results from MongoDB.
      */
     cursor(collectionName: string, query?: ObjectLiteral): Cursor<any> {
-        return this.getCollection(collectionName).find(query || {})
+        return this.getCollection(collectionName).find(query || {});
     }
 
     /**
@@ -149,7 +149,7 @@ export class MongoQueryRunner implements QueryRunner {
         pipeline: ObjectLiteral[],
         options?: CollectionAggregationOptions,
     ): AggregationCursor<any> {
-        return this.getCollection(collectionName).aggregate(pipeline, options)
+        return this.getCollection(collectionName).aggregate(pipeline, options);
     }
 
     /**
@@ -163,7 +163,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).bulkWrite(
             operations,
             options,
-        )
+        );
     }
 
     /**
@@ -177,7 +177,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).countDocuments(
             query || {},
             options,
-        )
+        );
     }
 
     /**
@@ -191,7 +191,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).createIndex(
             fieldOrSpec,
             options,
-        )
+        );
     }
 
     /**
@@ -204,7 +204,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         return await this.getCollection(collectionName).createIndexes(
             indexSpecs,
-        )
+        );
     }
 
     /**
@@ -218,7 +218,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).deleteMany(
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -232,7 +232,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).deleteOne(
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -248,7 +248,7 @@ export class MongoQueryRunner implements QueryRunner {
             key,
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -262,14 +262,14 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).dropIndex(
             indexName,
             options,
-        )
+        );
     }
 
     /**
      * Drops all indexes from the collection.
      */
     async dropCollectionIndexes(collectionName: string): Promise<any> {
-        return await this.getCollection(collectionName).dropIndexes()
+        return await this.getCollection(collectionName).dropIndexes();
     }
 
     /**
@@ -283,7 +283,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).findOneAndDelete(
             query,
             options,
-        )
+        );
     }
 
     /**
@@ -299,7 +299,7 @@ export class MongoQueryRunner implements QueryRunner {
             query,
             replacement,
             options,
-        )
+        );
     }
 
     /**
@@ -315,7 +315,7 @@ export class MongoQueryRunner implements QueryRunner {
             query,
             update,
             options,
-        )
+        );
     }
 
     /**
@@ -331,7 +331,7 @@ export class MongoQueryRunner implements QueryRunner {
             x,
             y,
             options,
-        )
+        );
     }
 
     /**
@@ -343,7 +343,7 @@ export class MongoQueryRunner implements QueryRunner {
         y: number,
         options?: GeoNearOptions,
     ): Promise<any> {
-        return await this.getCollection(collectionName).geoNear(x, y, options)
+        return await this.getCollection(collectionName).geoNear(x, y, options);
     }
 
     /**
@@ -367,14 +367,14 @@ export class MongoQueryRunner implements QueryRunner {
             finalize,
             command,
             options,
-        )
+        );
     }
 
     /**
      * Retrieve all the indexes on the collection.
      */
     async collectionIndexes(collectionName: string): Promise<any> {
-        return await this.getCollection(collectionName).indexes()
+        return await this.getCollection(collectionName).indexes();
     }
 
     /**
@@ -384,7 +384,7 @@ export class MongoQueryRunner implements QueryRunner {
         collectionName: string,
         indexes: string | string[],
     ): Promise<boolean> {
-        return await this.getCollection(collectionName).indexExists(indexes)
+        return await this.getCollection(collectionName).indexExists(indexes);
     }
 
     /**
@@ -396,7 +396,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<any> {
         return await this.getCollection(collectionName).indexInformation(
             options,
-        )
+        );
     }
 
     /**
@@ -408,7 +408,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): OrderedBulkOperation {
         return this.getCollection(collectionName).initializeOrderedBulkOp(
             options,
-        )
+        );
     }
 
     /**
@@ -420,7 +420,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): UnorderedBulkOperation {
         return this.getCollection(collectionName).initializeUnorderedBulkOp(
             options,
-        )
+        );
     }
 
     /**
@@ -434,7 +434,7 @@ export class MongoQueryRunner implements QueryRunner {
         return await this.getCollection(collectionName).insertMany(
             docs,
             options,
-        )
+        );
     }
 
     /**
@@ -445,14 +445,14 @@ export class MongoQueryRunner implements QueryRunner {
         doc: ObjectLiteral,
         options?: CollectionInsertOneOptions,
     ): Promise<InsertOneWriteOpResult> {
-        return await this.getCollection(collectionName).insertOne(doc, options)
+        return await this.getCollection(collectionName).insertOne(doc, options);
     }
 
     /**
      * Returns if the collection is a capped collection.
      */
     async isCapped(collectionName: string): Promise<any> {
-        return await this.getCollection(collectionName).isCapped()
+        return await this.getCollection(collectionName).isCapped();
     }
 
     /**
@@ -461,11 +461,11 @@ export class MongoQueryRunner implements QueryRunner {
     listCollectionIndexes(
         collectionName: string,
         options?: {
-            batchSize?: number
-            readPreference?: ReadPreference | string
+            batchSize?: number;
+            readPreference?: ReadPreference | string;
         },
     ): CommandCursor {
-        return this.getCollection(collectionName).listIndexes(options)
+        return this.getCollection(collectionName).listIndexes(options);
     }
 
     /**
@@ -481,7 +481,7 @@ export class MongoQueryRunner implements QueryRunner {
             map,
             reduce,
             options,
-        )
+        );
     }
 
     /**
@@ -494,14 +494,14 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<Cursor<any>[]> {
         return await this.getCollection(collectionName).parallelCollectionScan(
             options,
-        )
+        );
     }
 
     /**
      * Reindex all indexes on the collection Warning: reIndex is a blocking operation (indexes are rebuilt in the foreground) and will be slow for large collections.
      */
     async reIndex(collectionName: string): Promise<any> {
-        return await this.getCollection(collectionName).reIndex()
+        return await this.getCollection(collectionName).reIndex();
     }
 
     /**
@@ -512,7 +512,10 @@ export class MongoQueryRunner implements QueryRunner {
         newName: string,
         options?: { dropTarget?: boolean },
     ): Promise<Collection<any>> {
-        return await this.getCollection(collectionName).rename(newName, options)
+        return await this.getCollection(collectionName).rename(
+            newName,
+            options,
+        );
     }
 
     /**
@@ -528,7 +531,7 @@ export class MongoQueryRunner implements QueryRunner {
             query,
             doc,
             options,
-        )
+        );
     }
 
     /**
@@ -538,7 +541,7 @@ export class MongoQueryRunner implements QueryRunner {
         collectionName: string,
         options?: { scale: number },
     ): Promise<CollStats> {
-        return await this.getCollection(collectionName).stats(options)
+        return await this.getCollection(collectionName).stats(options);
     }
 
     /**
@@ -549,7 +552,7 @@ export class MongoQueryRunner implements QueryRunner {
         pipeline?: Object[],
         options?: ChangeStreamOptions,
     ): ChangeStream {
-        return this.getCollection(collectionName).watch(pipeline, options)
+        return this.getCollection(collectionName).watch(pipeline, options);
     }
 
     /**
@@ -565,7 +568,7 @@ export class MongoQueryRunner implements QueryRunner {
             query,
             update,
             options,
-        )
+        );
     }
 
     /**
@@ -581,7 +584,7 @@ export class MongoQueryRunner implements QueryRunner {
             query,
             update,
             options,
-        )
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -596,7 +599,7 @@ export class MongoQueryRunner implements QueryRunner {
     async clearDatabase(): Promise<void> {
         await this.databaseConnection
             .db(this.connection.driver.database!)
-            .dropDatabase()
+            .dropDatabase();
     }
 
     /**
@@ -638,7 +641,7 @@ export class MongoQueryRunner implements QueryRunner {
     query(query: string, parameters?: any[]): Promise<any> {
         throw new LapinError(
             `Executing SQL query is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -652,7 +655,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<ReadStream> {
         throw new LapinError(
             `Stream is not supported by MongoDB driver. Use watch instead.`,
-        )
+        );
     }
 
     /**
@@ -697,7 +700,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getDatabases(): Promise<string[]> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -707,7 +710,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getSchemas(database?: string): Promise<string[]> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -716,7 +719,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getTable(collectionName: string): Promise<Table | undefined> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -725,7 +728,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getTables(collectionNames: string[]): Promise<Table[]> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -734,7 +737,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getView(collectionName: string): Promise<View | undefined> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -743,11 +746,11 @@ export class MongoQueryRunner implements QueryRunner {
     async getViews(collectionNames: string[]): Promise<View[]> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     getReplicationMode(): ReplicationMode {
-        return "master"
+        return "master";
     }
 
     /**
@@ -756,7 +759,7 @@ export class MongoQueryRunner implements QueryRunner {
     async hasDatabase(database: string): Promise<boolean> {
         throw new LapinError(
             `Check database queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -765,7 +768,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getCurrentDatabase(): Promise<undefined> {
         throw new LapinError(
             `Check database queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -774,7 +777,7 @@ export class MongoQueryRunner implements QueryRunner {
     async hasSchema(schema: string): Promise<boolean> {
         throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -783,7 +786,7 @@ export class MongoQueryRunner implements QueryRunner {
     async getCurrentSchema(): Promise<undefined> {
         throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -792,7 +795,7 @@ export class MongoQueryRunner implements QueryRunner {
     async hasTable(collectionName: string): Promise<boolean> {
         throw new LapinError(
             `Check schema queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -804,7 +807,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<boolean> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -813,7 +816,7 @@ export class MongoQueryRunner implements QueryRunner {
     async createDatabase(database: string): Promise<void> {
         throw new LapinError(
             `Database create queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -822,7 +825,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropDatabase(database: string, ifExist?: boolean): Promise<void> {
         throw new LapinError(
             `Database drop queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -834,7 +837,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema create queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -843,7 +846,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
         throw new LapinError(
             `Schema drop queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -852,7 +855,7 @@ export class MongoQueryRunner implements QueryRunner {
     async createTable(table: Table): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -861,7 +864,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropTable(tableName: Table | string): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -870,7 +873,7 @@ export class MongoQueryRunner implements QueryRunner {
     async createView(view: View): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -879,7 +882,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropView(target: View | string): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -891,7 +894,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -903,7 +906,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -915,7 +918,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -928,7 +931,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -941,7 +944,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -953,7 +956,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -965,7 +968,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -977,7 +980,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -989,7 +992,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1001,7 +1004,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1010,7 +1013,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropPrimaryKey(tableOrName: Table | string): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1022,7 +1025,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1034,7 +1037,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1046,7 +1049,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1058,7 +1061,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1070,7 +1073,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1082,7 +1085,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1094,7 +1097,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1106,7 +1109,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1118,7 +1121,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1130,7 +1133,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1142,7 +1145,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1154,7 +1157,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1166,7 +1169,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1178,7 +1181,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1190,7 +1193,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1202,7 +1205,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1214,7 +1217,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1226,7 +1229,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1235,7 +1238,7 @@ export class MongoQueryRunner implements QueryRunner {
     async dropIndex(collectionName: string, indexName: string): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1247,7 +1250,7 @@ export class MongoQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema update queries are not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1256,7 +1259,7 @@ export class MongoQueryRunner implements QueryRunner {
     async clearTable(collectionName: string): Promise<void> {
         await this.databaseConnection
             .db(this.connection.driver.database!)
-            .dropCollection(collectionName)
+            .dropCollection(collectionName);
     }
 
     /**
@@ -1267,7 +1270,7 @@ export class MongoQueryRunner implements QueryRunner {
     enableSqlMemory(): void {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1279,7 +1282,7 @@ export class MongoQueryRunner implements QueryRunner {
     disableSqlMemory(): void {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1288,7 +1291,7 @@ export class MongoQueryRunner implements QueryRunner {
     clearSqlMemory(): void {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1297,7 +1300,7 @@ export class MongoQueryRunner implements QueryRunner {
     getMemorySql(): SqlInMemory {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1306,7 +1309,7 @@ export class MongoQueryRunner implements QueryRunner {
     async executeMemoryUpSql(): Promise<void> {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     /**
@@ -1315,7 +1318,7 @@ export class MongoQueryRunner implements QueryRunner {
     async executeMemoryDownSql(): Promise<void> {
         throw new LapinError(
             `This operation is not supported by MongoDB driver.`,
-        )
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -1328,6 +1331,6 @@ export class MongoQueryRunner implements QueryRunner {
     protected getCollection(collectionName: string): Collection<any> {
         return this.databaseConnection
             .db(this.connection.driver.database!)
-            .collection(collectionName)
+            .collection(collectionName);
     }
 }

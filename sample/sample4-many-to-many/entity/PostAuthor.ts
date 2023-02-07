@@ -3,17 +3,17 @@ import {
     Entity,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index"
-import { Post } from "./Post"
+} from "../../../src/index";
+import { Post } from "./Post";
 
 @Entity("sample4_post_author")
 export class PostAuthor {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @ManyToMany((type) => Post, (post) => post.authors)
-    posts: Post[]
+    posts: Post[];
 }

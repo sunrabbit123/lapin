@@ -1,4 +1,4 @@
-import { LapinError } from "./LapinError"
+import { LapinError } from "./LapinError";
 
 /**
  * Thrown when consumer specifies driver type that does not exist or supported.
@@ -8,6 +8,6 @@ export class MissingDriverError extends LapinError {
         super(
             `Wrong driver: "${driverType}" given. Supported drivers are: ` +
                 `${availableDrivers.map((d) => `"${d}"`).join(", ")}.`,
-        )
+        );
     }
 }

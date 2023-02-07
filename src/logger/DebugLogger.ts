@@ -1,30 +1,30 @@
-import debug from "debug"
-import { Logger } from "./Logger"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { PlatformTools } from "../platform/PlatformTools"
+import debug from "debug";
+import { Logger } from "./Logger";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { PlatformTools } from "../platform/PlatformTools";
 
 /**
  * Performs logging of the events in lapin via debug library.
  */
 export class DebugLogger implements Logger {
-    private debugQueryLog = debug("lapin:query:log")
-    private debugQueryError = debug("lapin:query:error")
-    private debugQuerySlow = debug("lapin:query:slow")
-    private debugSchemaBuild = debug("lapin:schema")
-    private debugMigration = debug("lapin:migration")
+    private debugQueryLog = debug("lapin:query:log");
+    private debugQueryError = debug("lapin:query:error");
+    private debugQuerySlow = debug("lapin:query:slow");
+    private debugSchemaBuild = debug("lapin:schema");
+    private debugMigration = debug("lapin:migration");
 
-    private debugLog = debug("lapin:log")
-    private debugInfo = debug("lapin:info")
-    private debugWarn = debug("lapin:warn")
+    private debugLog = debug("lapin:log");
+    private debugInfo = debug("lapin:info");
+    private debugWarn = debug("lapin:warn");
 
     /**
      * Logs query and parameters used in it.
      */
     logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
         if (this.debugQueryLog.enabled) {
-            this.debugQueryLog(PlatformTools.highlightSql(query) + ";")
+            this.debugQueryLog(PlatformTools.highlightSql(query) + ";");
             if (parameters && parameters.length) {
-                this.debugQueryLog("parameters:", parameters)
+                this.debugQueryLog("parameters:", parameters);
             }
         }
     }
@@ -39,11 +39,11 @@ export class DebugLogger implements Logger {
         queryRunner?: QueryRunner,
     ) {
         if (this.debugQueryError.enabled) {
-            this.debugQueryError(PlatformTools.highlightSql(query) + ";")
+            this.debugQueryError(PlatformTools.highlightSql(query) + ";");
             if (parameters && parameters.length) {
-                this.debugQueryError("parameters:", parameters)
+                this.debugQueryError("parameters:", parameters);
             }
-            this.debugQueryError("error: ", error)
+            this.debugQueryError("error: ", error);
         }
     }
 
@@ -57,11 +57,11 @@ export class DebugLogger implements Logger {
         queryRunner?: QueryRunner,
     ) {
         if (this.debugQuerySlow.enabled) {
-            this.debugQuerySlow(PlatformTools.highlightSql(query) + ";")
+            this.debugQuerySlow(PlatformTools.highlightSql(query) + ";");
             if (parameters && parameters.length) {
-                this.debugQuerySlow("parameters:", parameters)
+                this.debugQuerySlow("parameters:", parameters);
             }
-            this.debugQuerySlow("execution time:", time)
+            this.debugQuerySlow("execution time:", time);
         }
     }
 
@@ -70,7 +70,7 @@ export class DebugLogger implements Logger {
      */
     logSchemaBuild(message: string, queryRunner?: QueryRunner) {
         if (this.debugSchemaBuild.enabled) {
-            this.debugSchemaBuild(message)
+            this.debugSchemaBuild(message);
         }
     }
 
@@ -79,7 +79,7 @@ export class DebugLogger implements Logger {
      */
     logMigration(message: string, queryRunner?: QueryRunner) {
         if (this.debugMigration.enabled) {
-            this.debugMigration(message)
+            this.debugMigration(message);
         }
     }
 
@@ -95,19 +95,19 @@ export class DebugLogger implements Logger {
         switch (level) {
             case "log":
                 if (this.debugLog.enabled) {
-                    this.debugLog(message)
+                    this.debugLog(message);
                 }
-                break
+                break;
             case "info":
                 if (this.debugInfo.enabled) {
-                    this.debugInfo(message)
+                    this.debugInfo(message);
                 }
-                break
+                break;
             case "warn":
                 if (this.debugWarn.enabled) {
-                    this.debugWarn(message)
+                    this.debugWarn(message);
                 }
-                break
+                break;
         }
     }
 }

@@ -4,4 +4,4 @@
 export type NonNever<T extends {}> = Pick<
     T,
     { [K in keyof T]: T[K] extends never ? never : K }[keyof T]
->
+>;

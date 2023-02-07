@@ -1,20 +1,20 @@
-import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
-import { QueryFailedError } from "../../error/QueryFailedError"
-import { AbstractSqliteQueryRunner } from "../sqlite-abstract/AbstractSqliteQueryRunner"
-import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
-import { ExpoDriver } from "./ExpoDriver"
-import { Broadcaster } from "../../subscriber/Broadcaster"
-import { QueryResult } from "../../query-runner/QueryResult"
+import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError";
+import { QueryFailedError } from "../../error/QueryFailedError";
+import { AbstractSqliteQueryRunner } from "../sqlite-abstract/AbstractSqliteQueryRunner";
+import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
+import { ExpoDriver } from "./ExpoDriver";
+import { Broadcaster } from "../../subscriber/Broadcaster";
+import { QueryResult } from "../../query-runner/QueryResult";
 
 // Needed to satisfy the Typescript compiler
 interface IResultSet {
-    insertId: number | undefined
-    rowsAffected: number
+    insertId: number | undefined;
+    rowsAffected: number;
     rows: {
-        length: number
-        item: (idx: number) => any
-        _array: any[]
-    }
+        length: number;
+        item: (idx: number) => any;
+        _array: any[];
+    };
 }
 interface ITransaction {
     executeSql: (
@@ -22,7 +22,7 @@ interface ITransaction {
         args: any[] | undefined,
         ok: (tsx: ITransaction, resultSet: IResultSet) => void,
         fail: (tsx: ITransaction, err: any) => void,
-    ) => void
+    ) => void;
 }
 
 /**
@@ -32,22 +32,22 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
     /**
      * Database driver used by connection.
      */
-    driver: ExpoDriver
+    driver: ExpoDriver;
 
     /**
      * Database transaction object
      */
-    private transaction?: ITransaction
+    private transaction?: ITransaction;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(driver: ExpoDriver) {
-        super()
-        this.driver = driver
-        this.connection = driver.connection
-        this.broadcaster = new Broadcaster(this)
+        super();
+        this.driver = driver;
+        this.connection = driver.connection;
+        this.broadcaster = new Broadcaster(this);
     }
 
     /**
@@ -62,17 +62,17 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
      * transaction.
      */
     async startTransaction(): Promise<void> {
-        this.isTransactionActive = true
+        this.isTransactionActive = true;
         try {
-            await this.broadcaster.broadcast("BeforeTransactionStart")
+            await this.broadcaster.broadcast("BeforeTransactionStart");
         } catch (err) {
-            this.isTransactionActive = false
-            throw err
+            this.isTransactionActive = false;
+            throw err;
         }
 
-        this.transactionDepth += 1
+        this.transactionDepth += 1;
 
-        await this.broadcaster.broadcast("AfterTransactionStart")
+        await this.broadcaster.broadcast("AfterTransactionStart");
     }
 
     /**
@@ -88,16 +88,16 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
             !this.isTransactionActive &&
             typeof this.transaction === "undefined"
         )
-            throw new TransactionNotStartedError()
+            throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionCommit")
+        await this.broadcaster.broadcast("BeforeTransactionCommit");
 
-        this.transaction = undefined
-        this.isTransactionActive = false
+        this.transaction = undefined;
+        this.isTransactionActive = false;
 
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionCommit")
+        await this.broadcaster.broadcast("AfterTransactionCommit");
     }
 
     /**
@@ -112,44 +112,44 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
             !this.isTransactionActive &&
             typeof this.transaction === "undefined"
         )
-            throw new TransactionNotStartedError()
+            throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionRollback")
+        await this.broadcaster.broadcast("BeforeTransactionRollback");
 
-        this.transaction = undefined
-        this.isTransactionActive = false
+        this.transaction = undefined;
+        this.isTransactionActive = false;
 
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionRollback")
+        await this.broadcaster.broadcast("AfterTransactionRollback");
     }
 
     /**
      * Called before migrations are run.
      */
     async beforeMigration(): Promise<void> {
-        const databaseConnection = await this.connect()
+        const databaseConnection = await this.connect();
         return new Promise((ok, fail) => {
             databaseConnection.exec(
                 [{ sql: "PRAGMA foreign_keys = OFF", args: [] }],
                 false,
                 (err: any) => (err ? fail(err) : ok()),
-            )
-        })
+            );
+        });
     }
 
     /**
      * Called after migrations are run.
      */
     async afterMigration(): Promise<void> {
-        const databaseConnection = await this.connect()
+        const databaseConnection = await this.connect();
         return new Promise((ok, fail) => {
             databaseConnection.exec(
                 [{ sql: "PRAGMA foreign_keys = ON", args: [] }],
                 false,
                 (err: any) => (err ? fail(err) : ok()),
-            )
-        })
+            );
+        });
     }
 
     /**
@@ -160,18 +160,18 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
         parameters?: any[],
         useStructuredResult = false,
     ): Promise<any> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
         return new Promise<any>(async (ok, fail) => {
-            const databaseConnection = await this.connect()
-            this.driver.connection.logger.logQuery(query, parameters, this)
-            const queryStartTime = +new Date()
+            const databaseConnection = await this.connect();
+            this.driver.connection.logger.logQuery(query, parameters, this);
+            const queryStartTime = +new Date();
             // All Expo SQL queries are executed in a transaction context
             databaseConnection.transaction(
                 async (transaction: ITransaction) => {
                     if (typeof this.transaction === "undefined") {
-                        await this.startTransaction()
-                        this.transaction = transaction
+                        await this.startTransaction();
+                        this.transaction = transaction;
                     }
                     this.transaction.executeSql(
                         query,
@@ -179,10 +179,10 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
                         (t: ITransaction, raw: IResultSet) => {
                             // log slow queries if maxQueryExecution time is set
                             const maxQueryExecutionTime =
-                                this.driver.options.maxQueryExecutionTime
-                            const queryEndTime = +new Date()
+                                this.driver.options.maxQueryExecutionTime;
+                            const queryEndTime = +new Date();
                             const queryExecutionTime =
-                                queryEndTime - queryStartTime
+                                queryEndTime - queryStartTime;
                             if (
                                 maxQueryExecutionTime &&
                                 queryExecutionTime > maxQueryExecutionTime
@@ -192,34 +192,34 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
                                     query,
                                     parameters,
                                     this,
-                                )
+                                );
                             }
 
-                            const result = new QueryResult()
+                            const result = new QueryResult();
 
                             if (raw?.hasOwnProperty("rowsAffected")) {
-                                result.affected = raw.rowsAffected
+                                result.affected = raw.rowsAffected;
                             }
 
                             if (raw?.hasOwnProperty("rows")) {
-                                let resultSet = []
+                                let resultSet = [];
                                 for (let i = 0; i < raw.rows.length; i++) {
-                                    resultSet.push(raw.rows.item(i))
+                                    resultSet.push(raw.rows.item(i));
                                 }
 
-                                result.raw = resultSet
-                                result.records = resultSet
+                                result.raw = resultSet;
+                                result.records = resultSet;
                             }
 
                             // return id of inserted row, if query was insert statement.
                             if (query.startsWith("INSERT INTO")) {
-                                result.raw = raw.insertId
+                                result.raw = raw.insertId;
                             }
 
                             if (useStructuredResult) {
-                                ok(result)
+                                ok(result);
                             } else {
-                                ok(result.raw)
+                                ok(result.raw);
                             }
                         },
                         (t: ITransaction, err: any) => {
@@ -228,20 +228,20 @@ export class ExpoQueryRunner extends AbstractSqliteQueryRunner {
                                 query,
                                 parameters,
                                 this,
-                            )
-                            fail(new QueryFailedError(query, parameters, err))
+                            );
+                            fail(new QueryFailedError(query, parameters, err));
                         },
-                    )
+                    );
                 },
                 async (err: any) => {
-                    await this.rollbackTransaction()
-                    fail(err)
+                    await this.rollbackTransaction();
+                    fail(err);
                 },
                 () => {
-                    this.isTransactionActive = false
-                    this.transaction = undefined
+                    this.isTransactionActive = false;
+                    this.transaction = undefined;
                 },
-            )
-        })
+            );
+        });
     }
 }

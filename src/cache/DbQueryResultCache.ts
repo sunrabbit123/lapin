@@ -1,11 +1,11 @@
-import { ObjectLiteral } from "../common/ObjectLiteral"
-import { DataSource } from "../data-source/DataSource"
-import { MssqlParameter } from "../driver/sqlserver/MssqlParameter"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { Table } from "../schema-builder/table/Table"
-import { QueryResultCache } from "./QueryResultCache"
-import { QueryResultCacheOptions } from "./QueryResultCacheOptions"
-import { v4 as uuidv4 } from "uuid"
+import { ObjectLiteral } from "../common/ObjectLiteral";
+import { DataSource } from "../data-source/DataSource";
+import { MssqlParameter } from "../driver/sqlserver/MssqlParameter";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { Table } from "../schema-builder/table/Table";
+import { QueryResultCache } from "./QueryResultCache";
+import { QueryResultCacheOptions } from "./QueryResultCacheOptions";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Caches query result into current database, into separate table called "query-result-cache".
@@ -15,32 +15,32 @@ export class DbQueryResultCache implements QueryResultCache {
     // Private properties
     // -------------------------------------------------------------------------
 
-    private queryResultCacheTable: string
+    private queryResultCacheTable: string;
 
-    private queryResultCacheDatabase?: string
+    private queryResultCacheDatabase?: string;
 
-    private queryResultCacheSchema?: string
+    private queryResultCacheSchema?: string;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(protected connection: DataSource) {
-        const { schema } = this.connection.driver.options as any
-        const database = this.connection.driver.database
+        const { schema } = this.connection.driver.options as any;
+        const database = this.connection.driver.database;
         const cacheOptions =
             typeof this.connection.options.cache === "object"
                 ? this.connection.options.cache
-                : {}
-        const cacheTableName = cacheOptions.tableName || "query-result-cache"
+                : {};
+        const cacheTableName = cacheOptions.tableName || "query-result-cache";
 
-        this.queryResultCacheDatabase = database
-        this.queryResultCacheSchema = schema
+        this.queryResultCacheDatabase = database;
+        this.queryResultCacheSchema = schema;
         this.queryResultCacheTable = this.connection.driver.buildTableName(
             cacheTableName,
             schema,
             database,
-        )
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -61,12 +61,12 @@ export class DbQueryResultCache implements QueryResultCache {
      * Creates table for storing cache if it does not exist yet.
      */
     async synchronize(queryRunner?: QueryRunner): Promise<void> {
-        queryRunner = this.getQueryRunner(queryRunner)
-        const driver = this.connection.driver
+        queryRunner = this.getQueryRunner(queryRunner);
+        const driver = this.connection.driver;
         const tableExist = await queryRunner.hasTable(
             this.queryResultCacheTable,
-        ) // todo: table name should be configurable
-        if (tableExist) return
+        ); // todo: table name should be configurable
+        if (tableExist) return;
 
         await queryRunner.createTable(
             new Table({
@@ -127,7 +127,7 @@ export class DbQueryResultCache implements QueryResultCache {
                     },
                 ],
             }),
-        )
+        );
     }
 
     /**
@@ -139,11 +139,11 @@ export class DbQueryResultCache implements QueryResultCache {
         options: QueryResultCacheOptions,
         queryRunner?: QueryRunner,
     ): Promise<QueryResultCacheOptions | undefined> {
-        queryRunner = this.getQueryRunner(queryRunner)
+        queryRunner = this.getQueryRunner(queryRunner);
         const qb = this.connection
             .createQueryBuilder(queryRunner)
             .select()
-            .from(this.queryResultCacheTable, "cache")
+            .from(this.queryResultCacheTable, "cache");
 
         if (options.identifier) {
             return qb
@@ -158,7 +158,7 @@ export class DbQueryResultCache implements QueryResultCache {
                             ? new MssqlParameter(options.identifier, "nvarchar")
                             : options.identifier,
                 })
-                .getRawOne()
+                .getRawOne();
         } else if (options.query) {
             if (this.connection.driver.options.type === "oracle") {
                 return qb
@@ -168,7 +168,7 @@ export class DbQueryResultCache implements QueryResultCache {
                         )}, :query) = 0`,
                         { query: options.query },
                     )
-                    .getRawOne()
+                    .getRawOne();
             }
 
             return qb
@@ -179,10 +179,10 @@ export class DbQueryResultCache implements QueryResultCache {
                             ? new MssqlParameter(options.query, "nvarchar")
                             : options.query,
                 })
-                .getRawOne()
+                .getRawOne();
         }
 
-        return Promise.resolve(undefined)
+        return Promise.resolve(undefined);
     }
 
     /**
@@ -192,14 +192,14 @@ export class DbQueryResultCache implements QueryResultCache {
         const duration =
             typeof savedCache.duration === "string"
                 ? parseInt(savedCache.duration)
-                : savedCache.duration
+                : savedCache.duration;
         return (
             (typeof savedCache.time === "string"
                 ? parseInt(savedCache.time as any)
                 : savedCache.time)! +
                 duration <
             new Date().getTime()
-        )
+        );
     }
 
     /**
@@ -212,13 +212,13 @@ export class DbQueryResultCache implements QueryResultCache {
     ): Promise<void> {
         const shouldCreateQueryRunner =
             queryRunner === undefined ||
-            queryRunner?.getReplicationMode() === "slave"
+            queryRunner?.getReplicationMode() === "slave";
 
         if (queryRunner === undefined || shouldCreateQueryRunner) {
-            queryRunner = this.connection.createQueryRunner("master")
+            queryRunner = this.connection.createQueryRunner("master");
         }
 
-        let insertedValues: ObjectLiteral = options
+        let insertedValues: ObjectLiteral = options;
         if (this.connection.driver.options.type === "mssql") {
             // todo: bad abstraction, re-implement this part, probably better if we create an entity metadata for cache table
             insertedValues = {
@@ -227,7 +227,7 @@ export class DbQueryResultCache implements QueryResultCache {
                 duration: new MssqlParameter(options.duration, "int"),
                 query: new MssqlParameter(options.query, "nvarchar"),
                 result: new MssqlParameter(options.result, "nvarchar"),
-            }
+            };
         }
 
         if (savedCache && savedCache.identifier) {
@@ -235,37 +235,37 @@ export class DbQueryResultCache implements QueryResultCache {
             const qb = queryRunner.manager
                 .createQueryBuilder()
                 .update(this.queryResultCacheTable)
-                .set(insertedValues)
+                .set(insertedValues);
 
             qb.where(`${qb.escape("identifier")} = :condition`, {
                 condition: insertedValues.identifier,
-            })
-            await qb.execute()
+            });
+            await qb.execute();
         } else if (savedCache && savedCache.query) {
             // if exist then update
             const qb = queryRunner.manager
                 .createQueryBuilder()
                 .update(this.queryResultCacheTable)
-                .set(insertedValues)
+                .set(insertedValues);
 
             if (this.connection.driver.options.type === "oracle") {
                 qb.where(`dbms_lob.compare("query", :condition) = 0`, {
                     condition: insertedValues.query,
-                })
+                });
             } else {
                 qb.where(`${qb.escape("query")} = :condition`, {
                     condition: insertedValues.query,
-                })
+                });
             }
 
-            await qb.execute()
+            await qb.execute();
         } else {
             // Spanner does not support auto-generated columns
             if (
                 this.connection.driver.options.type === "spanner" &&
                 !insertedValues.id
             ) {
-                insertedValues.id = uuidv4()
+                insertedValues.id = uuidv4();
             }
 
             // otherwise insert
@@ -274,11 +274,11 @@ export class DbQueryResultCache implements QueryResultCache {
                 .insert()
                 .into(this.queryResultCacheTable)
                 .values(insertedValues)
-                .execute()
+                .execute();
         }
 
         if (shouldCreateQueryRunner) {
-            await queryRunner.release()
+            await queryRunner.release();
         }
     }
 
@@ -288,7 +288,7 @@ export class DbQueryResultCache implements QueryResultCache {
     async clear(queryRunner: QueryRunner): Promise<void> {
         return this.getQueryRunner(queryRunner).clearTable(
             this.queryResultCacheTable,
-        )
+        );
     }
 
     /**
@@ -298,22 +298,22 @@ export class DbQueryResultCache implements QueryResultCache {
         identifiers: string[],
         queryRunner?: QueryRunner,
     ): Promise<void> {
-        let _queryRunner: QueryRunner = queryRunner || this.getQueryRunner()
+        let _queryRunner: QueryRunner = queryRunner || this.getQueryRunner();
         await Promise.all(
             identifiers.map((identifier) => {
-                const qb = _queryRunner.manager.createQueryBuilder()
+                const qb = _queryRunner.manager.createQueryBuilder();
                 return qb
                     .delete()
                     .from(this.queryResultCacheTable)
                     .where(`${qb.escape("identifier")} = :identifier`, {
                         identifier,
                     })
-                    .execute()
+                    .execute();
             }),
-        )
+        );
 
         if (!queryRunner) {
-            await _queryRunner.release()
+            await _queryRunner.release();
         }
     }
 
@@ -325,8 +325,8 @@ export class DbQueryResultCache implements QueryResultCache {
      * Gets a query runner to work with.
      */
     protected getQueryRunner(queryRunner?: QueryRunner): QueryRunner {
-        if (queryRunner) return queryRunner
+        if (queryRunner) return queryRunner;
 
-        return this.connection.createQueryRunner()
+        return this.connection.createQueryRunner();
     }
 }

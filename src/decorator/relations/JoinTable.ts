@@ -1,13 +1,13 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { JoinTableMetadataArgs } from "../../metadata-args/JoinTableMetadataArgs"
-import { JoinTableMultipleColumnsOptions } from "../options/JoinTableMultipleColumnsOptions"
-import { JoinTableOptions } from "../options/JoinTableOptions"
+import { getMetadataArgsStorage } from "../../globals";
+import { JoinTableMetadataArgs } from "../../metadata-args/JoinTableMetadataArgs";
+import { JoinTableMultipleColumnsOptions } from "../options/JoinTableMultipleColumnsOptions";
+import { JoinTableOptions } from "../options/JoinTableOptions";
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
  * Its also used to set a custom junction table's name, column names and referenced columns.
  */
-export function JoinTable(): PropertyDecorator | Function
+export function JoinTable(): PropertyDecorator | Function;
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
@@ -15,7 +15,7 @@ export function JoinTable(): PropertyDecorator | Function
  */
 export function JoinTable(
     options: JoinTableOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
@@ -23,7 +23,7 @@ export function JoinTable(
  */
 export function JoinTable(
     options: JoinTableMultipleColumnsOptions,
-): PropertyDecorator | Function
+): PropertyDecorator | Function;
 
 /**
  * JoinTable decorator is used in many-to-many relationship to specify owner side of relationship.
@@ -35,7 +35,7 @@ export function JoinTable(
     return function (object: Object, propertyName: string) {
         options =
             options ||
-            ({} as JoinTableOptions | JoinTableMultipleColumnsOptions)
+            ({} as JoinTableOptions | JoinTableMultipleColumnsOptions);
         getMetadataArgsStorage().joinTables.push({
             target: object.constructor,
             propertyName: propertyName,
@@ -53,6 +53,6 @@ export function JoinTable(
             database:
                 options && options.database ? options.database : undefined,
             synchronize: !(options && options.synchronize === false),
-        } as JoinTableMetadataArgs)
-    }
+        } as JoinTableMetadataArgs);
+    };
 }

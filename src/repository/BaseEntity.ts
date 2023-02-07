@@ -1,20 +1,20 @@
-import { Repository } from "./Repository"
-import { FindOptionsWhere } from "../find-options/FindOptionsWhere"
-import { DeepPartial } from "../common/DeepPartial"
-import { SaveOptions } from "./SaveOptions"
-import { FindOneOptions } from "../find-options/FindOneOptions"
-import { RemoveOptions } from "./RemoveOptions"
-import { FindManyOptions } from "../find-options/FindManyOptions"
-import { DataSource } from "../data-source"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { InsertResult } from "../query-builder/result/InsertResult"
-import { UpdateResult } from "../query-builder/result/UpdateResult"
-import { DeleteResult } from "../query-builder/result/DeleteResult"
-import { ObjectID } from "../driver/mongodb/typings"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity"
-import { UpsertOptions } from "./UpsertOptions"
-import { EntityTarget } from "../common/EntityTarget"
+import { Repository } from "./Repository";
+import { FindOptionsWhere } from "../find-options/FindOptionsWhere";
+import { DeepPartial } from "../common/DeepPartial";
+import { SaveOptions } from "./SaveOptions";
+import { FindOneOptions } from "../find-options/FindOneOptions";
+import { RemoveOptions } from "./RemoveOptions";
+import { FindManyOptions } from "../find-options/FindManyOptions";
+import { DataSource } from "../data-source";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { InsertResult } from "../query-builder/result/InsertResult";
+import { UpdateResult } from "../query-builder/result/UpdateResult";
+import { DeleteResult } from "../query-builder/result/DeleteResult";
+import { ObjectID } from "../driver/mongodb/typings";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { QueryDeepPartialEntity } from "../query-builder/QueryPartialEntity";
+import { UpsertOptions } from "./UpsertOptions";
+import { EntityTarget } from "../common/EntityTarget";
 
 /**
  * Base abstract entity for all entities, used in ActiveRecord patterns.
@@ -27,7 +27,7 @@ export class BaseEntity {
     /**
      * DataSource used in all static methods of the BaseEntity.
      */
-    private static dataSource: DataSource | null
+    private static dataSource: DataSource | null;
 
     // -------------------------------------------------------------------------
     // Public Methods
@@ -38,8 +38,8 @@ export class BaseEntity {
      * If entity composite compose ids, it will check them all.
      */
     hasId(): boolean {
-        const baseEntity = this.constructor as typeof BaseEntity
-        return baseEntity.getRepository().hasId(this)
+        const baseEntity = this.constructor as typeof BaseEntity;
+        return baseEntity.getRepository().hasId(this);
     }
 
     /**
@@ -47,50 +47,52 @@ export class BaseEntity {
      * If entity does not exist in the database then inserts, otherwise updates.
      */
     save(options?: SaveOptions): Promise<this> {
-        const baseEntity = this.constructor as typeof BaseEntity
-        return baseEntity.getRepository().save(this, options)
+        const baseEntity = this.constructor as typeof BaseEntity;
+        return baseEntity.getRepository().save(this, options);
     }
 
     /**
      * Removes current entity from the database.
      */
     remove(options?: RemoveOptions): Promise<this> {
-        const baseEntity = this.constructor as typeof BaseEntity
-        return baseEntity.getRepository().remove(this, options) as Promise<this>
+        const baseEntity = this.constructor as typeof BaseEntity;
+        return baseEntity
+            .getRepository()
+            .remove(this, options) as Promise<this>;
     }
 
     /**
      * Records the delete date of current entity.
      */
     softRemove(options?: SaveOptions): Promise<this> {
-        const baseEntity = this.constructor as typeof BaseEntity
-        return baseEntity.getRepository().softRemove(this, options)
+        const baseEntity = this.constructor as typeof BaseEntity;
+        return baseEntity.getRepository().softRemove(this, options);
     }
 
     /**
      * Recovers a given entity in the database.
      */
     recover(options?: SaveOptions): Promise<this> {
-        const baseEntity = this.constructor as typeof BaseEntity
-        return baseEntity.getRepository().recover(this, options)
+        const baseEntity = this.constructor as typeof BaseEntity;
+        return baseEntity.getRepository().recover(this, options);
     }
 
     /**
      * Reloads entity data from the database.
      */
     async reload(): Promise<void> {
-        const baseEntity = this.constructor as typeof BaseEntity
-        const id = baseEntity.getRepository().metadata.getEntityIdMap(this)
+        const baseEntity = this.constructor as typeof BaseEntity;
+        const id = baseEntity.getRepository().metadata.getEntityIdMap(this);
         if (!id) {
             throw new Error(
                 `Entity doesn't have id-s set, cannot reload entity`,
-            )
+            );
         }
         const reloadedEntity: BaseEntity = await baseEntity
             .getRepository()
-            .findOneByOrFail(id)
+            .findOneByOrFail(id);
 
-        ObjectUtils.assign(this, reloadedEntity)
+        ObjectUtils.assign(this, reloadedEntity);
     }
 
     // -------------------------------------------------------------------------
@@ -101,7 +103,7 @@ export class BaseEntity {
      * Sets DataSource to be used by entity.
      */
     static useDataSource(dataSource: DataSource | null) {
-        this.dataSource = dataSource
+        this.dataSource = dataSource;
     }
 
     /**
@@ -110,10 +112,10 @@ export class BaseEntity {
     static getRepository<T extends BaseEntity>(
         this: { new (): T } & typeof BaseEntity,
     ): Repository<T> {
-        const dataSource = (this as typeof BaseEntity).dataSource
+        const dataSource = (this as typeof BaseEntity).dataSource;
         if (!dataSource)
-            throw new Error(`DataSource is not set for this entity.`)
-        return dataSource.getRepository<T>(this)
+            throw new Error(`DataSource is not set for this entity.`);
+        return dataSource.getRepository<T>(this);
     }
 
     /**
@@ -122,7 +124,7 @@ export class BaseEntity {
      * then it returns a name of that schema instead.
      */
     static get target(): EntityTarget<any> {
-        return this.getRepository().target
+        return this.getRepository().target;
     }
 
     /**
@@ -130,7 +132,7 @@ export class BaseEntity {
      * If entity composite compose ids, it will check them all.
      */
     static hasId(entity: BaseEntity): boolean {
-        return this.getRepository().hasId(entity)
+        return this.getRepository().hasId(entity);
     }
 
     /**
@@ -140,7 +142,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entity: T,
     ): any {
-        return this.getRepository<T>().getId(entity)
+        return this.getRepository<T>().getId(entity);
     }
 
     /**
@@ -150,7 +152,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         alias?: string,
     ): SelectQueryBuilder<T> {
-        return this.getRepository<T>().createQueryBuilder(alias)
+        return this.getRepository<T>().createQueryBuilder(alias);
     }
 
     /**
@@ -158,7 +160,7 @@ export class BaseEntity {
      */
     static create<T extends BaseEntity>(
         this: { new (): T } & typeof BaseEntity,
-    ): T
+    ): T;
 
     /**
      * Creates a new entities and copies all entity properties from given objects into their new entities.
@@ -167,7 +169,7 @@ export class BaseEntity {
     static create<T extends BaseEntity>(
         this: { new (): T } & typeof BaseEntity,
         entityLikeArray: DeepPartial<T>[],
-    ): T[]
+    ): T[];
 
     /**
      * Creates a new entity instance and copies all entity properties from this object into a new entity.
@@ -176,7 +178,7 @@ export class BaseEntity {
     static create<T extends BaseEntity>(
         this: { new (): T } & typeof BaseEntity,
         entityLike: DeepPartial<T>,
-    ): T
+    ): T;
 
     /**
      * Creates a new entity instance and copies all entity properties from this object into a new entity.
@@ -186,7 +188,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entityOrEntities?: any,
     ) {
-        return this.getRepository<T>().create(entityOrEntities)
+        return this.getRepository<T>().create(entityOrEntities);
     }
 
     /**
@@ -200,7 +202,7 @@ export class BaseEntity {
         return this.getRepository<T>().merge(
             mergeIntoEntity,
             ...entityLikes,
-        ) as T
+        ) as T;
     }
 
     /**
@@ -216,8 +218,8 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entityLike: DeepPartial<T>,
     ): Promise<T | undefined> {
-        const thisRepository = this.getRepository<T>()
-        return thisRepository.preload(entityLike)
+        const thisRepository = this.getRepository<T>();
+        return thisRepository.preload(entityLike);
     }
 
     /**
@@ -228,7 +230,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entities: DeepPartial<T>[],
         options?: SaveOptions,
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Saves a given entity in the database.
@@ -238,7 +240,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entity: DeepPartial<T>,
         options?: SaveOptions,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Saves one or many given entities.
@@ -248,7 +250,7 @@ export class BaseEntity {
         entityOrEntities: DeepPartial<T> | DeepPartial<T>[],
         options?: SaveOptions,
     ) {
-        return this.getRepository<T>().save(entityOrEntities as any, options)
+        return this.getRepository<T>().save(entityOrEntities as any, options);
     }
 
     /**
@@ -258,7 +260,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entities: T[],
         options?: RemoveOptions,
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Removes a given entity from the database.
@@ -267,7 +269,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entity: T,
         options?: RemoveOptions,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Removes one or many given entities.
@@ -277,7 +279,7 @@ export class BaseEntity {
         entityOrEntities: T | T[],
         options?: RemoveOptions,
     ) {
-        return this.getRepository<T>().remove(entityOrEntities as any, options)
+        return this.getRepository<T>().remove(entityOrEntities as any, options);
     }
 
     /**
@@ -287,7 +289,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entities: T[],
         options?: SaveOptions,
-    ): Promise<T[]>
+    ): Promise<T[]>;
 
     /**
      * Records the delete date of a given entity.
@@ -296,7 +298,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entity: T,
         options?: SaveOptions,
-    ): Promise<T>
+    ): Promise<T>;
 
     /**
      * Records the delete date of one or many given entities.
@@ -309,7 +311,7 @@ export class BaseEntity {
         return this.getRepository<T>().softRemove(
             entityOrEntities as any,
             options,
-        )
+        );
     }
 
     /**
@@ -322,7 +324,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     ): Promise<InsertResult> {
-        return this.getRepository<T>().insert(entity)
+        return this.getRepository<T>().insert(entity);
     }
 
     /**
@@ -345,7 +347,7 @@ export class BaseEntity {
             | FindOptionsWhere<T>,
         partialEntity: QueryDeepPartialEntity<T>,
     ): Promise<UpdateResult> {
-        return this.getRepository<T>().update(criteria, partialEntity)
+        return this.getRepository<T>().update(criteria, partialEntity);
     }
 
     /**
@@ -363,7 +365,7 @@ export class BaseEntity {
         return this.getRepository<T>().upsert(
             entityOrEntities,
             conflictPathsOrOptions,
-        )
+        );
     }
 
     /**
@@ -385,7 +387,7 @@ export class BaseEntity {
             | ObjectID[]
             | FindOptionsWhere<T>,
     ): Promise<DeleteResult> {
-        return this.getRepository<T>().delete(criteria)
+        return this.getRepository<T>().delete(criteria);
     }
 
     /**
@@ -395,7 +397,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         options?: FindManyOptions<T>,
     ): Promise<number> {
-        return this.getRepository<T>().count(options)
+        return this.getRepository<T>().count(options);
     }
 
     /**
@@ -405,7 +407,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
     ): Promise<number> {
-        return this.getRepository<T>().countBy(where)
+        return this.getRepository<T>().countBy(where);
     }
 
     /**
@@ -415,7 +417,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         options?: FindManyOptions<T>,
     ): Promise<T[]> {
-        return this.getRepository<T>().find(options)
+        return this.getRepository<T>().find(options);
     }
 
     /**
@@ -425,7 +427,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
     ): Promise<T[]> {
-        return this.getRepository<T>().findBy(where)
+        return this.getRepository<T>().findBy(where);
     }
 
     /**
@@ -437,7 +439,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         options?: FindManyOptions<T>,
     ): Promise<[T[], number]> {
-        return this.getRepository<T>().findAndCount(options)
+        return this.getRepository<T>().findAndCount(options);
     }
 
     /**
@@ -449,7 +451,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
     ): Promise<[T[], number]> {
-        return this.getRepository<T>().findAndCountBy(where)
+        return this.getRepository<T>().findAndCountBy(where);
     }
 
     /**
@@ -466,7 +468,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         ids: any[],
     ): Promise<T[]> {
-        return this.getRepository<T>().findByIds(ids)
+        return this.getRepository<T>().findByIds(ids);
     }
 
     /**
@@ -476,7 +478,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         options: FindOneOptions<T>,
     ): Promise<T | null> {
-        return this.getRepository<T>().findOne(options)
+        return this.getRepository<T>().findOne(options);
     }
 
     /**
@@ -486,7 +488,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
     ): Promise<T | null> {
-        return this.getRepository<T>().findOneBy(where)
+        return this.getRepository<T>().findOneBy(where);
     }
 
     /**
@@ -502,7 +504,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         id: string | number | Date | ObjectID,
     ): Promise<T | null> {
-        return this.getRepository<T>().findOneById(id)
+        return this.getRepository<T>().findOneById(id);
     }
 
     /**
@@ -512,7 +514,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         options: FindOneOptions<T>,
     ): Promise<T> {
-        return this.getRepository<T>().findOneOrFail(options)
+        return this.getRepository<T>().findOneOrFail(options);
     }
 
     /**
@@ -522,7 +524,7 @@ export class BaseEntity {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
     ): Promise<T> {
-        return this.getRepository<T>().findOneByOrFail(where)
+        return this.getRepository<T>().findOneByOrFail(where);
     }
 
     /**
@@ -534,7 +536,7 @@ export class BaseEntity {
         query: string,
         parameters?: any[],
     ): Promise<any> {
-        return this.getRepository<T>().query(query, parameters)
+        return this.getRepository<T>().query(query, parameters);
     }
 
     /**
@@ -543,6 +545,6 @@ export class BaseEntity {
     static clear<T extends BaseEntity>(
         this: { new (): T } & typeof BaseEntity,
     ): Promise<void> {
-        return this.getRepository<T>().clear()
+        return this.getRepository<T>().clear();
     }
 }

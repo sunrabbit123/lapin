@@ -1,6 +1,6 @@
-import { parseString as xmlParser } from "xml2js"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { DataSourceOptions } from "../../data-source/DataSourceOptions"
+import { parseString as xmlParser } from "xml2js";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { DataSourceOptions } from "../../data-source/DataSourceOptions";
 
 /**
  * Reads connection options defined in the xml file.
@@ -16,7 +16,7 @@ export class ConnectionOptionsXmlReader {
      * Reads connection options from given xml file.
      */
     async read(path: string): Promise<DataSourceOptions[]> {
-        const xml = await this.readXml(path)
+        const xml = await this.readXml(path);
         return (xml.connection as any[]).map((connection) => {
             return {
                 name: connection.$.name,
@@ -50,8 +50,8 @@ export class ConnectionOptionsXmlReader {
                 logging: connection.logging[0]
                     ? connection.logging[0].split(",")
                     : undefined,
-            }
-        })
+            };
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -62,13 +62,13 @@ export class ConnectionOptionsXmlReader {
      * Reads xml file contents and returns them in a promise.
      */
     protected readXml(path: string): Promise<any> {
-        const xmlOptions = { trim: true, explicitRoot: false }
+        const xmlOptions = { trim: true, explicitRoot: false };
         return new Promise((ok, fail) => {
             xmlParser(
                 PlatformTools.readFileSync(path),
                 xmlOptions,
                 (err: any, result: any) => (err ? fail(err) : ok(result)),
-            )
-        })
+            );
+        });
     }
 }

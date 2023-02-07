@@ -1,13 +1,13 @@
-import { Subject } from "../Subject"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { OrmUtils } from "../../util/OrmUtils"
-import { NestedSetMultipleRootError } from "../../error/NestedSetMultipleRootError"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { EntityMetadata } from "../../metadata/EntityMetadata"
+import { Subject } from "../Subject";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { OrmUtils } from "../../util/OrmUtils";
+import { NestedSetMultipleRootError } from "../../error/NestedSetMultipleRootError";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { EntityMetadata } from "../../metadata/EntityMetadata";
 
 class NestedSetIds {
-    left: number
-    right: number
+    left: number;
+    right: number;
 }
 
 /**
@@ -29,26 +29,26 @@ export class NestedSetSubjectExecutor {
      */
     async insert(subject: Subject): Promise<void> {
         const escape = (alias: string) =>
-            this.queryRunner.connection.driver.escape(alias)
-        const tableName = this.getTableName(subject.metadata.tablePath)
+            this.queryRunner.connection.driver.escape(alias);
+        const tableName = this.getTableName(subject.metadata.tablePath);
         const leftColumnName = escape(
             subject.metadata.nestedSetLeftColumn!.databaseName,
-        )
+        );
         const rightColumnName = escape(
             subject.metadata.nestedSetRightColumn!.databaseName,
-        )
+        );
 
         let parent = subject.metadata.treeParentRelation!.getEntityValue(
             subject.entity!,
-        ) // if entity was attached via parent
+        ); // if entity was attached via parent
         if (!parent && subject.parentSubject && subject.parentSubject.entity)
             // if entity was attached via children
             parent = subject.parentSubject.insertedValueSet
                 ? subject.parentSubject.insertedValueSet
-                : subject.parentSubject.entity
-        const parentId = subject.metadata.getEntityIdMap(parent)
+                : subject.parentSubject.entity;
+        const parentId = subject.metadata.getEntityIdMap(parent);
 
-        let parentNsRight: number | undefined = undefined
+        let parentNsRight: number | undefined = undefined;
         if (parentId) {
             parentNsRight = await this.queryRunner.manager
                 .createQueryBuilder()
@@ -62,10 +62,10 @@ export class NestedSetSubjectExecutor {
                 .whereInIds(parentId)
                 .getRawOne()
                 .then((result) => {
-                    const value: any = result ? result["right"] : undefined
+                    const value: any = result ? result["right"] : undefined;
                     // CockroachDB returns numeric types as string
-                    return typeof value === "string" ? parseInt(value) : value
-                })
+                    return typeof value === "string" ? parseInt(value) : value;
+                });
         }
 
         if (parentNsRight !== undefined) {
@@ -74,7 +74,7 @@ export class NestedSetSubjectExecutor {
                     `${leftColumnName} = CASE WHEN ${leftColumnName} > ${parentNsRight} THEN ${leftColumnName} + 2 ELSE ${leftColumnName} END,` +
                     `${rightColumnName} = ${rightColumnName} + 2 ` +
                     `WHERE ${rightColumnName} >= ${parentNsRight}`,
-            )
+            );
 
             OrmUtils.mergeDeep(
                 subject.insertedValueSet,
@@ -84,18 +84,18 @@ export class NestedSetSubjectExecutor {
                 subject.metadata.nestedSetRightColumn!.createValueMap(
                     parentNsRight + 1,
                 ),
-            )
+            );
         } else {
-            const isUniqueRoot = await this.isUniqueRootEntity(subject, parent)
+            const isUniqueRoot = await this.isUniqueRootEntity(subject, parent);
 
             // Validate if a root entity already exits and throw an exception
-            if (!isUniqueRoot) throw new NestedSetMultipleRootError()
+            if (!isUniqueRoot) throw new NestedSetMultipleRootError();
 
             OrmUtils.mergeDeep(
                 subject.insertedValueSet,
                 subject.metadata.nestedSetLeftColumn!.createValueMap(1),
                 subject.metadata.nestedSetRightColumn!.createValueMap(2),
-            )
+            );
         }
     }
 
@@ -105,12 +105,12 @@ export class NestedSetSubjectExecutor {
     async update(subject: Subject): Promise<void> {
         let parent = subject.metadata.treeParentRelation!.getEntityValue(
             subject.entity!,
-        ) // if entity was attached via parent
+        ); // if entity was attached via parent
         if (!parent && subject.parentSubject && subject.parentSubject.entity)
             // if entity was attached via children
-            parent = subject.parentSubject.entity
+            parent = subject.parentSubject.entity;
 
-        let entity = subject.databaseEntity // if entity was attached via parent
+        let entity = subject.databaseEntity; // if entity was attached via parent
         if (!entity && parent)
             // if entity was attached via children
             entity = subject.metadata
@@ -118,73 +118,73 @@ export class NestedSetSubjectExecutor {
                 .find((child: any) => {
                     return Object.entries(subject.identifier!).every(
                         ([key, value]) => child[key] === value,
-                    )
-                })
+                    );
+                });
 
         // Exit if the parent or the entity where never set
         if (entity === undefined || parent === undefined) {
-            return
+            return;
         }
 
         const oldParent = subject.metadata.treeParentRelation!.getEntityValue(
             entity!,
-        )
-        const oldParentId = subject.metadata.getEntityIdMap(oldParent)
-        const parentId = subject.metadata.getEntityIdMap(parent)
+        );
+        const oldParentId = subject.metadata.getEntityIdMap(oldParent);
+        const parentId = subject.metadata.getEntityIdMap(parent);
 
         // Exit if the new and old parents are the same
         if (OrmUtils.compareIds(oldParentId, parentId)) {
-            return
+            return;
         }
 
         if (parent) {
             const escape = (alias: string) =>
-                this.queryRunner.connection.driver.escape(alias)
-            const tableName = this.getTableName(subject.metadata.tablePath)
+                this.queryRunner.connection.driver.escape(alias);
+            const tableName = this.getTableName(subject.metadata.tablePath);
             const leftColumnName = escape(
                 subject.metadata.nestedSetLeftColumn!.databaseName,
-            )
+            );
             const rightColumnName = escape(
                 subject.metadata.nestedSetRightColumn!.databaseName,
-            )
+            );
 
-            const entityId = subject.metadata.getEntityIdMap(entity)
+            const entityId = subject.metadata.getEntityIdMap(entity);
 
-            let entityNs: NestedSetIds | undefined = undefined
+            let entityNs: NestedSetIds | undefined = undefined;
             if (entityId) {
                 entityNs = (
                     await this.getNestedSetIds(subject.metadata, entityId)
-                )[0]
+                )[0];
             }
 
-            let parentNs: NestedSetIds | undefined = undefined
+            let parentNs: NestedSetIds | undefined = undefined;
             if (parentId) {
                 parentNs = (
                     await this.getNestedSetIds(subject.metadata, parentId)
-                )[0]
+                )[0];
             }
 
             if (entityNs !== undefined && parentNs !== undefined) {
-                const isMovingUp = parentNs.left > entityNs.left
-                const treeSize = entityNs.right - entityNs.left + 1
+                const isMovingUp = parentNs.left > entityNs.left;
+                const treeSize = entityNs.right - entityNs.left + 1;
 
-                let entitySize: number
+                let entitySize: number;
                 if (isMovingUp) {
-                    entitySize = parentNs.left - entityNs.right
+                    entitySize = parentNs.left - entityNs.right;
                 } else {
-                    entitySize = parentNs.right - entityNs.left
+                    entitySize = parentNs.right - entityNs.left;
                 }
 
                 // Moved entity logic
                 const updateLeftSide =
                     `WHEN ${leftColumnName} >= ${entityNs.left} AND ` +
                     `${leftColumnName} < ${entityNs.right} ` +
-                    `THEN ${leftColumnName} + ${entitySize} `
+                    `THEN ${leftColumnName} + ${entitySize} `;
 
                 const updateRightSide =
                     `WHEN ${rightColumnName} > ${entityNs.left} AND ` +
                     `${rightColumnName} <= ${entityNs.right} ` +
-                    `THEN ${rightColumnName} + ${entitySize} `
+                    `THEN ${rightColumnName} + ${entitySize} `;
 
                 // Update the surrounding entities
                 if (isMovingUp) {
@@ -204,7 +204,7 @@ export class NestedSetSubjectExecutor {
                             updateRightSide +
                             `ELSE ${rightColumnName} ` +
                             `END`,
-                    )
+                    );
                 } else {
                     await this.queryRunner.query(
                         `UPDATE ${tableName} ` +
@@ -222,14 +222,14 @@ export class NestedSetSubjectExecutor {
                             updateRightSide +
                             `ELSE ${rightColumnName} ` +
                             `END`,
-                    )
+                    );
                 }
             }
         } else {
-            const isUniqueRoot = await this.isUniqueRootEntity(subject, parent)
+            const isUniqueRoot = await this.isUniqueRootEntity(subject, parent);
 
             // Validate if a root entity already exits and throw an exception
-            if (!isUniqueRoot) throw new NestedSetMultipleRootError()
+            if (!isUniqueRoot) throw new NestedSetMultipleRootError();
         }
     }
 
@@ -237,33 +237,33 @@ export class NestedSetSubjectExecutor {
      * Executes operations when subject is being removed.
      */
     async remove(subjects: Subject | Subject[]): Promise<void> {
-        if (!Array.isArray(subjects)) subjects = [subjects]
+        if (!Array.isArray(subjects)) subjects = [subjects];
 
-        const metadata = subjects[0].metadata
+        const metadata = subjects[0].metadata;
 
         const escape = (alias: string) =>
-            this.queryRunner.connection.driver.escape(alias)
-        const tableName = this.getTableName(metadata.tablePath)
+            this.queryRunner.connection.driver.escape(alias);
+        const tableName = this.getTableName(metadata.tablePath);
         const leftColumnName = escape(
             metadata.nestedSetLeftColumn!.databaseName,
-        )
+        );
         const rightColumnName = escape(
             metadata.nestedSetRightColumn!.databaseName,
-        )
+        );
 
-        let entitiesIds: ObjectLiteral[] = []
+        let entitiesIds: ObjectLiteral[] = [];
         for (const subject of subjects) {
-            const entityId = metadata.getEntityIdMap(subject.entity)
+            const entityId = metadata.getEntityIdMap(subject.entity);
 
             if (entityId) {
-                entitiesIds.push(entityId)
+                entitiesIds.push(entityId);
             }
         }
 
-        let entitiesNs = await this.getNestedSetIds(metadata, entitiesIds)
+        let entitiesNs = await this.getNestedSetIds(metadata, entitiesIds);
 
         for (const entity of entitiesNs) {
-            const treeSize = entity.right - entity.left + 1
+            const treeSize = entity.right - entity.left + 1;
 
             await this.queryRunner.query(
                 `UPDATE ${tableName} ` +
@@ -275,7 +275,7 @@ export class NestedSetSubjectExecutor {
                     `WHEN ${rightColumnName} > ${entity.right} THEN ${rightColumnName} - ${treeSize} ` +
                     `ELSE ${rightColumnName} ` +
                     `END`,
-            )
+            );
         }
     }
 
@@ -293,13 +293,13 @@ export class NestedSetSubjectExecutor {
             right: `${metadata.targetName}.${
                 metadata.nestedSetRightColumn!.propertyPath
             }`,
-        }
+        };
 
-        const queryBuilder = this.queryRunner.manager.createQueryBuilder()
+        const queryBuilder = this.queryRunner.manager.createQueryBuilder();
 
         Object.entries(select).forEach(([key, value]) => {
-            queryBuilder.addSelect(value, key)
-        })
+            queryBuilder.addSelect(value, key);
+        });
 
         return queryBuilder
             .from(metadata.target, metadata.targetName)
@@ -307,22 +307,22 @@ export class NestedSetSubjectExecutor {
             .orderBy(select.right, "DESC")
             .getRawMany()
             .then((results) => {
-                const data: NestedSetIds[] = []
+                const data: NestedSetIds[] = [];
 
                 for (const result of results) {
-                    const entry: any = {}
+                    const entry: any = {};
                     for (const key of Object.keys(select)) {
-                        const value = result ? result[key] : undefined
+                        const value = result ? result[key] : undefined;
 
                         // CockroachDB returns numeric types as string
                         entry[key] =
-                            typeof value === "string" ? parseInt(value) : value
+                            typeof value === "string" ? parseInt(value) : value;
                     }
-                    data.push(entry)
+                    data.push(entry);
                 }
 
-                return data
-            })
+                return data;
+            });
     }
 
     private async isUniqueRootEntity(
@@ -330,38 +330,38 @@ export class NestedSetSubjectExecutor {
         parent: any,
     ): Promise<boolean> {
         const escape = (alias: string) =>
-            this.queryRunner.connection.driver.escape(alias)
-        const tableName = this.getTableName(subject.metadata.tablePath)
-        const parameters: any[] = []
+            this.queryRunner.connection.driver.escape(alias);
+        const tableName = this.getTableName(subject.metadata.tablePath);
+        const parameters: any[] = [];
         const whereCondition = subject.metadata
             .treeParentRelation!.joinColumns.map((column) => {
-                const columnName = escape(column.databaseName)
-                const parameter = column.getEntityValue(parent)
+                const columnName = escape(column.databaseName);
+                const parameter = column.getEntityValue(parent);
 
                 if (parameter == null) {
-                    return `${columnName} IS NULL`
+                    return `${columnName} IS NULL`;
                 }
 
-                parameters.push(parameter)
+                parameters.push(parameter);
                 const parameterName =
                     this.queryRunner.connection.driver.createParameter(
                         "entity_" + column.databaseName,
                         parameters.length - 1,
-                    )
-                return `${columnName} = ${parameterName}`
+                    );
+                return `${columnName} = ${parameterName}`;
             })
-            .join(" AND ")
+            .join(" AND ");
 
-        const countAlias = "count"
+        const countAlias = "count";
         const result = await this.queryRunner.query(
             `SELECT COUNT(1) AS ${escape(
                 countAlias,
             )} FROM ${tableName} WHERE ${whereCondition}`,
             parameters,
             true,
-        )
+        );
 
-        return parseInt(result.records[0][countAlias]) === 0
+        return parseInt(result.records[0][countAlias]) === 0;
     }
 
     /**
@@ -375,8 +375,8 @@ export class NestedSetSubjectExecutor {
                 // this condition need because in SQL Server driver when custom database name was specified and schema name was not, we got `dbName..tableName` string, and doesn't need to escape middle empty string
                 return i === ""
                     ? i
-                    : this.queryRunner.connection.driver.escape(i)
+                    : this.queryRunner.connection.driver.escape(i);
             })
-            .join(".")
+            .join(".");
     }
 }

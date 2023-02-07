@@ -1,6 +1,6 @@
-import { EntityMetadata } from "../../metadata/EntityMetadata"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { ObjectUtils } from "../../util/ObjectUtils"
+import { EntityMetadata } from "../../metadata/EntityMetadata";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { ObjectUtils } from "../../util/ObjectUtils";
 
 /**
  * Transforms plain old javascript object
@@ -24,9 +24,9 @@ export class PlainObjectToNewEntityTransformer {
             object,
             metadata,
             getLazyRelationsPromiseValue,
-        )
+        );
         // console.log("result:", newEntity);
-        return newEntity
+        return newEntity;
     }
 
     // -------------------------------------------------------------------------
@@ -48,27 +48,27 @@ export class PlainObjectToNewEntityTransformer {
 
         // copy regular column properties from the given object
         metadata.nonVirtualColumns.forEach((column) => {
-            const objectColumnValue = column.getEntityValue(object)
+            const objectColumnValue = column.getEntityValue(object);
             if (objectColumnValue !== undefined)
-                column.setEntityValue(entity, objectColumnValue)
-        })
+                column.setEntityValue(entity, objectColumnValue);
+        });
 
         // // copy relation properties from the given object
         if (metadata.relations.length) {
             metadata.relations.forEach((relation) => {
-                let entityRelatedValue = relation.getEntityValue(entity)
+                let entityRelatedValue = relation.getEntityValue(entity);
                 const objectRelatedValue = relation.getEntityValue(
                     object,
                     getLazyRelationsPromiseValue,
-                )
-                if (objectRelatedValue === undefined) return
+                );
+                if (objectRelatedValue === undefined) return;
 
                 if (relation.isOneToMany || relation.isManyToMany) {
-                    if (!Array.isArray(objectRelatedValue)) return
+                    if (!Array.isArray(objectRelatedValue)) return;
 
                     if (!entityRelatedValue) {
-                        entityRelatedValue = []
-                        relation.setEntityValue(entity, entityRelatedValue)
+                        entityRelatedValue = [];
+                        relation.setEntityValue(entity, entityRelatedValue);
                     }
 
                     objectRelatedValue.forEach((objectRelatedValueItem) => {
@@ -79,8 +79,8 @@ export class PlainObjectToNewEntityTransformer {
                             return relation.inverseEntityMetadata.compareEntities(
                                 objectRelatedValueItem,
                                 entityRelatedValueItem,
-                            )
-                        })
+                            );
+                        });
 
                         // if such item already exist then merge new data into it, if its not we create a new entity and merge it into the array
                         if (!objectRelatedValueEntity) {
@@ -88,8 +88,8 @@ export class PlainObjectToNewEntityTransformer {
                                 relation.inverseEntityMetadata.create(
                                     undefined,
                                     { fromDeserializer: true },
-                                )
-                            entityRelatedValue.push(objectRelatedValueEntity)
+                                );
+                            entityRelatedValue.push(objectRelatedValueEntity);
                         }
 
                         this.groupAndTransform(
@@ -97,8 +97,8 @@ export class PlainObjectToNewEntityTransformer {
                             objectRelatedValueItem,
                             relation.inverseEntityMetadata,
                             getLazyRelationsPromiseValue,
-                        )
-                    })
+                        );
+                    });
                 } else {
                     // if related object isn't an object (direct relation id for example)
                     // we just set it to the entity relation, we don't need anything more from it
@@ -106,16 +106,16 @@ export class PlainObjectToNewEntityTransformer {
                     // to prevent full overriding of objects
                     if (!ObjectUtils.isObject(objectRelatedValue)) {
                         if (!ObjectUtils.isObject(entityRelatedValue))
-                            relation.setEntityValue(entity, objectRelatedValue)
-                        return
+                            relation.setEntityValue(entity, objectRelatedValue);
+                        return;
                     }
 
                     if (!entityRelatedValue) {
                         entityRelatedValue =
                             relation.inverseEntityMetadata.create(undefined, {
                                 fromDeserializer: true,
-                            })
-                        relation.setEntityValue(entity, entityRelatedValue)
+                            });
+                        relation.setEntityValue(entity, entityRelatedValue);
                     }
 
                     this.groupAndTransform(
@@ -123,9 +123,9 @@ export class PlainObjectToNewEntityTransformer {
                         objectRelatedValue,
                         relation.inverseEntityMetadata,
                         getLazyRelationsPromiseValue,
-                    )
+                    );
                 }
-            })
+            });
         }
     }
 }

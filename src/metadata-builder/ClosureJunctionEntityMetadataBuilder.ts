@@ -1,8 +1,8 @@
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { ColumnMetadata } from "../metadata/ColumnMetadata"
-import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata"
-import { DataSource } from "../data-source/DataSource"
-import { IndexMetadata } from "../metadata/IndexMetadata"
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { ForeignKeyMetadata } from "../metadata/ForeignKeyMetadata";
+import { DataSource } from "../data-source/DataSource";
+import { IndexMetadata } from "../metadata/IndexMetadata";
 
 /**
  * Creates EntityMetadata for junction tables of the closure entities.
@@ -37,8 +37,8 @@ export class ClosureJunctionEntityMetadataBuilder {
                         : parentClosureEntityMetadata.tableNameWithoutPrefix,
                 type: "closure-junction",
             },
-        })
-        entityMetadata.build()
+        });
+        entityMetadata.build();
 
         // create ancestor and descendant columns for new closure junction table
         parentClosureEntityMetadata.primaryColumns.forEach((primaryColumn) => {
@@ -66,7 +66,7 @@ export class ClosureJunctionEntityMetadataBuilder {
                         },
                     },
                 }),
-            )
+            );
             entityMetadata.ownColumns.push(
                 new ColumnMetadata({
                     connection: this.connection,
@@ -91,8 +91,8 @@ export class ClosureJunctionEntityMetadataBuilder {
                         },
                     },
                 }),
-            )
-        })
+            );
+        });
 
         entityMetadata.ownIndices = [
             new IndexMetadata({
@@ -111,7 +111,7 @@ export class ClosureJunctionEntityMetadataBuilder {
                     synchronize: true,
                 },
             }),
-        ]
+        ];
 
         // if tree level column was defined by a closure entity then add it to the junction columns as well
         if (parentClosureEntityMetadata.treeLevelColumn) {
@@ -129,7 +129,7 @@ export class ClosureJunctionEntityMetadataBuilder {
                         },
                     },
                 }),
-            )
+            );
         }
 
         // create junction table foreign keys
@@ -155,8 +155,8 @@ export class ClosureJunctionEntityMetadataBuilder {
                         ? "NO ACTION"
                         : "CASCADE",
             }),
-        ]
+        ];
 
-        return entityMetadata
+        return entityMetadata;
     }
 }

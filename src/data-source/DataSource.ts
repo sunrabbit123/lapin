@@ -1,45 +1,45 @@
-import { Driver } from "../driver/Driver"
-import { Repository } from "../repository/Repository"
-import { EntitySubscriberInterface } from "../subscriber/EntitySubscriberInterface"
-import { EntityTarget } from "../common/EntityTarget"
-import { ObjectType } from "../common/ObjectType"
-import { EntityManager } from "../entity-manager/EntityManager"
-import { DefaultNamingStrategy } from "../naming-strategy/DefaultNamingStrategy"
+import { Driver } from "../driver/Driver";
+import { Repository } from "../repository/Repository";
+import { EntitySubscriberInterface } from "../subscriber/EntitySubscriberInterface";
+import { EntityTarget } from "../common/EntityTarget";
+import { ObjectType } from "../common/ObjectType";
+import { EntityManager } from "../entity-manager/EntityManager";
+import { DefaultNamingStrategy } from "../naming-strategy/DefaultNamingStrategy";
 import {
     CannotConnectAlreadyConnectedError,
     CannotExecuteNotConnectedError,
     EntityMetadataNotFoundError,
     QueryRunnerProviderAlreadyReleasedError,
-} from "../error"
-import { TreeRepository } from "../repository/TreeRepository"
-import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface"
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { Logger } from "../logger/Logger"
-import { MigrationInterface } from "../migration/MigrationInterface"
-import { MigrationExecutor } from "../migration/MigrationExecutor"
-import { Migration } from "../migration/Migration"
-import { MongoRepository } from "../repository/MongoRepository"
-import { MongoEntityManager } from "../entity-manager/MongoEntityManager"
-import { EntityMetadataValidator } from "../metadata-builder/EntityMetadataValidator"
-import { DataSourceOptions } from "./DataSourceOptions"
-import { EntityManagerFactory } from "../entity-manager/EntityManagerFactory"
-import { DriverFactory } from "../driver/DriverFactory"
-import { ConnectionMetadataBuilder } from "../connection/ConnectionMetadataBuilder"
-import { QueryRunner } from "../query-runner/QueryRunner"
-import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder"
-import { LoggerFactory } from "../logger/LoggerFactory"
-import { QueryResultCacheFactory } from "../cache/QueryResultCacheFactory"
-import { QueryResultCache } from "../cache/QueryResultCache"
-import { SqljsEntityManager } from "../entity-manager/SqljsEntityManager"
-import { RelationLoader } from "../query-builder/RelationLoader"
-import { ObjectUtils } from "../util/ObjectUtils"
-import { IsolationLevel } from "../driver/types/IsolationLevel"
-import { ReplicationMode } from "../driver/types/ReplicationMode"
-import { LapinError } from "../error"
-import { RelationIdLoader } from "../query-builder/RelationIdLoader"
-import { DriverUtils } from "../driver/DriverUtils"
-import { InstanceChecker } from "../util/InstanceChecker"
-import { ObjectLiteral } from "../common/ObjectLiteral"
+} from "../error";
+import { TreeRepository } from "../repository/TreeRepository";
+import { NamingStrategyInterface } from "../naming-strategy/NamingStrategyInterface";
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { Logger } from "../logger/Logger";
+import { MigrationInterface } from "../migration/MigrationInterface";
+import { MigrationExecutor } from "../migration/MigrationExecutor";
+import { Migration } from "../migration/Migration";
+import { MongoRepository } from "../repository/MongoRepository";
+import { MongoEntityManager } from "../entity-manager/MongoEntityManager";
+import { EntityMetadataValidator } from "../metadata-builder/EntityMetadataValidator";
+import { DataSourceOptions } from "./DataSourceOptions";
+import { EntityManagerFactory } from "../entity-manager/EntityManagerFactory";
+import { DriverFactory } from "../driver/DriverFactory";
+import { ConnectionMetadataBuilder } from "../connection/ConnectionMetadataBuilder";
+import { QueryRunner } from "../query-runner/QueryRunner";
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { LoggerFactory } from "../logger/LoggerFactory";
+import { QueryResultCacheFactory } from "../cache/QueryResultCacheFactory";
+import { QueryResultCache } from "../cache/QueryResultCache";
+import { SqljsEntityManager } from "../entity-manager/SqljsEntityManager";
+import { RelationLoader } from "../query-builder/RelationLoader";
+import { ObjectUtils } from "../util/ObjectUtils";
+import { IsolationLevel } from "../driver/types/IsolationLevel";
+import { ReplicationMode } from "../driver/types/ReplicationMode";
+import { LapinError } from "../error";
+import { RelationIdLoader } from "../query-builder/RelationIdLoader";
+import { DriverUtils } from "../driver/DriverUtils";
+import { InstanceChecker } from "../util/InstanceChecker";
+import { ObjectLiteral } from "../common/ObjectLiteral";
 
 /**
  * DataSource is a pre-defined connection configuration to a specific database.
@@ -50,7 +50,7 @@ import { ObjectLiteral } from "../common/ObjectLiteral"
  * because `Connection` isn't the best name for what it's actually is.
  */
 export class DataSource {
-    readonly "@instanceof" = Symbol.for("DataSource")
+    readonly "@instanceof" = Symbol.for("DataSource");
 
     // -------------------------------------------------------------------------
     // Public Readonly Properties
@@ -61,92 +61,92 @@ export class DataSource {
      *
      * @deprecated we don't need names anymore since we are going to drop all related methods relying on this property.
      */
-    readonly name: string
+    readonly name: string;
 
     /**
      * Connection options.
      */
-    readonly options: DataSourceOptions
+    readonly options: DataSourceOptions;
 
     /**
      * Indicates if DataSource is initialized or not.
      */
-    readonly isInitialized: boolean
+    readonly isInitialized: boolean;
 
     /**
      * Database driver used by this connection.
      */
-    driver: Driver
+    driver: Driver;
 
     /**
      * EntityManager of this connection.
      */
-    readonly manager: EntityManager
+    readonly manager: EntityManager;
 
     /**
      * Naming strategy used in the connection.
      */
-    namingStrategy: NamingStrategyInterface
+    namingStrategy: NamingStrategyInterface;
 
     /**
      * Name for the metadata table
      */
-    readonly metadataTableName: string
+    readonly metadataTableName: string;
 
     /**
      * Logger used to log orm events.
      */
-    logger: Logger
+    logger: Logger;
 
     /**
      * Migration instances that are registered for this connection.
      */
-    readonly migrations: MigrationInterface[] = []
+    readonly migrations: MigrationInterface[] = [];
 
     /**
      * Entity subscriber instances that are registered for this connection.
      */
-    readonly subscribers: EntitySubscriberInterface<any>[] = []
+    readonly subscribers: EntitySubscriberInterface<any>[] = [];
 
     /**
      * All entity metadatas that are registered for this connection.
      */
-    readonly entityMetadatas: EntityMetadata[] = []
+    readonly entityMetadatas: EntityMetadata[] = [];
 
     /**
      * Used to work with query result cache.
      */
-    queryResultCache?: QueryResultCache
+    queryResultCache?: QueryResultCache;
 
     /**
      * Used to load relations and work with lazy relations.
      */
-    readonly relationLoader: RelationLoader
+    readonly relationLoader: RelationLoader;
 
-    readonly relationIdLoader: RelationIdLoader
+    readonly relationIdLoader: RelationIdLoader;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(options: DataSourceOptions) {
-        this.name = options.name || "default"
-        this.options = options
+        this.name = options.name || "default";
+        this.options = options;
         this.logger = new LoggerFactory().create(
             this.options.logger,
             this.options.logging,
-        )
-        this.driver = new DriverFactory().create(this)
-        this.manager = this.createEntityManager()
+        );
+        this.driver = new DriverFactory().create(this);
+        this.manager = this.createEntityManager();
         this.namingStrategy =
-            options.namingStrategy || new DefaultNamingStrategy()
-        this.metadataTableName = options.metadataTableName || "lapin_metadata"
+            options.namingStrategy || new DefaultNamingStrategy();
+        this.metadataTableName = options.metadataTableName || "lapin_metadata";
         this.queryResultCache = options.cache
             ? new QueryResultCacheFactory(this).create()
-            : undefined
-        this.relationLoader = new RelationLoader(this)
-        this.relationIdLoader = new RelationIdLoader(this)
-        this.isInitialized = false
+            : undefined;
+        this.relationLoader = new RelationLoader(this);
+        this.relationIdLoader = new RelationIdLoader(this);
+        this.isInitialized = false;
     }
 
     // -------------------------------------------------------------------------
@@ -159,7 +159,7 @@ export class DataSource {
      * @deprecated use .isInitialized instead
      */
     get isConnected() {
-        return this.isInitialized
+        return this.isInitialized;
     }
 
     /**
@@ -172,9 +172,9 @@ export class DataSource {
         if (!InstanceChecker.isMongoEntityManager(this.manager))
             throw new LapinError(
                 `MongoEntityManager is only available for MongoDB databases.`,
-            )
+            );
 
-        return this.manager as MongoEntityManager
+        return this.manager as MongoEntityManager;
     }
 
     /**
@@ -186,9 +186,9 @@ export class DataSource {
         if (!InstanceChecker.isSqljsEntityManager(this.manager))
             throw new LapinError(
                 `SqljsEntityManager is only available for Sqljs databases.`,
-            )
+            );
 
-        return this.manager
+        return this.manager;
     }
 
     // -------------------------------------------------------------------------
@@ -198,21 +198,21 @@ export class DataSource {
      * Updates current connection options with provided options.
      */
     setOptions(options: Partial<DataSourceOptions>): this {
-        Object.assign(this.options, options)
+        Object.assign(this.options, options);
 
         if (options.logger || options.logging) {
             this.logger = new LoggerFactory().create(
                 options.logger || this.options.logger,
                 options.logging || this.options.logging,
-            )
+            );
         }
 
         if (options.namingStrategy) {
-            this.namingStrategy = options.namingStrategy
+            this.namingStrategy = options.namingStrategy;
         }
 
         if (options.cache) {
-            this.queryResultCache = new QueryResultCacheFactory(this).create()
+            this.queryResultCache = new QueryResultCacheFactory(this).create();
         }
 
         // todo: we must update the database in the driver as well, if it was set by setOptions method
@@ -221,12 +221,12 @@ export class DataSource {
         if (options.database) {
             this.driver.database = DriverUtils.buildDriverOptions(
                 this.options,
-            ).database
+            ).database;
         }
 
         // todo: need to take a look if we need to update schema and other "poor" properties
 
-        return this
+        return this;
     }
 
     /**
@@ -237,42 +237,42 @@ export class DataSource {
      */
     async initialize(): Promise<this> {
         if (this.isInitialized)
-            throw new CannotConnectAlreadyConnectedError(this.name)
+            throw new CannotConnectAlreadyConnectedError(this.name);
 
         // connect to the database via its driver
-        await this.driver.connect()
+        await this.driver.connect();
 
         // connect to the cache-specific database if cache is enabled
-        if (this.queryResultCache) await this.queryResultCache.connect()
+        if (this.queryResultCache) await this.queryResultCache.connect();
 
         // set connected status for the current connection
-        ObjectUtils.assign(this, { isInitialized: true })
+        ObjectUtils.assign(this, { isInitialized: true });
 
         try {
             // build all metadatas registered in the current connection
-            await this.buildMetadatas()
+            await this.buildMetadatas();
 
-            await this.driver.afterConnect()
+            await this.driver.afterConnect();
 
             // if option is set - drop schema once connection is done
-            if (this.options.dropSchema) await this.dropDatabase()
+            if (this.options.dropSchema) await this.dropDatabase();
 
             // if option is set - automatically synchronize a schema
             if (this.options.migrationsRun)
                 await this.runMigrations({
                     transaction: this.options.migrationsTransactionMode,
-                })
+                });
 
             // if option is set - automatically synchronize a schema
-            if (this.options.synchronize) await this.synchronize()
+            if (this.options.synchronize) await this.synchronize();
         } catch (error) {
             // if for some reason build metadata fail (for example validation error during entity metadata check)
             // connection needs to be closed
-            await this.destroy()
-            throw error
+            await this.destroy();
+            throw error;
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -284,7 +284,7 @@ export class DataSource {
      * @deprecated use .initialize method instead
      */
     async connect(): Promise<this> {
-        return this.initialize()
+        return this.initialize();
     }
 
     /**
@@ -293,14 +293,14 @@ export class DataSource {
      */
     async destroy(): Promise<void> {
         if (!this.isInitialized)
-            throw new CannotExecuteNotConnectedError(this.name)
+            throw new CannotExecuteNotConnectedError(this.name);
 
-        await this.driver.disconnect()
+        await this.driver.disconnect();
 
         // disconnect from the cache-specific database if cache was enabled
-        if (this.queryResultCache) await this.queryResultCache.disconnect()
+        if (this.queryResultCache) await this.queryResultCache.disconnect();
 
-        ObjectUtils.assign(this, { isInitialized: false })
+        ObjectUtils.assign(this, { isInitialized: false });
     }
 
     /**
@@ -310,7 +310,7 @@ export class DataSource {
      * @deprecated use .destroy method instead
      */
     async close(): Promise<void> {
-        return this.destroy()
+        return this.destroy();
     }
 
     /**
@@ -321,12 +321,12 @@ export class DataSource {
      */
     async synchronize(dropBeforeSync: boolean = false): Promise<void> {
         if (!this.isInitialized)
-            throw new CannotExecuteNotConnectedError(this.name)
+            throw new CannotExecuteNotConnectedError(this.name);
 
-        if (dropBeforeSync) await this.dropDatabase()
+        if (dropBeforeSync) await this.dropDatabase();
 
-        const schemaBuilder = this.driver.createSchemaBuilder()
-        await schemaBuilder.build()
+        const schemaBuilder = this.driver.createSchemaBuilder();
+        await schemaBuilder.build();
     }
 
     /**
@@ -336,7 +336,7 @@ export class DataSource {
      */
     // TODO rename
     async dropDatabase(): Promise<void> {
-        const queryRunner = this.createQueryRunner()
+        const queryRunner = this.createQueryRunner();
         try {
             if (
                 this.driver.options.type === "mssql" ||
@@ -344,30 +344,30 @@ export class DataSource {
                 this.driver.options.type === "aurora-mysql" ||
                 DriverUtils.isSQLiteFamily(this.driver)
             ) {
-                const databases: string[] = []
+                const databases: string[] = [];
                 this.entityMetadatas.forEach((metadata) => {
                     if (
                         metadata.database &&
                         databases.indexOf(metadata.database) === -1
                     )
-                        databases.push(metadata.database)
-                })
+                        databases.push(metadata.database);
+                });
                 if (databases.length === 0 && this.driver.database) {
-                    databases.push(this.driver.database)
+                    databases.push(this.driver.database);
                 }
 
                 if (databases.length === 0) {
-                    await queryRunner.clearDatabase()
+                    await queryRunner.clearDatabase();
                 } else {
                     for (const database of databases) {
-                        await queryRunner.clearDatabase(database)
+                        await queryRunner.clearDatabase(database);
                     }
                 }
             } else {
-                await queryRunner.clearDatabase()
+                await queryRunner.clearDatabase();
             }
         } finally {
-            await queryRunner.release()
+            await queryRunner.release();
         }
     }
 
@@ -376,20 +376,20 @@ export class DataSource {
      * Can be used only after connection to the database is established.
      */
     async runMigrations(options?: {
-        transaction?: "all" | "none" | "each"
-        fake?: boolean
+        transaction?: "all" | "none" | "each";
+        fake?: boolean;
     }): Promise<Migration[]> {
         if (!this.isInitialized)
-            throw new CannotExecuteNotConnectedError(this.name)
+            throw new CannotExecuteNotConnectedError(this.name);
 
-        const migrationExecutor = new MigrationExecutor(this)
+        const migrationExecutor = new MigrationExecutor(this);
         migrationExecutor.transaction =
-            (options && options.transaction) || "all"
-        migrationExecutor.fake = (options && options.fake) || false
+            (options && options.transaction) || "all";
+        migrationExecutor.fake = (options && options.fake) || false;
 
         const successMigrations =
-            await migrationExecutor.executePendingMigrations()
-        return successMigrations
+            await migrationExecutor.executePendingMigrations();
+        return successMigrations;
     }
 
     /**
@@ -397,18 +397,18 @@ export class DataSource {
      * Can be used only after connection to the database is established.
      */
     async undoLastMigration(options?: {
-        transaction?: "all" | "none" | "each"
-        fake?: boolean
+        transaction?: "all" | "none" | "each";
+        fake?: boolean;
     }): Promise<void> {
         if (!this.isInitialized)
-            throw new CannotExecuteNotConnectedError(this.name)
+            throw new CannotExecuteNotConnectedError(this.name);
 
-        const migrationExecutor = new MigrationExecutor(this)
+        const migrationExecutor = new MigrationExecutor(this);
         migrationExecutor.transaction =
-            (options && options.transaction) || "all"
-        migrationExecutor.fake = (options && options.fake) || false
+            (options && options.transaction) || "all";
+        migrationExecutor.fake = (options && options.fake) || false;
 
-        await migrationExecutor.undoLastMigration()
+        await migrationExecutor.undoLastMigration();
     }
 
     /**
@@ -417,27 +417,27 @@ export class DataSource {
      */
     async showMigrations(): Promise<boolean> {
         if (!this.isInitialized) {
-            throw new CannotExecuteNotConnectedError(this.name)
+            throw new CannotExecuteNotConnectedError(this.name);
         }
-        const migrationExecutor = new MigrationExecutor(this)
-        return await migrationExecutor.showMigrations()
+        const migrationExecutor = new MigrationExecutor(this);
+        return await migrationExecutor.showMigrations();
     }
 
     /**
      * Checks if entity metadata exist for the given entity class, target name or table name.
      */
     hasMetadata(target: EntityTarget<any>): boolean {
-        return !!this.findMetadata(target)
+        return !!this.findMetadata(target);
     }
 
     /**
      * Gets entity metadata for the given entity class or schema name.
      */
     getMetadata(target: EntityTarget<any>): EntityMetadata {
-        const metadata = this.findMetadata(target)
-        if (!metadata) throw new EntityMetadataNotFoundError(target)
+        const metadata = this.findMetadata(target);
+        if (!metadata) throw new EntityMetadataNotFoundError(target);
 
-        return metadata
+        return metadata;
     }
 
     /**
@@ -446,7 +446,7 @@ export class DataSource {
     getRepository<Entity extends ObjectLiteral>(
         target: EntityTarget<Entity>,
     ): Repository<Entity> {
-        return this.manager.getRepository(target)
+        return this.manager.getRepository(target);
     }
 
     /**
@@ -456,7 +456,7 @@ export class DataSource {
     getTreeRepository<Entity extends ObjectLiteral>(
         target: EntityTarget<Entity>,
     ): TreeRepository<Entity> {
-        return this.manager.getTreeRepository(target)
+        return this.manager.getTreeRepository(target);
     }
 
     /**
@@ -469,9 +469,9 @@ export class DataSource {
         if (!(this.driver.options.type === "mongodb"))
             throw new LapinError(
                 `You can use getMongoRepository only for MongoDB connections.`,
-            )
+            );
 
-        return this.manager.getRepository(target) as any
+        return this.manager.getRepository(target) as any;
     }
 
     /**
@@ -480,7 +480,7 @@ export class DataSource {
      * @deprecated use Repository.extend function to create a custom repository
      */
     getCustomRepository<T>(customRepository: ObjectType<T>): T {
-        return this.manager.getCustomRepository(customRepository)
+        return this.manager.getCustomRepository(customRepository);
     }
 
     /**
@@ -489,11 +489,11 @@ export class DataSource {
      */
     async transaction<T>(
         runInTransaction: (entityManager: EntityManager) => Promise<T>,
-    ): Promise<T>
+    ): Promise<T>;
     async transaction<T>(
         isolationLevel: IsolationLevel,
         runInTransaction: (entityManager: EntityManager) => Promise<T>,
-    ): Promise<T>
+    ): Promise<T>;
     async transaction<T>(
         isolationOrRunInTransaction:
             | IsolationLevel
@@ -503,7 +503,7 @@ export class DataSource {
         return this.manager.transaction(
             isolationOrRunInTransaction as any,
             runInTransactionParam as any,
-        )
+        );
     }
 
     /**
@@ -515,17 +515,17 @@ export class DataSource {
         queryRunner?: QueryRunner,
     ): Promise<any> {
         if (InstanceChecker.isMongoEntityManager(this.manager))
-            throw new LapinError(`Queries aren't supported by MongoDB.`)
+            throw new LapinError(`Queries aren't supported by MongoDB.`);
 
         if (queryRunner && queryRunner.isReleased)
-            throw new QueryRunnerProviderAlreadyReleasedError()
+            throw new QueryRunnerProviderAlreadyReleasedError();
 
-        const usedQueryRunner = queryRunner || this.createQueryRunner()
+        const usedQueryRunner = queryRunner || this.createQueryRunner();
 
         try {
-            return await usedQueryRunner.query(query, parameters) // await is needed here because we are using finally
+            return await usedQueryRunner.query(query, parameters); // await is needed here because we are using finally
         } finally {
-            if (!queryRunner) await usedQueryRunner.release()
+            if (!queryRunner) await usedQueryRunner.release();
         }
     }
 
@@ -536,12 +536,12 @@ export class DataSource {
         entityClass: EntityTarget<Entity>,
         alias: string,
         queryRunner?: QueryRunner,
-    ): SelectQueryBuilder<Entity>
+    ): SelectQueryBuilder<Entity>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<any>
+    createQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<any>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
@@ -552,21 +552,21 @@ export class DataSource {
         queryRunner?: QueryRunner,
     ): SelectQueryBuilder<Entity> {
         if (InstanceChecker.isMongoEntityManager(this.manager))
-            throw new LapinError(`Query Builder is not supported by MongoDB.`)
+            throw new LapinError(`Query Builder is not supported by MongoDB.`);
 
         if (alias) {
-            alias = DriverUtils.buildAlias(this.driver, alias)
+            alias = DriverUtils.buildAlias(this.driver, alias);
             const metadata = this.getMetadata(
                 entityOrRunner as EntityTarget<Entity>,
-            )
+            );
             return new SelectQueryBuilder(this, queryRunner)
                 .select(alias)
-                .from(metadata.target, alias)
+                .from(metadata.target, alias);
         } else {
             return new SelectQueryBuilder(
                 this,
                 entityOrRunner as QueryRunner | undefined,
-            )
+            );
         }
     }
 
@@ -581,10 +581,10 @@ export class DataSource {
      * if you perform reads you can use slave databases.
      */
     createQueryRunner(mode: ReplicationMode = "master"): QueryRunner {
-        const queryRunner = this.driver.createQueryRunner(mode)
-        const manager = this.createEntityManager(queryRunner)
-        Object.assign(queryRunner, { manager: manager })
-        return queryRunner
+        const queryRunner = this.driver.createQueryRunner(mode);
+        const manager = this.createEntityManager(queryRunner);
+        Object.assign(queryRunner, { manager: manager });
+        return queryRunner;
     }
 
     /**
@@ -597,25 +597,25 @@ export class DataSource {
         const relationMetadata =
             this.getMetadata(entityTarget).findRelationWithPropertyPath(
                 relationPropertyPath,
-            )
+            );
         if (!relationMetadata)
             throw new LapinError(
                 `Relation "${relationPropertyPath}" was not found in ${entityTarget} entity.`,
-            )
+            );
         if (!relationMetadata.isManyToMany)
             throw new LapinError(
                 `Relation "${entityTarget}#${relationPropertyPath}" does not have a many-to-many relationship.` +
                     `You can use this method only on many-to-many relations.`,
-            )
+            );
 
-        return relationMetadata.junctionEntityMetadata
+        return relationMetadata.junctionEntityMetadata;
     }
 
     /**
      * Creates an Entity Manager for the current connection with the help of the EntityManagerFactory.
      */
     createEntityManager(queryRunner?: QueryRunner): EntityManager {
-        return new EntityManagerFactory().create(this, queryRunner)
+        return new EntityManagerFactory().create(this, queryRunner);
     }
 
     // -------------------------------------------------------------------------
@@ -629,18 +629,18 @@ export class DataSource {
         target: EntityTarget<any>,
     ): EntityMetadata | undefined {
         return this.entityMetadatas.find((metadata) => {
-            if (metadata.target === target) return true
+            if (metadata.target === target) return true;
             if (InstanceChecker.isEntitySchema(target)) {
-                return metadata.name === target.options.name
+                return metadata.name === target.options.name;
             }
             if (typeof target === "string") {
                 if (target.indexOf(".") !== -1) {
-                    return metadata.tablePath === target
+                    return metadata.tablePath === target;
                 } else {
                     return (
                         metadata.name === target ||
                         metadata.tableName === target
-                    )
+                    );
                 }
             }
             if (
@@ -648,53 +648,53 @@ export class DataSource {
                 typeof target.name === "string"
             ) {
                 if (target.name.indexOf(".") !== -1) {
-                    return metadata.tablePath === target.name
+                    return metadata.tablePath === target.name;
                 } else {
                     return (
                         metadata.name === target.name ||
                         metadata.tableName === target.name
-                    )
+                    );
                 }
             }
 
-            return false
-        })
+            return false;
+        });
     }
 
     /**
      * Builds metadatas for all registered classes inside this connection.
      */
     protected async buildMetadatas(): Promise<void> {
-        const connectionMetadataBuilder = new ConnectionMetadataBuilder(this)
-        const entityMetadataValidator = new EntityMetadataValidator()
+        const connectionMetadataBuilder = new ConnectionMetadataBuilder(this);
+        const entityMetadataValidator = new EntityMetadataValidator();
 
         // create subscribers instances if they are not disallowed from high-level (for example they can disallowed from migrations run process)
         const flattenedSubscribers = ObjectUtils.mixedListToArray(
             this.options.subscribers || [],
-        )
+        );
         const subscribers = await connectionMetadataBuilder.buildSubscribers(
             flattenedSubscribers,
-        )
-        ObjectUtils.assign(this, { subscribers: subscribers })
+        );
+        ObjectUtils.assign(this, { subscribers: subscribers });
 
         // build entity metadatas
         const flattenedEntities = ObjectUtils.mixedListToArray(
             this.options.entities || [],
-        )
+        );
         const entityMetadatas =
             await connectionMetadataBuilder.buildEntityMetadatas(
                 flattenedEntities,
-            )
-        ObjectUtils.assign(this, { entityMetadatas: entityMetadatas })
+            );
+        ObjectUtils.assign(this, { entityMetadatas: entityMetadatas });
 
         // create migration instances
         const flattenedMigrations = ObjectUtils.mixedListToArray(
             this.options.migrations || [],
-        )
+        );
         const migrations = await connectionMetadataBuilder.buildMigrations(
             flattenedMigrations,
-        )
-        ObjectUtils.assign(this, { migrations: migrations })
+        );
+        ObjectUtils.assign(this, { migrations: migrations });
 
         // validate all created entity metadatas to make sure user created entities are valid and correct
         entityMetadataValidator.validateMany(
@@ -702,14 +702,14 @@ export class DataSource {
                 (metadata) => metadata.tableType !== "view",
             ),
             this.driver,
-        )
+        );
 
         // set current data source to the entities
         for (let entityMetadata of entityMetadatas) {
             if (
                 InstanceChecker.isBaseEntityConstructor(entityMetadata.target)
             ) {
-                entityMetadata.target.useDataSource(this)
+                entityMetadata.target.useDataSource(this);
             }
         }
     }

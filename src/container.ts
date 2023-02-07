@@ -7,24 +7,24 @@ export interface UseContainerOptions {
     /**
      * If set to true, then default container will be used in the case if given container haven't returned anything.
      */
-    fallback?: boolean
+    fallback?: boolean;
 
     /**
      * If set to true, then default container will be used in the case if given container thrown an exception.
      */
-    fallbackOnErrors?: boolean
+    fallbackOnErrors?: boolean;
 }
 
 /**
  * @deprecated
  */
-export type ContainedType<T> = { new (...args: any[]): T } | Function
+export type ContainedType<T> = { new (...args: any[]): T } | Function;
 
 /**
  * @deprecated
  */
 export interface ContainerInterface {
-    get<T>(someClass: ContainedType<T>): T
+    get<T>(someClass: ContainedType<T>): T;
 }
 
 /**
@@ -36,24 +36,24 @@ export interface ContainerInterface {
 const defaultContainer: ContainerInterface = new (class
     implements ContainerInterface
 {
-    private instances: { type: Function; object: any }[] = []
+    private instances: { type: Function; object: any }[] = [];
 
     get<T>(someClass: ContainedType<T>): T {
-        let instance = this.instances.find((i) => i.type === someClass)
+        let instance = this.instances.find((i) => i.type === someClass);
         if (!instance) {
             instance = {
                 type: someClass,
                 object: new (someClass as new () => T)(),
-            }
-            this.instances.push(instance)
+            };
+            this.instances.push(instance);
         }
 
-        return instance.object
+        return instance.object;
     }
-})()
+})();
 
-let userContainer: ContainerInterface
-let userContainerOptions: UseContainerOptions | undefined
+let userContainer: ContainerInterface;
+let userContainerOptions: UseContainerOptions | undefined;
 
 /**
  * Sets container to be used by this library.
@@ -64,8 +64,8 @@ export function useContainer(
     iocContainer: ContainerInterface,
     options?: UseContainerOptions,
 ) {
-    userContainer = iocContainer
-    userContainerOptions = options
+    userContainer = iocContainer;
+    userContainerOptions = options;
 }
 
 /**
@@ -76,15 +76,15 @@ export function useContainer(
 export function getFromContainer<T>(someClass: ContainedType<T>): T {
     if (userContainer) {
         try {
-            const instance = userContainer.get(someClass)
-            if (instance) return instance
+            const instance = userContainer.get(someClass);
+            if (instance) return instance;
 
             if (!userContainerOptions || !userContainerOptions.fallback)
-                return instance
+                return instance;
         } catch (error) {
             if (!userContainerOptions || !userContainerOptions.fallbackOnErrors)
-                throw error
+                throw error;
         }
     }
-    return defaultContainer.get<T>(someClass)
+    return defaultContainer.get<T>(someClass);
 }

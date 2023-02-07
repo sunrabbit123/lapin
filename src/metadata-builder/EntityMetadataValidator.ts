@@ -1,14 +1,14 @@
-import { EntityMetadata } from "../metadata/EntityMetadata"
-import { MissingPrimaryColumnError } from "../error/MissingPrimaryColumnError"
-import { CircularRelationsError } from "../error/CircularRelationsError"
-import { DepGraph } from "../util/DepGraph"
-import { Driver } from "../driver/Driver"
-import { DataTypeNotSupportedError } from "../error/DataTypeNotSupportedError"
-import { ColumnType } from "../driver/types/ColumnTypes"
-import { NoConnectionOptionError } from "../error/NoConnectionOptionError"
-import { InitializedRelationError } from "../error/InitializedRelationError"
-import { LapinError } from "../error"
-import { DriverUtils } from "../driver/DriverUtils"
+import { EntityMetadata } from "../metadata/EntityMetadata";
+import { MissingPrimaryColumnError } from "../error/MissingPrimaryColumnError";
+import { CircularRelationsError } from "../error/CircularRelationsError";
+import { DepGraph } from "../util/DepGraph";
+import { Driver } from "../driver/Driver";
+import { DataTypeNotSupportedError } from "../error/DataTypeNotSupportedError";
+import { ColumnType } from "../driver/types/ColumnTypes";
+import { NoConnectionOptionError } from "../error/NoConnectionOptionError";
+import { InitializedRelationError } from "../error/InitializedRelationError";
+import { LapinError } from "../error";
+import { DriverUtils } from "../driver/DriverUtils";
 
 /// todo: add check if there are multiple tables with the same name
 /// todo: add checks when generated column / table names are too long for the specific driver
@@ -41,9 +41,9 @@ export class EntityMetadataValidator {
     validateMany(entityMetadatas: EntityMetadata[], driver: Driver) {
         entityMetadatas.forEach((entityMetadata) =>
             this.validate(entityMetadata, entityMetadatas, driver),
-        )
-        this.validateDependencies(entityMetadatas)
-        this.validateEagerRelations(entityMetadatas)
+        );
+        this.validateDependencies(entityMetadatas);
+        this.validateEagerRelations(entityMetadatas);
     }
 
     /**
@@ -56,7 +56,7 @@ export class EntityMetadataValidator {
     ) {
         // check if table metadata has an id
         if (!entityMetadata.primaryColumns.length && !entityMetadata.isJunction)
-            throw new MissingPrimaryColumnError(entityMetadata)
+            throw new MissingPrimaryColumnError(entityMetadata);
 
         // if entity has multiple primary keys and uses custom constraint name,
         // then all primary keys should have the same constraint name
@@ -65,11 +65,11 @@ export class EntityMetadataValidator {
                 (columnMetadata, i, columnMetadatas) =>
                     columnMetadata.primaryKeyConstraintName ===
                     columnMetadatas[0].primaryKeyConstraintName,
-            )
+            );
             if (!areConstraintNamesEqual) {
                 throw new LapinError(
                     `Entity ${entityMetadata.name} has multiple primary columns with different constraint names. Constraint names should be the equal.`,
-                )
+                );
             }
         }
 
@@ -82,12 +82,12 @@ export class EntityMetadataValidator {
             if (!entityMetadata.discriminatorColumn)
                 throw new LapinError(
                     `Entity ${entityMetadata.name} using single-table inheritance, it should also have a discriminator column. Did you forget to put discriminator column options?`,
-                )
+                );
 
             if (typeof entityMetadata.discriminatorValue === "undefined")
                 throw new LapinError(
                     `Entity ${entityMetadata.name} has an undefined discriminator value. Discriminator value should be defined.`,
-                )
+                );
 
             const sameDiscriminatorValueEntityMetadata =
                 allEntityMetadatas.find((metadata) => {
@@ -104,12 +104,12 @@ export class EntityMetadataValidator {
                                     parent,
                                 ) !== -1,
                         )
-                    )
-                })
+                    );
+                });
             if (sameDiscriminatorValueEntityMetadata)
                 throw new LapinError(
                     `Entities ${entityMetadata.name} and ${sameDiscriminatorValueEntityMetadata.name} have the same discriminator values. Make sure they are different while using the @ChildEntity decorator.`,
-                )
+                );
         }
 
         entityMetadata.relationCounts.forEach((relationCount) => {
@@ -119,8 +119,8 @@ export class EntityMetadataValidator {
             )
                 throw new LapinError(
                     `Relation count can not be implemented on ManyToOne or OneToOne relations.`,
-                )
-        })
+                );
+        });
 
         if (!(driver.options.type === "mongodb")) {
             entityMetadata.columns
@@ -128,7 +128,7 @@ export class EntityMetadataValidator {
                 .forEach((column) => {
                     const normalizedColumn = driver.normalizeType(
                         column,
-                    ) as ColumnType
+                    ) as ColumnType;
                     if (
                         driver.supportedDataTypes.indexOf(normalizedColumn) ===
                         -1
@@ -137,7 +137,7 @@ export class EntityMetadataValidator {
                             column,
                             normalizedColumn,
                             driver.options.type,
-                        )
+                        );
                     if (
                         column.length &&
                         driver.withLengthColumnTypes.indexOf(
@@ -146,7 +146,7 @@ export class EntityMetadataValidator {
                     )
                         throw new LapinError(
                             `Column ${column.propertyName} of Entity ${entityMetadata.name} does not support length property.`,
-                        )
+                        );
                     if (
                         column.type === "enum" &&
                         !column.enum &&
@@ -154,8 +154,8 @@ export class EntityMetadataValidator {
                     )
                         throw new LapinError(
                             `Column "${column.propertyName}" of Entity "${entityMetadata.name}" is defined as enum, but missing "enum" or "enumName" properties.`,
-                        )
-                })
+                        );
+                });
         }
 
         if (
@@ -165,11 +165,11 @@ export class EntityMetadataValidator {
             const generatedColumns = entityMetadata.columns.filter(
                 (column) =>
                     column.isGenerated && column.generationStrategy !== "uuid",
-            )
+            );
             if (generatedColumns.length > 1)
                 throw new LapinError(
                     `Error in ${entityMetadata.name} entity. There can be only one auto-increment column in MySql table.`,
-                )
+                );
         }
 
         // for mysql we are able to not define a default selected database, instead all entities can have their database
@@ -178,19 +178,19 @@ export class EntityMetadataValidator {
         if (DriverUtils.isMySQLFamily(driver)) {
             const metadatasWithDatabase = allEntityMetadatas.filter(
                 (metadata) => metadata.database,
-            )
+            );
             if (metadatasWithDatabase.length === 0 && !driver.database)
-                throw new NoConnectionOptionError("database")
+                throw new NoConnectionOptionError("database");
         }
 
         if (driver.options.type === "mssql") {
             const charsetColumns = entityMetadata.columns.filter(
                 (column) => column.charset,
-            )
+            );
             if (charsetColumns.length > 1)
                 throw new LapinError(
                     `Character set specifying is not supported in Sql Server`,
-                )
+                );
         }
 
         // Postgres supports only STORED generated columns.
@@ -200,29 +200,29 @@ export class EntityMetadataValidator {
                     column.asExpression &&
                     (!column.generatedType ||
                         column.generatedType === "VIRTUAL"),
-            )
+            );
             if (virtualColumn)
                 throw new LapinError(
                     `Column "${virtualColumn.propertyName}" of Entity "${entityMetadata.name}" is defined as VIRTUAL, but Postgres supports only STORED generated columns.`,
-                )
+                );
         }
 
         // check if relations are all without initialized properties
         const entityInstance = entityMetadata.create(undefined, {
             fromDeserializer: true,
-        })
+        });
         entityMetadata.relations.forEach((relation) => {
             if (relation.isManyToMany || relation.isOneToMany) {
                 // we skip relations for which persistence is disabled since initialization in them cannot harm somehow
-                if (relation.persistenceEnabled === false) return
+                if (relation.persistenceEnabled === false) return;
 
                 // get entity relation value and check if its an array
                 const relationInitializedValue =
-                    relation.getEntityValue(entityInstance)
+                    relation.getEntityValue(entityInstance);
                 if (Array.isArray(relationInitializedValue))
-                    throw new InitializedRelationError(relation)
+                    throw new InitializedRelationError(relation);
             }
-        })
+        });
 
         // validate relations
         entityMetadata.relations.forEach((relation) => {
@@ -276,14 +276,14 @@ export class EntityMetadataValidator {
             // todo: if multiple columns with same name - throw exception, including cases when columns are in embeds with same prefixes or without prefix at all
             // todo: if multiple primary key used, at least one of them must be unique or @Index decorator must be set on entity
             // todo: check if entity with duplicate names, some decorators exist
-        })
+        });
 
         // make sure cascade remove is not set for both sides of relationships (can be set in OneToOne decorators)
         entityMetadata.relations.forEach((relation) => {
             const isCircularCascadeRemove =
                 relation.isCascadeRemove &&
                 relation.inverseRelation &&
-                relation.inverseRelation!.isCascadeRemove
+                relation.inverseRelation!.isCascadeRemove;
             if (isCircularCascadeRemove)
                 throw new LapinError(
                     `Relation ${entityMetadata.name}#${
@@ -292,20 +292,20 @@ export class EntityMetadataValidator {
                         relation.inverseRelation!.propertyName
                     } both has cascade remove set. ` +
                         `This may lead to unexpected circular removals. Please set cascade remove only from one side of relationship.`,
-                )
-        }) // todo: maybe better just deny removal from one to one relation without join column?
+                );
+        }); // todo: maybe better just deny removal from one to one relation without join column?
 
-        entityMetadata.eagerRelations.forEach((relation) => {})
+        entityMetadata.eagerRelations.forEach((relation) => {});
     }
 
     /**
      * Validates dependencies of the entity metadatas.
      */
     protected validateDependencies(entityMetadatas: EntityMetadata[]) {
-        const graph = new DepGraph()
+        const graph = new DepGraph();
         entityMetadatas.forEach((entityMetadata) => {
-            graph.addNode(entityMetadata.name)
-        })
+            graph.addNode(entityMetadata.name);
+        });
         entityMetadatas.forEach((entityMetadata) => {
             entityMetadata.relationsWithJoinColumns
                 .filter((relation) => !relation.isNullable)
@@ -313,15 +313,15 @@ export class EntityMetadataValidator {
                     graph.addDependency(
                         entityMetadata.name,
                         relation.inverseEntityMetadata.name,
-                    )
-                })
-        })
+                    );
+                });
+        });
         try {
-            graph.overallOrder()
+            graph.overallOrder();
         } catch (err) {
             throw new CircularRelationsError(
                 err.toString().replace("Error: Dependency Cycle Found: ", ""),
-            )
+            );
         }
     }
 
@@ -340,8 +340,8 @@ export class EntityMetadataValidator {
                             `${entityMetadata.targetName}#${relation.propertyPath} contains "eager: true", and its inverse side ` +
                             `${relation.inverseEntityMetadata.targetName}#${relation.inverseRelation.propertyPath} contains "eager: true" as well.` +
                             ` Remove "eager: true" from one side of the relation.`,
-                    )
-            })
-        })
+                    );
+            });
+        });
     }
 }

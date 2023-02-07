@@ -1,4 +1,4 @@
-import { ObjectID } from "../driver/mongodb/typings"
+import { ObjectID } from "../driver/mongodb/typings";
 
 /**
  * A single property handler for FindOptionsSelect.
@@ -25,7 +25,7 @@ export type FindOptionsSelectProperty<Property> = Property extends Promise<
     ? boolean
     : Property extends object
     ? FindOptionsSelect<Property>
-    : boolean
+    : boolean;
 
 /**
  * Select find options.
@@ -33,8 +33,8 @@ export type FindOptionsSelectProperty<Property> = Property extends Promise<
 export type FindOptionsSelect<Entity> = {
     [P in keyof Entity]?: P extends "toString"
         ? unknown
-        : FindOptionsSelectProperty<NonNullable<Entity[P]>>
-}
+        : FindOptionsSelectProperty<NonNullable<Entity[P]>>;
+};
 
 /**
  * Property paths (column names) to be selected by "find" defined as string.
@@ -42,4 +42,4 @@ export type FindOptionsSelect<Entity> = {
  *
  * @deprecated will be removed in the next version, use FindOptionsSelect type notation instead
  */
-export type FindOptionsSelectByString<Entity> = (keyof Entity)[]
+export type FindOptionsSelectByString<Entity> = (keyof Entity)[];

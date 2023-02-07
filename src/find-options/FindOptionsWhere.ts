@@ -1,6 +1,6 @@
-import { FindOperator } from "./FindOperator"
-import { ObjectID } from "../driver/mongodb/typings"
-import { EqualOperator } from "./EqualOperator"
+import { FindOperator } from "./FindOperator";
+import { ObjectID } from "../driver/mongodb/typings";
+import { EqualOperator } from "./EqualOperator";
 
 /**
  * A single property handler for FindOptionsWhere.
@@ -32,7 +32,7 @@ export type FindOptionsWhereProperty<Property> = Property extends Promise<
           | EqualOperator<Property>
           | FindOperator<any>
           | boolean
-    : Property | FindOperator<Property>
+    : Property | FindOperator<Property>;
 
 /**
  * Used for find operations.
@@ -40,5 +40,5 @@ export type FindOptionsWhereProperty<Property> = Property extends Promise<
 export type FindOptionsWhere<Entity> = {
     [P in keyof Entity]?: P extends "toString"
         ? unknown
-        : FindOptionsWhereProperty<NonNullable<Entity[P]>>
-}
+        : FindOptionsWhereProperty<NonNullable<Entity[P]>>;
+};

@@ -1,31 +1,31 @@
-import { QueryResult } from "../../query-runner/QueryResult"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { Table } from "../../schema-builder/table/Table"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { TableIndex } from "../../schema-builder/table/TableIndex"
-import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
-import { View } from "../../schema-builder/view/View"
-import { Query } from "../Query"
-import { MysqlDriver } from "./MysqlDriver"
-import { ReadStream } from "../../platform/PlatformTools"
-import { OrmUtils } from "../../util/OrmUtils"
-import { QueryFailedError } from "../../error/QueryFailedError"
-import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions"
-import { TableUnique } from "../../schema-builder/table/TableUnique"
-import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner"
-import { Broadcaster } from "../../subscriber/Broadcaster"
-import { ColumnType } from "../types/ColumnTypes"
-import { TableCheck } from "../../schema-builder/table/TableCheck"
-import { IsolationLevel } from "../types/IsolationLevel"
-import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { VersionUtils } from "../../util/VersionUtils"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { LapinError } from "../../error"
-import { MetadataTableType } from "../types/MetadataTableType"
-import { InstanceChecker } from "../../util/InstanceChecker"
+import { QueryResult } from "../../query-runner/QueryResult";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { Table } from "../../schema-builder/table/Table";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { TableIndex } from "../../schema-builder/table/TableIndex";
+import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError";
+import { View } from "../../schema-builder/view/View";
+import { Query } from "../Query";
+import { MysqlDriver } from "./MysqlDriver";
+import { ReadStream } from "../../platform/PlatformTools";
+import { OrmUtils } from "../../util/OrmUtils";
+import { QueryFailedError } from "../../error/QueryFailedError";
+import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions";
+import { TableUnique } from "../../schema-builder/table/TableUnique";
+import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
+import { Broadcaster } from "../../subscriber/Broadcaster";
+import { ColumnType } from "../types/ColumnTypes";
+import { TableCheck } from "../../schema-builder/table/TableCheck";
+import { IsolationLevel } from "../types/IsolationLevel";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
+import { VersionUtils } from "../../util/VersionUtils";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { LapinError } from "../../error";
+import { MetadataTableType } from "../types/MetadataTableType";
+import { InstanceChecker } from "../../util/InstanceChecker";
 
 /**
  * Runs queries on a single mysql database connection.
@@ -38,7 +38,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     /**
      * Database driver used by connection.
      */
-    driver: MysqlDriver
+    driver: MysqlDriver;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -47,18 +47,18 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     /**
      * Promise used to obtain a database connection from a pool for a first time.
      */
-    protected databaseConnectionPromise: Promise<any>
+    protected databaseConnectionPromise: Promise<any>;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(driver: MysqlDriver, mode: ReplicationMode) {
-        super()
-        this.driver = driver
-        this.connection = driver.connection
-        this.broadcaster = new Broadcaster(this)
-        this.mode = mode
+        super();
+        this.driver = driver;
+        this.connection = driver.connection;
+        this.broadcaster = new Broadcaster(this);
+        this.mode = mode;
     }
 
     // -------------------------------------------------------------------------
@@ -71,29 +71,29 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      */
     connect(): Promise<any> {
         if (this.databaseConnection)
-            return Promise.resolve(this.databaseConnection)
+            return Promise.resolve(this.databaseConnection);
 
         if (this.databaseConnectionPromise)
-            return this.databaseConnectionPromise
+            return this.databaseConnectionPromise;
 
         if (this.mode === "slave" && this.driver.isReplicated) {
             this.databaseConnectionPromise = this.driver
                 .obtainSlaveConnection()
                 .then((connection) => {
-                    this.databaseConnection = connection
-                    return this.databaseConnection
-                })
+                    this.databaseConnection = connection;
+                    return this.databaseConnection;
+                });
         } else {
             // master
             this.databaseConnectionPromise = this.driver
                 .obtainMasterConnection()
                 .then((connection) => {
-                    this.databaseConnection = connection
-                    return this.databaseConnection
-                })
+                    this.databaseConnection = connection;
+                    return this.databaseConnection;
+                });
         }
 
-        return this.databaseConnectionPromise
+        return this.databaseConnectionPromise;
     }
 
     /**
@@ -101,35 +101,35 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * You cannot use query runner methods once its released.
      */
     release(): Promise<void> {
-        this.isReleased = true
-        if (this.databaseConnection) this.databaseConnection.release()
-        return Promise.resolve()
+        this.isReleased = true;
+        if (this.databaseConnection) this.databaseConnection.release();
+        return Promise.resolve();
     }
 
     /**
      * Starts transaction on the current connection.
      */
     async startTransaction(isolationLevel?: IsolationLevel): Promise<void> {
-        this.isTransactionActive = true
+        this.isTransactionActive = true;
         try {
-            await this.broadcaster.broadcast("BeforeTransactionStart")
+            await this.broadcaster.broadcast("BeforeTransactionStart");
         } catch (err) {
-            this.isTransactionActive = false
-            throw err
+            this.isTransactionActive = false;
+            throw err;
         }
         if (this.transactionDepth === 0) {
             if (isolationLevel) {
                 await this.query(
                     "SET TRANSACTION ISOLATION LEVEL " + isolationLevel,
-                )
+                );
             }
-            await this.query("START TRANSACTION")
+            await this.query("START TRANSACTION");
         } else {
-            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`);
         }
-        this.transactionDepth += 1
+        this.transactionDepth += 1;
 
-        await this.broadcaster.broadcast("AfterTransactionStart")
+        await this.broadcaster.broadcast("AfterTransactionStart");
     }
 
     /**
@@ -137,21 +137,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Error will be thrown if transaction was not started.
      */
     async commitTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionCommit")
+        await this.broadcaster.broadcast("BeforeTransactionCommit");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.query("COMMIT")
-            this.isTransactionActive = false
+            await this.query("COMMIT");
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionCommit")
+        await this.broadcaster.broadcast("AfterTransactionCommit");
     }
 
     /**
@@ -159,21 +159,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Error will be thrown if transaction was not started.
      */
     async rollbackTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionRollback")
+        await this.broadcaster.broadcast("BeforeTransactionRollback");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.query("ROLLBACK")
-            this.isTransactionActive = false
+            await this.query("ROLLBACK");
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionRollback")
+        await this.broadcaster.broadcast("AfterTransactionRollback");
     }
 
     /**
@@ -184,22 +184,23 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         parameters?: any[],
         useStructuredResult = false,
     ): Promise<any> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
         return new Promise(async (ok, fail) => {
             try {
-                const databaseConnection = await this.connect()
-                this.driver.connection.logger.logQuery(query, parameters, this)
-                const queryStartTime = +new Date()
+                const databaseConnection = await this.connect();
+                this.driver.connection.logger.logQuery(query, parameters, this);
+                const queryStartTime = +new Date();
                 databaseConnection.query(
                     query,
                     parameters,
                     (err: any, raw: any) => {
                         // log slow queries if maxQueryExecution time is set
                         const maxQueryExecutionTime =
-                            this.driver.options.maxQueryExecutionTime
-                        const queryEndTime = +new Date()
-                        const queryExecutionTime = queryEndTime - queryStartTime
+                            this.driver.options.maxQueryExecutionTime;
+                        const queryEndTime = +new Date();
+                        const queryExecutionTime =
+                            queryEndTime - queryStartTime;
                         if (
                             maxQueryExecutionTime &&
                             queryExecutionTime > maxQueryExecutionTime
@@ -209,7 +210,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 query,
                                 parameters,
                                 this,
-                            )
+                            );
 
                         if (err) {
                             this.driver.connection.logger.logQueryError(
@@ -217,37 +218,37 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 query,
                                 parameters,
                                 this,
-                            )
+                            );
                             return fail(
                                 new QueryFailedError(query, parameters, err),
-                            )
+                            );
                         }
 
-                        const result = new QueryResult()
+                        const result = new QueryResult();
 
-                        result.raw = raw
+                        result.raw = raw;
 
                         try {
-                            result.records = Array.from(raw)
+                            result.records = Array.from(raw);
                         } catch {
                             // Do nothing.
                         }
 
                         if (raw?.hasOwnProperty("affectedRows")) {
-                            result.affected = raw.affectedRows
+                            result.affected = raw.affectedRows;
                         }
 
                         if (useStructuredResult) {
-                            ok(result)
+                            ok(result);
                         } else {
-                            ok(result.raw)
+                            ok(result.raw);
                         }
                     },
-                )
+                );
             } catch (err) {
-                fail(err)
+                fail(err);
             }
-        })
+        });
     }
 
     /**
@@ -259,30 +260,30 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
         return new Promise(async (ok, fail) => {
             try {
-                const databaseConnection = await this.connect()
-                this.driver.connection.logger.logQuery(query, parameters, this)
+                const databaseConnection = await this.connect();
+                this.driver.connection.logger.logQuery(query, parameters, this);
                 const databaseQuery = databaseConnection.query(
                     query,
                     parameters,
-                )
-                if (onEnd) databaseQuery.on("end", onEnd)
-                if (onError) databaseQuery.on("error", onError)
-                ok(databaseQuery.stream())
+                );
+                if (onEnd) databaseQuery.on("end", onEnd);
+                if (onError) databaseQuery.on("error", onError);
+                ok(databaseQuery.stream());
             } catch (err) {
-                fail(err)
+                fail(err);
             }
-        })
+        });
     }
 
     /**
      * Returns all available database names including system databases.
      */
     async getDatabases(): Promise<string[]> {
-        return Promise.resolve([])
+        return Promise.resolve([]);
     }
 
     /**
@@ -290,7 +291,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        throw new LapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`);
     }
 
     /**
@@ -299,41 +300,41 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     async hasDatabase(database: string): Promise<boolean> {
         const result = await this.query(
             `SELECT * FROM \`INFORMATION_SCHEMA\`.\`SCHEMATA\` WHERE \`SCHEMA_NAME\` = '${database}'`,
-        )
-        return result.length ? true : false
+        );
+        return result.length ? true : false;
     }
 
     /**
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<string> {
-        const query = await this.query(`SELECT DATABASE() AS \`db_name\``)
-        return query[0]["db_name"]
+        const query = await this.query(`SELECT DATABASE() AS \`db_name\``);
+        return query[0]["db_name"];
     }
 
     /**
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new LapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`);
     }
 
     /**
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<string> {
-        const query = await this.query(`SELECT SCHEMA() AS \`schema_name\``)
-        return query[0]["schema_name"]
+        const query = await this.query(`SELECT SCHEMA() AS \`schema_name\``);
+        return query[0]["schema_name"];
     }
 
     /**
      * Checks if table with the given name exist in the database.
      */
     async hasTable(tableOrName: Table | string): Promise<boolean> {
-        const parsedTableName = this.driver.parseTableName(tableOrName)
-        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}'`
-        const result = await this.query(sql)
-        return result.length ? true : false
+        const parsedTableName = this.driver.parseTableName(tableOrName);
+        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}'`;
+        const result = await this.query(sql);
+        return result.length ? true : false;
     }
 
     /**
@@ -343,13 +344,13 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         column: TableColumn | string,
     ): Promise<boolean> {
-        const parsedTableName = this.driver.parseTableName(tableOrName)
+        const parsedTableName = this.driver.parseTableName(tableOrName);
         const columnName = InstanceChecker.isTableColumn(column)
             ? column.name
-            : column
-        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}' AND \`COLUMN_NAME\` = '${columnName}'`
-        const result = await this.query(sql)
-        return result.length ? true : false
+            : column;
+        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}' AND \`COLUMN_NAME\` = '${columnName}'`;
+        const result = await this.query(sql);
+        return result.length ? true : false;
     }
 
     /**
@@ -361,9 +362,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const up = ifNotExist
             ? `CREATE DATABASE IF NOT EXISTS \`${database}\``
-            : `CREATE DATABASE \`${database}\``
-        const down = `DROP DATABASE \`${database}\``
-        await this.executeQueries(new Query(up), new Query(down))
+            : `CREATE DATABASE \`${database}\``;
+        const down = `DROP DATABASE \`${database}\``;
+        await this.executeQueries(new Query(up), new Query(down));
     }
 
     /**
@@ -372,9 +373,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     async dropDatabase(database: string, ifExist?: boolean): Promise<void> {
         const up = ifExist
             ? `DROP DATABASE IF EXISTS \`${database}\``
-            : `DROP DATABASE \`${database}\``
-        const down = `CREATE DATABASE \`${database}\``
-        await this.executeQueries(new Query(up), new Query(down))
+            : `DROP DATABASE \`${database}\``;
+        const down = `CREATE DATABASE \`${database}\``;
+        await this.executeQueries(new Query(up), new Query(down));
     }
 
     /**
@@ -386,7 +387,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `Schema create queries are not supported by MySql driver.`,
-        )
+        );
     }
 
     /**
@@ -395,7 +396,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
         throw new LapinError(
             `Schema drop queries are not supported by MySql driver.`,
-        )
+        );
     }
 
     /**
@@ -407,14 +408,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         createForeignKeys: boolean = true,
     ): Promise<void> {
         if (ifNotExist) {
-            const isTableExist = await this.hasTable(table)
-            if (isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(table);
+            if (isTableExist) return Promise.resolve();
         }
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
-        upQueries.push(this.createTableSql(table, createForeignKeys))
-        downQueries.push(this.dropTableSql(table))
+        upQueries.push(this.createTableSql(table, createForeignKeys));
+        downQueries.push(this.dropTableSql(table));
 
         // we must first drop indices, than drop foreign keys, because drop queries runs in reversed order
         // and foreign keys will be dropped first as indices. This order is very important, because we can't drop index
@@ -423,22 +424,22 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         // createTable does not need separate method to create indices, because it create indices in the same query with table creation.
         table.indices.forEach((index) =>
             downQueries.push(this.dropIndexSql(table, index)),
-        )
+        );
 
         // if createForeignKeys is true, we must drop created foreign keys in down query.
         // createTable does not need separate method to create foreign keys, because it create fk's in the same query with table creation.
         if (createForeignKeys)
             table.foreignKeys.forEach((foreignKey) =>
                 downQueries.push(this.dropForeignKeySql(table, foreignKey)),
-            )
+            );
 
         // if table has column with generated type, we must add the expression to the metadata table
         const generatedColumns = table.columns.filter(
             (column) => column.generatedType && column.asExpression,
-        )
+        );
 
         for (const column of generatedColumns) {
-            const currentDatabase = await this.getCurrentDatabase()
+            const currentDatabase = await this.getCurrentDatabase();
 
             const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
@@ -446,20 +447,20 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
             const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
 
-            upQueries.push(insertQuery)
-            downQueries.push(deleteQuery)
+            upQueries.push(insertQuery);
+            downQueries.push(deleteQuery);
         }
 
-        return this.executeQueries(upQueries, downQueries)
+        return this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -473,43 +474,43 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         // It needs because if table does not exist and dropForeignKeys or dropIndices is true, we don't need
         // to perform drop queries for foreign keys and indices.
         if (ifExist) {
-            const isTableExist = await this.hasTable(target)
-            if (!isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(target);
+            if (!isTableExist) return Promise.resolve();
         }
 
         // if dropTable called with dropForeignKeys = true, we must create foreign keys in down query.
-        const createForeignKeys: boolean = dropForeignKeys
-        const tablePath = this.getTablePath(target)
-        const table = await this.getCachedTable(tablePath)
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const createForeignKeys: boolean = dropForeignKeys;
+        const tablePath = this.getTablePath(target);
+        const table = await this.getCachedTable(tablePath);
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         if (dropForeignKeys)
             table.foreignKeys.forEach((foreignKey) =>
                 upQueries.push(this.dropForeignKeySql(table, foreignKey)),
-            )
+            );
 
         table.indices.forEach((index) =>
             upQueries.push(this.dropIndexSql(table, index)),
-        )
+        );
 
-        upQueries.push(this.dropTableSql(table))
-        downQueries.push(this.createTableSql(table, createForeignKeys))
+        upQueries.push(this.dropTableSql(table));
+        downQueries.push(this.createTableSql(table, createForeignKeys));
 
         // if table had columns with generated type, we must remove the expression from the metadata table
         const generatedColumns = table.columns.filter(
             (column) => column.generatedType && column.asExpression,
-        )
+        );
 
         for (const column of generatedColumns) {
-            const currentDatabase = await this.getCurrentDatabase()
+            const currentDatabase = await this.getCurrentDatabase();
 
             const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
 
             const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
@@ -517,13 +518,13 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
-            upQueries.push(deleteQuery)
-            downQueries.push(insertQuery)
+            upQueries.push(deleteQuery);
+            downQueries.push(insertQuery);
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -533,31 +534,31 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         view: View,
         syncWithMetadata: boolean = false,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(this.createViewSql(view))
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(this.createViewSql(view));
         if (syncWithMetadata)
-            upQueries.push(await this.insertViewDefinitionSql(view))
-        downQueries.push(this.dropViewSql(view))
+            upQueries.push(await this.insertViewDefinitionSql(view));
+        downQueries.push(this.dropViewSql(view));
         if (syncWithMetadata)
-            downQueries.push(await this.deleteViewDefinitionSql(view))
-        await this.executeQueries(upQueries, downQueries)
+            downQueries.push(await this.deleteViewDefinitionSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
      * Drops the view.
      */
     async dropView(target: View | string): Promise<void> {
-        const viewName = InstanceChecker.isView(target) ? target.name : target
-        const view = await this.getCachedView(viewName)
+        const viewName = InstanceChecker.isView(target) ? target.name : target;
+        const view = await this.getCachedView(viewName);
 
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(await this.deleteViewDefinitionSql(view))
-        upQueries.push(this.dropViewSql(view))
-        downQueries.push(await this.insertViewDefinitionSql(view))
-        downQueries.push(this.createViewSql(view))
-        await this.executeQueries(upQueries, downQueries)
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(await this.deleteViewDefinitionSql(view));
+        upQueries.push(this.dropViewSql(view));
+        downQueries.push(await this.insertViewDefinitionSql(view));
+        downQueries.push(this.createViewSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -567,16 +568,16 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         oldTableOrName: Table | string,
         newTableName: string,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
         const oldTable = InstanceChecker.isTable(oldTableOrName)
             ? oldTableOrName
-            : await this.getCachedTable(oldTableOrName)
-        const newTable = oldTable.clone()
+            : await this.getCachedTable(oldTableOrName);
+        const newTable = oldTable.clone();
 
-        const { database } = this.driver.parseTableName(oldTable)
+        const { database } = this.driver.parseTableName(oldTable);
 
-        newTable.name = database ? `${database}.${newTableName}` : newTableName
+        newTable.name = database ? `${database}.${newTableName}` : newTableName;
 
         // rename table
         upQueries.push(
@@ -585,44 +586,44 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     newTable,
                 )}`,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `RENAME TABLE ${this.escapePath(newTable)} TO ${this.escapePath(
                     oldTable,
                 )}`,
             ),
-        )
+        );
 
         // rename index constraints
         newTable.indices.forEach((index) => {
             const oldIndexName = this.connection.namingStrategy.indexName(
                 oldTable,
                 index.columnNames,
-            )
+            );
 
             // Skip renaming if Index has user defined constraint name
-            if (index.name !== oldIndexName) return
+            if (index.name !== oldIndexName) return;
 
             // build new constraint name
             const columnNames = index.columnNames
                 .map((column) => `\`${column}\``)
-                .join(", ")
+                .join(", ");
             const newIndexName = this.connection.namingStrategy.indexName(
                 newTable,
                 index.columnNames,
                 index.where,
-            )
+            );
 
             // build queries
-            let indexType = ""
-            if (index.isUnique) indexType += "UNIQUE "
-            if (index.isSpatial) indexType += "SPATIAL "
-            if (index.isFulltext) indexType += "FULLTEXT "
+            let indexType = "";
+            if (index.isUnique) indexType += "UNIQUE ";
+            if (index.isSpatial) indexType += "SPATIAL ";
+            if (index.isFulltext) indexType += "FULLTEXT ";
             const indexParser =
                 index.isFulltext && index.parser
                     ? ` WITH PARSER ${index.parser}`
-                    : ""
+                    : "";
 
             upQueries.push(
                 new Query(
@@ -630,7 +631,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         index.name
                     }\`, ADD ${indexType}INDEX \`${newIndexName}\` (${columnNames})${indexParser}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
@@ -639,11 +640,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         index.name
                     }\` (${columnNames})${indexParser}`,
                 ),
-            )
+            );
 
             // replace constraint name
-            index.name = newIndexName
-        })
+            index.name = newIndexName;
+        });
 
         // rename foreign key constraint
         newTable.foreignKeys.forEach((foreignKey) => {
@@ -653,25 +654,25 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     foreignKey.columnNames,
                     this.getTablePath(foreignKey),
                     foreignKey.referencedColumnNames,
-                )
+                );
 
             // Skip renaming if foreign key has user defined constraint name
-            if (foreignKey.name !== oldForeignKeyName) return
+            if (foreignKey.name !== oldForeignKeyName) return;
 
             // build new constraint name
             const columnNames = foreignKey.columnNames
                 .map((column) => `\`${column}\``)
-                .join(", ")
+                .join(", ");
             const referencedColumnNames = foreignKey.referencedColumnNames
                 .map((column) => `\`${column}\``)
-                .join(",")
+                .join(",");
             const newForeignKeyName =
                 this.connection.namingStrategy.foreignKeyName(
                     newTable,
                     foreignKey.columnNames,
                     this.getTablePath(foreignKey),
                     foreignKey.referencedColumnNames,
-                )
+                );
 
             // build queries
             let up =
@@ -680,9 +681,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 }\`, ADD CONSTRAINT \`${newForeignKeyName}\` FOREIGN KEY (${columnNames}) ` +
                 `REFERENCES ${this.escapePath(
                     this.getTablePath(foreignKey),
-                )}(${referencedColumnNames})`
-            if (foreignKey.onDelete) up += ` ON DELETE ${foreignKey.onDelete}`
-            if (foreignKey.onUpdate) up += ` ON UPDATE ${foreignKey.onUpdate}`
+                )}(${referencedColumnNames})`;
+            if (foreignKey.onDelete) up += ` ON DELETE ${foreignKey.onDelete}`;
+            if (foreignKey.onUpdate) up += ` ON UPDATE ${foreignKey.onUpdate}`;
 
             let down =
                 `ALTER TABLE ${this.escapePath(
@@ -692,22 +693,24 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 }\` FOREIGN KEY (${columnNames}) ` +
                 `REFERENCES ${this.escapePath(
                     this.getTablePath(foreignKey),
-                )}(${referencedColumnNames})`
-            if (foreignKey.onDelete) down += ` ON DELETE ${foreignKey.onDelete}`
-            if (foreignKey.onUpdate) down += ` ON UPDATE ${foreignKey.onUpdate}`
+                )}(${referencedColumnNames})`;
+            if (foreignKey.onDelete)
+                down += ` ON DELETE ${foreignKey.onDelete}`;
+            if (foreignKey.onUpdate)
+                down += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-            upQueries.push(new Query(up))
-            downQueries.push(new Query(down))
+            upQueries.push(new Query(up));
+            downQueries.push(new Query(down));
 
             // replace constraint name
-            foreignKey.name = newForeignKeyName
-        })
+            foreignKey.name = newForeignKeyName;
+        });
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
         // rename old table and replace it in cached tabled;
-        oldTable.name = newTable.name
-        this.replaceCachedTable(oldTable, newTable)
+        oldTable.name = newTable.name;
+        this.replaceCachedTable(oldTable, newTable);
     }
 
     /**
@@ -719,11 +722,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        const skipColumnLevelPrimary = clonedTable.primaryColumns.length > 0
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        const skipColumnLevelPrimary = clonedTable.primaryColumns.length > 0;
 
         upQueries.push(
             new Query(
@@ -735,14 +738,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     false,
                 )}`,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(table)} DROP COLUMN \`${
                     column.name
                 }\``,
             ),
-        )
+        );
 
         // create or update primary key constraint
         if (column.isPrimary && skipColumnLevelPrimary) {
@@ -751,11 +754,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 (column) =>
                     column.isGenerated &&
                     column.generationStrategy === "increment",
-            )
+            );
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -765,62 +768,62 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             nonGeneratedColumn.name
                         }\` ${this.buildCreateColumnSql(column, true)}`,
                     ),
-                )
+                );
             }
 
-            const primaryColumns = clonedTable.primaryColumns
+            const primaryColumns = clonedTable.primaryColumns;
             let columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
 
-            primaryColumns.push(column)
+            primaryColumns.push(column);
             columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
 
             // if we previously dropped AUTO_INCREMENT property, we must bring it back
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             nonGeneratedColumn.name
                         }\` ${this.buildCreateColumnSql(column, true)}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -830,29 +833,29 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
             }
         }
 
         if (column.generatedType && column.asExpression) {
-            const currentDatabase = await this.getCurrentDatabase()
+            const currentDatabase = await this.getCurrentDatabase();
             const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
             const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
 
-            upQueries.push(insertQuery)
-            downQueries.push(deleteQuery)
+            upQueries.push(insertQuery);
+            downQueries.push(deleteQuery);
         }
 
         // create column index
@@ -860,10 +863,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             (index) =>
                 index.columnNames.length === 1 &&
                 index.columnNames[0] === column.name,
-        )
+        );
         if (columnIndex) {
-            upQueries.push(this.createIndexSql(table, columnIndex))
-            downQueries.push(this.dropIndexSql(table, columnIndex))
+            upQueries.push(this.createIndexSql(table, columnIndex));
+            downQueries.push(this.dropIndexSql(table, columnIndex));
         } else if (column.isUnique) {
             const uniqueIndex = new TableIndex({
                 name: this.connection.namingStrategy.indexName(table, [
@@ -871,34 +874,34 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 ]),
                 columnNames: [column.name],
                 isUnique: true,
-            })
-            clonedTable.indices.push(uniqueIndex)
+            });
+            clonedTable.indices.push(uniqueIndex);
             clonedTable.uniques.push(
                 new TableUnique({
                     name: uniqueIndex.name,
                     columnNames: uniqueIndex.columnNames,
                 }),
-            )
+            );
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} ADD UNIQUE INDEX \`${
                         uniqueIndex.name
                     }\` (\`${column.name}\`)`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP INDEX \`${
                         uniqueIndex.name
                     }\``,
                 ),
-            )
+            );
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
-        clonedTable.addColumn(column)
-        this.replaceCachedTable(table, clonedTable)
+        clonedTable.addColumn(column);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -909,7 +912,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         columns: TableColumn[],
     ): Promise<void> {
         for (const column of columns) {
-            await this.addColumn(tableOrName, column)
+            await this.addColumn(tableOrName, column);
         }
     }
 
@@ -923,24 +926,24 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const oldColumn = InstanceChecker.isTableColumn(oldTableColumnOrName)
             ? oldTableColumnOrName
-            : table.columns.find((c) => c.name === oldTableColumnOrName)
+            : table.columns.find((c) => c.name === oldTableColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
-        let newColumn: TableColumn | undefined = undefined
+        let newColumn: TableColumn | undefined = undefined;
         if (InstanceChecker.isTableColumn(newTableColumnOrName)) {
-            newColumn = newTableColumnOrName
+            newColumn = newTableColumnOrName;
         } else {
-            newColumn = oldColumn.clone()
-            newColumn.name = newTableColumnOrName
+            newColumn = oldColumn.clone();
+            newColumn.name = newTableColumnOrName;
         }
 
-        await this.changeColumn(table, oldColumn, newColumn)
+        await this.changeColumn(table, oldColumn, newColumn);
     }
 
     /**
@@ -953,18 +956,18 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        let clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+            : await this.getCachedTable(tableOrName);
+        let clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         const oldColumn = InstanceChecker.isTableColumn(oldColumnOrName)
             ? oldColumnOrName
-            : table.columns.find((column) => column.name === oldColumnOrName)
+            : table.columns.find((column) => column.name === oldColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
         if (
             (newColumn.isGenerated !== oldColumn.isGenerated &&
@@ -978,11 +981,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 newColumn.generatedType === "VIRTUAL") ||
             (oldColumn.generatedType === "VIRTUAL" && !newColumn.generatedType)
         ) {
-            await this.dropColumn(table, oldColumn)
-            await this.addColumn(table, newColumn)
+            await this.dropColumn(table, oldColumn);
+            await this.addColumn(table, newColumn);
 
             // update cloned table
-            clonedTable = table.clone()
+            clonedTable = table.clone();
         } else {
             if (newColumn.name !== oldColumn.name) {
                 // We don't change any column properties, just rename it.
@@ -996,7 +999,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1007,7 +1010,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
 
                 // rename index constraints
                 clonedTable.findColumnIndices(oldColumn).forEach((index) => {
@@ -1015,36 +1018,36 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         this.connection.namingStrategy.indexName(
                             clonedTable,
                             index.columnNames,
-                        )
+                        );
 
                     // Skip renaming if Index has user defined constraint name
-                    if (index.name !== oldUniqueName) return
+                    if (index.name !== oldUniqueName) return;
 
                     // build new constraint name
                     index.columnNames.splice(
                         index.columnNames.indexOf(oldColumn.name),
                         1,
-                    )
-                    index.columnNames.push(newColumn.name)
+                    );
+                    index.columnNames.push(newColumn.name);
                     const columnNames = index.columnNames
                         .map((column) => `\`${column}\``)
-                        .join(", ")
+                        .join(", ");
                     const newIndexName =
                         this.connection.namingStrategy.indexName(
                             clonedTable,
                             index.columnNames,
                             index.where,
-                        )
+                        );
 
                     // build queries
-                    let indexType = ""
-                    if (index.isUnique) indexType += "UNIQUE "
-                    if (index.isSpatial) indexType += "SPATIAL "
-                    if (index.isFulltext) indexType += "FULLTEXT "
+                    let indexType = "";
+                    if (index.isUnique) indexType += "UNIQUE ";
+                    if (index.isSpatial) indexType += "SPATIAL ";
+                    if (index.isFulltext) indexType += "FULLTEXT ";
                     const indexParser =
                         index.isFulltext && index.parser
                             ? ` WITH PARSER ${index.parser}`
-                            : ""
+                            : "";
 
                     upQueries.push(
                         new Query(
@@ -1054,7 +1057,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 index.name
                             }\`, ADD ${indexType}INDEX \`${newIndexName}\` (${columnNames})${indexParser}`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -1063,11 +1066,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 index.name
                             }\` (${columnNames})${indexParser}`,
                         ),
-                    )
+                    );
 
                     // replace constraint name
-                    index.name = newIndexName
-                })
+                    index.name = newIndexName;
+                });
 
                 // rename foreign key constraints
                 clonedTable
@@ -1079,31 +1082,31 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 foreignKey.columnNames,
                                 this.getTablePath(foreignKey),
                                 foreignKey.referencedColumnNames,
-                            )
+                            );
 
                         // Skip renaming if foreign key has user defined constraint name
-                        if (foreignKey.name !== foreignKeyName) return
+                        if (foreignKey.name !== foreignKeyName) return;
 
                         // build new constraint name
                         foreignKey.columnNames.splice(
                             foreignKey.columnNames.indexOf(oldColumn.name),
                             1,
-                        )
-                        foreignKey.columnNames.push(newColumn.name)
+                        );
+                        foreignKey.columnNames.push(newColumn.name);
                         const columnNames = foreignKey.columnNames
                             .map((column) => `\`${column}\``)
-                            .join(", ")
+                            .join(", ");
                         const referencedColumnNames =
                             foreignKey.referencedColumnNames
                                 .map((column) => `\`${column}\``)
-                                .join(",")
+                                .join(",");
                         const newForeignKeyName =
                             this.connection.namingStrategy.foreignKeyName(
                                 clonedTable,
                                 foreignKey.columnNames,
                                 this.getTablePath(foreignKey),
                                 foreignKey.referencedColumnNames,
-                            )
+                            );
 
                         // build queries
                         let up =
@@ -1114,11 +1117,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             }\`, ADD CONSTRAINT \`${newForeignKeyName}\` FOREIGN KEY (${columnNames}) ` +
                             `REFERENCES ${this.escapePath(
                                 this.getTablePath(foreignKey),
-                            )}(${referencedColumnNames})`
+                            )}(${referencedColumnNames})`;
                         if (foreignKey.onDelete)
-                            up += ` ON DELETE ${foreignKey.onDelete}`
+                            up += ` ON DELETE ${foreignKey.onDelete}`;
                         if (foreignKey.onUpdate)
-                            up += ` ON UPDATE ${foreignKey.onUpdate}`
+                            up += ` ON UPDATE ${foreignKey.onUpdate}`;
 
                         let down =
                             `ALTER TABLE ${this.escapePath(
@@ -1128,27 +1131,27 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             }\` FOREIGN KEY (${columnNames}) ` +
                             `REFERENCES ${this.escapePath(
                                 this.getTablePath(foreignKey),
-                            )}(${referencedColumnNames})`
+                            )}(${referencedColumnNames})`;
                         if (foreignKey.onDelete)
-                            down += ` ON DELETE ${foreignKey.onDelete}`
+                            down += ` ON DELETE ${foreignKey.onDelete}`;
                         if (foreignKey.onUpdate)
-                            down += ` ON UPDATE ${foreignKey.onUpdate}`
+                            down += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-                        upQueries.push(new Query(up))
-                        downQueries.push(new Query(down))
+                        upQueries.push(new Query(up));
+                        downQueries.push(new Query(down));
 
                         // replace constraint name
-                        foreignKey.name = newForeignKeyName
-                    })
+                        foreignKey.name = newForeignKeyName;
+                    });
 
                 // rename old column in the Table object
                 const oldTableColumn = clonedTable.columns.find(
                     (column) => column.name === oldColumn.name,
-                )
+                );
                 clonedTable.columns[
                     clonedTable.columns.indexOf(oldTableColumn!)
-                ].name = newColumn.name
-                oldColumn.name = newColumn.name
+                ].name = newColumn.name;
+                oldColumn.name = newColumn.name;
             }
 
             if (this.isColumnChanged(oldColumn, newColumn, true, true)) {
@@ -1158,61 +1161,61 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             oldColumn.name
                         }\` ${this.buildCreateColumnSql(newColumn, true)}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             newColumn.name
                         }\` ${this.buildCreateColumnSql(oldColumn, true)}`,
                     ),
-                )
+                );
 
                 if (oldColumn.generatedType && !newColumn.generatedType) {
                     // if column changed from generated to non-generated, delete record from lapin metadata
 
-                    const currentDatabase = await this.getCurrentDatabase()
+                    const currentDatabase = await this.getCurrentDatabase();
                     const deleteQuery = this.deletelapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: oldColumn.name,
-                    })
+                    });
                     const insertQuery = this.insertlapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: oldColumn.name,
                         value: oldColumn.asExpression,
-                    })
+                    });
 
-                    upQueries.push(deleteQuery)
-                    downQueries.push(insertQuery)
+                    upQueries.push(deleteQuery);
+                    downQueries.push(insertQuery);
                 } else if (
                     !oldColumn.generatedType &&
                     newColumn.generatedType
                 ) {
                     // if column changed from non-generated to generated, insert record into lapin metadata
 
-                    const currentDatabase = await this.getCurrentDatabase()
+                    const currentDatabase = await this.getCurrentDatabase();
                     const insertQuery = this.insertlapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: newColumn.name,
                         value: newColumn.asExpression,
-                    })
+                    });
                     const deleteQuery = this.deletelapinMetadataSql({
                         schema: currentDatabase,
                         table: table.name,
                         type: MetadataTableType.GENERATED_COLUMN,
                         name: newColumn.name,
-                    })
+                    });
 
-                    upQueries.push(insertQuery)
-                    downQueries.push(deleteQuery)
+                    upQueries.push(insertQuery);
+                    downQueries.push(deleteQuery);
                 } else if (oldColumn.asExpression !== newColumn.asExpression) {
                     // if only expression changed, just update it in lapin_metadata table
-                    const currentDatabase = await this.getCurrentDatabase()
+                    const currentDatabase = await this.getCurrentDatabase();
                     const updateQuery = this.connection
                         .createQueryBuilder()
                         .update(this.getlapinMetadataTableName())
@@ -1225,7 +1228,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             schema: currentDatabase,
                         })
                         .andWhere("`table` = :table", { table: table.name })
-                        .getQueryAndParameters()
+                        .getQueryAndParameters();
 
                     const revertUpdateQuery = this.connection
                         .createQueryBuilder()
@@ -1239,12 +1242,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             schema: currentDatabase,
                         })
                         .andWhere("`table` = :table", { table: table.name })
-                        .getQueryAndParameters()
+                        .getQueryAndParameters();
 
-                    upQueries.push(new Query(updateQuery[0], updateQuery[1]))
+                    upQueries.push(new Query(updateQuery[0], updateQuery[1]));
                     downQueries.push(
                         new Query(revertUpdateQuery[0], revertUpdateQuery[1]),
-                    )
+                    );
                 }
             }
 
@@ -1254,11 +1257,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     (column) =>
                         column.isGenerated &&
                         column.generationStrategy === "increment",
-                )
+                );
                 if (generatedColumn) {
-                    const nonGeneratedColumn = generatedColumn.clone()
-                    nonGeneratedColumn.isGenerated = false
-                    nonGeneratedColumn.generationStrategy = undefined
+                    const nonGeneratedColumn = generatedColumn.clone();
+                    nonGeneratedColumn.isGenerated = false;
+                    nonGeneratedColumn.generationStrategy = undefined;
 
                     upQueries.push(
                         new Query(
@@ -1269,7 +1272,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1279,97 +1282,97 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                 }
 
-                const primaryColumns = clonedTable.primaryColumns
+                const primaryColumns = clonedTable.primaryColumns;
 
                 // if primary column state changed, we must always drop existed constraint.
                 if (primaryColumns.length > 0) {
                     const columnNames = primaryColumns
                         .map((column) => `\`${column.name}\``)
-                        .join(", ")
+                        .join(", ");
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP PRIMARY KEY`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} ADD PRIMARY KEY (${columnNames})`,
                         ),
-                    )
+                    );
                 }
 
                 if (newColumn.isPrimary === true) {
-                    primaryColumns.push(newColumn)
+                    primaryColumns.push(newColumn);
                     // update column in table
                     const column = clonedTable.columns.find(
                         (column) => column.name === newColumn.name,
-                    )
-                    column!.isPrimary = true
+                    );
+                    column!.isPrimary = true;
                     const columnNames = primaryColumns
                         .map((column) => `\`${column.name}\``)
-                        .join(", ")
+                        .join(", ");
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} ADD PRIMARY KEY (${columnNames})`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP PRIMARY KEY`,
                         ),
-                    )
+                    );
                 } else {
                     const primaryColumn = primaryColumns.find(
                         (c) => c.name === newColumn.name,
-                    )
+                    );
                     primaryColumns.splice(
                         primaryColumns.indexOf(primaryColumn!),
                         1,
-                    )
+                    );
                     // update column in table
                     const column = clonedTable.columns.find(
                         (column) => column.name === newColumn.name,
-                    )
-                    column!.isPrimary = false
+                    );
+                    column!.isPrimary = false;
 
                     // if we have another primary keys, we must recreate constraint.
                     if (primaryColumns.length > 0) {
                         const columnNames = primaryColumns
                             .map((column) => `\`${column.name}\``)
-                            .join(", ")
+                            .join(", ");
                         upQueries.push(
                             new Query(
                                 `ALTER TABLE ${this.escapePath(
                                     table,
                                 )} ADD PRIMARY KEY (${columnNames})`,
                             ),
-                        )
+                        );
                         downQueries.push(
                             new Query(
                                 `ALTER TABLE ${this.escapePath(
                                     table,
                                 )} DROP PRIMARY KEY`,
                             ),
-                        )
+                        );
                     }
                 }
 
                 // if we have generated column, and we dropped AUTO_INCREMENT property before, we must bring it back
                 if (generatedColumn) {
-                    const nonGeneratedColumn = generatedColumn.clone()
-                    nonGeneratedColumn.isGenerated = false
-                    nonGeneratedColumn.generationStrategy = undefined
+                    const nonGeneratedColumn = generatedColumn.clone();
+                    nonGeneratedColumn.isGenerated = false;
+                    nonGeneratedColumn.generationStrategy = undefined;
 
                     upQueries.push(
                         new Query(
@@ -1380,7 +1383,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1390,7 +1393,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                 }
             }
 
@@ -1402,14 +1405,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         ]),
                         columnNames: [newColumn.name],
                         isUnique: true,
-                    })
-                    clonedTable.indices.push(uniqueIndex)
+                    });
+                    clonedTable.indices.push(uniqueIndex);
                     clonedTable.uniques.push(
                         new TableUnique({
                             name: uniqueIndex.name,
                             columnNames: uniqueIndex.columnNames,
                         }),
-                    )
+                    );
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -1418,14 +1421,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 newColumn.name
                             }\`)`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP INDEX \`${uniqueIndex.name}\``,
                         ),
-                    )
+                    );
                 } else {
                     const uniqueIndex = clonedTable.indices.find((index) => {
                         return (
@@ -1434,20 +1437,20 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             !!index.columnNames.find(
                                 (columnName) => columnName === newColumn.name,
                             )
-                        )
-                    })
+                        );
+                    });
                     clonedTable.indices.splice(
                         clonedTable.indices.indexOf(uniqueIndex!),
                         1,
-                    )
+                    );
 
                     const tableUnique = clonedTable.uniques.find(
                         (unique) => unique.name === uniqueIndex!.name,
-                    )
+                    );
                     clonedTable.uniques.splice(
                         clonedTable.uniques.indexOf(tableUnique!),
                         1,
-                    )
+                    );
 
                     upQueries.push(
                         new Query(
@@ -1455,7 +1458,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 table,
                             )} DROP INDEX \`${uniqueIndex!.name}\``,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -1464,13 +1467,13 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 newColumn.name
                             }\`)`,
                         ),
-                    )
+                    );
                 }
             }
         }
 
-        await this.executeQueries(upQueries, downQueries)
-        this.replaceCachedTable(table, clonedTable)
+        await this.executeQueries(upQueries, downQueries);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1481,7 +1484,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         changedColumns: { newColumn: TableColumn; oldColumn: TableColumn }[],
     ): Promise<void> {
         for (const { oldColumn, newColumn } of changedColumns) {
-            await this.changeColumn(tableOrName, oldColumn, newColumn)
+            await this.changeColumn(tableOrName, oldColumn, newColumn);
         }
     }
 
@@ -1494,18 +1497,18 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const column = InstanceChecker.isTableColumn(columnOrName)
             ? columnOrName
-            : table.findColumnByName(columnOrName)
+            : table.findColumnByName(columnOrName);
         if (!column)
             throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
-            )
+            );
 
-        const clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         // drop primary key constraint
         if (column.isPrimary) {
@@ -1514,11 +1517,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 (column) =>
                     column.isGenerated &&
                     column.generationStrategy === "increment",
-            )
+            );
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
 
                 upQueries.push(
                     new Query(
@@ -1529,7 +1532,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1539,58 +1542,58 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
             }
 
             // dropping primary key constraint
             const columnNames = clonedTable.primaryColumns
                 .map((primaryColumn) => `\`${primaryColumn.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         clonedTable,
                     )} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         clonedTable,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
 
             // update column in table
-            const tableColumn = clonedTable.findColumnByName(column.name)
-            tableColumn!.isPrimary = false
+            const tableColumn = clonedTable.findColumnByName(column.name);
+            tableColumn!.isPrimary = false;
 
             // if primary key have multiple columns, we must recreate it without dropped column
             if (clonedTable.primaryColumns.length > 0) {
                 const columnNames = clonedTable.primaryColumns
                     .map((primaryColumn) => `\`${primaryColumn.name}\``)
-                    .join(", ")
+                    .join(", ");
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(
                             clonedTable,
                         )} ADD PRIMARY KEY (${columnNames})`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(
                             clonedTable,
                         )} DROP PRIMARY KEY`,
                     ),
-                )
+                );
             }
 
             // if we have generated column, and we dropped AUTO_INCREMENT property before, and this column is not current dropping column, we must bring it back
             if (generatedColumn && generatedColumn.name !== column.name) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
 
                 upQueries.push(
                     new Query(
@@ -1601,7 +1604,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1611,7 +1614,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             true,
                         )}`,
                     ),
-                )
+                );
             }
         }
 
@@ -1620,40 +1623,40 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             (index) =>
                 index.columnNames.length === 1 &&
                 index.columnNames[0] === column.name,
-        )
+        );
         if (columnIndex) {
             clonedTable.indices.splice(
                 clonedTable.indices.indexOf(columnIndex),
                 1,
-            )
-            upQueries.push(this.dropIndexSql(table, columnIndex))
-            downQueries.push(this.createIndexSql(table, columnIndex))
+            );
+            upQueries.push(this.dropIndexSql(table, columnIndex));
+            downQueries.push(this.createIndexSql(table, columnIndex));
         } else if (column.isUnique) {
             // we splice constraints both from table uniques and indices.
             const uniqueName =
                 this.connection.namingStrategy.uniqueConstraintName(table, [
                     column.name,
-                ])
+                ]);
             const foundUnique = clonedTable.uniques.find(
                 (unique) => unique.name === uniqueName,
-            )
+            );
             if (foundUnique)
                 clonedTable.uniques.splice(
                     clonedTable.uniques.indexOf(foundUnique),
                     1,
-                )
+                );
 
             const indexName = this.connection.namingStrategy.indexName(table, [
                 column.name,
-            ])
+            ]);
             const foundIndex = clonedTable.indices.find(
                 (index) => index.name === indexName,
-            )
+            );
             if (foundIndex)
                 clonedTable.indices.splice(
                     clonedTable.indices.indexOf(foundIndex),
                     1,
-                )
+                );
 
             upQueries.push(
                 new Query(
@@ -1661,14 +1664,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         table,
                     )} DROP INDEX \`${indexName}\``,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD UNIQUE INDEX \`${indexName}\` (\`${column.name}\`)`,
                 ),
-            )
+            );
         }
 
         upQueries.push(
@@ -1677,39 +1680,39 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     column.name
                 }\``,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(
                     table,
                 )} ADD ${this.buildCreateColumnSql(column, true)}`,
             ),
-        )
+        );
 
         if (column.generatedType && column.asExpression) {
-            const currentDatabase = await this.getCurrentDatabase()
+            const currentDatabase = await this.getCurrentDatabase();
             const deleteQuery = this.deletelapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
-            })
+            });
             const insertQuery = this.insertlapinMetadataSql({
                 schema: currentDatabase,
                 table: table.name,
                 type: MetadataTableType.GENERATED_COLUMN,
                 name: column.name,
                 value: column.asExpression,
-            })
+            });
 
-            upQueries.push(deleteQuery)
-            downQueries.push(insertQuery)
+            upQueries.push(deleteQuery);
+            downQueries.push(insertQuery);
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
-        clonedTable.removeColumn(column)
-        this.replaceCachedTable(table, clonedTable)
+        clonedTable.removeColumn(column);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1720,7 +1723,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         columns: TableColumn[] | string[],
     ): Promise<void> {
         for (const column of columns) {
-            await this.dropColumn(tableOrName, column)
+            await this.dropColumn(tableOrName, column);
         }
     }
 
@@ -1733,18 +1736,18 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
 
-        const up = this.createPrimaryKeySql(table, columnNames)
-        const down = this.dropPrimaryKeySql(table)
+        const up = this.createPrimaryKeySql(table, columnNames);
+        const down = this.dropPrimaryKeySql(table);
 
-        await this.executeQueries(up, down)
+        await this.executeQueries(up, down);
         clonedTable.columns.forEach((column) => {
             if (columnNames.find((columnName) => columnName === column.name))
-                column.isPrimary = true
-        })
-        this.replaceCachedTable(table, clonedTable)
+                column.isPrimary = true;
+        });
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1756,21 +1759,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
-        const columnNames = columns.map((column) => column.name)
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
+        const columnNames = columns.map((column) => column.name);
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         // if table have generated column, we must drop AUTO_INCREMENT before changing primary constraints.
         const generatedColumn = clonedTable.columns.find(
             (column) =>
                 column.isGenerated && column.generationStrategy === "increment",
-        )
+        );
         if (generatedColumn) {
-            const nonGeneratedColumn = generatedColumn.clone()
-            nonGeneratedColumn.isGenerated = false
-            nonGeneratedColumn.generationStrategy = undefined
+            const nonGeneratedColumn = generatedColumn.clone();
+            nonGeneratedColumn.isGenerated = false;
+            nonGeneratedColumn.generationStrategy = undefined;
 
             upQueries.push(
                 new Query(
@@ -1778,54 +1781,54 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         generatedColumn.name
                     }\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                         nonGeneratedColumn.name
                     }\` ${this.buildCreateColumnSql(generatedColumn, true)}`,
                 ),
-            )
+            );
         }
 
         // if table already have primary columns, we must drop them.
-        const primaryColumns = clonedTable.primaryColumns
+        const primaryColumns = clonedTable.primaryColumns;
         if (primaryColumns.length > 0) {
             const columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
         }
 
         // update columns in table.
         clonedTable.columns
             .filter((column) => columnNames.indexOf(column.name) !== -1)
-            .forEach((column) => (column.isPrimary = true))
+            .forEach((column) => (column.isPrimary = true));
 
         const columnNamesString = columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
+            .join(", ");
         upQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(
                     table,
                 )} ADD PRIMARY KEY (${columnNamesString})`,
             ),
-        )
+        );
         downQueries.push(
             new Query(`ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`),
-        )
+        );
 
         // if we already have generated column or column is changed to generated, and we dropped AUTO_INCREMENT property before, we must bring it back
         const newOrExistGeneratedColumn = generatedColumn
@@ -1834,11 +1837,11 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                   (column) =>
                       column.isGenerated &&
                       column.generationStrategy === "increment",
-              )
+              );
         if (newOrExistGeneratedColumn) {
-            const nonGeneratedColumn = newOrExistGeneratedColumn.clone()
-            nonGeneratedColumn.isGenerated = false
-            nonGeneratedColumn.generationStrategy = undefined
+            const nonGeneratedColumn = newOrExistGeneratedColumn.clone();
+            nonGeneratedColumn.isGenerated = false;
+            nonGeneratedColumn.generationStrategy = undefined;
 
             upQueries.push(
                 new Query(
@@ -1849,25 +1852,25 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         true,
                     )}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                         newOrExistGeneratedColumn.name
                     }\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`,
                 ),
-            )
+            );
 
             // if column changed to generated, we must update it in table
             const changedGeneratedColumn = clonedTable.columns.find(
                 (column) => column.name === newOrExistGeneratedColumn.name,
-            )
-            changedGeneratedColumn!.isGenerated = true
-            changedGeneratedColumn!.generationStrategy = "increment"
+            );
+            changedGeneratedColumn!.isGenerated = true;
+            changedGeneratedColumn!.generationStrategy = "increment";
         }
 
-        await this.executeQueries(upQueries, downQueries)
-        this.replaceCachedTable(table, clonedTable)
+        await this.executeQueries(upQueries, downQueries);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1876,16 +1879,16 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     async dropPrimaryKey(tableOrName: Table | string): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const up = this.dropPrimaryKeySql(table)
+            : await this.getCachedTable(tableOrName);
+        const up = this.dropPrimaryKeySql(table);
         const down = this.createPrimaryKeySql(
             table,
             table.primaryColumns.map((column) => column.name),
-        )
-        await this.executeQueries(up, down)
+        );
+        await this.executeQueries(up, down);
         table.primaryColumns.forEach((column) => {
-            column.isPrimary = false
-        })
+            column.isPrimary = false;
+        });
     }
 
     /**
@@ -1897,7 +1900,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1909,7 +1912,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1921,7 +1924,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1933,7 +1936,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1943,7 +1946,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1953,7 +1956,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1963,7 +1966,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkOrName: TableCheck | string,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1973,7 +1976,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1983,7 +1986,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -1993,7 +1996,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -2003,7 +2006,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -2013,7 +2016,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -2025,7 +2028,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // new FK may be passed without name. In this case we generate FK name manually.
         if (!foreignKey.name)
@@ -2034,12 +2037,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 foreignKey.columnNames,
                 this.getTablePath(foreignKey),
                 foreignKey.referencedColumnNames,
-            )
+            );
 
-        const up = this.createForeignKeySql(table, foreignKey)
-        const down = this.dropForeignKeySql(table, foreignKey)
-        await this.executeQueries(up, down)
-        table.addForeignKey(foreignKey)
+        const up = this.createForeignKeySql(table, foreignKey);
+        const down = this.dropForeignKeySql(table, foreignKey);
+        await this.executeQueries(up, down);
+        table.addForeignKey(foreignKey);
     }
 
     /**
@@ -2051,8 +2054,8 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const promises = foreignKeys.map((foreignKey) =>
             this.createForeignKey(tableOrName, foreignKey),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -2064,19 +2067,19 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const foreignKey = InstanceChecker.isTableForeignKey(foreignKeyOrName)
             ? foreignKeyOrName
-            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
+            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName);
         if (!foreignKey)
             throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
-            )
+            );
 
-        const up = this.dropForeignKeySql(table, foreignKey)
-        const down = this.createForeignKeySql(table, foreignKey)
-        await this.executeQueries(up, down)
-        table.removeForeignKey(foreignKey)
+        const up = this.dropForeignKeySql(table, foreignKey);
+        const down = this.createForeignKeySql(table, foreignKey);
+        await this.executeQueries(up, down);
+        table.removeForeignKey(foreignKey);
     }
 
     /**
@@ -2088,8 +2091,8 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const promises = foreignKeys.map((foreignKey) =>
             this.dropForeignKey(tableOrName, foreignKey),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -2101,15 +2104,15 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // new index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.createIndexSql(table, index)
-        const down = this.dropIndexSql(table, index)
-        await this.executeQueries(up, down)
-        table.addIndex(index, true)
+        const up = this.createIndexSql(table, index);
+        const down = this.dropIndexSql(table, index);
+        await this.executeQueries(up, down);
+        table.addIndex(index, true);
     }
 
     /**
@@ -2121,8 +2124,8 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.createIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -2134,22 +2137,22 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const index = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName
-            : table.indices.find((i) => i.name === indexOrName)
+            : table.indices.find((i) => i.name === indexOrName);
         if (!index)
             throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
-            )
+            );
 
         // old index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.dropIndexSql(table, index)
-        const down = this.createIndexSql(table, index)
-        await this.executeQueries(up, down)
-        table.removeIndex(index, true)
+        const up = this.dropIndexSql(table, index);
+        const down = this.createIndexSql(table, index);
+        await this.executeQueries(up, down);
+        table.removeIndex(index, true);
     }
 
     /**
@@ -2161,8 +2164,8 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.dropIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -2170,7 +2173,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     async clearTable(tableOrName: Table | string): Promise<void> {
-        await this.query(`TRUNCATE TABLE ${this.escapePath(tableOrName)}`)
+        await this.query(`TRUNCATE TABLE ${this.escapePath(tableOrName)}`);
     }
 
     /**
@@ -2179,48 +2182,48 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      * (because it can clear all your database).
      */
     async clearDatabase(database?: string): Promise<void> {
-        const dbName = database ? database : this.driver.database
+        const dbName = database ? database : this.driver.database;
         if (dbName) {
-            const isDatabaseExist = await this.hasDatabase(dbName)
-            if (!isDatabaseExist) return Promise.resolve()
+            const isDatabaseExist = await this.hasDatabase(dbName);
+            if (!isDatabaseExist) return Promise.resolve();
         } else {
             throw new LapinError(
                 `Can not clear database. No database is specified`,
-            )
+            );
         }
 
-        const isAnotherTransactionActive = this.isTransactionActive
-        if (!isAnotherTransactionActive) await this.startTransaction()
+        const isAnotherTransactionActive = this.isTransactionActive;
+        if (!isAnotherTransactionActive) await this.startTransaction();
         try {
-            const selectViewDropsQuery = `SELECT concat('DROP VIEW IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`VIEWS\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`
+            const selectViewDropsQuery = `SELECT concat('DROP VIEW IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`VIEWS\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`;
             const dropViewQueries: ObjectLiteral[] = await this.query(
                 selectViewDropsQuery,
-            )
+            );
             await Promise.all(
                 dropViewQueries.map((q) => this.query(q["query"])),
-            )
+            );
 
-            const disableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 0;`
-            const dropTablesQuery = `SELECT concat('DROP TABLE IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`
-            const enableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 1;`
+            const disableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 0;`;
+            const dropTablesQuery = `SELECT concat('DROP TABLE IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`;
+            const enableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 1;`;
 
-            await this.query(disableForeignKeysCheckQuery)
+            await this.query(disableForeignKeysCheckQuery);
             const dropQueries: ObjectLiteral[] = await this.query(
                 dropTablesQuery,
-            )
+            );
             await Promise.all(
                 dropQueries.map((query) => this.query(query["query"])),
-            )
-            await this.query(enableForeignKeysCheckQuery)
+            );
+            await this.query(enableForeignKeysCheckQuery);
 
-            if (!isAnotherTransactionActive) await this.commitTransaction()
+            if (!isAnotherTransactionActive) await this.commitTransaction();
         } catch (error) {
             try {
                 // we throw original error even if rollback thrown an error
                 if (!isAnotherTransactionActive)
-                    await this.rollbackTransaction()
+                    await this.rollbackTransaction();
             } catch (rollbackError) {}
-            throw error
+            throw error;
         }
     }
 
@@ -2229,28 +2232,28 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName());
         if (!hasTable) {
-            return []
+            return [];
         }
 
         if (!viewNames) {
-            viewNames = []
+            viewNames = [];
         }
 
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const viewsCondition = viewNames
             .map((tableName) => {
                 let { database, tableName: name } =
-                    this.driver.parseTableName(tableName)
+                    this.driver.parseTableName(tableName);
 
                 if (!database) {
-                    database = currentDatabase
+                    database = currentDatabase;
                 }
 
-                return `(\`t\`.\`schema\` = '${database}' AND \`t\`.\`name\` = '${name}')`
+                return `(\`t\`.\`schema\` = '${database}' AND \`t\`.\`name\` = '${name}')`;
             })
-            .join(" OR ")
+            .join(" OR ");
 
         const query =
             `SELECT \`t\`.*, \`v\`.\`check_option\` FROM ${this.escapePath(
@@ -2258,23 +2261,23 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             )} \`t\` ` +
             `INNER JOIN \`information_schema\`.\`views\` \`v\` ON \`v\`.\`table_schema\` = \`t\`.\`schema\` AND \`v\`.\`table_name\` = \`t\`.\`name\` WHERE \`t\`.\`type\` = '${
                 MetadataTableType.VIEW
-            }' ${viewsCondition ? `AND (${viewsCondition})` : ""}`
-        const dbViews = await this.query(query)
+            }' ${viewsCondition ? `AND (${viewsCondition})` : ""}`;
+        const dbViews = await this.query(query);
         return dbViews.map((dbView: any) => {
-            const view = new View()
+            const view = new View();
             const db =
                 dbView["schema"] === currentDatabase
                     ? undefined
-                    : dbView["schema"]
-            view.database = dbView["schema"]
+                    : dbView["schema"];
+            view.database = dbView["schema"];
             view.name = this.driver.buildTableName(
                 dbView["name"],
                 undefined,
                 db,
-            )
-            view.expression = dbView["value"]
-            return view
-        })
+            );
+            view.expression = dbView["value"];
+            return view;
+        });
     }
 
     /**
@@ -2282,10 +2285,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      */
     protected async loadTables(tableNames?: string[]): Promise<Table[]> {
         if (tableNames && tableNames.length === 0) {
-            return []
+            return [];
         }
 
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
 
         // The following SQL brought to you by:
         //   A terrible understanding of https://dev.mysql.com/doc/refman/8.0/en/information-schema-optimization.html
@@ -2310,13 +2313,13 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         // will cause the query to not hit the optimizations & do full scans.  This is why
         // a number of queries below do `UNION`s of single `WHERE` clauses.
 
-        const dbTables: { TABLE_SCHEMA: string; TABLE_NAME: string }[] = []
+        const dbTables: { TABLE_SCHEMA: string; TABLE_NAME: string }[] = [];
 
         if (!tableNames) {
             // Since we don't have any of this data we have to do a scan
-            const tablesSql = `SELECT \`TABLE_SCHEMA\`, \`TABLE_NAME\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\``
+            const tablesSql = `SELECT \`TABLE_SCHEMA\`, \`TABLE_NAME\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\``;
 
-            dbTables.push(...(await this.query(tablesSql)))
+            dbTables.push(...(await this.query(tablesSql)));
         } else {
             // Avoid data directory scan: TABLE_SCHEMA
             // Avoid database directory scan: TABLE_NAME
@@ -2325,21 +2328,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 .filter((tableName) => tableName)
                 .map((tableName) => {
                     let { database, tableName: name } =
-                        this.driver.parseTableName(tableName)
+                        this.driver.parseTableName(tableName);
 
                     if (!database) {
-                        database = currentDatabase
+                        database = currentDatabase;
                     }
 
-                    return `SELECT \`TABLE_SCHEMA\`, \`TABLE_NAME\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${database}' AND \`TABLE_NAME\` = '${name}'`
+                    return `SELECT \`TABLE_SCHEMA\`, \`TABLE_NAME\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${database}' AND \`TABLE_NAME\` = '${name}'`;
                 })
-                .join(" UNION ")
+                .join(" UNION ");
 
-            dbTables.push(...(await this.query(tablesSql)))
+            dbTables.push(...(await this.query(tablesSql)));
         }
 
         // if tables were not found in the db, no need to proceed
-        if (!dbTables.length) return []
+        if (!dbTables.length) return [];
 
         // Avoid data directory scan: TABLE_SCHEMA
         // Avoid database directory scan: TABLE_NAME
@@ -2354,9 +2357,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     \`TABLE_SCHEMA\` = '${TABLE_SCHEMA}'
                     AND
                     \`TABLE_NAME\` = '${TABLE_NAME}'
-            `
+            `;
             })
-            .join(" UNION ")
+            .join(" UNION ");
 
         // Avoid data directory scan: TABLE_SCHEMA
         // Avoid database directory scan: TABLE_NAME
@@ -2371,9 +2374,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     \`kcu\`.\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}'
                     AND
                     \`kcu\`.\`TABLE_NAME\` = '${TABLE_NAME}'
-            `
+            `;
             })
-            .join(" UNION ")
+            .join(" UNION ");
 
         // Avoid data directory scan: CONSTRAINT_SCHEMA
         // Avoid database directory scan: TABLE_NAME
@@ -2388,9 +2391,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     \`CONSTRAINT_SCHEMA\` = '${TABLE_SCHEMA}'
                     AND
                     \`TABLE_NAME\` = '${TABLE_NAME}'
-            `
+            `;
             })
-            .join(" UNION ")
+            .join(" UNION ");
 
         // Avoid data directory scan: TABLE_SCHEMA
         // Avoid database directory scan: TABLE_NAME
@@ -2406,9 +2409,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     \`TABLE_SCHEMA\` = '${TABLE_SCHEMA}'
                     AND
                     \`TABLE_NAME\` = '${TABLE_NAME}'
-                `
+                `;
             })
-            .join(" UNION ")
+            .join(" UNION ");
 
         // No Optimizations are available for COLLATIONS
         const collationsSql = `
@@ -2417,10 +2420,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 \`DEFAULT_CHARACTER_SET_NAME\` as \`CHARSET\`,
                 \`DEFAULT_COLLATION_NAME\` AS \`COLLATION\`
             FROM \`INFORMATION_SCHEMA\`.\`SCHEMATA\`
-            `
+            `;
 
         // Key Column Usage but only for PKs
-        const primaryKeySql = `SELECT * FROM (${kcuSubquerySql}) \`kcu\` WHERE \`CONSTRAINT_NAME\` = 'PRIMARY'`
+        const primaryKeySql = `SELECT * FROM (${kcuSubquerySql}) \`kcu\` WHERE \`CONSTRAINT_NAME\` = 'PRIMARY'`;
 
         // Combine stats & referential constraints
         const indicesSql = `
@@ -2436,7 +2439,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 \`s\`.\`INDEX_NAME\` != 'PRIMARY'
                 AND
                 \`rc\`.\`CONSTRAINT_NAME\` IS NULL
-            `
+            `;
 
         // Combine Key Column Usage & Referential Constraints
         const foreignKeysSql = `
@@ -2458,7 +2461,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                     \`rc\`.\`TABLE_NAME\` = \`kcu\`.\`TABLE_NAME\`
                     AND
                     \`rc\`.\`CONSTRAINT_NAME\` = \`kcu\`.\`CONSTRAINT_NAME\`
-            `
+            `;
 
         const [
             dbColumns,
@@ -2472,33 +2475,33 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             this.query(collationsSql),
             this.query(indicesSql),
             this.query(foreignKeysSql),
-        ])
+        ]);
 
-        const isMariaDb = this.driver.options.type === "mariadb"
-        const dbVersion = await this.getVersion()
+        const isMariaDb = this.driver.options.type === "mariadb";
+        const dbVersion = await this.getVersion();
 
         // create tables for loaded tables
         return Promise.all(
             dbTables.map(async (dbTable) => {
-                const table = new Table()
+                const table = new Table();
 
                 const dbCollation = dbCollations.find(
                     (coll) => coll["SCHEMA_NAME"] === dbTable["TABLE_SCHEMA"],
-                )!
-                const defaultCollation = dbCollation["COLLATION"]
-                const defaultCharset = dbCollation["CHARSET"]
+                )!;
+                const defaultCollation = dbCollation["COLLATION"];
+                const defaultCharset = dbCollation["CHARSET"];
 
                 // We do not need to join database name, when database is by default.
                 const db =
                     dbTable["TABLE_SCHEMA"] === currentDatabase
                         ? undefined
-                        : dbTable["TABLE_SCHEMA"]
-                table.database = dbTable["TABLE_SCHEMA"]
+                        : dbTable["TABLE_SCHEMA"];
+                table.database = dbTable["TABLE_SCHEMA"];
                 table.name = this.driver.buildTableName(
                     dbTable["TABLE_NAME"],
                     undefined,
                     db,
-                )
+                );
 
                 // create columns from the loaded columns
                 table.columns = await Promise.all(
@@ -2522,16 +2525,16 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                             dbColumn["COLUMN_NAME"] &&
                                         parseInt(dbIndex["NON_UNIQUE"], 10) ===
                                             0
-                                    )
+                                    );
                                 },
-                            )
+                            );
 
                             const tableMetadata =
                                 this.connection.entityMetadatas.find(
                                     (metadata) =>
                                         this.getTablePath(table) ===
                                         this.getTablePath(metadata),
-                                )
+                                );
                             const hasIgnoredIndex =
                                 columnUniqueIndices.length > 0 &&
                                 tableMetadata &&
@@ -2542,10 +2545,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                                 index.name ===
                                                     uniqueIndex["INDEX_NAME"] &&
                                                 index.synchronize === false
-                                            )
+                                            );
                                         },
-                                    )
-                                })
+                                    );
+                                });
 
                             const isConstraintComposite =
                                 columnUniqueIndices.every((uniqueIndex) => {
@@ -2555,28 +2558,28 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                                 uniqueIndex["INDEX_NAME"] &&
                                             dbIndex["COLUMN_NAME"] !==
                                                 dbColumn["COLUMN_NAME"],
-                                    )
-                                })
+                                    );
+                                });
 
-                            const tableColumn = new TableColumn()
-                            tableColumn.name = dbColumn["COLUMN_NAME"]
+                            const tableColumn = new TableColumn();
+                            tableColumn.name = dbColumn["COLUMN_NAME"];
                             tableColumn.type =
-                                dbColumn["DATA_TYPE"].toLowerCase()
+                                dbColumn["DATA_TYPE"].toLowerCase();
 
                             // since mysql 8.0, "geometrycollection" returned as "geomcollection"
                             // lapin still use "geometrycollection"
                             if (tableColumn.type === "geomcollection") {
-                                tableColumn.type = "geometrycollection"
+                                tableColumn.type = "geometrycollection";
                             }
 
                             tableColumn.zerofill =
                                 dbColumn["COLUMN_TYPE"].indexOf("zerofill") !==
-                                -1
+                                -1;
                             tableColumn.unsigned = tableColumn.zerofill
                                 ? true
                                 : dbColumn["COLUMN_TYPE"].indexOf(
                                       "unsigned",
-                                  ) !== -1
+                                  ) !== -1;
                             if (
                                 this.driver.withWidthColumnTypes.indexOf(
                                     tableColumn.type as ColumnType,
@@ -2585,7 +2588,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 const width = dbColumn["COLUMN_TYPE"].substring(
                                     dbColumn["COLUMN_TYPE"].indexOf("(") + 1,
                                     dbColumn["COLUMN_TYPE"].indexOf(")"),
-                                )
+                                );
                                 tableColumn.width =
                                     width &&
                                     !this.isDefaultColumnWidth(
@@ -2594,7 +2597,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                         parseInt(width),
                                     )
                                         ? parseInt(width)
-                                        : undefined
+                                        : undefined;
                             }
 
                             if (
@@ -2603,7 +2606,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 (isMariaDb &&
                                     dbColumn["COLUMN_DEFAULT"] === "NULL")
                             ) {
-                                tableColumn.default = undefined
+                                tableColumn.default = undefined;
                             } else if (
                                 /^CURRENT_TIMESTAMP(\([0-9]*\))?$/i.test(
                                     dbColumn["COLUMN_DEFAULT"],
@@ -2612,7 +2615,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 // New versions of MariaDB return expressions in lowercase.  We need to set it in
                                 // uppercase so the comparison in MysqlDriver#compareDefaultValues does not fail.
                                 tableColumn.default =
-                                    dbColumn["COLUMN_DEFAULT"].toUpperCase()
+                                    dbColumn["COLUMN_DEFAULT"].toUpperCase();
                             } else if (
                                 isMariaDb &&
                                 VersionUtils.isGreaterOrEqual(
@@ -2622,9 +2625,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             ) {
                                 // MariaDB started adding quotes to literals in COLUMN_DEFAULT since version 10.2.7
                                 // See https://mariadb.com/kb/en/library/information-schema-columns-table/
-                                tableColumn.default = dbColumn["COLUMN_DEFAULT"]
+                                tableColumn.default =
+                                    dbColumn["COLUMN_DEFAULT"];
                             } else {
-                                tableColumn.default = `'${dbColumn["COLUMN_DEFAULT"]}'`
+                                tableColumn.default = `'${dbColumn["COLUMN_DEFAULT"]}'`;
                             }
 
                             if (dbColumn["EXTRA"].indexOf("on update") !== -1) {
@@ -2635,14 +2639,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                         dbColumn["EXTRA"].indexOf("on update") +
                                             10,
                                     )
-                                    .toUpperCase()
+                                    .toUpperCase();
                             }
 
                             if (dbColumn["GENERATION_EXPRESSION"]) {
                                 tableColumn.generatedType =
                                     dbColumn["EXTRA"].indexOf("VIRTUAL") !== -1
                                         ? "VIRTUAL"
-                                        : "STORED"
+                                        : "STORED";
 
                                 // We cannot relay on information_schema.columns.generation_expression, because it is formatted different.
                                 const asExpressionQuery =
@@ -2651,29 +2655,29 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                         table: dbTable["TABLE_NAME"],
                                         type: MetadataTableType.GENERATED_COLUMN,
                                         name: tableColumn.name,
-                                    })
+                                    });
 
                                 const results = await this.query(
                                     asExpressionQuery.query,
                                     asExpressionQuery.parameters,
-                                )
+                                );
                                 if (results[0] && results[0].value) {
-                                    tableColumn.asExpression = results[0].value
+                                    tableColumn.asExpression = results[0].value;
                                 } else {
-                                    tableColumn.asExpression = ""
+                                    tableColumn.asExpression = "";
                                 }
                             }
 
                             tableColumn.isUnique =
                                 columnUniqueIndices.length > 0 &&
                                 !hasIgnoredIndex &&
-                                !isConstraintComposite
+                                !isConstraintComposite;
 
                             if (isMariaDb && tableColumn.generatedType) {
                                 // do nothing - MariaDB does not support NULL/NOT NULL expressions for generated columns
                             } else {
                                 tableColumn.isNullable =
-                                    dbColumn["IS_NULLABLE"] === "YES"
+                                    dbColumn["IS_NULLABLE"] === "YES";
                             }
 
                             tableColumn.isPrimary = dbPrimaryKeys.some(
@@ -2685,33 +2689,33 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                             dbColumn["TABLE_SCHEMA"] &&
                                         dbPrimaryKey["COLUMN_NAME"] ===
                                             dbColumn["COLUMN_NAME"]
-                                    )
+                                    );
                                 },
-                            )
+                            );
                             tableColumn.isGenerated =
                                 dbColumn["EXTRA"].indexOf("auto_increment") !==
-                                -1
+                                -1;
                             if (tableColumn.isGenerated)
-                                tableColumn.generationStrategy = "increment"
+                                tableColumn.generationStrategy = "increment";
 
                             tableColumn.comment =
                                 typeof dbColumn["COLUMN_COMMENT"] ===
                                     "string" &&
                                 dbColumn["COLUMN_COMMENT"].length === 0
                                     ? undefined
-                                    : dbColumn["COLUMN_COMMENT"]
+                                    : dbColumn["COLUMN_COMMENT"];
                             if (dbColumn["CHARACTER_SET_NAME"])
                                 tableColumn.charset =
                                     dbColumn["CHARACTER_SET_NAME"] ===
                                     defaultCharset
                                         ? undefined
-                                        : dbColumn["CHARACTER_SET_NAME"]
+                                        : dbColumn["CHARACTER_SET_NAME"];
                             if (dbColumn["COLLATION_NAME"])
                                 tableColumn.collation =
                                     dbColumn["COLLATION_NAME"] ===
                                     defaultCollation
                                         ? undefined
-                                        : dbColumn["COLLATION_NAME"]
+                                        : dbColumn["COLLATION_NAME"];
 
                             // check only columns that have length property
                             if (
@@ -2723,7 +2727,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 const length =
                                     dbColumn[
                                         "CHARACTER_MAXIMUM_LENGTH"
-                                    ].toString()
+                                    ].toString();
                                 tableColumn.length =
                                     !this.isDefaultColumnLength(
                                         table,
@@ -2731,7 +2735,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                         length,
                                     )
                                         ? length
-                                        : ""
+                                        : "";
                             }
 
                             if (
@@ -2749,7 +2753,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 )
                                     tableColumn.precision = parseInt(
                                         dbColumn["NUMERIC_PRECISION"],
-                                    )
+                                    );
                                 if (
                                     dbColumn["NUMERIC_SCALE"] !== null &&
                                     !this.isDefaultColumnScale(
@@ -2760,7 +2764,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 )
                                     tableColumn.scale = parseInt(
                                         dbColumn["NUMERIC_SCALE"],
-                                    )
+                                    );
                             }
 
                             if (
@@ -2768,22 +2772,22 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 tableColumn.type === "simple-enum" ||
                                 tableColumn.type === "set"
                             ) {
-                                const colType = dbColumn["COLUMN_TYPE"]
+                                const colType = dbColumn["COLUMN_TYPE"];
                                 const items = colType
                                     .substring(
                                         colType.indexOf("(") + 1,
                                         colType.lastIndexOf(")"),
                                     )
-                                    .split(",")
+                                    .split(",");
                                 tableColumn.enum = (items as string[]).map(
                                     (item) => {
                                         return item.substring(
                                             1,
                                             item.length - 1,
-                                        )
+                                        );
                                     },
-                                )
-                                tableColumn.length = ""
+                                );
+                                tableColumn.length = "";
                             }
 
                             if (
@@ -2800,12 +2804,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             ) {
                                 tableColumn.precision = parseInt(
                                     dbColumn["DATETIME_PRECISION"],
-                                )
+                                );
                             }
 
-                            return tableColumn
+                            return tableColumn;
                         }),
-                )
+                );
 
                 // find foreign key constraints of table, group them by constraint name and build TableForeignKey.
                 const tableForeignKeyConstraints = OrmUtils.uniq(
@@ -2815,10 +2819,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 dbTable["TABLE_NAME"] &&
                             dbForeignKey["TABLE_SCHEMA"] ===
                                 dbTable["TABLE_SCHEMA"]
-                        )
+                        );
                     }),
                     (dbForeignKey) => dbForeignKey["CONSTRAINT_NAME"],
-                )
+                );
 
                 table.foreignKeys = tableForeignKeyConstraints.map(
                     (dbForeignKey) => {
@@ -2826,19 +2830,19 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             (dbFk) =>
                                 dbFk["CONSTRAINT_NAME"] ===
                                 dbForeignKey["CONSTRAINT_NAME"],
-                        )
+                        );
 
                         // if referenced table located in currently used db, we don't need to concat db name to table name.
                         const database =
                             dbForeignKey["REFERENCED_TABLE_SCHEMA"] ===
                             currentDatabase
                                 ? undefined
-                                : dbForeignKey["REFERENCED_TABLE_SCHEMA"]
+                                : dbForeignKey["REFERENCED_TABLE_SCHEMA"];
                         const referencedTableName = this.driver.buildTableName(
                             dbForeignKey["REFERENCED_TABLE_NAME"],
                             undefined,
                             database,
-                        )
+                        );
 
                         return new TableForeignKey({
                             name: dbForeignKey["CONSTRAINT_NAME"],
@@ -2853,9 +2857,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             ),
                             onDelete: dbForeignKey["ON_DELETE"],
                             onUpdate: dbForeignKey["ON_UPDATE"],
-                        })
+                        });
                     },
-                )
+                );
 
                 // find index constraints of table, group them by constraint name and build TableIndex.
                 const tableIndexConstraints = OrmUtils.uniq(
@@ -2865,7 +2869,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             dbIndex["TABLE_SCHEMA"] === dbTable["TABLE_SCHEMA"],
                     ),
                     (dbIndex) => dbIndex["INDEX_NAME"],
-                )
+                );
 
                 table.indices = tableIndexConstraints.map((constraint) => {
                     const indices = dbIndices.filter((index) => {
@@ -2874,10 +2878,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                                 constraint["TABLE_SCHEMA"] &&
                             index["TABLE_NAME"] === constraint["TABLE_NAME"] &&
                             index["INDEX_NAME"] === constraint["INDEX_NAME"]
-                        )
-                    })
+                        );
+                    });
 
-                    const nonUnique = parseInt(constraint["NON_UNIQUE"], 10)
+                    const nonUnique = parseInt(constraint["NON_UNIQUE"], 10);
 
                     return new TableIndex(<TableIndexOptions>{
                         table: table,
@@ -2886,12 +2890,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         isUnique: nonUnique === 0,
                         isSpatial: constraint["INDEX_TYPE"] === "SPATIAL",
                         isFulltext: constraint["INDEX_TYPE"] === "FULLTEXT",
-                    })
-                })
+                    });
+                });
 
-                return table
+                return table;
             }),
-        )
+        );
     }
 
     /**
@@ -2900,8 +2904,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     protected createTableSql(table: Table, createForeignKeys?: boolean): Query {
         const columnDefinitions = table.columns
             .map((column) => this.buildCreateColumnSql(column, true))
-            .join(", ")
-        let sql = `CREATE TABLE ${this.escapePath(table)} (${columnDefinitions}`
+            .join(", ");
+        let sql = `CREATE TABLE ${this.escapePath(
+            table,
+        )} (${columnDefinitions}`;
 
         // we create unique indexes instead of unique constraints, because MySql does not have unique constraints.
         // if we mark column as Unique, it means that we create UNIQUE INDEX.
@@ -2913,14 +2919,14 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                         index.columnNames.length === 1 &&
                         !!index.isUnique &&
                         index.columnNames.indexOf(column.name) !== -1
-                    )
-                })
+                    );
+                });
                 const isUniqueConstraintExist = table.uniques.some((unique) => {
                     return (
                         unique.columnNames.length === 1 &&
                         unique.columnNames.indexOf(column.name) !== -1
-                    )
-                })
+                    );
+                });
                 if (!isUniqueIndexExist && !isUniqueConstraintExist)
                     table.indices.push(
                         new TableIndex({
@@ -2931,15 +2937,15 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             columnNames: [column.name],
                             isUnique: true,
                         }),
-                    )
-            })
+                    );
+            });
 
         // as MySql does not have unique constraints, we must create table indices from table uniques and mark them as unique.
         if (table.uniques.length > 0) {
             table.uniques.forEach((unique) => {
                 const uniqueExist = table.indices.some(
                     (index) => index.name === unique.name,
-                )
+                );
                 if (!uniqueExist) {
                     table.indices.push(
                         new TableIndex({
@@ -2947,9 +2953,9 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                             columnNames: unique.columnNames,
                             isUnique: true,
                         }),
-                    )
+                    );
                 }
-            })
+            });
         }
 
         if (table.indices.length > 0) {
@@ -2957,28 +2963,28 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 .map((index) => {
                     const columnNames = index.columnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
                     if (!index.name)
                         index.name = this.connection.namingStrategy.indexName(
                             table,
                             index.columnNames,
                             index.where,
-                        )
+                        );
 
-                    let indexType = ""
-                    if (index.isUnique) indexType += "UNIQUE "
-                    if (index.isSpatial) indexType += "SPATIAL "
-                    if (index.isFulltext) indexType += "FULLTEXT "
+                    let indexType = "";
+                    if (index.isUnique) indexType += "UNIQUE ";
+                    if (index.isSpatial) indexType += "SPATIAL ";
+                    if (index.isFulltext) indexType += "FULLTEXT ";
                     const indexParser =
                         index.isFulltext && index.parser
                             ? ` WITH PARSER ${index.parser}`
-                            : ""
+                            : "";
 
-                    return `${indexType}INDEX \`${index.name}\` (${columnNames})${indexParser}`
+                    return `${indexType}INDEX \`${index.name}\` (${columnNames})${indexParser}`;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${indicesSql}`
+            sql += `, ${indicesSql}`;
         }
 
         if (table.foreignKeys.length > 0 && createForeignKeys) {
@@ -2986,85 +2992,85 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 .map((fk) => {
                     const columnNames = fk.columnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
                     if (!fk.name)
                         fk.name = this.connection.namingStrategy.foreignKeyName(
                             table,
                             fk.columnNames,
                             this.getTablePath(fk),
                             fk.referencedColumnNames,
-                        )
+                        );
                     const referencedColumnNames = fk.referencedColumnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
 
                     let constraint = `CONSTRAINT \`${
                         fk.name
                     }\` FOREIGN KEY (${columnNames}) REFERENCES ${this.escapePath(
                         this.getTablePath(fk),
-                    )} (${referencedColumnNames})`
-                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`
-                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`
+                    )} (${referencedColumnNames})`;
+                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`;
+                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`;
 
-                    return constraint
+                    return constraint;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${foreignKeysSql}`
+            sql += `, ${foreignKeysSql}`;
         }
 
         if (table.primaryColumns.length > 0) {
             const columnNames = table.primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
-            sql += `, PRIMARY KEY (${columnNames})`
+                .join(", ");
+            sql += `, PRIMARY KEY (${columnNames})`;
         }
 
-        sql += `) ENGINE=${table.engine || "InnoDB"}`
+        sql += `) ENGINE=${table.engine || "InnoDB"}`;
 
-        return new Query(sql)
+        return new Query(sql);
     }
 
     /**
      * Builds drop table sql
      */
     protected dropTableSql(tableOrName: Table | string): Query {
-        return new Query(`DROP TABLE ${this.escapePath(tableOrName)}`)
+        return new Query(`DROP TABLE ${this.escapePath(tableOrName)}`);
     }
 
     protected createViewSql(view: View): Query {
         if (typeof view.expression === "string") {
             return new Query(
                 `CREATE VIEW ${this.escapePath(view)} AS ${view.expression}`,
-            )
+            );
         } else {
             return new Query(
                 `CREATE VIEW ${this.escapePath(view)} AS ${view
                     .expression(this.connection)
                     .getQuery()}`,
-            )
+            );
         }
     }
 
     protected async insertViewDefinitionSql(view: View): Promise<Query> {
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const expression =
             typeof view.expression === "string"
                 ? view.expression.trim()
-                : view.expression(this.connection).getQuery()
+                : view.expression(this.connection).getQuery();
         return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: view.name,
             value: expression,
-        })
+        });
     }
 
     /**
      * Builds drop view sql.
      */
     protected dropViewSql(viewOrPath: View | string): Query {
-        return new Query(`DROP VIEW ${this.escapePath(viewOrPath)}`)
+        return new Query(`DROP VIEW ${this.escapePath(viewOrPath)}`);
     }
 
     /**
@@ -3073,15 +3079,15 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     protected async deleteViewDefinitionSql(
         viewOrPath: View | string,
     ): Promise<Query> {
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
-            : viewOrPath
+            : viewOrPath;
         return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: viewName,
-        })
+        });
     }
 
     /**
@@ -3090,21 +3096,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     protected createIndexSql(table: Table, index: TableIndex): Query {
         const columns = index.columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
-        let indexType = ""
-        if (index.isUnique) indexType += "UNIQUE "
-        if (index.isSpatial) indexType += "SPATIAL "
-        if (index.isFulltext) indexType += "FULLTEXT "
+            .join(", ");
+        let indexType = "";
+        if (index.isUnique) indexType += "UNIQUE ";
+        if (index.isSpatial) indexType += "SPATIAL ";
+        if (index.isFulltext) indexType += "FULLTEXT ";
         const indexParser =
             index.isFulltext && index.parser
                 ? ` WITH PARSER ${index.parser}`
-                : ""
+                : "";
 
         return new Query(
             `CREATE ${indexType}INDEX \`${index.name}\` ON ${this.escapePath(
                 table,
             )} (${columns})${indexParser}`,
-        )
+        );
     }
 
     /**
@@ -3116,10 +3122,10 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Query {
         let indexName = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName.name
-            : indexOrName
+            : indexOrName;
         return new Query(
             `DROP INDEX \`${indexName}\` ON ${this.escapePath(table)}`,
-        )
+        );
     }
 
     /**
@@ -3128,12 +3134,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     protected createPrimaryKeySql(table: Table, columnNames: string[]): Query {
         const columnNamesString = columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
+            .join(", ");
         return new Query(
             `ALTER TABLE ${this.escapePath(
                 table,
             )} ADD PRIMARY KEY (${columnNamesString})`,
-        )
+        );
     }
 
     /**
@@ -3142,7 +3148,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     protected dropPrimaryKeySql(table: Table): Query {
         return new Query(
             `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
-        )
+        );
     }
 
     /**
@@ -3154,21 +3160,21 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): Query {
         const columnNames = foreignKey.columnNames
             .map((column) => `\`${column}\``)
-            .join(", ")
+            .join(", ");
         const referencedColumnNames = foreignKey.referencedColumnNames
             .map((column) => `\`${column}\``)
-            .join(",")
+            .join(",");
         let sql =
             `ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT \`${
                 foreignKey.name
             }\` FOREIGN KEY (${columnNames}) ` +
             `REFERENCES ${this.escapePath(
                 this.getTablePath(foreignKey),
-            )}(${referencedColumnNames})`
-        if (foreignKey.onDelete) sql += ` ON DELETE ${foreignKey.onDelete}`
-        if (foreignKey.onUpdate) sql += ` ON UPDATE ${foreignKey.onUpdate}`
+            )}(${referencedColumnNames})`;
+        if (foreignKey.onDelete) sql += ` ON DELETE ${foreignKey.onDelete}`;
+        if (foreignKey.onUpdate) sql += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-        return new Query(sql)
+        return new Query(sql);
     }
 
     /**
@@ -3182,12 +3188,12 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
             foreignKeyOrName,
         )
             ? foreignKeyOrName.name
-            : foreignKeyOrName
+            : foreignKeyOrName;
         return new Query(
             `ALTER TABLE ${this.escapePath(
                 table,
             )} DROP FOREIGN KEY \`${foreignKeyName}\``,
-        )
+        );
     }
 
     /**
@@ -3195,28 +3201,28 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
      */
     protected escapeComment(comment?: string) {
         if (!comment || comment.length === 0) {
-            return `''`
+            return `''`;
         }
 
         comment = comment
             .replace(/\\/g, "\\\\") // MySQL allows escaping characters via backslashes
             .replace(/'/g, "''")
-            .replace(/\u0000/g, "") // Null bytes aren't allowed in comments
+            .replace(/\u0000/g, ""); // Null bytes aren't allowed in comments
 
-        return `'${comment}'`
+        return `'${comment}'`;
     }
 
     /**
      * Escapes given table or view path.
      */
     protected escapePath(target: Table | View | string): string {
-        const { database, tableName } = this.driver.parseTableName(target)
+        const { database, tableName } = this.driver.parseTableName(target);
 
         if (database && database !== this.driver.database) {
-            return `\`${database}\`.\`${tableName}\``
+            return `\`${database}\`.\`${tableName}\``;
         }
 
-        return `\`${tableName}\``
+        return `\`${tableName}\``;
     }
 
     /**
@@ -3227,35 +3233,35 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         skipPrimary: boolean,
         skipName: boolean = false,
     ) {
-        let c = ""
+        let c = "";
         if (skipName) {
-            c = this.connection.driver.createFullType(column)
+            c = this.connection.driver.createFullType(column);
         } else {
             c = `\`${column.name}\` ${this.connection.driver.createFullType(
                 column,
-            )}`
+            )}`;
         }
 
-        if (column.charset) c += ` CHARACTER SET "${column.charset}"`
-        if (column.collation) c += ` COLLATE "${column.collation}"`
+        if (column.charset) c += ` CHARACTER SET "${column.charset}"`;
+        if (column.collation) c += ` COLLATE "${column.collation}"`;
 
         if (column.asExpression)
             c += ` AS (${column.asExpression}) ${
                 column.generatedType ? column.generatedType : "VIRTUAL"
-            }`
+            }`;
 
         // if you specify ZEROFILL for a numeric column, MySQL automatically adds the UNSIGNED attribute to that column.
         if (column.zerofill) {
-            c += " ZEROFILL"
+            c += " ZEROFILL";
         } else if (column.unsigned) {
-            c += " UNSIGNED"
+            c += " UNSIGNED";
         }
         if (column.enum)
             c += ` (${column.enum
                 .map((value) => "'" + value.replace(/'/g, "''") + "'")
-                .join(", ")})`
+                .join(", ")})`;
 
-        const isMariaDb = this.driver.options.type === "mariadb"
+        const isMariaDb = this.driver.options.type === "mariadb";
         if (
             isMariaDb &&
             column.asExpression &&
@@ -3263,26 +3269,26 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
         ) {
             // do nothing - MariaDB does not support NULL/NOT NULL expressions for VIRTUAL columns and STORED columns
         } else {
-            if (!column.isNullable) c += " NOT NULL"
-            if (column.isNullable) c += " NULL"
+            if (!column.isNullable) c += " NOT NULL";
+            if (column.isNullable) c += " NULL";
         }
 
-        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY"
+        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY";
         if (column.isGenerated && column.generationStrategy === "increment")
             // don't use skipPrimary here since updates can update already exist primary without auto inc.
-            c += " AUTO_INCREMENT"
+            c += " AUTO_INCREMENT";
         if (column.comment && column.comment.length > 0)
-            c += ` COMMENT ${this.escapeComment(column.comment)}`
+            c += ` COMMENT ${this.escapeComment(column.comment)}`;
         if (column.default !== undefined && column.default !== null)
-            c += ` DEFAULT ${column.default}`
-        if (column.onUpdate) c += ` ON UPDATE ${column.onUpdate}`
+            c += ` DEFAULT ${column.default}`;
+        if (column.onUpdate) c += ` ON UPDATE ${column.onUpdate}`;
 
-        return c
+        return c;
     }
 
     protected async getVersion(): Promise<string> {
-        const result = await this.query(`SELECT VERSION() AS \`version\``)
-        return result[0]["version"]
+        const result = await this.query(`SELECT VERSION() AS \`version\``);
+        return result[0]["version"];
     }
 
     /**
@@ -3295,17 +3301,17 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
     ): boolean {
         // if table have metadata, we check if length is specified in column metadata
         if (this.connection.hasMetadata(table.name)) {
-            const metadata = this.connection.getMetadata(table.name)
+            const metadata = this.connection.getMetadata(table.name);
             const columnMetadata = metadata.findColumnWithDatabaseName(
                 column.name,
-            )
-            if (columnMetadata && columnMetadata.width) return false
+            );
+            if (columnMetadata && columnMetadata.width) return false;
         }
 
         const defaultWidthForType =
             this.connection.driver.dataTypeDefaults &&
             this.connection.driver.dataTypeDefaults[column.type] &&
-            this.connection.driver.dataTypeDefaults[column.type].width
+            this.connection.driver.dataTypeDefaults[column.type].width;
 
         if (defaultWidthForType) {
             // In MariaDB & MySQL 5.7, the default widths of certain numeric types are 1 less than
@@ -3315,16 +3321,16 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
                 "tinyint",
                 "smallint",
                 "mediumint",
-            ]
+            ];
             const needsAdjustment =
-                typesWithReducedUnsignedDefault.indexOf(column.type) !== -1
+                typesWithReducedUnsignedDefault.indexOf(column.type) !== -1;
             if (column.unsigned && needsAdjustment) {
-                return defaultWidthForType - 1 === width
+                return defaultWidthForType - 1 === width;
             } else {
-                return defaultWidthForType === width
+                return defaultWidthForType === width;
             }
         }
 
-        return false
+        return false;
     }
 }

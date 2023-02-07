@@ -1,6 +1,6 @@
-import { QueryExpressionMap } from "../QueryExpressionMap"
-import { RelationCountMetadata } from "../../metadata/RelationCountMetadata"
-import { RelationCountAttribute } from "./RelationCountAttribute"
+import { QueryExpressionMap } from "../QueryExpressionMap";
+import { RelationCountMetadata } from "../../metadata/RelationCountMetadata";
+import { RelationCountAttribute } from "./RelationCountAttribute";
 
 export class RelationCountMetadataToAttributeTransformer {
     // -------------------------------------------------------------------------
@@ -29,25 +29,25 @@ export class RelationCountMetadataToAttributeTransformer {
                     const attribute = this.metadataToAttribute(
                         this.expressionMap.mainAlias!.name,
                         relationCount,
-                    )
-                    this.expressionMap.relationCountAttributes.push(attribute)
+                    );
+                    this.expressionMap.relationCountAttributes.push(attribute);
                 },
-            )
+            );
         }
 
         // second create relation count attributes for all relation count metadatas of all joined objects (category from example)
         this.expressionMap.joinAttributes.forEach((join) => {
             // ensure this join has a metadata, because relation count can only work for real orm entities
-            if (!join.metadata || join.metadata.isJunction) return
+            if (!join.metadata || join.metadata.isJunction) return;
 
             join.metadata.relationCounts.forEach((relationCount) => {
                 const attribute = this.metadataToAttribute(
                     join.alias.name,
                     relationCount,
-                )
-                this.expressionMap.relationCountAttributes.push(attribute)
-            })
-        })
+                );
+                this.expressionMap.relationCountAttributes.push(attribute);
+            });
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -64,6 +64,6 @@ export class RelationCountMetadataToAttributeTransformer {
             mapToProperty: parentAliasName + "." + relationCount.propertyName, // category.imageIds
             alias: relationCount.alias,
             queryBuilderFactory: relationCount.queryBuilderFactory,
-        })
+        });
     }
 }

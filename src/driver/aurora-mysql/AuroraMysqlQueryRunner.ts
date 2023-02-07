@@ -1,28 +1,28 @@
-import { QueryResult } from "../../query-runner/QueryResult"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { ObjectLiteral } from "../../common/ObjectLiteral"
-import { TransactionNotStartedError } from "../../error/TransactionNotStartedError"
-import { TableColumn } from "../../schema-builder/table/TableColumn"
-import { Table } from "../../schema-builder/table/Table"
-import { TableForeignKey } from "../../schema-builder/table/TableForeignKey"
-import { TableIndex } from "../../schema-builder/table/TableIndex"
-import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError"
-import { View } from "../../schema-builder/view/View"
-import { Query } from "../Query"
-import { AuroraMysqlDriver } from "./AuroraMysqlDriver"
-import { ReadStream } from "../../platform/PlatformTools"
-import { OrmUtils } from "../../util/OrmUtils"
-import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions"
-import { TableUnique } from "../../schema-builder/table/TableUnique"
-import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner"
-import { Broadcaster } from "../../subscriber/Broadcaster"
-import { ColumnType } from "../types/ColumnTypes"
-import { TableCheck } from "../../schema-builder/table/TableCheck"
-import { IsolationLevel } from "../types/IsolationLevel"
-import { TableExclusion } from "../../schema-builder/table/TableExclusion"
-import { LapinError } from "../../error"
-import { MetadataTableType } from "../types/MetadataTableType"
-import { InstanceChecker } from "../../util/InstanceChecker"
+import { QueryResult } from "../../query-runner/QueryResult";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
+import { TableColumn } from "../../schema-builder/table/TableColumn";
+import { Table } from "../../schema-builder/table/Table";
+import { TableForeignKey } from "../../schema-builder/table/TableForeignKey";
+import { TableIndex } from "../../schema-builder/table/TableIndex";
+import { QueryRunnerAlreadyReleasedError } from "../../error/QueryRunnerAlreadyReleasedError";
+import { View } from "../../schema-builder/view/View";
+import { Query } from "../Query";
+import { AuroraMysqlDriver } from "./AuroraMysqlDriver";
+import { ReadStream } from "../../platform/PlatformTools";
+import { OrmUtils } from "../../util/OrmUtils";
+import { TableIndexOptions } from "../../schema-builder/options/TableIndexOptions";
+import { TableUnique } from "../../schema-builder/table/TableUnique";
+import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
+import { Broadcaster } from "../../subscriber/Broadcaster";
+import { ColumnType } from "../types/ColumnTypes";
+import { TableCheck } from "../../schema-builder/table/TableCheck";
+import { IsolationLevel } from "../types/IsolationLevel";
+import { TableExclusion } from "../../schema-builder/table/TableExclusion";
+import { LapinError } from "../../error";
+import { MetadataTableType } from "../types/MetadataTableType";
+import { InstanceChecker } from "../../util/InstanceChecker";
 
 /**
  * Runs queries on a single mysql database connection.
@@ -39,9 +39,9 @@ export class AuroraMysqlQueryRunner
      * Database driver used by connection.
      */
 
-    driver: AuroraMysqlDriver
+    driver: AuroraMysqlDriver;
 
-    protected client: any
+    protected client: any;
 
     // -------------------------------------------------------------------------
     // Protected Properties
@@ -50,18 +50,18 @@ export class AuroraMysqlQueryRunner
     /**
      * Promise used to obtain a database connection from a pool for a first time.
      */
-    protected databaseConnectionPromise: Promise<any>
+    protected databaseConnectionPromise: Promise<any>;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(driver: AuroraMysqlDriver, client: any) {
-        super()
-        this.driver = driver
-        this.connection = driver.connection
-        this.client = client
-        this.broadcaster = new Broadcaster(this)
+        super();
+        this.driver = driver;
+        this.connection = driver.connection;
+        this.client = client;
+        this.broadcaster = new Broadcaster(this);
     }
 
     // -------------------------------------------------------------------------
@@ -73,7 +73,7 @@ export class AuroraMysqlQueryRunner
      * Returns obtained database connection.
      */
     async connect(): Promise<any> {
-        return {}
+        return {};
     }
 
     /**
@@ -81,31 +81,31 @@ export class AuroraMysqlQueryRunner
      * You cannot use query runner methods once its released.
      */
     release(): Promise<void> {
-        this.isReleased = true
-        if (this.databaseConnection) this.databaseConnection.release()
-        return Promise.resolve()
+        this.isReleased = true;
+        if (this.databaseConnection) this.databaseConnection.release();
+        return Promise.resolve();
     }
 
     /**
      * Starts transaction on the current connection.
      */
     async startTransaction(isolationLevel?: IsolationLevel): Promise<void> {
-        this.isTransactionActive = true
+        this.isTransactionActive = true;
         try {
-            await this.broadcaster.broadcast("BeforeTransactionStart")
+            await this.broadcaster.broadcast("BeforeTransactionStart");
         } catch (err) {
-            this.isTransactionActive = false
-            throw err
+            this.isTransactionActive = false;
+            throw err;
         }
 
         if (this.transactionDepth === 0) {
-            await this.client.startTransaction()
+            await this.client.startTransaction();
         } else {
-            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`)
+            await this.query(`SAVEPOINT lapin_${this.transactionDepth}`);
         }
-        this.transactionDepth += 1
+        this.transactionDepth += 1;
 
-        await this.broadcaster.broadcast("AfterTransactionStart")
+        await this.broadcaster.broadcast("AfterTransactionStart");
     }
 
     /**
@@ -113,21 +113,21 @@ export class AuroraMysqlQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async commitTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionCommit")
+        await this.broadcaster.broadcast("BeforeTransactionCommit");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `RELEASE SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.client.commitTransaction()
-            this.isTransactionActive = false
+            await this.client.commitTransaction();
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionCommit")
+        await this.broadcaster.broadcast("AfterTransactionCommit");
     }
 
     /**
@@ -135,21 +135,21 @@ export class AuroraMysqlQueryRunner
      * Error will be thrown if transaction was not started.
      */
     async rollbackTransaction(): Promise<void> {
-        if (!this.isTransactionActive) throw new TransactionNotStartedError()
+        if (!this.isTransactionActive) throw new TransactionNotStartedError();
 
-        await this.broadcaster.broadcast("BeforeTransactionRollback")
+        await this.broadcaster.broadcast("BeforeTransactionRollback");
 
         if (this.transactionDepth > 1) {
             await this.query(
                 `ROLLBACK TO SAVEPOINT lapin_${this.transactionDepth - 1}`,
-            )
+            );
         } else {
-            await this.client.rollbackTransaction()
-            this.isTransactionActive = false
+            await this.client.rollbackTransaction();
+            this.isTransactionActive = false;
         }
-        this.transactionDepth -= 1
+        this.transactionDepth -= 1;
 
-        await this.broadcaster.broadcast("AfterTransactionRollback")
+        await this.broadcaster.broadcast("AfterTransactionRollback");
     }
 
     /**
@@ -160,27 +160,27 @@ export class AuroraMysqlQueryRunner
         parameters?: any[],
         useStructuredResult = false,
     ): Promise<any> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
-        const raw = await this.client.query(query, parameters)
+        const raw = await this.client.query(query, parameters);
 
-        const result = new QueryResult()
+        const result = new QueryResult();
 
-        result.raw = raw
+        result.raw = raw;
 
         if (raw?.hasOwnProperty("records") && Array.isArray(raw.records)) {
-            result.records = raw.records
+            result.records = raw.records;
         }
 
         if (raw?.hasOwnProperty("numberOfRecordsUpdated")) {
-            result.affected = raw.numberOfRecordsUpdated
+            result.affected = raw.numberOfRecordsUpdated;
         }
 
         if (!useStructuredResult) {
-            return result.raw
+            return result.raw;
         }
 
-        return result
+        return result;
     }
 
     /**
@@ -192,26 +192,26 @@ export class AuroraMysqlQueryRunner
         onEnd?: Function,
         onError?: Function,
     ): Promise<ReadStream> {
-        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError()
+        if (this.isReleased) throw new QueryRunnerAlreadyReleasedError();
 
         return new Promise(async (ok, fail) => {
             try {
-                const databaseConnection = await this.connect()
-                const stream = databaseConnection.query(query, parameters)
-                if (onEnd) stream.on("end", onEnd)
-                if (onError) stream.on("error", onError)
-                ok(stream)
+                const databaseConnection = await this.connect();
+                const stream = databaseConnection.query(query, parameters);
+                if (onEnd) stream.on("end", onEnd);
+                if (onError) stream.on("error", onError);
+                ok(stream);
             } catch (err) {
-                fail(err)
+                fail(err);
             }
-        })
+        });
     }
 
     /**
      * Returns all available database names including system databases.
      */
     async getDatabases(): Promise<string[]> {
-        return Promise.resolve([])
+        return Promise.resolve([]);
     }
 
     /**
@@ -219,7 +219,7 @@ export class AuroraMysqlQueryRunner
      * If database parameter specified, returns schemas of that database.
      */
     async getSchemas(database?: string): Promise<string[]> {
-        throw new LapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`);
     }
 
     /**
@@ -228,41 +228,41 @@ export class AuroraMysqlQueryRunner
     async hasDatabase(database: string): Promise<boolean> {
         const result = await this.query(
             `SELECT * FROM \`INFORMATION_SCHEMA\`.\`SCHEMATA\` WHERE \`SCHEMA_NAME\` = '${database}'`,
-        )
-        return result.length ? true : false
+        );
+        return result.length ? true : false;
     }
 
     /**
      * Loads currently using database
      */
     async getCurrentDatabase(): Promise<string> {
-        const query = await this.query(`SELECT DATABASE() AS \`db_name\``)
-        return query[0]["db_name"]
+        const query = await this.query(`SELECT DATABASE() AS \`db_name\``);
+        return query[0]["db_name"];
     }
 
     /**
      * Checks if schema with the given name exist.
      */
     async hasSchema(schema: string): Promise<boolean> {
-        throw new LapinError(`MySql driver does not support table schemas`)
+        throw new LapinError(`MySql driver does not support table schemas`);
     }
 
     /**
      * Loads currently using database schema
      */
     async getCurrentSchema(): Promise<string> {
-        const query = await this.query(`SELECT SCHEMA() AS \`schema_name\``)
-        return query[0]["schema_name"]
+        const query = await this.query(`SELECT SCHEMA() AS \`schema_name\``);
+        return query[0]["schema_name"];
     }
 
     /**
      * Checks if table with the given name exist in the database.
      */
     async hasTable(tableOrName: Table | string): Promise<boolean> {
-        const parsedTableName = this.driver.parseTableName(tableOrName)
-        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}'`
-        const result = await this.query(sql)
-        return result.length ? true : false
+        const parsedTableName = this.driver.parseTableName(tableOrName);
+        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}'`;
+        const result = await this.query(sql);
+        return result.length ? true : false;
     }
 
     /**
@@ -272,13 +272,13 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         column: TableColumn | string,
     ): Promise<boolean> {
-        const parsedTableName = this.driver.parseTableName(tableOrName)
+        const parsedTableName = this.driver.parseTableName(tableOrName);
         const columnName = InstanceChecker.isTableColumn(column)
             ? column.name
-            : column
-        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}' AND \`COLUMN_NAME\` = '${columnName}'`
-        const result = await this.query(sql)
-        return result.length ? true : false
+            : column;
+        const sql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE \`TABLE_SCHEMA\` = '${parsedTableName.database}' AND \`TABLE_NAME\` = '${parsedTableName.tableName}' AND \`COLUMN_NAME\` = '${columnName}'`;
+        const result = await this.query(sql);
+        return result.length ? true : false;
     }
 
     /**
@@ -290,9 +290,9 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const up = ifNotExist
             ? `CREATE DATABASE IF NOT EXISTS \`${database}\``
-            : `CREATE DATABASE \`${database}\``
-        const down = `DROP DATABASE \`${database}\``
-        await this.executeQueries(new Query(up), new Query(down))
+            : `CREATE DATABASE \`${database}\``;
+        const down = `DROP DATABASE \`${database}\``;
+        await this.executeQueries(new Query(up), new Query(down));
     }
 
     /**
@@ -301,9 +301,9 @@ export class AuroraMysqlQueryRunner
     async dropDatabase(database: string, ifExist?: boolean): Promise<void> {
         const up = ifExist
             ? `DROP DATABASE IF EXISTS \`${database}\``
-            : `DROP DATABASE \`${database}\``
-        const down = `CREATE DATABASE \`${database}\``
-        await this.executeQueries(new Query(up), new Query(down))
+            : `DROP DATABASE \`${database}\``;
+        const down = `CREATE DATABASE \`${database}\``;
+        await this.executeQueries(new Query(up), new Query(down));
     }
 
     /**
@@ -315,7 +315,7 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         throw new LapinError(
             `Schema create queries are not supported by MySql driver.`,
-        )
+        );
     }
 
     /**
@@ -324,7 +324,7 @@ export class AuroraMysqlQueryRunner
     async dropSchema(schemaPath: string, ifExist?: boolean): Promise<void> {
         throw new LapinError(
             `Schema drop queries are not supported by MySql driver.`,
-        )
+        );
     }
 
     /**
@@ -336,14 +336,14 @@ export class AuroraMysqlQueryRunner
         createForeignKeys: boolean = true,
     ): Promise<void> {
         if (ifNotExist) {
-            const isTableExist = await this.hasTable(table)
-            if (isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(table);
+            if (isTableExist) return Promise.resolve();
         }
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
-        upQueries.push(this.createTableSql(table, createForeignKeys))
-        downQueries.push(this.dropTableSql(table))
+        upQueries.push(this.createTableSql(table, createForeignKeys));
+        downQueries.push(this.dropTableSql(table));
 
         // we must first drop indices, than drop foreign keys, because drop queries runs in reversed order
         // and foreign keys will be dropped first as indices. This order is very important, because we can't drop index
@@ -352,16 +352,16 @@ export class AuroraMysqlQueryRunner
         // createTable does not need separate method to create indices, because it create indices in the same query with table creation.
         table.indices.forEach((index) =>
             downQueries.push(this.dropIndexSql(table, index)),
-        )
+        );
 
         // if createForeignKeys is true, we must drop created foreign keys in down query.
         // createTable does not need separate method to create foreign keys, because it create fk's in the same query with table creation.
         if (createForeignKeys)
             table.foreignKeys.forEach((foreignKey) =>
                 downQueries.push(this.dropForeignKeySql(table, foreignKey)),
-            )
+            );
 
-        return this.executeQueries(upQueries, downQueries)
+        return this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -375,30 +375,30 @@ export class AuroraMysqlQueryRunner
         // It needs because if table does not exist and dropForeignKeys or dropIndices is true, we don't need
         // to perform drop queries for foreign keys and indices.
         if (ifExist) {
-            const isTableExist = await this.hasTable(target)
-            if (!isTableExist) return Promise.resolve()
+            const isTableExist = await this.hasTable(target);
+            if (!isTableExist) return Promise.resolve();
         }
 
         // if dropTable called with dropForeignKeys = true, we must create foreign keys in down query.
-        const createForeignKeys: boolean = dropForeignKeys
-        const tablePath = this.getTablePath(target)
-        const table = await this.getCachedTable(tablePath)
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const createForeignKeys: boolean = dropForeignKeys;
+        const tablePath = this.getTablePath(target);
+        const table = await this.getCachedTable(tablePath);
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         if (dropForeignKeys)
             table.foreignKeys.forEach((foreignKey) =>
                 upQueries.push(this.dropForeignKeySql(table, foreignKey)),
-            )
+            );
 
         table.indices.forEach((index) =>
             upQueries.push(this.dropIndexSql(table, index)),
-        )
+        );
 
-        upQueries.push(this.dropTableSql(table))
-        downQueries.push(this.createTableSql(table, createForeignKeys))
+        upQueries.push(this.dropTableSql(table));
+        downQueries.push(this.createTableSql(table, createForeignKeys));
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -408,31 +408,31 @@ export class AuroraMysqlQueryRunner
         view: View,
         syncWithMetadata: boolean = false,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(this.createViewSql(view))
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(this.createViewSql(view));
         if (syncWithMetadata)
-            upQueries.push(await this.insertViewDefinitionSql(view))
-        downQueries.push(this.dropViewSql(view))
+            upQueries.push(await this.insertViewDefinitionSql(view));
+        downQueries.push(this.dropViewSql(view));
         if (syncWithMetadata)
-            downQueries.push(await this.deleteViewDefinitionSql(view))
-        await this.executeQueries(upQueries, downQueries)
+            downQueries.push(await this.deleteViewDefinitionSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
      * Drops the view.
      */
     async dropView(target: View | string): Promise<void> {
-        const viewName = InstanceChecker.isView(target) ? target.name : target
-        const view = await this.getCachedView(viewName)
+        const viewName = InstanceChecker.isView(target) ? target.name : target;
+        const view = await this.getCachedView(viewName);
 
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        upQueries.push(await this.deleteViewDefinitionSql(view))
-        upQueries.push(this.dropViewSql(view))
-        downQueries.push(await this.insertViewDefinitionSql(view))
-        downQueries.push(this.createViewSql(view))
-        await this.executeQueries(upQueries, downQueries)
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        upQueries.push(await this.deleteViewDefinitionSql(view));
+        upQueries.push(this.dropViewSql(view));
+        downQueries.push(await this.insertViewDefinitionSql(view));
+        downQueries.push(this.createViewSql(view));
+        await this.executeQueries(upQueries, downQueries);
     }
 
     /**
@@ -442,15 +442,15 @@ export class AuroraMysqlQueryRunner
         oldTableOrName: Table | string,
         newTableName: string,
     ): Promise<void> {
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
         const oldTable = InstanceChecker.isTable(oldTableOrName)
             ? oldTableOrName
-            : await this.getCachedTable(oldTableOrName)
-        const newTable = oldTable.clone()
+            : await this.getCachedTable(oldTableOrName);
+        const newTable = oldTable.clone();
 
-        const { database } = this.driver.parseTableName(oldTable)
-        newTable.name = database ? `${database}.${newTableName}` : newTableName
+        const { database } = this.driver.parseTableName(oldTable);
+        newTable.name = database ? `${database}.${newTableName}` : newTableName;
 
         // rename table
         upQueries.push(
@@ -459,39 +459,39 @@ export class AuroraMysqlQueryRunner
                     newTable,
                 )}`,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `RENAME TABLE ${this.escapePath(newTable)} TO ${this.escapePath(
                     oldTable,
                 )}`,
             ),
-        )
+        );
 
         // rename index constraints
         newTable.indices.forEach((index) => {
             // build new constraint name
             const columnNames = index.columnNames
                 .map((column) => `\`${column}\``)
-                .join(", ")
+                .join(", ");
             const newIndexName = this.connection.namingStrategy.indexName(
                 newTable,
                 index.columnNames,
                 index.where,
-            )
+            );
 
             // build queries
-            let indexType = ""
-            if (index.isUnique) indexType += "UNIQUE "
-            if (index.isSpatial) indexType += "SPATIAL "
-            if (index.isFulltext) indexType += "FULLTEXT "
+            let indexType = "";
+            if (index.isUnique) indexType += "UNIQUE ";
+            if (index.isSpatial) indexType += "SPATIAL ";
+            if (index.isFulltext) indexType += "FULLTEXT ";
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(newTable)} DROP INDEX \`${
                         index.name
                     }\`, ADD ${indexType}INDEX \`${newIndexName}\` (${columnNames})`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
@@ -500,26 +500,26 @@ export class AuroraMysqlQueryRunner
                         index.name
                     }\` (${columnNames})`,
                 ),
-            )
+            );
 
             // replace constraint name
-            index.name = newIndexName
-        })
+            index.name = newIndexName;
+        });
 
         // rename foreign key constraint
         newTable.foreignKeys.forEach((foreignKey) => {
             // build new constraint name
             const columnNames = foreignKey.columnNames
                 .map((column) => `\`${column}\``)
-                .join(", ")
+                .join(", ");
             const referencedColumnNames = foreignKey.referencedColumnNames
                 .map((column) => `\`${column}\``)
-                .join(",")
+                .join(",");
             const newForeignKeyName =
                 this.connection.namingStrategy.foreignKeyName(
                     newTable,
                     foreignKey.columnNames,
-                )
+                );
 
             // build queries
             let up =
@@ -528,9 +528,9 @@ export class AuroraMysqlQueryRunner
                 }\`, ADD CONSTRAINT \`${newForeignKeyName}\` FOREIGN KEY (${columnNames}) ` +
                 `REFERENCES ${this.escapePath(
                     this.getTablePath(foreignKey),
-                )}(${referencedColumnNames})`
-            if (foreignKey.onDelete) up += ` ON DELETE ${foreignKey.onDelete}`
-            if (foreignKey.onUpdate) up += ` ON UPDATE ${foreignKey.onUpdate}`
+                )}(${referencedColumnNames})`;
+            if (foreignKey.onDelete) up += ` ON DELETE ${foreignKey.onDelete}`;
+            if (foreignKey.onUpdate) up += ` ON UPDATE ${foreignKey.onUpdate}`;
 
             let down =
                 `ALTER TABLE ${this.escapePath(
@@ -540,22 +540,24 @@ export class AuroraMysqlQueryRunner
                 }\` FOREIGN KEY (${columnNames}) ` +
                 `REFERENCES ${this.escapePath(
                     this.getTablePath(foreignKey),
-                )}(${referencedColumnNames})`
-            if (foreignKey.onDelete) down += ` ON DELETE ${foreignKey.onDelete}`
-            if (foreignKey.onUpdate) down += ` ON UPDATE ${foreignKey.onUpdate}`
+                )}(${referencedColumnNames})`;
+            if (foreignKey.onDelete)
+                down += ` ON DELETE ${foreignKey.onDelete}`;
+            if (foreignKey.onUpdate)
+                down += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-            upQueries.push(new Query(up))
-            downQueries.push(new Query(down))
+            upQueries.push(new Query(up));
+            downQueries.push(new Query(down));
 
             // replace constraint name
-            foreignKey.name = newForeignKeyName
-        })
+            foreignKey.name = newForeignKeyName;
+        });
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
         // rename old table and replace it in cached tabled;
-        oldTable.name = newTable.name
-        this.replaceCachedTable(oldTable, newTable)
+        oldTable.name = newTable.name;
+        this.replaceCachedTable(oldTable, newTable);
     }
 
     /**
@@ -567,11 +569,11 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
-        const skipColumnLevelPrimary = clonedTable.primaryColumns.length > 0
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
+        const skipColumnLevelPrimary = clonedTable.primaryColumns.length > 0;
 
         upQueries.push(
             new Query(
@@ -583,14 +585,14 @@ export class AuroraMysqlQueryRunner
                     false,
                 )}`,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(table)} DROP COLUMN \`${
                     column.name
                 }\``,
             ),
-        )
+        );
 
         // create or update primary key constraint
         if (column.isPrimary && skipColumnLevelPrimary) {
@@ -599,11 +601,11 @@ export class AuroraMysqlQueryRunner
                 (column) =>
                     column.isGenerated &&
                     column.generationStrategy === "increment",
-            )
+            );
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -613,62 +615,62 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             nonGeneratedColumn.name
                         }\` ${this.buildCreateColumnSql(column, true)}`,
                     ),
-                )
+                );
             }
 
-            const primaryColumns = clonedTable.primaryColumns
+            const primaryColumns = clonedTable.primaryColumns;
             let columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
 
-            primaryColumns.push(column)
+            primaryColumns.push(column);
             columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
 
             // if we previously dropped AUTO_INCREMENT property, we must bring it back
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             nonGeneratedColumn.name
                         }\` ${this.buildCreateColumnSql(column, true)}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -678,7 +680,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
             }
         }
 
@@ -687,10 +689,10 @@ export class AuroraMysqlQueryRunner
             (index) =>
                 index.columnNames.length === 1 &&
                 index.columnNames[0] === column.name,
-        )
+        );
         if (columnIndex) {
-            upQueries.push(this.createIndexSql(table, columnIndex))
-            downQueries.push(this.dropIndexSql(table, columnIndex))
+            upQueries.push(this.createIndexSql(table, columnIndex));
+            downQueries.push(this.dropIndexSql(table, columnIndex));
         } else if (column.isUnique) {
             const uniqueIndex = new TableIndex({
                 name: this.connection.namingStrategy.indexName(table, [
@@ -698,34 +700,34 @@ export class AuroraMysqlQueryRunner
                 ]),
                 columnNames: [column.name],
                 isUnique: true,
-            })
-            clonedTable.indices.push(uniqueIndex)
+            });
+            clonedTable.indices.push(uniqueIndex);
             clonedTable.uniques.push(
                 new TableUnique({
                     name: uniqueIndex.name,
                     columnNames: uniqueIndex.columnNames,
                 }),
-            )
+            );
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} ADD UNIQUE INDEX \`${
                         uniqueIndex.name
                     }\` (\`${column.name}\`)`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP INDEX \`${
                         uniqueIndex.name
                     }\``,
                 ),
-            )
+            );
         }
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
-        clonedTable.addColumn(column)
-        this.replaceCachedTable(table, clonedTable)
+        clonedTable.addColumn(column);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -736,7 +738,7 @@ export class AuroraMysqlQueryRunner
         columns: TableColumn[],
     ): Promise<void> {
         for (const column of columns) {
-            await this.addColumn(tableOrName, column)
+            await this.addColumn(tableOrName, column);
         }
     }
 
@@ -750,24 +752,24 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const oldColumn = InstanceChecker.isTableColumn(oldTableColumnOrName)
             ? oldTableColumnOrName
-            : table.columns.find((c) => c.name === oldTableColumnOrName)
+            : table.columns.find((c) => c.name === oldTableColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldTableColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
-        let newColumn: TableColumn | undefined = undefined
+        let newColumn: TableColumn | undefined = undefined;
         if (InstanceChecker.isTableColumn(newTableColumnOrName)) {
-            newColumn = newTableColumnOrName
+            newColumn = newTableColumnOrName;
         } else {
-            newColumn = oldColumn.clone()
-            newColumn.name = newTableColumnOrName
+            newColumn = oldColumn.clone();
+            newColumn.name = newTableColumnOrName;
         }
 
-        await this.changeColumn(table, oldColumn, newColumn)
+        await this.changeColumn(table, oldColumn, newColumn);
     }
 
     /**
@@ -780,18 +782,18 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        let clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+            : await this.getCachedTable(tableOrName);
+        let clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         const oldColumn = InstanceChecker.isTableColumn(oldColumnOrName)
             ? oldColumnOrName
-            : table.columns.find((column) => column.name === oldColumnOrName)
+            : table.columns.find((column) => column.name === oldColumnOrName);
         if (!oldColumn)
             throw new LapinError(
                 `Column "${oldColumnOrName}" was not found in the "${table.name}" table.`,
-            )
+            );
 
         if (
             (newColumn.isGenerated !== oldColumn.isGenerated &&
@@ -800,11 +802,11 @@ export class AuroraMysqlQueryRunner
             oldColumn.length !== newColumn.length ||
             oldColumn.generatedType !== newColumn.generatedType
         ) {
-            await this.dropColumn(table, oldColumn)
-            await this.addColumn(table, newColumn)
+            await this.dropColumn(table, oldColumn);
+            await this.addColumn(table, newColumn);
 
             // update cloned table
-            clonedTable = table.clone()
+            clonedTable = table.clone();
         } else {
             if (newColumn.name !== oldColumn.name) {
                 // We don't change any column properties, just rename it.
@@ -818,7 +820,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -829,7 +831,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
 
                 // rename index constraints
                 clonedTable.findColumnIndices(oldColumn).forEach((index) => {
@@ -837,23 +839,23 @@ export class AuroraMysqlQueryRunner
                     index.columnNames.splice(
                         index.columnNames.indexOf(oldColumn.name),
                         1,
-                    )
-                    index.columnNames.push(newColumn.name)
+                    );
+                    index.columnNames.push(newColumn.name);
                     const columnNames = index.columnNames
                         .map((column) => `\`${column}\``)
-                        .join(", ")
+                        .join(", ");
                     const newIndexName =
                         this.connection.namingStrategy.indexName(
                             clonedTable,
                             index.columnNames,
                             index.where,
-                        )
+                        );
 
                     // build queries
-                    let indexType = ""
-                    if (index.isUnique) indexType += "UNIQUE "
-                    if (index.isSpatial) indexType += "SPATIAL "
-                    if (index.isFulltext) indexType += "FULLTEXT "
+                    let indexType = "";
+                    if (index.isUnique) indexType += "UNIQUE ";
+                    if (index.isSpatial) indexType += "SPATIAL ";
+                    if (index.isFulltext) indexType += "FULLTEXT ";
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -862,7 +864,7 @@ export class AuroraMysqlQueryRunner
                                 index.name
                             }\`, ADD ${indexType}INDEX \`${newIndexName}\` (${columnNames})`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -871,11 +873,11 @@ export class AuroraMysqlQueryRunner
                                 index.name
                             }\` (${columnNames})`,
                         ),
-                    )
+                    );
 
                     // replace constraint name
-                    index.name = newIndexName
-                })
+                    index.name = newIndexName;
+                });
 
                 // rename foreign key constraints
                 clonedTable
@@ -885,20 +887,20 @@ export class AuroraMysqlQueryRunner
                         foreignKey.columnNames.splice(
                             foreignKey.columnNames.indexOf(oldColumn.name),
                             1,
-                        )
-                        foreignKey.columnNames.push(newColumn.name)
+                        );
+                        foreignKey.columnNames.push(newColumn.name);
                         const columnNames = foreignKey.columnNames
                             .map((column) => `\`${column}\``)
-                            .join(", ")
+                            .join(", ");
                         const referencedColumnNames =
                             foreignKey.referencedColumnNames
                                 .map((column) => `\`${column}\``)
-                                .join(",")
+                                .join(",");
                         const newForeignKeyName =
                             this.connection.namingStrategy.foreignKeyName(
                                 clonedTable,
                                 foreignKey.columnNames,
-                            )
+                            );
 
                         // build queries
                         let up =
@@ -909,11 +911,11 @@ export class AuroraMysqlQueryRunner
                             }\`, ADD CONSTRAINT \`${newForeignKeyName}\` FOREIGN KEY (${columnNames}) ` +
                             `REFERENCES ${this.escapePath(
                                 this.getTablePath(foreignKey),
-                            )}(${referencedColumnNames})`
+                            )}(${referencedColumnNames})`;
                         if (foreignKey.onDelete)
-                            up += ` ON DELETE ${foreignKey.onDelete}`
+                            up += ` ON DELETE ${foreignKey.onDelete}`;
                         if (foreignKey.onUpdate)
-                            up += ` ON UPDATE ${foreignKey.onUpdate}`
+                            up += ` ON UPDATE ${foreignKey.onUpdate}`;
 
                         let down =
                             `ALTER TABLE ${this.escapePath(
@@ -923,27 +925,27 @@ export class AuroraMysqlQueryRunner
                             }\` FOREIGN KEY (${columnNames}) ` +
                             `REFERENCES ${this.escapePath(
                                 this.getTablePath(foreignKey),
-                            )}(${referencedColumnNames})`
+                            )}(${referencedColumnNames})`;
                         if (foreignKey.onDelete)
-                            down += ` ON DELETE ${foreignKey.onDelete}`
+                            down += ` ON DELETE ${foreignKey.onDelete}`;
                         if (foreignKey.onUpdate)
-                            down += ` ON UPDATE ${foreignKey.onUpdate}`
+                            down += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-                        upQueries.push(new Query(up))
-                        downQueries.push(new Query(down))
+                        upQueries.push(new Query(up));
+                        downQueries.push(new Query(down));
 
                         // replace constraint name
-                        foreignKey.name = newForeignKeyName
-                    })
+                        foreignKey.name = newForeignKeyName;
+                    });
 
                 // rename old column in the Table object
                 const oldTableColumn = clonedTable.columns.find(
                     (column) => column.name === oldColumn.name,
-                )
+                );
                 clonedTable.columns[
                     clonedTable.columns.indexOf(oldTableColumn!)
-                ].name = newColumn.name
-                oldColumn.name = newColumn.name
+                ].name = newColumn.name;
+                oldColumn.name = newColumn.name;
             }
 
             if (this.isColumnChanged(oldColumn, newColumn, true)) {
@@ -953,14 +955,14 @@ export class AuroraMysqlQueryRunner
                             oldColumn.name
                         }\` ${this.buildCreateColumnSql(newColumn, true)}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                             newColumn.name
                         }\` ${this.buildCreateColumnSql(oldColumn, true)}`,
                     ),
-                )
+                );
             }
 
             if (newColumn.isPrimary !== oldColumn.isPrimary) {
@@ -969,11 +971,11 @@ export class AuroraMysqlQueryRunner
                     (column) =>
                         column.isGenerated &&
                         column.generationStrategy === "increment",
-                )
+                );
                 if (generatedColumn) {
-                    const nonGeneratedColumn = generatedColumn.clone()
-                    nonGeneratedColumn.isGenerated = false
-                    nonGeneratedColumn.generationStrategy = undefined
+                    const nonGeneratedColumn = generatedColumn.clone();
+                    nonGeneratedColumn.isGenerated = false;
+                    nonGeneratedColumn.generationStrategy = undefined;
 
                     upQueries.push(
                         new Query(
@@ -984,7 +986,7 @@ export class AuroraMysqlQueryRunner
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -994,97 +996,97 @@ export class AuroraMysqlQueryRunner
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                 }
 
-                const primaryColumns = clonedTable.primaryColumns
+                const primaryColumns = clonedTable.primaryColumns;
 
                 // if primary column state changed, we must always drop existed constraint.
                 if (primaryColumns.length > 0) {
                     const columnNames = primaryColumns
                         .map((column) => `\`${column.name}\``)
-                        .join(", ")
+                        .join(", ");
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP PRIMARY KEY`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} ADD PRIMARY KEY (${columnNames})`,
                         ),
-                    )
+                    );
                 }
 
                 if (newColumn.isPrimary === true) {
-                    primaryColumns.push(newColumn)
+                    primaryColumns.push(newColumn);
                     // update column in table
                     const column = clonedTable.columns.find(
                         (column) => column.name === newColumn.name,
-                    )
-                    column!.isPrimary = true
+                    );
+                    column!.isPrimary = true;
                     const columnNames = primaryColumns
                         .map((column) => `\`${column.name}\``)
-                        .join(", ")
+                        .join(", ");
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} ADD PRIMARY KEY (${columnNames})`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP PRIMARY KEY`,
                         ),
-                    )
+                    );
                 } else {
                     const primaryColumn = primaryColumns.find(
                         (c) => c.name === newColumn.name,
-                    )
+                    );
                     primaryColumns.splice(
                         primaryColumns.indexOf(primaryColumn!),
                         1,
-                    )
+                    );
                     // update column in table
                     const column = clonedTable.columns.find(
                         (column) => column.name === newColumn.name,
-                    )
-                    column!.isPrimary = false
+                    );
+                    column!.isPrimary = false;
 
                     // if we have another primary keys, we must recreate constraint.
                     if (primaryColumns.length > 0) {
                         const columnNames = primaryColumns
                             .map((column) => `\`${column.name}\``)
-                            .join(", ")
+                            .join(", ");
                         upQueries.push(
                             new Query(
                                 `ALTER TABLE ${this.escapePath(
                                     table,
                                 )} ADD PRIMARY KEY (${columnNames})`,
                             ),
-                        )
+                        );
                         downQueries.push(
                             new Query(
                                 `ALTER TABLE ${this.escapePath(
                                     table,
                                 )} DROP PRIMARY KEY`,
                             ),
-                        )
+                        );
                     }
                 }
 
                 // if we have generated column, and we dropped AUTO_INCREMENT property before, we must bring it back
                 if (generatedColumn) {
-                    const nonGeneratedColumn = generatedColumn.clone()
-                    nonGeneratedColumn.isGenerated = false
-                    nonGeneratedColumn.generationStrategy = undefined
+                    const nonGeneratedColumn = generatedColumn.clone();
+                    nonGeneratedColumn.isGenerated = false;
+                    nonGeneratedColumn.generationStrategy = undefined;
 
                     upQueries.push(
                         new Query(
@@ -1095,7 +1097,7 @@ export class AuroraMysqlQueryRunner
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1105,7 +1107,7 @@ export class AuroraMysqlQueryRunner
                                 true,
                             )}`,
                         ),
-                    )
+                    );
                 }
             }
 
@@ -1117,14 +1119,14 @@ export class AuroraMysqlQueryRunner
                         ]),
                         columnNames: [newColumn.name],
                         isUnique: true,
-                    })
-                    clonedTable.indices.push(uniqueIndex)
+                    });
+                    clonedTable.indices.push(uniqueIndex);
                     clonedTable.uniques.push(
                         new TableUnique({
                             name: uniqueIndex.name,
                             columnNames: uniqueIndex.columnNames,
                         }),
-                    )
+                    );
                     upQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -1133,14 +1135,14 @@ export class AuroraMysqlQueryRunner
                                 newColumn.name
                             }\`)`,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
                                 table,
                             )} DROP INDEX \`${uniqueIndex.name}\``,
                         ),
-                    )
+                    );
                 } else {
                     const uniqueIndex = clonedTable.indices.find((index) => {
                         return (
@@ -1149,20 +1151,20 @@ export class AuroraMysqlQueryRunner
                             !!index.columnNames.find(
                                 (columnName) => columnName === newColumn.name,
                             )
-                        )
-                    })
+                        );
+                    });
                     clonedTable.indices.splice(
                         clonedTable.indices.indexOf(uniqueIndex!),
                         1,
-                    )
+                    );
 
                     const tableUnique = clonedTable.uniques.find(
                         (unique) => unique.name === uniqueIndex!.name,
-                    )
+                    );
                     clonedTable.uniques.splice(
                         clonedTable.uniques.indexOf(tableUnique!),
                         1,
-                    )
+                    );
 
                     upQueries.push(
                         new Query(
@@ -1170,7 +1172,7 @@ export class AuroraMysqlQueryRunner
                                 table,
                             )} DROP INDEX \`${uniqueIndex!.name}\``,
                         ),
-                    )
+                    );
                     downQueries.push(
                         new Query(
                             `ALTER TABLE ${this.escapePath(
@@ -1179,13 +1181,13 @@ export class AuroraMysqlQueryRunner
                                 newColumn.name
                             }\`)`,
                         ),
-                    )
+                    );
                 }
             }
         }
 
-        await this.executeQueries(upQueries, downQueries)
-        this.replaceCachedTable(table, clonedTable)
+        await this.executeQueries(upQueries, downQueries);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1196,7 +1198,7 @@ export class AuroraMysqlQueryRunner
         changedColumns: { newColumn: TableColumn; oldColumn: TableColumn }[],
     ): Promise<void> {
         for (const { oldColumn, newColumn } of changedColumns) {
-            await this.changeColumn(tableOrName, oldColumn, newColumn)
+            await this.changeColumn(tableOrName, oldColumn, newColumn);
         }
     }
 
@@ -1209,18 +1211,18 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const column = InstanceChecker.isTableColumn(columnOrName)
             ? columnOrName
-            : table.findColumnByName(columnOrName)
+            : table.findColumnByName(columnOrName);
         if (!column)
             throw new LapinError(
                 `Column "${columnOrName}" was not found in table "${table.name}"`,
-            )
+            );
 
-        const clonedTable = table.clone()
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+        const clonedTable = table.clone();
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         // drop primary key constraint
         if (column.isPrimary) {
@@ -1229,11 +1231,11 @@ export class AuroraMysqlQueryRunner
                 (column) =>
                     column.isGenerated &&
                     column.generationStrategy === "increment",
-            )
+            );
             if (generatedColumn) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
 
                 upQueries.push(
                     new Query(
@@ -1244,7 +1246,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1254,58 +1256,58 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
             }
 
             // dropping primary key constraint
             const columnNames = clonedTable.primaryColumns
                 .map((primaryColumn) => `\`${primaryColumn.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         clonedTable,
                     )} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         clonedTable,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
 
             // update column in table
-            const tableColumn = clonedTable.findColumnByName(column.name)
-            tableColumn!.isPrimary = false
+            const tableColumn = clonedTable.findColumnByName(column.name);
+            tableColumn!.isPrimary = false;
 
             // if primary key have multiple columns, we must recreate it without dropped column
             if (clonedTable.primaryColumns.length > 0) {
                 const columnNames = clonedTable.primaryColumns
                     .map((primaryColumn) => `\`${primaryColumn.name}\``)
-                    .join(", ")
+                    .join(", ");
                 upQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(
                             clonedTable,
                         )} ADD PRIMARY KEY (${columnNames})`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(
                             clonedTable,
                         )} DROP PRIMARY KEY`,
                     ),
-                )
+                );
             }
 
             // if we have generated column, and we dropped AUTO_INCREMENT property before, and this column is not current dropping column, we must bring it back
             if (generatedColumn && generatedColumn.name !== column.name) {
-                const nonGeneratedColumn = generatedColumn.clone()
-                nonGeneratedColumn.isGenerated = false
-                nonGeneratedColumn.generationStrategy = undefined
+                const nonGeneratedColumn = generatedColumn.clone();
+                nonGeneratedColumn.isGenerated = false;
+                nonGeneratedColumn.generationStrategy = undefined;
 
                 upQueries.push(
                     new Query(
@@ -1316,7 +1318,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
                 downQueries.push(
                     new Query(
                         `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
@@ -1326,7 +1328,7 @@ export class AuroraMysqlQueryRunner
                             true,
                         )}`,
                     ),
-                )
+                );
             }
         }
 
@@ -1335,40 +1337,40 @@ export class AuroraMysqlQueryRunner
             (index) =>
                 index.columnNames.length === 1 &&
                 index.columnNames[0] === column.name,
-        )
+        );
         if (columnIndex) {
             clonedTable.indices.splice(
                 clonedTable.indices.indexOf(columnIndex),
                 1,
-            )
-            upQueries.push(this.dropIndexSql(table, columnIndex))
-            downQueries.push(this.createIndexSql(table, columnIndex))
+            );
+            upQueries.push(this.dropIndexSql(table, columnIndex));
+            downQueries.push(this.createIndexSql(table, columnIndex));
         } else if (column.isUnique) {
             // we splice constraints both from table uniques and indices.
             const uniqueName =
                 this.connection.namingStrategy.uniqueConstraintName(table, [
                     column.name,
-                ])
+                ]);
             const foundUnique = clonedTable.uniques.find(
                 (unique) => unique.name === uniqueName,
-            )
+            );
             if (foundUnique)
                 clonedTable.uniques.splice(
                     clonedTable.uniques.indexOf(foundUnique),
                     1,
-                )
+                );
 
             const indexName = this.connection.namingStrategy.indexName(table, [
                 column.name,
-            ])
+            ]);
             const foundIndex = clonedTable.indices.find(
                 (index) => index.name === indexName,
-            )
+            );
             if (foundIndex)
                 clonedTable.indices.splice(
                     clonedTable.indices.indexOf(foundIndex),
                     1,
-                )
+                );
 
             upQueries.push(
                 new Query(
@@ -1376,14 +1378,14 @@ export class AuroraMysqlQueryRunner
                         table,
                     )} DROP INDEX \`${indexName}\``,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD UNIQUE INDEX \`${indexName}\` (\`${column.name}\`)`,
                 ),
-            )
+            );
         }
 
         upQueries.push(
@@ -1392,19 +1394,19 @@ export class AuroraMysqlQueryRunner
                     column.name
                 }\``,
             ),
-        )
+        );
         downQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(
                     table,
                 )} ADD ${this.buildCreateColumnSql(column, true)}`,
             ),
-        )
+        );
 
-        await this.executeQueries(upQueries, downQueries)
+        await this.executeQueries(upQueries, downQueries);
 
-        clonedTable.removeColumn(column)
-        this.replaceCachedTable(table, clonedTable)
+        clonedTable.removeColumn(column);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1415,7 +1417,7 @@ export class AuroraMysqlQueryRunner
         columns: TableColumn[] | string[],
     ): Promise<void> {
         for (const column of columns) {
-            await this.dropColumn(tableOrName, column)
+            await this.dropColumn(tableOrName, column);
         }
     }
 
@@ -1428,18 +1430,18 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
 
-        const up = this.createPrimaryKeySql(table, columnNames)
-        const down = this.dropPrimaryKeySql(table)
+        const up = this.createPrimaryKeySql(table, columnNames);
+        const down = this.dropPrimaryKeySql(table);
 
-        await this.executeQueries(up, down)
+        await this.executeQueries(up, down);
         clonedTable.columns.forEach((column) => {
             if (columnNames.find((columnName) => columnName === column.name))
-                column.isPrimary = true
-        })
-        this.replaceCachedTable(table, clonedTable)
+                column.isPrimary = true;
+        });
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1451,21 +1453,21 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const clonedTable = table.clone()
-        const columnNames = columns.map((column) => column.name)
-        const upQueries: Query[] = []
-        const downQueries: Query[] = []
+            : await this.getCachedTable(tableOrName);
+        const clonedTable = table.clone();
+        const columnNames = columns.map((column) => column.name);
+        const upQueries: Query[] = [];
+        const downQueries: Query[] = [];
 
         // if table have generated column, we must drop AUTO_INCREMENT before changing primary constraints.
         const generatedColumn = clonedTable.columns.find(
             (column) =>
                 column.isGenerated && column.generationStrategy === "increment",
-        )
+        );
         if (generatedColumn) {
-            const nonGeneratedColumn = generatedColumn.clone()
-            nonGeneratedColumn.isGenerated = false
-            nonGeneratedColumn.generationStrategy = undefined
+            const nonGeneratedColumn = generatedColumn.clone();
+            nonGeneratedColumn.isGenerated = false;
+            nonGeneratedColumn.generationStrategy = undefined;
 
             upQueries.push(
                 new Query(
@@ -1473,54 +1475,54 @@ export class AuroraMysqlQueryRunner
                         generatedColumn.name
                     }\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                         nonGeneratedColumn.name
                     }\` ${this.buildCreateColumnSql(generatedColumn, true)}`,
                 ),
-            )
+            );
         }
 
         // if table already have primary columns, we must drop them.
-        const primaryColumns = clonedTable.primaryColumns
+        const primaryColumns = clonedTable.primaryColumns;
         if (primaryColumns.length > 0) {
             const columnNames = primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
+                .join(", ");
             upQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(
                         table,
                     )} ADD PRIMARY KEY (${columnNames})`,
                 ),
-            )
+            );
         }
 
         // update columns in table.
         clonedTable.columns
             .filter((column) => columnNames.indexOf(column.name) !== -1)
-            .forEach((column) => (column.isPrimary = true))
+            .forEach((column) => (column.isPrimary = true));
 
         const columnNamesString = columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
+            .join(", ");
         upQueries.push(
             new Query(
                 `ALTER TABLE ${this.escapePath(
                     table,
                 )} ADD PRIMARY KEY (${columnNamesString})`,
             ),
-        )
+        );
         downQueries.push(
             new Query(`ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`),
-        )
+        );
 
         // if we already have generated column or column is changed to generated, and we dropped AUTO_INCREMENT property before, we must bring it back
         const newOrExistGeneratedColumn = generatedColumn
@@ -1529,11 +1531,11 @@ export class AuroraMysqlQueryRunner
                   (column) =>
                       column.isGenerated &&
                       column.generationStrategy === "increment",
-              )
+              );
         if (newOrExistGeneratedColumn) {
-            const nonGeneratedColumn = newOrExistGeneratedColumn.clone()
-            nonGeneratedColumn.isGenerated = false
-            nonGeneratedColumn.generationStrategy = undefined
+            const nonGeneratedColumn = newOrExistGeneratedColumn.clone();
+            nonGeneratedColumn.isGenerated = false;
+            nonGeneratedColumn.generationStrategy = undefined;
 
             upQueries.push(
                 new Query(
@@ -1544,25 +1546,25 @@ export class AuroraMysqlQueryRunner
                         true,
                     )}`,
                 ),
-            )
+            );
             downQueries.push(
                 new Query(
                     `ALTER TABLE ${this.escapePath(table)} CHANGE \`${
                         newOrExistGeneratedColumn.name
                     }\` ${this.buildCreateColumnSql(nonGeneratedColumn, true)}`,
                 ),
-            )
+            );
 
             // if column changed to generated, we must update it in table
             const changedGeneratedColumn = clonedTable.columns.find(
                 (column) => column.name === newOrExistGeneratedColumn.name,
-            )
-            changedGeneratedColumn!.isGenerated = true
-            changedGeneratedColumn!.generationStrategy = "increment"
+            );
+            changedGeneratedColumn!.isGenerated = true;
+            changedGeneratedColumn!.generationStrategy = "increment";
         }
 
-        await this.executeQueries(upQueries, downQueries)
-        this.replaceCachedTable(table, clonedTable)
+        await this.executeQueries(upQueries, downQueries);
+        this.replaceCachedTable(table, clonedTable);
     }
 
     /**
@@ -1571,16 +1573,16 @@ export class AuroraMysqlQueryRunner
     async dropPrimaryKey(tableOrName: Table | string): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
-        const up = this.dropPrimaryKeySql(table)
+            : await this.getCachedTable(tableOrName);
+        const up = this.dropPrimaryKeySql(table);
         const down = this.createPrimaryKeySql(
             table,
             table.primaryColumns.map((column) => column.name),
-        )
-        await this.executeQueries(up, down)
+        );
+        await this.executeQueries(up, down);
         table.primaryColumns.forEach((column) => {
-            column.isPrimary = false
-        })
+            column.isPrimary = false;
+        });
     }
 
     /**
@@ -1592,7 +1594,7 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1604,7 +1606,7 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1616,7 +1618,7 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1628,7 +1630,7 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         throw new LapinError(
             `MySql does not support unique constraints. Use unique index instead.`,
-        )
+        );
     }
 
     /**
@@ -1638,7 +1640,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraint: TableCheck,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1648,7 +1650,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1658,7 +1660,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkOrName: TableCheck | string,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1668,7 +1670,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         checkConstraints: TableCheck[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support check constraints.`)
+        throw new LapinError(`MySql does not support check constraints.`);
     }
 
     /**
@@ -1678,7 +1680,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraint: TableExclusion,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -1688,7 +1690,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -1698,7 +1700,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionOrName: TableExclusion | string,
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -1708,7 +1710,7 @@ export class AuroraMysqlQueryRunner
         tableOrName: Table | string,
         exclusionConstraints: TableExclusion[],
     ): Promise<void> {
-        throw new LapinError(`MySql does not support exclusion constraints.`)
+        throw new LapinError(`MySql does not support exclusion constraints.`);
     }
 
     /**
@@ -1720,19 +1722,19 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // new FK may be passed without name. In this case we generate FK name manually.
         if (!foreignKey.name)
             foreignKey.name = this.connection.namingStrategy.foreignKeyName(
                 table,
                 foreignKey.columnNames,
-            )
+            );
 
-        const up = this.createForeignKeySql(table, foreignKey)
-        const down = this.dropForeignKeySql(table, foreignKey)
-        await this.executeQueries(up, down)
-        table.addForeignKey(foreignKey)
+        const up = this.createForeignKeySql(table, foreignKey);
+        const down = this.dropForeignKeySql(table, foreignKey);
+        await this.executeQueries(up, down);
+        table.addForeignKey(foreignKey);
     }
 
     /**
@@ -1744,8 +1746,8 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const promises = foreignKeys.map((foreignKey) =>
             this.createForeignKey(tableOrName, foreignKey),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1757,19 +1759,19 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const foreignKey = InstanceChecker.isTableForeignKey(foreignKeyOrName)
             ? foreignKeyOrName
-            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName)
+            : table.foreignKeys.find((fk) => fk.name === foreignKeyOrName);
         if (!foreignKey)
             throw new LapinError(
                 `Supplied foreign key was not found in table ${table.name}`,
-            )
+            );
 
-        const up = this.dropForeignKeySql(table, foreignKey)
-        const down = this.createForeignKeySql(table, foreignKey)
-        await this.executeQueries(up, down)
-        table.removeForeignKey(foreignKey)
+        const up = this.dropForeignKeySql(table, foreignKey);
+        const down = this.createForeignKeySql(table, foreignKey);
+        await this.executeQueries(up, down);
+        table.removeForeignKey(foreignKey);
     }
 
     /**
@@ -1781,8 +1783,8 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const promises = foreignKeys.map((foreignKey) =>
             this.dropForeignKey(tableOrName, foreignKey),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1794,15 +1796,15 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
 
         // new index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.createIndexSql(table, index)
-        const down = this.dropIndexSql(table, index)
-        await this.executeQueries(up, down)
-        table.addIndex(index, true)
+        const up = this.createIndexSql(table, index);
+        const down = this.dropIndexSql(table, index);
+        await this.executeQueries(up, down);
+        table.addIndex(index, true);
     }
 
     /**
@@ -1814,8 +1816,8 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.createIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1827,22 +1829,22 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const table = InstanceChecker.isTable(tableOrName)
             ? tableOrName
-            : await this.getCachedTable(tableOrName)
+            : await this.getCachedTable(tableOrName);
         const index = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName
-            : table.indices.find((i) => i.name === indexOrName)
+            : table.indices.find((i) => i.name === indexOrName);
         if (!index)
             throw new LapinError(
                 `Supplied index ${indexOrName} was not found in table ${table.name}`,
-            )
+            );
 
         // old index may be passed without name. In this case we generate index name manually.
-        if (!index.name) index.name = this.generateIndexName(table, index)
+        if (!index.name) index.name = this.generateIndexName(table, index);
 
-        const up = this.dropIndexSql(table, index)
-        const down = this.createIndexSql(table, index)
-        await this.executeQueries(up, down)
-        table.removeIndex(index, true)
+        const up = this.dropIndexSql(table, index);
+        const down = this.createIndexSql(table, index);
+        await this.executeQueries(up, down);
+        table.removeIndex(index, true);
     }
 
     /**
@@ -1854,8 +1856,8 @@ export class AuroraMysqlQueryRunner
     ): Promise<void> {
         const promises = indices.map((index) =>
             this.dropIndex(tableOrName, index),
-        )
-        await Promise.all(promises)
+        );
+        await Promise.all(promises);
     }
 
     /**
@@ -1863,7 +1865,7 @@ export class AuroraMysqlQueryRunner
      * Note: this operation uses SQL's TRUNCATE query which cannot be reverted in transactions.
      */
     async clearTable(tableOrName: Table | string): Promise<void> {
-        await this.query(`TRUNCATE TABLE ${this.escapePath(tableOrName)}`)
+        await this.query(`TRUNCATE TABLE ${this.escapePath(tableOrName)}`);
     }
 
     /**
@@ -1872,51 +1874,51 @@ export class AuroraMysqlQueryRunner
      * (because it can clear all your database).
      */
     async clearDatabase(database?: string): Promise<void> {
-        const dbName = database ? database : this.driver.database
+        const dbName = database ? database : this.driver.database;
         if (dbName) {
-            const isDatabaseExist = await this.hasDatabase(dbName)
-            if (!isDatabaseExist) return Promise.resolve()
+            const isDatabaseExist = await this.hasDatabase(dbName);
+            if (!isDatabaseExist) return Promise.resolve();
         } else {
             throw new LapinError(
                 `Can not clear database. No database is specified`,
-            )
+            );
         }
 
-        const isAnotherTransactionActive = this.isTransactionActive
-        if (!isAnotherTransactionActive) await this.startTransaction()
+        const isAnotherTransactionActive = this.isTransactionActive;
+        if (!isAnotherTransactionActive) await this.startTransaction();
         try {
-            const selectViewDropsQuery = `SELECT concat('DROP VIEW IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`VIEWS\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`
+            const selectViewDropsQuery = `SELECT concat('DROP VIEW IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`VIEWS\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`;
             const dropViewQueries: ObjectLiteral[] = await this.query(
                 selectViewDropsQuery,
-            )
+            );
             await Promise.all(
                 dropViewQueries.map((q) => this.query(q["query"])),
-            )
+            );
 
-            const disableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 0;`
-            const dropTablesQuery = `SELECT concat('DROP TABLE IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`
-            const enableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 1;`
+            const disableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 0;`;
+            const dropTablesQuery = `SELECT concat('DROP TABLE IF EXISTS \`', table_schema, '\`.\`', table_name, '\`') AS \`query\` FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE \`TABLE_SCHEMA\` = '${dbName}'`;
+            const enableForeignKeysCheckQuery = `SET FOREIGN_KEY_CHECKS = 1;`;
 
-            await this.query(disableForeignKeysCheckQuery)
+            await this.query(disableForeignKeysCheckQuery);
             const dropQueries: ObjectLiteral[] = await this.query(
                 dropTablesQuery,
-            )
+            );
             await Promise.all(
                 dropQueries.map((query) => this.query(query["query"])),
-            )
-            await this.query(enableForeignKeysCheckQuery)
+            );
+            await this.query(enableForeignKeysCheckQuery);
 
             if (!isAnotherTransactionActive) {
-                await this.commitTransaction()
+                await this.commitTransaction();
             }
         } catch (error) {
             try {
                 // we throw original error even if rollback thrown an error
                 if (!isAnotherTransactionActive) {
-                    await this.rollbackTransaction()
+                    await this.rollbackTransaction();
                 }
             } catch (rollbackError) {}
-            throw error
+            throw error;
         }
     }
 
@@ -1925,28 +1927,28 @@ export class AuroraMysqlQueryRunner
     // -------------------------------------------------------------------------
 
     protected async loadViews(viewNames?: string[]): Promise<View[]> {
-        const hasTable = await this.hasTable(this.getlapinMetadataTableName())
+        const hasTable = await this.hasTable(this.getlapinMetadataTableName());
         if (!hasTable) {
-            return []
+            return [];
         }
 
         if (!viewNames) {
-            viewNames = []
+            viewNames = [];
         }
 
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const viewsCondition = viewNames
             .map((tableName) => {
                 let { database, tableName: name } =
-                    this.driver.parseTableName(tableName)
+                    this.driver.parseTableName(tableName);
 
                 if (!database) {
-                    database = currentDatabase
+                    database = currentDatabase;
                 }
 
-                return `(\`t\`.\`schema\` = '${database}' AND \`t\`.\`name\` = '${name}')`
+                return `(\`t\`.\`schema\` = '${database}' AND \`t\`.\`name\` = '${name}')`;
             })
-            .join(" OR ")
+            .join(" OR ");
 
         const query =
             `SELECT \`t\`.*, \`v\`.\`check_option\` FROM ${this.escapePath(
@@ -1954,23 +1956,23 @@ export class AuroraMysqlQueryRunner
             )} \`t\` ` +
             `INNER JOIN \`information_schema\`.\`views\` \`v\` ON \`v\`.\`table_schema\` = \`t\`.\`schema\` AND \`v\`.\`table_name\` = \`t\`.\`name\` WHERE \`t\`.\`type\` = '${
                 MetadataTableType.VIEW
-            }' ${viewsCondition ? `AND (${viewsCondition})` : ""}`
-        const dbViews = await this.query(query)
+            }' ${viewsCondition ? `AND (${viewsCondition})` : ""}`;
+        const dbViews = await this.query(query);
         return dbViews.map((dbView: any) => {
-            const view = new View()
+            const view = new View();
             const db =
                 dbView["schema"] === currentDatabase
                     ? undefined
-                    : dbView["schema"]
-            view.database = dbView["schema"]
+                    : dbView["schema"];
+            view.database = dbView["schema"];
             view.name = this.driver.buildTableName(
                 dbView["name"],
                 undefined,
                 db,
-            )
-            view.expression = dbView["value"]
-            return view
-        })
+            );
+            view.expression = dbView["value"];
+            return view;
+        });
     }
 
     /**
@@ -1979,74 +1981,74 @@ export class AuroraMysqlQueryRunner
     protected async loadTables(tableNames?: string[]): Promise<Table[]> {
         // if no tables given then no need to proceed
         if (tableNames && tableNames.length === 0) {
-            return []
+            return [];
         }
 
-        const dbTables: { TABLE_NAME: string; TABLE_SCHEMA: string }[] = []
+        const dbTables: { TABLE_NAME: string; TABLE_SCHEMA: string }[] = [];
 
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
 
         if (!tableNames) {
-            const tablesSql = `SELECT TABLE_NAME, TABLE_SCHEMA FROM \`INFORMATION_SCHEMA\`.\`TABLES\``
+            const tablesSql = `SELECT TABLE_NAME, TABLE_SCHEMA FROM \`INFORMATION_SCHEMA\`.\`TABLES\``;
 
-            dbTables.push(...(await this.query(tablesSql)))
+            dbTables.push(...(await this.query(tablesSql)));
         } else {
             const tablesCondition = tableNames
                 .map((tableName) => {
-                    let [database, name] = tableName.split(".")
+                    let [database, name] = tableName.split(".");
                     if (!name) {
-                        name = database
-                        database = this.driver.database || currentDatabase
+                        name = database;
+                        database = this.driver.database || currentDatabase;
                     }
-                    return `(\`TABLE_SCHEMA\` = '${database}' AND \`TABLE_NAME\` = '${name}')`
+                    return `(\`TABLE_SCHEMA\` = '${database}' AND \`TABLE_NAME\` = '${name}')`;
                 })
-                .join(" OR ")
+                .join(" OR ");
             const tablesSql =
                 `SELECT TABLE_NAME, TABLE_SCHEMA FROM \`INFORMATION_SCHEMA\`.\`TABLES\` WHERE ` +
-                tablesCondition
+                tablesCondition;
 
-            dbTables.push(...(await this.query(tablesSql)))
+            dbTables.push(...(await this.query(tablesSql)));
         }
 
         if (dbTables.length === 0) {
-            return []
+            return [];
         }
 
         const columnsCondition = dbTables
             .map(({ TABLE_NAME, TABLE_SCHEMA }) => {
-                return `(\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`TABLE_NAME\` = '${TABLE_NAME}')`
+                return `(\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`TABLE_NAME\` = '${TABLE_NAME}')`;
             })
-            .join(" OR ")
+            .join(" OR ");
         const columnsSql =
             `SELECT * FROM \`INFORMATION_SCHEMA\`.\`COLUMNS\` WHERE ` +
-            columnsCondition
+            columnsCondition;
 
-        const primaryKeySql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`KEY_COLUMN_USAGE\` WHERE \`CONSTRAINT_NAME\` = 'PRIMARY' AND (${columnsCondition})`
+        const primaryKeySql = `SELECT * FROM \`INFORMATION_SCHEMA\`.\`KEY_COLUMN_USAGE\` WHERE \`CONSTRAINT_NAME\` = 'PRIMARY' AND (${columnsCondition})`;
 
-        const collationsSql = `SELECT \`SCHEMA_NAME\`, \`DEFAULT_CHARACTER_SET_NAME\` as \`CHARSET\`, \`DEFAULT_COLLATION_NAME\` AS \`COLLATION\` FROM \`INFORMATION_SCHEMA\`.\`SCHEMATA\``
+        const collationsSql = `SELECT \`SCHEMA_NAME\`, \`DEFAULT_CHARACTER_SET_NAME\` as \`CHARSET\`, \`DEFAULT_COLLATION_NAME\` AS \`COLLATION\` FROM \`INFORMATION_SCHEMA\`.\`SCHEMATA\``;
 
         const indicesCondition = dbTables
             .map(({ TABLE_NAME, TABLE_SCHEMA }) => {
-                return `(\`s\`.\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`s\`.\`TABLE_NAME\` = '${TABLE_NAME}')`
+                return `(\`s\`.\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`s\`.\`TABLE_NAME\` = '${TABLE_NAME}')`;
             })
-            .join(" OR ")
+            .join(" OR ");
         const indicesSql =
             `SELECT \`s\`.* FROM \`INFORMATION_SCHEMA\`.\`STATISTICS\` \`s\` ` +
             `LEFT JOIN \`INFORMATION_SCHEMA\`.\`REFERENTIAL_CONSTRAINTS\` \`rc\` ON \`s\`.\`INDEX_NAME\` = \`rc\`.\`CONSTRAINT_NAME\` ` +
-            `WHERE (${indicesCondition}) AND \`s\`.\`INDEX_NAME\` != 'PRIMARY' AND \`rc\`.\`CONSTRAINT_NAME\` IS NULL`
+            `WHERE (${indicesCondition}) AND \`s\`.\`INDEX_NAME\` != 'PRIMARY' AND \`rc\`.\`CONSTRAINT_NAME\` IS NULL`;
 
         const foreignKeysCondition = dbTables
             .map(({ TABLE_NAME, TABLE_SCHEMA }) => {
-                return `(\`kcu\`.\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`kcu\`.\`TABLE_NAME\` = '${TABLE_NAME}')`
+                return `(\`kcu\`.\`TABLE_SCHEMA\` = '${TABLE_SCHEMA}' AND \`kcu\`.\`TABLE_NAME\` = '${TABLE_NAME}')`;
             })
-            .join(" OR ")
+            .join(" OR ");
         const foreignKeysSql =
             `SELECT \`kcu\`.\`TABLE_SCHEMA\`, \`kcu\`.\`TABLE_NAME\`, \`kcu\`.\`CONSTRAINT_NAME\`, \`kcu\`.\`COLUMN_NAME\`, \`kcu\`.\`REFERENCED_TABLE_SCHEMA\`, ` +
             `\`kcu\`.\`REFERENCED_TABLE_NAME\`, \`kcu\`.\`REFERENCED_COLUMN_NAME\`, \`rc\`.\`DELETE_RULE\` \`ON_DELETE\`, \`rc\`.\`UPDATE_RULE\` \`ON_UPDATE\` ` +
             `FROM \`INFORMATION_SCHEMA\`.\`KEY_COLUMN_USAGE\` \`kcu\` ` +
             `INNER JOIN \`INFORMATION_SCHEMA\`.\`REFERENTIAL_CONSTRAINTS\` \`rc\` ON \`rc\`.\`constraint_name\` = \`kcu\`.\`constraint_name\` ` +
             `WHERE ` +
-            foreignKeysCondition
+            foreignKeysCondition;
         const [
             dbColumns,
             dbPrimaryKeys,
@@ -2059,30 +2061,30 @@ export class AuroraMysqlQueryRunner
             this.query(collationsSql),
             this.query(indicesSql),
             this.query(foreignKeysSql),
-        ])
+        ]);
 
         // create tables for loaded tables
         return Promise.all(
             dbTables.map(async (dbTable) => {
-                const table = new Table()
+                const table = new Table();
 
                 const dbCollation = dbCollations.find(
                     (coll) => coll["SCHEMA_NAME"] === dbTable["TABLE_SCHEMA"],
-                )!
-                const defaultCollation = dbCollation["COLLATION"]
-                const defaultCharset = dbCollation["CHARSET"]
+                )!;
+                const defaultCollation = dbCollation["COLLATION"];
+                const defaultCharset = dbCollation["CHARSET"];
 
                 // We do not need to join database name, when database is by default.
                 const db =
                     dbTable["TABLE_SCHEMA"] === currentDatabase
                         ? undefined
-                        : dbTable["TABLE_SCHEMA"]
-                table.database = dbTable["TABLE_SCHEMA"]
+                        : dbTable["TABLE_SCHEMA"];
+                table.database = dbTable["TABLE_SCHEMA"];
                 table.name = this.driver.buildTableName(
                     dbTable["TABLE_NAME"],
                     undefined,
                     db,
-                )
+                );
 
                 // create columns from the loaded columns
                 table.columns = dbColumns
@@ -2103,16 +2105,16 @@ export class AuroraMysqlQueryRunner
                                     dbIndex["COLUMN_NAME"] ===
                                         dbColumn["COLUMN_NAME"] &&
                                     parseInt(dbIndex["NON_UNIQUE"], 10) === 0
-                                )
+                                );
                             },
-                        )
+                        );
 
                         const tableMetadata =
                             this.connection.entityMetadatas.find(
                                 (metadata) =>
                                     this.getTablePath(table) ===
                                     this.getTablePath(metadata),
-                            )
+                            );
                         const hasIgnoredIndex =
                             columnUniqueIndices.length > 0 &&
                             tableMetadata &&
@@ -2123,10 +2125,10 @@ export class AuroraMysqlQueryRunner
                                             index.name ===
                                                 uniqueIndex["INDEX_NAME"] &&
                                             index.synchronize === false
-                                        )
+                                        );
                                     },
-                                )
-                            })
+                                );
+                            });
 
                         const isConstraintComposite = columnUniqueIndices.every(
                             (uniqueIndex) => {
@@ -2136,19 +2138,20 @@ export class AuroraMysqlQueryRunner
                                             uniqueIndex["INDEX_NAME"] &&
                                         dbIndex["COLUMN_NAME"] !==
                                             dbColumn["COLUMN_NAME"],
-                                )
+                                );
                             },
-                        )
+                        );
 
-                        const tableColumn = new TableColumn()
-                        tableColumn.name = dbColumn["COLUMN_NAME"]
-                        tableColumn.type = dbColumn["DATA_TYPE"].toLowerCase()
+                        const tableColumn = new TableColumn();
+                        tableColumn.name = dbColumn["COLUMN_NAME"];
+                        tableColumn.type = dbColumn["DATA_TYPE"].toLowerCase();
 
                         // Unsigned columns are handled differently when it comes to width.
                         // Hence, we need to set the unsigned attribute before we check the width.
                         tableColumn.unsigned = tableColumn.zerofill
                             ? true
-                            : dbColumn["COLUMN_TYPE"].indexOf("unsigned") !== -1
+                            : dbColumn["COLUMN_TYPE"].indexOf("unsigned") !==
+                              -1;
 
                         if (
                             this.driver.withWidthColumnTypes.indexOf(
@@ -2158,7 +2161,7 @@ export class AuroraMysqlQueryRunner
                             const width = dbColumn["COLUMN_TYPE"].substring(
                                 dbColumn["COLUMN_TYPE"].indexOf("(") + 1,
                                 dbColumn["COLUMN_TYPE"].indexOf(")"),
-                            )
+                            );
                             tableColumn.width =
                                 width &&
                                 !this.isDefaultColumnWidth(
@@ -2167,43 +2170,43 @@ export class AuroraMysqlQueryRunner
                                     parseInt(width),
                                 )
                                     ? parseInt(width)
-                                    : undefined
+                                    : undefined;
                         }
 
                         if (
                             dbColumn["COLUMN_DEFAULT"] === null ||
                             dbColumn["COLUMN_DEFAULT"] === undefined
                         ) {
-                            tableColumn.default = undefined
+                            tableColumn.default = undefined;
                         } else {
                             tableColumn.default =
                                 dbColumn["COLUMN_DEFAULT"] ===
                                 "CURRENT_TIMESTAMP"
                                     ? dbColumn["COLUMN_DEFAULT"]
-                                    : `'${dbColumn["COLUMN_DEFAULT"]}'`
+                                    : `'${dbColumn["COLUMN_DEFAULT"]}'`;
                         }
 
                         if (dbColumn["EXTRA"].indexOf("on update") !== -1) {
                             tableColumn.onUpdate = dbColumn["EXTRA"].substring(
                                 dbColumn["EXTRA"].indexOf("on update") + 10,
-                            )
+                            );
                         }
 
                         if (dbColumn["GENERATION_EXPRESSION"]) {
                             tableColumn.asExpression =
-                                dbColumn["GENERATION_EXPRESSION"]
+                                dbColumn["GENERATION_EXPRESSION"];
                             tableColumn.generatedType =
                                 dbColumn["EXTRA"].indexOf("VIRTUAL") !== -1
                                     ? "VIRTUAL"
-                                    : "STORED"
+                                    : "STORED";
                         }
 
                         tableColumn.isUnique =
                             columnUniqueIndices.length > 0 &&
                             !hasIgnoredIndex &&
-                            !isConstraintComposite
+                            !isConstraintComposite;
                         tableColumn.isNullable =
-                            dbColumn["IS_NULLABLE"] === "YES"
+                            dbColumn["IS_NULLABLE"] === "YES";
                         tableColumn.isPrimary = dbPrimaryKeys.some(
                             (dbPrimaryKey) => {
                                 return (
@@ -2213,32 +2216,32 @@ export class AuroraMysqlQueryRunner
                                         dbColumn["TABLE_SCHEMA"] &&
                                     dbPrimaryKey["COLUMN_NAME"] ===
                                         dbColumn["COLUMN_NAME"]
-                                )
+                                );
                             },
-                        )
+                        );
                         tableColumn.zerofill =
-                            dbColumn["COLUMN_TYPE"].indexOf("zerofill") !== -1
+                            dbColumn["COLUMN_TYPE"].indexOf("zerofill") !== -1;
                         tableColumn.isGenerated =
-                            dbColumn["EXTRA"].indexOf("auto_increment") !== -1
+                            dbColumn["EXTRA"].indexOf("auto_increment") !== -1;
                         if (tableColumn.isGenerated)
-                            tableColumn.generationStrategy = "increment"
+                            tableColumn.generationStrategy = "increment";
 
                         tableColumn.comment =
                             typeof dbColumn["COLUMN_COMMENT"] === "string" &&
                             dbColumn["COLUMN_COMMENT"].length === 0
                                 ? undefined
-                                : dbColumn["COLUMN_COMMENT"]
+                                : dbColumn["COLUMN_COMMENT"];
                         if (dbColumn["CHARACTER_SET_NAME"])
                             tableColumn.charset =
                                 dbColumn["CHARACTER_SET_NAME"] ===
                                 defaultCharset
                                     ? undefined
-                                    : dbColumn["CHARACTER_SET_NAME"]
+                                    : dbColumn["CHARACTER_SET_NAME"];
                         if (dbColumn["COLLATION_NAME"])
                             tableColumn.collation =
                                 dbColumn["COLLATION_NAME"] === defaultCollation
                                     ? undefined
-                                    : dbColumn["COLLATION_NAME"]
+                                    : dbColumn["COLLATION_NAME"];
 
                         // check only columns that have length property
                         if (
@@ -2248,14 +2251,14 @@ export class AuroraMysqlQueryRunner
                             dbColumn["CHARACTER_MAXIMUM_LENGTH"]
                         ) {
                             const length =
-                                dbColumn["CHARACTER_MAXIMUM_LENGTH"].toString()
+                                dbColumn["CHARACTER_MAXIMUM_LENGTH"].toString();
                             tableColumn.length = !this.isDefaultColumnLength(
                                 table,
                                 tableColumn,
                                 length,
                             )
                                 ? length
-                                : ""
+                                : "";
                         }
 
                         if (
@@ -2273,7 +2276,7 @@ export class AuroraMysqlQueryRunner
                             )
                                 tableColumn.precision = parseInt(
                                     dbColumn["NUMERIC_PRECISION"],
-                                )
+                                );
                             if (
                                 dbColumn["NUMERIC_SCALE"] !== null &&
                                 !this.isDefaultColumnScale(
@@ -2284,7 +2287,7 @@ export class AuroraMysqlQueryRunner
                             )
                                 tableColumn.scale = parseInt(
                                     dbColumn["NUMERIC_SCALE"],
-                                )
+                                );
                         }
 
                         if (
@@ -2292,19 +2295,19 @@ export class AuroraMysqlQueryRunner
                             tableColumn.type === "simple-enum" ||
                             tableColumn.type === "set"
                         ) {
-                            const colType = dbColumn["COLUMN_TYPE"]
+                            const colType = dbColumn["COLUMN_TYPE"];
                             const items = colType
                                 .substring(
                                     colType.indexOf("(") + 1,
                                     colType.lastIndexOf(")"),
                                 )
-                                .split(",")
+                                .split(",");
                             tableColumn.enum = (items as string[]).map(
                                 (item) => {
-                                    return item.substring(1, item.length - 1)
+                                    return item.substring(1, item.length - 1);
                                 },
-                            )
-                            tableColumn.length = ""
+                            );
+                            tableColumn.length = "";
                         }
 
                         if (
@@ -2321,11 +2324,11 @@ export class AuroraMysqlQueryRunner
                         ) {
                             tableColumn.precision = parseInt(
                                 dbColumn["DATETIME_PRECISION"],
-                            )
+                            );
                         }
 
-                        return tableColumn
-                    })
+                        return tableColumn;
+                    });
 
                 // find foreign key constraints of table, group them by constraint name and build TableForeignKey.
                 const tableForeignKeyConstraints = OrmUtils.uniq(
@@ -2335,10 +2338,10 @@ export class AuroraMysqlQueryRunner
                                 dbTable["TABLE_NAME"] &&
                             dbForeignKey["TABLE_SCHEMA"] ===
                                 dbTable["TABLE_SCHEMA"]
-                        )
+                        );
                     }),
                     (dbForeignKey) => dbForeignKey["CONSTRAINT_NAME"],
-                )
+                );
 
                 table.foreignKeys = tableForeignKeyConstraints.map(
                     (dbForeignKey) => {
@@ -2346,19 +2349,19 @@ export class AuroraMysqlQueryRunner
                             (dbFk) =>
                                 dbFk["CONSTRAINT_NAME"] ===
                                 dbForeignKey["CONSTRAINT_NAME"],
-                        )
+                        );
 
                         // if referenced table located in currently used db, we don't need to concat db name to table name.
                         const database =
                             dbForeignKey["REFERENCED_TABLE_SCHEMA"] ===
                             currentDatabase
                                 ? undefined
-                                : dbForeignKey["REFERENCED_TABLE_SCHEMA"]
+                                : dbForeignKey["REFERENCED_TABLE_SCHEMA"];
                         const referencedTableName = this.driver.buildTableName(
                             dbForeignKey["REFERENCED_TABLE_NAME"],
                             undefined,
                             database,
-                        )
+                        );
 
                         return new TableForeignKey({
                             name: dbForeignKey["CONSTRAINT_NAME"],
@@ -2373,9 +2376,9 @@ export class AuroraMysqlQueryRunner
                             ),
                             onDelete: dbForeignKey["ON_DELETE"],
                             onUpdate: dbForeignKey["ON_UPDATE"],
-                        })
+                        });
                     },
-                )
+                );
 
                 // find index constraints of table, group them by constraint name and build TableIndex.
                 const tableIndexConstraints = OrmUtils.uniq(
@@ -2383,10 +2386,10 @@ export class AuroraMysqlQueryRunner
                         return (
                             dbIndex["TABLE_NAME"] === dbTable["TABLE_NAME"] &&
                             dbIndex["TABLE_SCHEMA"] === dbTable["TABLE_SCHEMA"]
-                        )
+                        );
                     }),
                     (dbIndex) => dbIndex["INDEX_NAME"],
-                )
+                );
 
                 table.indices = tableIndexConstraints.map((constraint) => {
                     const indices = dbIndices.filter((index) => {
@@ -2395,10 +2398,10 @@ export class AuroraMysqlQueryRunner
                                 constraint["TABLE_SCHEMA"] &&
                             index["TABLE_NAME"] === constraint["TABLE_NAME"] &&
                             index["INDEX_NAME"] === constraint["INDEX_NAME"]
-                        )
-                    })
+                        );
+                    });
 
-                    const nonUnique = parseInt(constraint["NON_UNIQUE"], 10)
+                    const nonUnique = parseInt(constraint["NON_UNIQUE"], 10);
 
                     return new TableIndex(<TableIndexOptions>{
                         table: table,
@@ -2407,12 +2410,12 @@ export class AuroraMysqlQueryRunner
                         isUnique: nonUnique === 0,
                         isSpatial: constraint["INDEX_TYPE"] === "SPATIAL",
                         isFulltext: constraint["INDEX_TYPE"] === "FULLTEXT",
-                    })
-                })
+                    });
+                });
 
-                return table
+                return table;
             }),
-        )
+        );
     }
 
     /**
@@ -2421,8 +2424,10 @@ export class AuroraMysqlQueryRunner
     protected createTableSql(table: Table, createForeignKeys?: boolean): Query {
         const columnDefinitions = table.columns
             .map((column) => this.buildCreateColumnSql(column, true))
-            .join(", ")
-        let sql = `CREATE TABLE ${this.escapePath(table)} (${columnDefinitions}`
+            .join(", ");
+        let sql = `CREATE TABLE ${this.escapePath(
+            table,
+        )} (${columnDefinitions}`;
 
         // we create unique indexes instead of unique constraints, because MySql does not have unique constraints.
         // if we mark column as Unique, it means that we create UNIQUE INDEX.
@@ -2434,14 +2439,14 @@ export class AuroraMysqlQueryRunner
                         index.columnNames.length === 1 &&
                         !!index.isUnique &&
                         index.columnNames.indexOf(column.name) !== -1
-                    )
-                })
+                    );
+                });
                 const isUniqueConstraintExist = table.uniques.some((unique) => {
                     return (
                         unique.columnNames.length === 1 &&
                         unique.columnNames.indexOf(column.name) !== -1
-                    )
-                })
+                    );
+                });
                 if (!isUniqueIndexExist && !isUniqueConstraintExist)
                     table.indices.push(
                         new TableIndex({
@@ -2452,15 +2457,15 @@ export class AuroraMysqlQueryRunner
                             columnNames: [column.name],
                             isUnique: true,
                         }),
-                    )
-            })
+                    );
+            });
 
         // as MySql does not have unique constraints, we must create table indices from table uniques and mark them as unique.
         if (table.uniques.length > 0) {
             table.uniques.forEach((unique) => {
                 const uniqueExist = table.indices.some(
                     (index) => index.name === unique.name,
-                )
+                );
                 if (!uniqueExist) {
                     table.indices.push(
                         new TableIndex({
@@ -2468,9 +2473,9 @@ export class AuroraMysqlQueryRunner
                             columnNames: unique.columnNames,
                             isUnique: true,
                         }),
-                    )
+                    );
                 }
-            })
+            });
         }
 
         if (table.indices.length > 0) {
@@ -2478,23 +2483,23 @@ export class AuroraMysqlQueryRunner
                 .map((index) => {
                     const columnNames = index.columnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
                     if (!index.name)
                         index.name = this.connection.namingStrategy.indexName(
                             table,
                             index.columnNames,
                             index.where,
-                        )
+                        );
 
-                    let indexType = ""
-                    if (index.isUnique) indexType += "UNIQUE "
-                    if (index.isSpatial) indexType += "SPATIAL "
-                    if (index.isFulltext) indexType += "FULLTEXT "
-                    return `${indexType}INDEX \`${index.name}\` (${columnNames})`
+                    let indexType = "";
+                    if (index.isUnique) indexType += "UNIQUE ";
+                    if (index.isSpatial) indexType += "SPATIAL ";
+                    if (index.isFulltext) indexType += "FULLTEXT ";
+                    return `${indexType}INDEX \`${index.name}\` (${columnNames})`;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${indicesSql}`
+            sql += `, ${indicesSql}`;
         }
 
         if (table.foreignKeys.length > 0 && createForeignKeys) {
@@ -2502,83 +2507,83 @@ export class AuroraMysqlQueryRunner
                 .map((fk) => {
                     const columnNames = fk.columnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
                     if (!fk.name)
                         fk.name = this.connection.namingStrategy.foreignKeyName(
                             table,
                             fk.columnNames,
-                        )
+                        );
                     const referencedColumnNames = fk.referencedColumnNames
                         .map((columnName) => `\`${columnName}\``)
-                        .join(", ")
+                        .join(", ");
 
                     let constraint = `CONSTRAINT \`${
                         fk.name
                     }\` FOREIGN KEY (${columnNames}) REFERENCES ${this.escapePath(
                         this.getTablePath(fk),
-                    )} (${referencedColumnNames})`
-                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`
-                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`
+                    )} (${referencedColumnNames})`;
+                    if (fk.onDelete) constraint += ` ON DELETE ${fk.onDelete}`;
+                    if (fk.onUpdate) constraint += ` ON UPDATE ${fk.onUpdate}`;
 
-                    return constraint
+                    return constraint;
                 })
-                .join(", ")
+                .join(", ");
 
-            sql += `, ${foreignKeysSql}`
+            sql += `, ${foreignKeysSql}`;
         }
 
         if (table.primaryColumns.length > 0) {
             const columnNames = table.primaryColumns
                 .map((column) => `\`${column.name}\``)
-                .join(", ")
-            sql += `, PRIMARY KEY (${columnNames})`
+                .join(", ");
+            sql += `, PRIMARY KEY (${columnNames})`;
         }
 
-        sql += `) ENGINE=${table.engine || "InnoDB"}`
+        sql += `) ENGINE=${table.engine || "InnoDB"}`;
 
-        return new Query(sql)
+        return new Query(sql);
     }
 
     /**
      * Builds drop table sql
      */
     protected dropTableSql(tableOrName: Table | string): Query {
-        return new Query(`DROP TABLE ${this.escapePath(tableOrName)}`)
+        return new Query(`DROP TABLE ${this.escapePath(tableOrName)}`);
     }
 
     protected createViewSql(view: View): Query {
         if (typeof view.expression === "string") {
             return new Query(
                 `CREATE VIEW ${this.escapePath(view)} AS ${view.expression}`,
-            )
+            );
         } else {
             return new Query(
                 `CREATE VIEW ${this.escapePath(view)} AS ${view
                     .expression(this.connection)
                     .getQuery()}`,
-            )
+            );
         }
     }
 
     protected async insertViewDefinitionSql(view: View): Promise<Query> {
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const expression =
             typeof view.expression === "string"
                 ? view.expression.trim()
-                : view.expression(this.connection).getQuery()
+                : view.expression(this.connection).getQuery();
         return this.insertlapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: view.name,
             value: expression,
-        })
+        });
     }
 
     /**
      * Builds drop view sql.
      */
     protected dropViewSql(viewOrPath: View | string): Query {
-        return new Query(`DROP VIEW ${this.escapePath(viewOrPath)}`)
+        return new Query(`DROP VIEW ${this.escapePath(viewOrPath)}`);
     }
 
     /**
@@ -2587,15 +2592,15 @@ export class AuroraMysqlQueryRunner
     protected async deleteViewDefinitionSql(
         viewOrPath: View | string,
     ): Promise<Query> {
-        const currentDatabase = await this.getCurrentDatabase()
+        const currentDatabase = await this.getCurrentDatabase();
         const viewName = InstanceChecker.isView(viewOrPath)
             ? viewOrPath.name
-            : viewOrPath
+            : viewOrPath;
         return this.deletelapinMetadataSql({
             type: MetadataTableType.VIEW,
             schema: currentDatabase,
             name: viewName,
-        })
+        });
     }
 
     /**
@@ -2604,16 +2609,16 @@ export class AuroraMysqlQueryRunner
     protected createIndexSql(table: Table, index: TableIndex): Query {
         const columns = index.columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
-        let indexType = ""
-        if (index.isUnique) indexType += "UNIQUE "
-        if (index.isSpatial) indexType += "SPATIAL "
-        if (index.isFulltext) indexType += "FULLTEXT "
+            .join(", ");
+        let indexType = "";
+        if (index.isUnique) indexType += "UNIQUE ";
+        if (index.isSpatial) indexType += "SPATIAL ";
+        if (index.isFulltext) indexType += "FULLTEXT ";
         return new Query(
             `CREATE ${indexType}INDEX \`${index.name}\` ON ${this.escapePath(
                 table,
             )} (${columns})`,
-        )
+        );
     }
 
     /**
@@ -2625,10 +2630,10 @@ export class AuroraMysqlQueryRunner
     ): Query {
         let indexName = InstanceChecker.isTableIndex(indexOrName)
             ? indexOrName.name
-            : indexOrName
+            : indexOrName;
         return new Query(
             `DROP INDEX \`${indexName}\` ON ${this.escapePath(table)}`,
-        )
+        );
     }
 
     /**
@@ -2637,12 +2642,12 @@ export class AuroraMysqlQueryRunner
     protected createPrimaryKeySql(table: Table, columnNames: string[]): Query {
         const columnNamesString = columnNames
             .map((columnName) => `\`${columnName}\``)
-            .join(", ")
+            .join(", ");
         return new Query(
             `ALTER TABLE ${this.escapePath(
                 table,
             )} ADD PRIMARY KEY (${columnNamesString})`,
-        )
+        );
     }
 
     /**
@@ -2651,7 +2656,7 @@ export class AuroraMysqlQueryRunner
     protected dropPrimaryKeySql(table: Table): Query {
         return new Query(
             `ALTER TABLE ${this.escapePath(table)} DROP PRIMARY KEY`,
-        )
+        );
     }
 
     /**
@@ -2663,21 +2668,21 @@ export class AuroraMysqlQueryRunner
     ): Query {
         const columnNames = foreignKey.columnNames
             .map((column) => `\`${column}\``)
-            .join(", ")
+            .join(", ");
         const referencedColumnNames = foreignKey.referencedColumnNames
             .map((column) => `\`${column}\``)
-            .join(",")
+            .join(",");
         let sql =
             `ALTER TABLE ${this.escapePath(table)} ADD CONSTRAINT \`${
                 foreignKey.name
             }\` FOREIGN KEY (${columnNames}) ` +
             `REFERENCES ${this.escapePath(
                 this.getTablePath(foreignKey),
-            )}(${referencedColumnNames})`
-        if (foreignKey.onDelete) sql += ` ON DELETE ${foreignKey.onDelete}`
-        if (foreignKey.onUpdate) sql += ` ON UPDATE ${foreignKey.onUpdate}`
+            )}(${referencedColumnNames})`;
+        if (foreignKey.onDelete) sql += ` ON DELETE ${foreignKey.onDelete}`;
+        if (foreignKey.onUpdate) sql += ` ON UPDATE ${foreignKey.onUpdate}`;
 
-        return new Query(sql)
+        return new Query(sql);
     }
 
     /**
@@ -2691,12 +2696,12 @@ export class AuroraMysqlQueryRunner
             foreignKeyOrName,
         )
             ? foreignKeyOrName.name
-            : foreignKeyOrName
+            : foreignKeyOrName;
         return new Query(
             `ALTER TABLE ${this.escapePath(
                 table,
             )} DROP FOREIGN KEY \`${foreignKeyName}\``,
-        )
+        );
     }
 
     /**
@@ -2704,28 +2709,28 @@ export class AuroraMysqlQueryRunner
      */
     protected escapeComment(comment?: string) {
         if (!comment || comment.length === 0) {
-            return `''`
+            return `''`;
         }
 
         comment = comment
             .replace(/\\/g, "\\\\") // MySQL allows escaping characters via backslashes
             .replace(/'/g, "''")
-            .replace(/\u0000/g, "") // Null bytes aren't allowed in comments
+            .replace(/\u0000/g, ""); // Null bytes aren't allowed in comments
 
-        return `'${comment}'`
+        return `'${comment}'`;
     }
 
     /**
      * Escapes given table or view path.
      */
     protected escapePath(target: Table | View | string): string {
-        const { database, tableName } = this.driver.parseTableName(target)
+        const { database, tableName } = this.driver.parseTableName(target);
 
         if (database && database !== this.driver.database) {
-            return `\`${database}\`.\`${tableName}\``
+            return `\`${database}\`.\`${tableName}\``;
         }
 
-        return `\`${tableName}\``
+        return `\`${tableName}\``;
     }
 
     /**
@@ -2736,44 +2741,44 @@ export class AuroraMysqlQueryRunner
         skipPrimary: boolean,
         skipName: boolean = false,
     ) {
-        let c = ""
+        let c = "";
         if (skipName) {
-            c = this.connection.driver.createFullType(column)
+            c = this.connection.driver.createFullType(column);
         } else {
             c = `\`${column.name}\` ${this.connection.driver.createFullType(
                 column,
-            )}`
+            )}`;
         }
         if (column.asExpression)
             c += ` AS (${column.asExpression}) ${
                 column.generatedType ? column.generatedType : "VIRTUAL"
-            }`
+            }`;
 
         // if you specify ZEROFILL for a numeric column, MySQL automatically adds the UNSIGNED attribute to that column.
         if (column.zerofill) {
-            c += " ZEROFILL"
+            c += " ZEROFILL";
         } else if (column.unsigned) {
-            c += " UNSIGNED"
+            c += " UNSIGNED";
         }
         if (column.enum)
             c += ` (${column.enum
                 .map((value) => "'" + value + "'")
-                .join(", ")})`
-        if (column.charset) c += ` CHARACTER SET "${column.charset}"`
-        if (column.collation) c += ` COLLATE "${column.collation}"`
-        if (!column.isNullable) c += " NOT NULL"
-        if (column.isNullable) c += " NULL"
-        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY"
+                .join(", ")})`;
+        if (column.charset) c += ` CHARACTER SET "${column.charset}"`;
+        if (column.collation) c += ` COLLATE "${column.collation}"`;
+        if (!column.isNullable) c += " NOT NULL";
+        if (column.isNullable) c += " NULL";
+        if (column.isPrimary && !skipPrimary) c += " PRIMARY KEY";
         if (column.isGenerated && column.generationStrategy === "increment")
             // don't use skipPrimary here since updates can update already exist primary without auto inc.
-            c += " AUTO_INCREMENT"
+            c += " AUTO_INCREMENT";
         if (column.comment)
-            c += ` COMMENT ${this.escapeComment(column.comment)}`
+            c += ` COMMENT ${this.escapeComment(column.comment)}`;
         if (column.default !== undefined && column.default !== null)
-            c += ` DEFAULT ${column.default}`
-        if (column.onUpdate) c += ` ON UPDATE ${column.onUpdate}`
+            c += ` DEFAULT ${column.default}`;
+        if (column.onUpdate) c += ` ON UPDATE ${column.onUpdate}`;
 
-        return c
+        return c;
     }
 
     /**
@@ -2786,17 +2791,17 @@ export class AuroraMysqlQueryRunner
     ): boolean {
         // if table have metadata, we check if length is specified in column metadata
         if (this.connection.hasMetadata(table.name)) {
-            const metadata = this.connection.getMetadata(table.name)
+            const metadata = this.connection.getMetadata(table.name);
             const columnMetadata = metadata.findColumnWithDatabaseName(
                 column.name,
-            )
-            if (columnMetadata && columnMetadata.width) return false
+            );
+            if (columnMetadata && columnMetadata.width) return false;
         }
 
         const defaultWidthForType =
             this.connection.driver.dataTypeDefaults &&
             this.connection.driver.dataTypeDefaults[column.type] &&
-            this.connection.driver.dataTypeDefaults[column.type].width
+            this.connection.driver.dataTypeDefaults[column.type].width;
 
         if (defaultWidthForType) {
             // In MariaDB & MySQL 5.7, the default widths of certain numeric types are 1 less than
@@ -2807,16 +2812,16 @@ export class AuroraMysqlQueryRunner
                 "tinyint",
                 "smallint",
                 "mediumint",
-            ]
+            ];
             const needsAdjustment =
-                typesWithReducedUnsignedDefault.indexOf(column.type) !== -1
+                typesWithReducedUnsignedDefault.indexOf(column.type) !== -1;
             if (column.unsigned && needsAdjustment) {
-                return defaultWidthForType - 1 === width
+                return defaultWidthForType - 1 === width;
             } else {
-                return defaultWidthForType === width
+                return defaultWidthForType === width;
             }
         }
 
-        return false
+        return false;
     }
 }

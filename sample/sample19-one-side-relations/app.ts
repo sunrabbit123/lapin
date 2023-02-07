@@ -1,9 +1,9 @@
-import "reflect-metadata"
-import { DataSource, DataSourceOptions } from "../../src/index"
-import { Post } from "./entity/Post"
-import { Author } from "./entity/Author"
-import { Category } from "./entity/Category"
-import { PostMetadata } from "./entity/PostMetadata"
+import "reflect-metadata";
+import { DataSource, DataSourceOptions } from "../../src/index";
+import { Post } from "./entity/Post";
+import { Author } from "./entity/Author";
+import { Category } from "./entity/Category";
+import { PostMetadata } from "./entity/PostMetadata";
 
 const options: DataSourceOptions = {
     type: "mysql",
@@ -15,42 +15,42 @@ const options: DataSourceOptions = {
     logging: ["query", "error"],
     synchronize: true,
     entities: [Post, Author, Category, PostMetadata],
-}
+};
 
-const dataSource = new DataSource(options)
+const dataSource = new DataSource(options);
 dataSource.initialize().then(
     (dataSource) => {
-        let postRepository = dataSource.getRepository(Post)
-        let authorRepository = dataSource.getRepository(Author)
-        let categoryRepository = dataSource.getRepository(Category)
-        let metadataRepository = dataSource.getRepository(PostMetadata)
+        let postRepository = dataSource.getRepository(Post);
+        let authorRepository = dataSource.getRepository(Author);
+        let categoryRepository = dataSource.getRepository(Category);
+        let metadataRepository = dataSource.getRepository(PostMetadata);
 
-        let category1 = categoryRepository.create()
-        category1.name = "Hello category1"
+        let category1 = categoryRepository.create();
+        category1.name = "Hello category1";
 
-        let category2 = categoryRepository.create()
-        category2.name = "Bye category2"
+        let category2 = categoryRepository.create();
+        category2.name = "Bye category2";
 
-        let author = authorRepository.create()
-        author.name = "Umed"
+        let author = authorRepository.create();
+        author.name = "Umed";
 
-        let metadata = metadataRepository.create()
-        metadata.comment = "Metadata about post"
+        let metadata = metadataRepository.create();
+        metadata.comment = "Metadata about post";
 
-        let post = postRepository.create()
-        post.text = "Hello how are you?"
-        post.title = "hello"
-        post.author = author
-        post.metadata = metadata
-        post.categories = [category1, category2]
+        let post = postRepository.create();
+        post.text = "Hello how are you?";
+        post.title = "hello";
+        post.author = author;
+        post.metadata = metadata;
+        post.categories = [category1, category2];
 
         postRepository
             .save(post)
             .then((post) => {
-                console.log("Post has been saved.")
-                console.log(post)
+                console.log("Post has been saved.");
+                console.log(post);
 
-                console.log("Now lets load posts with all their relations:")
+                console.log("Now lets load posts with all their relations:");
                 return postRepository.find({
                     join: {
                         alias: "post",
@@ -60,7 +60,7 @@ dataSource.initialize().then(
                             categories: "post.categories",
                         },
                     },
-                })
+                });
 
                 // let secondPost = postRepository.create();
                 // secondPost.text = "Second post";
@@ -68,7 +68,7 @@ dataSource.initialize().then(
                 // return authorRepository.save(author);
             })
             .then((post) => {
-                console.log("Loaded posts: ", post)
+                console.log("Loaded posts: ", post);
             })
             /*    posts[0].title = "should be updated second post";
 
@@ -125,7 +125,7 @@ dataSource.initialize().then(
             .then((posts) => {
                 // console.log("One of the post category has been removed.");
             })
-            .catch((error) => console.log(error.stack))
+            .catch((error) => console.log(error.stack));
     },
     (error) => console.log("Cannot connect: ", error),
-)
+);

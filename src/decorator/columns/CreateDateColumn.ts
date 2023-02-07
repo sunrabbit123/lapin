@@ -1,6 +1,6 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs"
-import { ColumnOptions } from "../options/ColumnOptions"
+import { getMetadataArgsStorage } from "../../globals";
+import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs";
+import { ColumnOptions } from "../options/ColumnOptions";
 
 /**
  * This column will store a creation date of the inserted object.
@@ -16,6 +16,6 @@ export function CreateDateColumn(
             propertyName: propertyName,
             mode: "createDate",
             options: options || {},
-        } as ColumnMetadataArgs)
-    }
+        } as ColumnMetadataArgs);
+    };
 }

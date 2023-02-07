@@ -5,15 +5,15 @@ export interface CheckMetadataArgs {
     /**
      * Class to which index is applied.
      */
-    target: Function | string
+    target: Function | string;
 
     /**
      * Check constraint name.
      */
-    name?: string
+    name?: string;
 
     /**
      * Check expression.
      */
-    expression: string
+    expression: string;
 }

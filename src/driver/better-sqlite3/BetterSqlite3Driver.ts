@@ -1,15 +1,15 @@
-import mkdirp from "mkdirp"
-import path from "path"
-import { DriverPackageNotInstalledError } from "../../error"
-import { PlatformTools } from "../../platform/PlatformTools"
-import { DataSource } from "../../data-source"
-import { ColumnType } from "../types/ColumnTypes"
-import { QueryRunner } from "../../query-runner/QueryRunner"
-import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver"
-import { BetterSqlite3ConnectionOptions } from "./BetterSqlite3ConnectionOptions"
-import { BetterSqlite3QueryRunner } from "./BetterSqlite3QueryRunner"
-import { ReplicationMode } from "../types/ReplicationMode"
-import { filepathToName, isAbsolute } from "../../util/PathUtils"
+import mkdirp from "mkdirp";
+import path from "path";
+import { DriverPackageNotInstalledError } from "../../error";
+import { PlatformTools } from "../../platform/PlatformTools";
+import { DataSource } from "../../data-source";
+import { ColumnType } from "../types/ColumnTypes";
+import { QueryRunner } from "../../query-runner/QueryRunner";
+import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver";
+import { BetterSqlite3ConnectionOptions } from "./BetterSqlite3ConnectionOptions";
+import { BetterSqlite3QueryRunner } from "./BetterSqlite3QueryRunner";
+import { ReplicationMode } from "../types/ReplicationMode";
+import { filepathToName, isAbsolute } from "../../util/PathUtils";
 
 /**
  * Organizes communication with sqlite DBMS.
@@ -22,26 +22,26 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
     /**
      * Connection options.
      */
-    options: BetterSqlite3ConnectionOptions
+    options: BetterSqlite3ConnectionOptions;
 
     /**
      * SQLite underlying library.
      */
-    sqlite: any
+    sqlite: any;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
     constructor(connection: DataSource) {
-        super(connection)
+        super(connection);
 
-        this.connection = connection
-        this.options = connection.options as BetterSqlite3ConnectionOptions
-        this.database = this.options.database
+        this.connection = connection;
+        this.options = connection.options as BetterSqlite3ConnectionOptions;
+        this.database = this.options.database;
 
         // load sqlite package
-        this.loadDependencies()
+        this.loadDependencies();
     }
 
     // -------------------------------------------------------------------------
@@ -52,8 +52,8 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
      * Closes connection with database.
      */
     async disconnect(): Promise<void> {
-        this.queryRunner = undefined
-        this.databaseConnection.close()
+        this.queryRunner = undefined;
+        this.databaseConnection.close();
     }
 
     /**
@@ -61,26 +61,26 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
      */
     createQueryRunner(mode: ReplicationMode): QueryRunner {
         if (!this.queryRunner)
-            this.queryRunner = new BetterSqlite3QueryRunner(this)
+            this.queryRunner = new BetterSqlite3QueryRunner(this);
 
-        return this.queryRunner
+        return this.queryRunner;
     }
 
     normalizeType(column: {
-        type?: ColumnType
-        length?: number | string
-        precision?: number | null
-        scale?: number
+        type?: ColumnType;
+        length?: number | string;
+        precision?: number | null;
+        scale?: number;
     }): string {
         if ((column.type as any) === Buffer) {
-            return "blob"
+            return "blob";
         }
 
-        return super.normalizeType(column)
+        return super.normalizeType(column);
     }
 
     async afterConnect(): Promise<void> {
-        return this.attachDatabases()
+        return this.attachDatabases();
     }
 
     /**
@@ -91,28 +91,28 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
         _schema?: string,
         database?: string,
     ): string {
-        if (!database) return tableName
+        if (!database) return tableName;
         if (this.getAttachedDatabaseHandleByRelativePath(database))
             return `${this.getAttachedDatabaseHandleByRelativePath(
                 database,
-            )}.${tableName}`
+            )}.${tableName}`;
 
-        if (database === this.options.database) return tableName
+        if (database === this.options.database) return tableName;
 
         // we use the decorated name as supplied when deriving attach handle (ideally without non-portable absolute path)
-        const identifierHash = filepathToName(database)
+        const identifierHash = filepathToName(database);
         // decorated name will be assumed relative to main database file when non absolute. Paths supplied as absolute won't be portable
         const absFilepath = isAbsolute(database)
             ? database
-            : path.join(this.getMainDatabasePath(), database)
+            : path.join(this.getMainDatabasePath(), database);
 
         this.attachedDatabases[database] = {
             attachFilepathAbsolute: absFilepath,
             attachFilepathRelative: database,
             attachHandle: identifierHash,
-        }
+        };
 
-        return `${identifierHash}.${tableName}`
+        return `${identifierHash}.${tableName}`;
     }
 
     // -------------------------------------------------------------------------
@@ -127,7 +127,7 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
         if (this.options.database !== ":memory:")
             await this.createDatabaseDirectory(
                 path.dirname(this.options.database),
-            )
+            );
 
         const {
             database,
@@ -137,35 +137,35 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
             verbose = null,
             nativeBinding = null,
             prepareDatabase,
-        } = this.options
+        } = this.options;
         const databaseConnection = this.sqlite(database, {
             readonly,
             fileMustExist,
             timeout,
             verbose,
             nativeBinding,
-        })
+        });
         // in the options, if encryption key for SQLCipher is setted.
         // Must invoke key pragma before trying to do any other interaction with the database.
         if (this.options.key) {
             databaseConnection.exec(
                 `PRAGMA key = ${JSON.stringify(this.options.key)}`,
-            )
+            );
         }
 
         // function to run before a database is used in lapin.
         if (typeof prepareDatabase === "function") {
-            prepareDatabase(databaseConnection)
+            prepareDatabase(databaseConnection);
         }
 
         // we need to enable foreign keys in sqlite to make sure all foreign key related features
         // working properly. this also makes onDelete to work with sqlite.
-        databaseConnection.exec(`PRAGMA foreign_keys = ON`)
+        databaseConnection.exec(`PRAGMA foreign_keys = ON`);
 
         // turn on WAL mode to enhance performance
-        databaseConnection.exec(`PRAGMA journal_mode = WAL`)
+        databaseConnection.exec(`PRAGMA journal_mode = WAL`);
 
-        return databaseConnection
+        return databaseConnection;
     }
 
     /**
@@ -174,10 +174,13 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
     protected loadDependencies(): void {
         try {
             const sqlite =
-                this.options.driver || PlatformTools.load("better-sqlite3")
-            this.sqlite = sqlite
+                this.options.driver || PlatformTools.load("better-sqlite3");
+            this.sqlite = sqlite;
         } catch (e) {
-            throw new DriverPackageNotInstalledError("SQLite", "better-sqlite3")
+            throw new DriverPackageNotInstalledError(
+                "SQLite",
+                "better-sqlite3",
+            );
         }
     }
 
@@ -185,7 +188,7 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
      * Auto creates database directory if it does not exist.
      */
     protected async createDatabaseDirectory(dbPath: string): Promise<void> {
-        await mkdirp(dbPath)
+        await mkdirp(dbPath);
     }
 
     /**
@@ -202,19 +205,19 @@ export class BetterSqlite3Driver extends AbstractSqliteDriver {
         } of Object.values(this.attachedDatabases)) {
             await this.createDatabaseDirectory(
                 path.dirname(attachFilepathAbsolute),
-            )
+            );
             await this.connection.query(
                 `ATTACH "${attachFilepathAbsolute}" AS "${attachHandle}"`,
-            )
+            );
         }
     }
 
     protected getMainDatabasePath(): string {
-        const optionsDb = this.options.database
+        const optionsDb = this.options.database;
         return path.dirname(
             isAbsolute(optionsDb)
                 ? optionsDb
                 : path.join(this.options.baseDirectory!, optionsDb),
-        )
+        );
     }
 }

@@ -1,6 +1,6 @@
-import { getMetadataArgsStorage } from "../../globals"
-import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs"
-import { ColumnOptions } from "../options/ColumnOptions"
+import { getMetadataArgsStorage } from "../../globals";
+import { ColumnMetadataArgs } from "../../metadata-args/ColumnMetadataArgs";
+import { ColumnOptions } from "../options/ColumnOptions";
 
 /**
  * This column will store an update date of the updated object.
@@ -15,6 +15,6 @@ export function UpdateDateColumn(
             propertyName: propertyName,
             mode: "updateDate",
             options: options ? options : {},
-        } as ColumnMetadataArgs)
-    }
+        } as ColumnMetadataArgs);
+    };
 }

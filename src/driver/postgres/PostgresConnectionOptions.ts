@@ -1,5 +1,5 @@
-import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions"
-import { PostgresConnectionCredentialsOptions } from "./PostgresConnectionCredentialsOptions"
+import { BaseDataSourceOptions } from "../../data-source/BaseDataSourceOptions";
+import { PostgresConnectionCredentialsOptions } from "./PostgresConnectionCredentialsOptions";
 
 /**
  * Postgres-specific connection options.
@@ -10,29 +10,29 @@ export interface PostgresConnectionOptions
     /**
      * Database type.
      */
-    readonly type: "postgres"
+    readonly type: "postgres";
 
     /**
      * Schema name.
      */
-    readonly schema?: string
+    readonly schema?: string;
 
     /**
      * The driver object
      * This defaults to `require("pg")`.
      */
-    readonly driver?: any
+    readonly driver?: any;
 
     /**
      * The driver object
      * This defaults to `require("pg-native")`.
      */
-    readonly nativeDriver?: any
+    readonly nativeDriver?: any;
 
     /**
      * A boolean determining whether to pass time values in UTC or local time. (default: false).
      */
-    readonly useUTC?: boolean
+    readonly useUTC?: boolean;
 
     /**
      * Replication setup.
@@ -41,48 +41,48 @@ export interface PostgresConnectionOptions
         /**
          * Master server used by orm to perform writes.
          */
-        readonly master: PostgresConnectionCredentialsOptions
+        readonly master: PostgresConnectionCredentialsOptions;
 
         /**
          * List of read-from severs (slaves).
          */
-        readonly slaves: PostgresConnectionCredentialsOptions[]
-    }
+        readonly slaves: PostgresConnectionCredentialsOptions[];
+    };
 
     /**
      * The milliseconds before a timeout occurs during the initial connection to the postgres
      * server. If undefined, or set to 0, there is no timeout. Defaults to undefined.
      */
-    readonly connectTimeoutMS?: number
+    readonly connectTimeoutMS?: number;
 
     /**
      * The Postgres extension to use to generate UUID columns. Defaults to uuid-ossp.
      * If pgcrypto is selected, lapin will use the gen_random_uuid() function from this extension.
      * If uuid-ossp is selected, lapin will use the uuid_generate_v4() function from this extension.
      */
-    readonly uuidExtension?: "pgcrypto" | "uuid-ossp"
+    readonly uuidExtension?: "pgcrypto" | "uuid-ossp";
 
     /*
      * Function handling errors thrown by drivers pool.
      * Defaults to logging error with `warn` level.
      */
-    readonly poolErrorHandler?: (err: any) => any
+    readonly poolErrorHandler?: (err: any) => any;
 
     /**
      * Include notification messages from Postgres server in client logs
      */
-    readonly logNotifications?: boolean
+    readonly logNotifications?: boolean;
 
     /**
      * Automatically install postgres extensions
      */
-    readonly installExtensions?: boolean
+    readonly installExtensions?: boolean;
 
     /**
      * sets the application_name var to help db administrators identify
      * the service using this connection. Defaults to 'undefined'
      */
-    readonly applicationName?: string
+    readonly applicationName?: string;
 
     /**
      * Return 64-bit integers (int8) as JavaScript integers.
@@ -99,5 +99,5 @@ export interface PostgresConnectionOptions
      * @see [node-postgres int8 explanation](https://github.com/brianc/node-pg-types#:~:text=on%20projects%3A%20return-,64%2Dbit%20integers,-(int8)%20as)
      * @see [node-postgres defaults.parseInt8 implementation](https://github.com/brianc/node-postgres/blob/pg%408.8.0/packages/pg/lib/defaults.js#L80)
      */
-    readonly parseInt8?: boolean
+    readonly parseInt8?: boolean;
 }
