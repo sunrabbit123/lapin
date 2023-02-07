@@ -20,6 +20,7 @@ import { ColumnHstoreOptions } from "../options/ColumnHstoreOptions";
 import { ColumnWithWidthOptions } from "../options/ColumnWithWidthOptions";
 import { GeneratedMetadataArgs } from "../../metadata-args/GeneratedMetadataArgs";
 import { ColumnOptions } from "../options/ColumnOptions";
+import { BaseEntity } from "../../repository/BaseEntity";
 
 /**
  * Column decorator is used to mark a specific class property as a table column. Only properties decorated with this
@@ -122,8 +123,8 @@ export function Column(
  * single table of the entity where Embedded is used. And on hydration all columns which supposed to be in the
  * embedded will be mapped to it from the single table.
  */
-export function Column(
-    type: (type?: any) => Function,
+export function Column<T extends BaseEntity>(
+    type: (type?: T) => Function,
     options?: ColumnEmbeddedOptions,
 ): PropertyDecorator;
 
@@ -131,14 +132,14 @@ export function Column(
  * Column decorator is used to mark a specific class property as a table column.
  * Only properties decorated with this decorator will be persisted to the database when entity be saved.
  */
-export function Column(
+export function Column<T extends BaseEntity>(
     typeOrOptions?:
-        | ((type?: any) => Function)
+        | ((type?: T) => Function)
         | ColumnType
         | (ColumnOptions & ColumnEmbeddedOptions),
     options?: ColumnOptions & ColumnEmbeddedOptions,
-): PropertyDecorator | Function {
-    return function (object: Object, propertyName: string) {
+): PropertyDecorator {
+    return (object, propertyName) => {
         // normalize parameters
         let type: ColumnType | undefined;
         if (
@@ -150,30 +151,33 @@ export function Column(
             options = <ColumnOptions>typeOrOptions;
             type = typeOrOptions.type;
         }
-        if (!options) options = {} as ColumnOptions;
+        if (!options) {
+            options = {};
+        }
 
         // if type is not given explicitly then try to guess it
         const reflectMetadataType =
-            Reflect && (Reflect as any).getMetadata
-                ? (Reflect as any).getMetadata(
-                      "design:type",
-                      object,
-                      propertyName,
-                  )
+            Reflect && Reflect["getMetadata"]
+                ? Reflect.getMetadata("design:type", object, propertyName)
                 : undefined;
-        if (!type && reflectMetadataType)
+        if (!type && reflectMetadataType) {
             // if type is not given explicitly then try to guess it
             type = reflectMetadataType;
+        }
 
         // check if there is no type in column options then set type from first function argument, or guessed one
-        if (!options.type && type) options.type = type;
+        if (!options.type && type) {
+            options.type = type;
+        }
 
         // specify HSTORE type if column is HSTORE
-        if (options.type === "hstore" && !options.hstoreType)
+        if (options.type === "hstore" && !options.hstoreType) {
             options.hstoreType =
                 reflectMetadataType === Object ? "object" : "string";
+        }
 
         if (typeof typeOrOptions === "function") {
+            typeOrOptions;
             // register an embedded
             getMetadataArgsStorage().embeddeds.push({
                 target: object.constructor,
@@ -189,13 +193,16 @@ export function Column(
 
             // if we still don't have a type then we need to give error to user that type is required
             if (!options.type)
-                throw new ColumnTypeUndefinedError(object, propertyName);
+                throw new ColumnTypeUndefinedError(
+                    object,
+                    propertyName.toString(),
+                );
 
             // create unique
             if (options.unique === true)
                 getMetadataArgsStorage().uniques.push({
                     target: object.constructor,
-                    columns: [propertyName],
+                    columns: [propertyName.toString()],
                 });
 
             getMetadataArgsStorage().columns.push({
