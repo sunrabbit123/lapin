@@ -9,11 +9,12 @@ import {
     FindOptionsRelations,
 } from "./FindOptionsRelations";
 import { FindOptionsOrder } from "./FindOptionsOrder";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Defines a special criteria to find specific entity.
  */
-export interface FindOneOptions<Entity = any> {
+export interface FindOneOptions<Entity extends BaseEntity> {
     /**
      * Adds a comment with the supplied string in the generated query.  This is
      * helpful for debugging purposes, such as finding a specific query in the

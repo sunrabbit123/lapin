@@ -54,7 +54,7 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
 {
     readonly "@instanceof" = Symbol.for("SelectQueryBuilder");
 
-    protected findOptions: FindManyOptions = {};
+    protected findOptions: FindManyOptions<Entity> = {};
     protected selects: string[] = [];
     protected joins: {
         type: "inner" | "left";
@@ -301,7 +301,7 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
     addFrom<T extends BaseEntity>(
         entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<T>,
         aliasName: string,
-    ): SelectQueryBuilder<Entity & TT>;
+    ): SelectQueryBuilder<Entity & T>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.

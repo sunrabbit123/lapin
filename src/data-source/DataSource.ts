@@ -40,6 +40,7 @@ import { RelationIdLoader } from "../query-builder/RelationIdLoader";
 import { DriverUtils } from "../driver/DriverUtils";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { ObjectLiteral } from "../common/ObjectLiteral";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * DataSource is a pre-defined connection configuration to a specific database.
@@ -532,21 +533,23 @@ export class DataSource {
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder<Entity extends ObjectLiteral>(
-        entityClass: EntityTarget<Entity>,
+    createQueryBuilder<T extends BaseEntity>(
+        entityClass: EntityTarget<T>,
         alias: string,
         queryRunner?: QueryRunner,
-    ): SelectQueryBuilder<Entity>;
+    ): SelectQueryBuilder<T>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder(queryRunner?: QueryRunner): SelectQueryBuilder<any>;
+    createQueryBuilder<T extends BaseEntity>(
+        queryRunner?: QueryRunner,
+    ): SelectQueryBuilder<T>;
 
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder<Entity extends ObjectLiteral>(
+    createQueryBuilder<Entity extends BaseEntity>(
         entityOrRunner?: EntityTarget<Entity> | QueryRunner,
         alias?: string,
         queryRunner?: QueryRunner,
@@ -559,11 +562,11 @@ export class DataSource {
             const metadata = this.getMetadata(
                 entityOrRunner as EntityTarget<Entity>,
             );
-            return new SelectQueryBuilder(this, queryRunner)
+            return new SelectQueryBuilder<Entity>(this, queryRunner)
                 .select(alias)
                 .from(metadata.target, alias);
         } else {
-            return new SelectQueryBuilder(
+            return new SelectQueryBuilder<Entity>(
                 this,
                 entityOrRunner as QueryRunner | undefined,
             );

@@ -9,3 +9,4 @@ export type EntityTarget<Entity> =
     | EntitySchema<Entity>
     | string
     | { type: Entity; name: string };
+    | ObjectLiteral
