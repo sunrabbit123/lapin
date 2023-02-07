@@ -5,9 +5,10 @@ import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne";
 import { JoinColumn } from "../../../../../../src/decorator/relations/JoinColumn";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 import { CategoryWithRelation } from "./CategoryWithRelation";
+import { BaseEntity } from "../../../../../../src";
 
 @Entity()
-export class PostWithRelation {
+export class PostWithRelation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

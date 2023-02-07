@@ -250,7 +250,7 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
         return this;
     }
 
-    fromDummy(): SelectQueryBuilder<any> {
+    fromDummy(): SelectQueryBuilder<Entity & BaseEntity> {
         return this.from(
             this.connection.driver.dummyTableName ??
                 "(SELECT 1 AS dummy_column)",
@@ -264,9 +264,9 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
      * Removes all previously set from-s.
      */
     from<T extends BaseEntity>(
-        entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>,
+        entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<T>,
         aliasName: string,
-    ): SelectQueryBuilder<T>;
+    ): SelectQueryBuilder<Entity & T>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -276,7 +276,7 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
     from<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName: string,
-    ): SelectQueryBuilder<T>;
+    ): SelectQueryBuilder<Entity & T>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -286,12 +286,12 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
     from<T extends BaseEntity>(
         entityTarget:
             | EntityTarget<T>
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
+            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<T>),
         aliasName: string,
-    ): SelectQueryBuilder<T> {
+    ): SelectQueryBuilder<Entity & T> {
         const mainAlias = this.createFromAlias(entityTarget, aliasName);
         this.expressionMap.setMainAlias(mainAlias);
-        return this as any as SelectQueryBuilder<T>;
+        return this as unknown as SelectQueryBuilder<Entity & T>;
     }
 
     /**
@@ -299,9 +299,9 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
      * Also sets a main string alias of the selection data.
      */
     addFrom<T extends BaseEntity>(
-        entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>,
+        entityTarget: (qb: SelectQueryBuilder<any>) => SelectQueryBuilder<T>,
         aliasName: string,
-    ): SelectQueryBuilder<T>;
+    ): SelectQueryBuilder<Entity & TT>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -310,7 +310,7 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
     addFrom<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName: string,
-    ): SelectQueryBuilder<T>;
+    ): SelectQueryBuilder<Entity & T>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -319,14 +319,15 @@ export class SelectQueryBuilder<Entity extends BaseEntity>
     addFrom<T extends BaseEntity>(
         entityTarget:
             | EntityTarget<T>
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
+            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<T>),
         aliasName: string,
-    ): SelectQueryBuilder<T> {
+    ): SelectQueryBuilder<Entity & T> {
         const alias = this.createFromAlias(entityTarget, aliasName);
-        if (!this.expressionMap.mainAlias)
+        if (!this.expressionMap.mainAlias) {
             this.expressionMap.setMainAlias(alias);
+        }
 
-        return this as any as SelectQueryBuilder<T>;
+        return this as unknown as SelectQueryBuilder<Entity & T>;
     }
 
     /**

@@ -9,7 +9,7 @@
     "email": "qudwls185@naver.com"
   },
   "engines": {
-    "node": ">= 18.13.0"
+    "node": ">= 16.13.2"
   },
   "exports": {
     ".": {
@@ -37,7 +37,18 @@
   },
   "main": "./index.js",
   "module": "./index.mjs",
-  "types": "./index.d.ts",
+  "types": "./index.d.ts","scripts": {
+    "test" : "rimraf ./build && tsc && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000",
+    "test-all": "rimraf ./build && tsc && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000 ./build/compiled/test",
+    "test-fast": "mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000 ./build/compiled/test",
+    "compile": "rimraf ./build && tsc",
+    "watch": "./node_modules/.bin/tsc -w",
+    "package": "gulp package",
+    "pack": "gulp pack",
+    "lint": "prettier --check \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
+    "format": "prettier --write \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2"
+  },
   "browser": {
     "./browser/connection/ConnectionOptionsReader.js": "./browser/platform/BrowserConnectionOptionsReaderDummy.js",
     "./browser/connection/options-reader/ConnectionOptionsXmlReader.js": "./browser/platform/BrowserConnectionOptionsReaderDummy.js",
@@ -234,19 +245,7 @@
     "xml2js": "^0.4.23",
     "yargs": "^17.3.1"
   },
-  "scripts": {
-    "test" : "rimraf ./build && tsc && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000",
-    "test-all": "rimraf ./build && tsc && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000 ./build/compiled/test",
-    "test-fast": "mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 60000 ./build/compiled/test",
-    "compile": "rimraf ./build && tsc",
-    "watch": "./node_modules/.bin/tsc -w",
-    "package": "gulp package",
-    "pack": "gulp pack",
-    "lint": "prettier --check \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
-    "format": "prettier --write \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2"
-  },
-  "bin": {
+    "bin": {
     "lapin": "./cli.js",
     "lapin-ts-node-commonjs": "./cli-ts-node-commonjs.js",
     "lapin-ts-node-esm": "./cli-ts-node-esm.js"
