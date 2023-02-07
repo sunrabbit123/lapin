@@ -217,14 +217,18 @@ export class RawSqlResultsToEntityTransformer {
             )
                 return;
 
-            const value =
+            let value =
                 rawResults[0][
                     DriverUtils.buildAlias(
                         this.driver,
                         alias.name,
                         column.databaseName,
                     )
-                ] ?? rawResults[0][column.databaseName];
+                ];
+            value =
+                value === undefined
+                    ? rawResults[0][column.databaseName]
+                    : value;
             if (value === undefined || column.isVirtual) return;
 
             // if user does not selected the whole entity or he used partial selection and does not select this particular column
