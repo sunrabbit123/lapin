@@ -3,7 +3,7 @@ import { BaseEntity } from "../../../../../src";
 
 import { Information } from "./Information";
 
-export class SimpleCounters {
+export class SimpleCounters extends BaseEntity {
     @Column()
     likes: number;
 

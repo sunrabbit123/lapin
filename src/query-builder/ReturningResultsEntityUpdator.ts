@@ -5,6 +5,7 @@ import { ColumnMetadata } from "../metadata/ColumnMetadata";
 import { UpdateResult } from "./result/UpdateResult";
 import { InsertResult } from "./result/InsertResult";
 import { LapinError } from "../error";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Updates entity with returning results in the entity insert and update operations.
@@ -26,9 +27,9 @@ export class ReturningResultsEntityUpdator {
     /**
      * Updates entities with a special columns after updation query execution.
      */
-    async update(
+    async update<T extends BaseEntity>(
         updateResult: UpdateResult,
-        entities: ObjectLiteral[],
+        entities: T[],
     ): Promise<void> {
         const metadata = this.expressionMap.mainAlias!.metadata;
 
@@ -134,9 +135,9 @@ export class ReturningResultsEntityUpdator {
     /**
      * Updates entities with a special columns after insertion query execution.
      */
-    async insert(
+    async insert<T extends BaseEntity>(
         insertResult: InsertResult,
-        entities: ObjectLiteral[],
+        entities: T[],
     ): Promise<void> {
         const metadata = this.expressionMap.mainAlias!.metadata;
         let insertionColumns = metadata.getInsertionReturningColumns();

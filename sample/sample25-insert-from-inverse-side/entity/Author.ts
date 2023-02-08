@@ -1,9 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src";
 import { OneToMany } from "../../../src/decorator/relations/OneToMany";
 import { Post } from "./Post";
 
 @Entity("sample25_author")
-export class Author {
+export class Author extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

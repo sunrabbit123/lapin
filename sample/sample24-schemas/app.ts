@@ -1,5 +1,10 @@
 import "reflect-metadata";
-import { DataSource, DataSourceOptions, EntitySchema } from "../../src";
+import {
+    BaseEntity,
+    DataSource,
+    DataSourceOptions,
+    EntitySchema,
+} from "../../src";
 import { Post } from "./entity/Post";
 import { PostDetails } from "./entity/PostDetails";
 import { Category } from "./entity/Category";
@@ -40,7 +45,9 @@ const dataSource = new DataSource(options);
 dataSource
     .initialize()
     .then((dataSource) => {
-        let postRepository = dataSource.getRepository<Post>("Post");
+        let postRepository = dataSource.getRepository<Post & BaseEntity>(
+            "Post",
+        );
 
         let post: Post = {
             title: "Hello post",

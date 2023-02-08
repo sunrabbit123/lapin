@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn } from "../../../src/index";
+import { BaseEntity, Column, PrimaryGeneratedColumn } from "../../../src";
 import { TreeLevelColumn } from "../../../src/decorator/tree/TreeLevelColumn";
 import { TreeParent } from "../../../src/decorator/tree/TreeParent";
 import { TreeChildren } from "../../../src/decorator/tree/TreeChildren";
@@ -7,7 +7,7 @@ import { Entity } from "../../../src/decorator/entity/Entity";
 
 @Entity("sample22_category")
 @Tree("closure-table")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

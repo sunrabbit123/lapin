@@ -5,7 +5,7 @@ import { FindRelationsNotFoundError } from "../error/FindRelationsNotFoundError"
 import { EntityMetadata } from "../metadata/EntityMetadata";
 import { DriverUtils } from "../driver/DriverUtils";
 import { FindTreeOptions } from "./FindTreeOptions";
-import { ObjectLiteral } from "../common/ObjectLiteral";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Utilities to work with FindOptions.
@@ -18,7 +18,7 @@ export class FindOptionsUtils {
     /**
      * Checks if given object is really instance of FindOneOptions interface.
      */
-    static isFindOneOptions<Entity = any>(
+    static isFindOneOptions<Entity extends BaseEntity>(
         obj: any,
     ): obj is FindOneOptions<Entity> {
         const possibleOptions: FindOneOptions<Entity> = obj;
@@ -49,7 +49,7 @@ export class FindOptionsUtils {
     /**
      * Checks if given object is really instance of FindManyOptions interface.
      */
-    static isFindManyOptions<Entity = any>(
+    static isFindManyOptions<Entity extends BaseEntity>(
         obj: any,
     ): obj is FindManyOptions<Entity> {
         const possibleOptions: FindManyOptions<Entity> = obj;
@@ -240,7 +240,7 @@ export class FindOptionsUtils {
         return qb;
     }*/
 
-    static applyOptionsToTreeQueryBuilder<T extends ObjectLiteral>(
+    static applyOptionsToTreeQueryBuilder<T extends BaseEntity>(
         qb: SelectQueryBuilder<T>,
         options?: FindTreeOptions,
     ): SelectQueryBuilder<T> {

@@ -7,7 +7,7 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { Image } from "./Image";
 import { Cover } from "./Cover";
 import { Category } from "./Category";

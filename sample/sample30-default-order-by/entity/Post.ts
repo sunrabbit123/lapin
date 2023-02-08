@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src";
 import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
 import { Category } from "./Category";
 import { JoinTable } from "../../../src/decorator/relations/JoinTable";
@@ -9,7 +14,7 @@ import { JoinTable } from "../../../src/decorator/relations/JoinTable";
         id: "DESC",
     },
 })
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -24,6 +29,7 @@ export class Post {
     categories: Category[];
 
     constructor(title: string, text: string, categories: Category[]) {
+        super();
         this.title = title;
         this.text = text;
         this.categories = categories;

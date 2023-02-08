@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src";
 import { Post } from "./Post";
 import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
 import { AfterRemove } from "../../../src/decorator/listeners/AfterRemove";
@@ -13,7 +18,7 @@ import { AfterSoftRemove } from "../../../src/decorator/listeners/AfterSoftRemov
 import { BeforeSoftRemove } from "../../../src/decorator/listeners/BeforeSoftRemove";
 
 @Entity("sample9_post_category")
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

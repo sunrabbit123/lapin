@@ -3,7 +3,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 
 @Entity("sample1_post")
 export class Post extends BaseEntity {

@@ -1,17 +1,18 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { Post } from "./Post";
 import { Chapter } from "./Chapter";
 import { Category } from "./Category";
 
 @Entity("sample10_post_details")
-export class PostDetails {
+export class PostDetails extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

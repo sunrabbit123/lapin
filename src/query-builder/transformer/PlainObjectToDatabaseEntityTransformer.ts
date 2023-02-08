@@ -132,10 +132,7 @@ export class PlainObjectToDatabaseEntityTransformer {
             loadMap.groupByTargetIds().map((targetWithIds) => {
                 // todo: fix type hinting
                 return this.manager
-                    .findByIds<ObjectLiteral>(
-                        targetWithIds.target as any,
-                        targetWithIds.ids,
-                    )
+                    .findByIds(targetWithIds.target as any, targetWithIds.ids)
                     .then((entities) =>
                         loadMap.fillEntities(targetWithIds.target, entities),
                     );

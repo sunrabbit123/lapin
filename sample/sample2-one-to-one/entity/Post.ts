@@ -1,9 +1,10 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { PostDetails } from "./PostDetails";
 import { PostCategory } from "./PostCategory";
 import { PostAuthor } from "./PostAuthor";
@@ -13,7 +14,7 @@ import { PostMetadata } from "./PostMetadata";
 import { JoinColumn } from "../../../src/decorator/relations/JoinColumn";
 
 @Entity("sample2_post")
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

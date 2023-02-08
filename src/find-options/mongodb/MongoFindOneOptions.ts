@@ -1,10 +1,11 @@
 import { FindOneOptions } from "../FindOneOptions";
 import { ObjectLiteral } from "../../common/ObjectLiteral";
+import { BaseEntity } from "../../repository/BaseEntity";
 
 /**
  * Defines a special criteria to find specific entity.
  */
-export type MongoFindOneOptions<Entity = any> = Omit<
+export type MongoFindOneOptions<Entity extends BaseEntity> = Omit<
     FindOneOptions<Entity>,
     "where"
 > & {

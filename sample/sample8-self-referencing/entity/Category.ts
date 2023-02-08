@@ -1,9 +1,10 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { ManyToOne } from "../../../src/decorator/relations/ManyToOne";
 import { OneToMany } from "../../../src/decorator/relations/OneToMany";
 import { OneToOne } from "../../../src/decorator/relations/OneToOne";
@@ -11,7 +12,7 @@ import { JoinColumn } from "../../../src/decorator/relations/JoinColumn";
 import { JoinTable } from "../../../src/decorator/relations/JoinTable";
 
 @Entity("sample8_category")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

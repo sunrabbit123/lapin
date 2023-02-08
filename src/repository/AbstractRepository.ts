@@ -1,4 +1,3 @@
-import { ObjectLiteral } from "../common/ObjectLiteral";
 import { EntityManager } from "../entity-manager/EntityManager";
 import { Repository } from "./Repository";
 import { TreeRepository } from "./TreeRepository";
@@ -8,6 +7,7 @@ import { CustomRepositoryDoesNotHaveEntityError } from "../error/CustomRepositor
 import { getMetadataArgsStorage } from "../globals";
 import { CustomRepositoryNotFoundError } from "../error/CustomRepositoryNotFoundError";
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
+import { BaseEntity } from "./BaseEntity";
 
 /**
  * Provides abstract class for custom repositories that do not inherit from original orm Repository.
@@ -16,7 +16,7 @@ import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
  *
  * @deprecated use Repository.extend function to create a custom repository
  */
-export class AbstractRepository<Entity extends ObjectLiteral> {
+export class AbstractRepository<Entity extends BaseEntity> {
     // -------------------------------------------------------------------------
     // Protected Methods Set Dynamically
     // -------------------------------------------------------------------------
@@ -75,7 +75,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     /**
      * Creates a new query builder for the given entity that can be used to build a SQL query.
      */
-    protected createQueryBuilderFor<T extends ObjectLiteral>(
+    protected createQueryBuilderFor<T extends BaseEntity>(
         entity: ObjectType<T>,
         alias: string,
     ): SelectQueryBuilder<T> {
@@ -85,7 +85,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     /**
      * Gets the original ORM repository for the given entity class.
      */
-    protected getRepositoryFor<T extends ObjectLiteral>(
+    protected getRepositoryFor<T extends BaseEntity>(
         entity: ObjectType<T>,
     ): Repository<T> {
         return this.manager.getRepository(entity);
@@ -94,7 +94,7 @@ export class AbstractRepository<Entity extends ObjectLiteral> {
     /**
      * Gets the original ORM tree repository for the given entity class.
      */
-    protected getTreeRepositoryFor<T extends ObjectLiteral>(
+    protected getTreeRepositoryFor<T extends BaseEntity>(
         entity: ObjectType<T>,
     ): TreeRepository<T> {
         return this.manager.getTreeRepository(entity);

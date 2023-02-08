@@ -1,9 +1,9 @@
-import { Column, Entity } from "../../../src/index";
+import { BaseEntity, Column, Entity } from "../../../src";
 import { ObjectIdColumn } from "../../../src/decorator/columns/ObjectIdColumn";
 import { ObjectID } from "../../../src/driver/mongodb/typings";
 
 @Entity("sample34_post")
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

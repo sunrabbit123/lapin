@@ -2,13 +2,14 @@ import { Column } from "../../../src/decorator/columns/Column";
 import { TableInheritance } from "../../../src/decorator/entity/TableInheritance";
 import { Entity } from "../../../src/decorator/entity/Entity";
 import { PrimaryColumn } from "../../../src/decorator/columns/PrimaryColumn";
+import { BaseEntity } from "../../../src";
 
 // todo: some things left to do:
 // * check how it works when is join (conditions are not added in the joins right now)
 
 @Entity("sample28_person")
 @TableInheritance({ column: { name: "type", type: "varchar" } })
-export abstract class Person {
+export abstract class Person extends BaseEntity {
     @PrimaryColumn("int")
     id: number;
 

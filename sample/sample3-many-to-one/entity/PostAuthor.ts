@@ -4,7 +4,7 @@ import {
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { Post } from "./Post";
 
 @Entity("sample3_post_author")

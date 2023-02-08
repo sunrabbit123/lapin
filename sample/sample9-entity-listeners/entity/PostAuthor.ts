@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src";
 import { Post } from "./Post";
 import { OneToMany } from "../../../src/decorator/relations/OneToMany";
 import { AfterRemove } from "../../../src/decorator/listeners/AfterRemove";
@@ -13,7 +18,7 @@ import { AfterSoftRemove } from "../../../src/decorator/listeners/AfterSoftRemov
 import { BeforeSoftRemove } from "../../../src/decorator/listeners/BeforeSoftRemove";
 
 @Entity("sample9_post_author")
-export class PostAuthor {
+export class PostAuthor extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -1,16 +1,17 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { Post } from "./Post";
 import { ImageDetails } from "./ImageDetails";
 import { JoinColumn } from "../../../src/decorator/relations/JoinColumn";
 
 @Entity("sample10_image")
-export class Image {
+export class Image extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

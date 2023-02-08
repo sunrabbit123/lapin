@@ -5,6 +5,7 @@ import { FindOptionsUtils } from "../find-options/FindOptionsUtils";
 import { FindTreeOptions } from "../find-options/FindTreeOptions";
 import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 import { TreeRepositoryUtils } from "../util/TreeRepositoryUtils";
+import { BaseEntity } from "./BaseEntity";
 import { Repository } from "./Repository";
 
 /**
@@ -13,7 +14,7 @@ import { Repository } from "./Repository";
  * @see Repository
  */
 export class TreeRepository<
-    Entity extends ObjectLiteral,
+    Entity extends BaseEntity,
 > extends Repository<Entity> {
     // -------------------------------------------------------------------------
     // Public Methods

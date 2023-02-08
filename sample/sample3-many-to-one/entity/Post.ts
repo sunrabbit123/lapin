@@ -4,7 +4,7 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { PostDetails } from "./PostDetails";
 import { PostCategory } from "./PostCategory";
 import { PostAuthor } from "./PostAuthor";

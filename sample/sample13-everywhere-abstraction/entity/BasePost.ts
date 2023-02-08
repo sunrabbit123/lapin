@@ -1,4 +1,4 @@
-import { BaseEntity, Column, PrimaryGeneratedColumn } from "../../../src/index";
+import { BaseEntity, Column, PrimaryGeneratedColumn } from "../../../src";
 
 export class BasePost extends BaseEntity {
     @PrimaryGeneratedColumn()

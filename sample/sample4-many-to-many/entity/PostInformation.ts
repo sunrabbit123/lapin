@@ -1,13 +1,14 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { Post } from "./Post";
 
 @Entity("sample4_post_information")
-export class PostInformation {
+export class PostInformation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

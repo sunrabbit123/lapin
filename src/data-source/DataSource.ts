@@ -627,8 +627,8 @@ export class DataSource {
     /**
      * Finds exist entity metadata by the given entity class, target name or table name.
      */
-    protected findMetadata(
-        target: EntityTarget<any>,
+    protected findMetadata<T>(
+        target: EntityTarget<T>,
     ): EntityMetadata | undefined {
         return this.entityMetadatas.find((metadata) => {
             if (metadata.target === target) return true;

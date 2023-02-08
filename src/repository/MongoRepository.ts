@@ -38,12 +38,13 @@ import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 import { LapinError } from "../error/LapinError";
 import { MongoFindOneOptions } from "../find-options/mongodb/MongoFindOneOptions";
 import { FindOneOptions } from "../find-options/FindOneOptions";
+import { BaseEntity } from "./BaseEntity";
 
 /**
  * Repository used to manage mongodb documents of a single entity type.
  */
 export class MongoRepository<
-    Entity extends ObjectLiteral,
+    Entity extends BaseEntity,
 > extends Repository<Entity> {
     // -------------------------------------------------------------------------
     // Public Properties

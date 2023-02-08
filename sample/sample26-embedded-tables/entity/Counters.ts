@@ -1,4 +1,4 @@
-import { Column } from "../../../src/index";
+import { Column } from "../../../src";
 
 export class Counters {
     @Column()

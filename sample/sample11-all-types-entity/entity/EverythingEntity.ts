@@ -3,7 +3,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { CreateDateColumn } from "../../../src/decorator/columns/CreateDateColumn";
 import { UpdateDateColumn } from "../../../src/decorator/columns/UpdateDateColumn";
 

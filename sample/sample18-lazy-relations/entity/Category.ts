@@ -3,7 +3,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
 import { Post } from "./Post";
 

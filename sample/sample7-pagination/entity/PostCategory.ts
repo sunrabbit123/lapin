@@ -1,9 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src";
 import { Post } from "./Post";
 import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
 
 @Entity("sample7_post_category")
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

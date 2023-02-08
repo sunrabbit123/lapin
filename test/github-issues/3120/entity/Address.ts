@@ -5,8 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
-import { Column } from "../../../../src/decorator/columns/Column";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Person } from "./Person";
 

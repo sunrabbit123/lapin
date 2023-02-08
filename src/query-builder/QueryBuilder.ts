@@ -25,6 +25,7 @@ import { ReturningType } from "../driver/Driver";
 import { OracleDriver } from "../driver/oracle/OracleDriver";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { escapeRegExp } from "../util/escapeRegExp";
+import { BaseEntity } from "../repository/BaseEntity";
 
 // todo: completely cover query builder with tests
 // todo: entityOrProperty can be target name. implement proper behaviour if it is.
@@ -44,7 +45,7 @@ import { escapeRegExp } from "../util/escapeRegExp";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export abstract class QueryBuilder<Entity extends ObjectLiteral> {
+export abstract class QueryBuilder<Entity extends BaseEntity> {
     readonly "@instanceof" = Symbol.for("QueryBuilder");
 
     // -------------------------------------------------------------------------

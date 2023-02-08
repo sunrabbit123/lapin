@@ -4,8 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
-import { Column } from "../../../../src/decorator/columns/Column";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { Post } from "./Post";
 import { RelationId } from "../../../../src/decorator/relations/RelationId";

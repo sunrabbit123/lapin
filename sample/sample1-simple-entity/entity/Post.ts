@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity } from "../../../src/index";
+import { BaseEntity, Column, Entity } from "../../../src";
 import { PrimaryColumn } from "../../../src/decorator/columns/PrimaryColumn";
 import { Generated } from "../../../src/decorator/Generated";
 

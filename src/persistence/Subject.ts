@@ -6,6 +6,7 @@ import { RelationMetadata } from "../metadata/RelationMetadata";
 import { ColumnMetadata } from "../metadata/ColumnMetadata";
 import { ObjectUtils } from "../util/ObjectUtils";
 import { InstanceChecker } from "../util/InstanceChecker";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Subject is a subject of persistence.
@@ -53,7 +54,7 @@ export class Subject {
      * If entity is not set then this subject is created only for the entity loaded from the database,
      * or this subject is used for the junction operation (junction operations are relying only on identifier).
      */
-    entity?: ObjectLiteral;
+    entity?: BaseEntity;
 
     /**
      * Database entity.
@@ -140,7 +141,7 @@ export class Subject {
     constructor(options: {
         metadata: EntityMetadata;
         parentSubject?: Subject;
-        entity?: ObjectLiteral;
+        entity?: BaseEntity;
         canBeInserted?: boolean;
         canBeUpdated?: boolean;
         mustBeRemoved?: boolean;

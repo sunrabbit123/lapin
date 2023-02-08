@@ -5,8 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
-import { Column } from "../../../../src/decorator/columns/Column";
 
 @Entity()
 export class Company extends BaseEntity {

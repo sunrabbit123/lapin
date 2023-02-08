@@ -1,4 +1,4 @@
-import { Column, Entity } from "../../../src/index";
+import { Column, Entity } from "../../../src";
 import { BasePost } from "./BasePost";
 import { ManyToOne } from "../../../src/decorator/relations/ManyToOne";
 import { PostAuthor } from "./PostAuthor";

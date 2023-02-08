@@ -3,7 +3,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 
 @Entity("sample3_post_category")
 export class PostCategory extends BaseEntity {

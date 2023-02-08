@@ -1,16 +1,17 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-} from "../../../src/index";
+} from "../../../src";
 import { JoinTable } from "../../../src/decorator/relations/JoinTable";
 import { ManyToMany } from "../../../src/decorator/relations/ManyToMany";
 import { Author } from "./Author";
 import { Category } from "./Category";
 
 @Entity("sample31_post")
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
