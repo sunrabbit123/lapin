@@ -9,7 +9,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { Tree } from "../../../../src/decorator/tree/Tree";
 
 @Entity()

@@ -4,7 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Index } from "../../../../src/decorator/Index";
 @Entity()
 @Index("unique_idx", ["first_name", "last_name"], { unique: true })

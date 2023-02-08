@@ -4,7 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Parent } from "./Parent";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 

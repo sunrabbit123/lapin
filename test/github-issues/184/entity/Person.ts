@@ -7,7 +7,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 
 export enum PersonType {

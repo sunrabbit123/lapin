@@ -8,7 +8,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { OneToOne } from "../../../../src/decorator/relations/OneToOne";
 import { User } from "./User";
 

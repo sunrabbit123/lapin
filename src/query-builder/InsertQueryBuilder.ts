@@ -9,6 +9,7 @@ import { LapinError } from "../error";
 import { InsertValuesMissingError } from "../error/InsertValuesMissingError";
 import { ReturningStatementNotSupportedError } from "../error/ReturningStatementNotSupportedError";
 import { ColumnMetadata } from "../metadata/ColumnMetadata";
+import { BaseEntity } from "../repository/BaseEntity";
 import { BroadcasterResult } from "../subscriber/BroadcasterResult";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { ObjectUtils } from "../util/ObjectUtils";
@@ -22,7 +23,7 @@ import { ReturningResultsEntityUpdator } from "./ReturningResultsEntityUpdator";
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
 export class InsertQueryBuilder<
-    Entity extends ObjectLiteral,
+    Entity extends BaseEntity,
 > extends QueryBuilder<Entity> {
     readonly "@instanceof" = Symbol.for("InsertQueryBuilder");
 

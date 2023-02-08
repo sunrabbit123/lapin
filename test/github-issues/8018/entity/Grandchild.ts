@@ -1,4 +1,9 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { Child } from "./Child";
 
 @Entity()

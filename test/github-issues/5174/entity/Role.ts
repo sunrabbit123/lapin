@@ -4,7 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { PrimaryColumn, OneToMany } from "../../../../src";
 import { User } from "./User";
 

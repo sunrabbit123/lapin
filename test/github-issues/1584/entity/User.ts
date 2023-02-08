@@ -4,7 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { ObjectIdColumn } from "../../../../src/decorator/columns/ObjectIdColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";

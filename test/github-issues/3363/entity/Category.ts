@@ -7,7 +7,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()

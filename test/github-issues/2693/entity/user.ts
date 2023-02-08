@@ -5,7 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity({ name: "users", synchronize: false })
 export class User {
     @PrimaryGeneratedColumn("uuid")

@@ -16,6 +16,7 @@ import { MongoRepository } from "./repository/MongoRepository";
 import { SelectQueryBuilder } from "./query-builder/SelectQueryBuilder";
 import { ObjectUtils } from "./util/ObjectUtils";
 import { ObjectLiteral } from "./common/ObjectLiteral";
+import { BaseEntity } from "./repository/BaseEntity";
 
 /**
  * Gets metadata args storage.
@@ -175,7 +176,7 @@ export function getSqljsManager(
  *
  * @deprecated
  */
-export function getRepository<Entity extends ObjectLiteral>(
+export function getRepository<Entity extends BaseEntity>(
     entityClass: EntityTarget<Entity>,
     connectionName: string = "default",
 ): Repository<Entity> {
@@ -189,7 +190,7 @@ export function getRepository<Entity extends ObjectLiteral>(
  *
  * @deprecated
  */
-export function getTreeRepository<Entity extends ObjectLiteral>(
+export function getTreeRepository<Entity extends BaseEntity>(
     entityClass: EntityTarget<Entity>,
     connectionName: string = "default",
 ): TreeRepository<Entity> {
@@ -217,7 +218,7 @@ export function getCustomRepository<T>(
  *
  * @deprecated
  */
-export function getMongoRepository<Entity extends ObjectLiteral>(
+export function getMongoRepository<Entity extends BaseEntity>(
     entityClass: EntityTarget<Entity>,
     connectionName: string = "default",
 ): MongoRepository<Entity> {
@@ -231,7 +232,7 @@ export function getMongoRepository<Entity extends ObjectLiteral>(
  *
  * @deprecated
  */
-export function createQueryBuilder<Entity extends ObjectLiteral>(
+export function createQueryBuilder<Entity extends BaseEntity>(
     entityClass?: EntityTarget<Entity>,
     alias?: string,
     connectionName: string = "default",

@@ -11,7 +11,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { Foo } from "./Foo";
 
 @Entity()

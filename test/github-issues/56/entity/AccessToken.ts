@@ -5,7 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 export class AccessToken extends BaseEntity {
     @PrimaryColumn()

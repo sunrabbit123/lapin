@@ -404,7 +404,7 @@ export class EntityManager {
     /**
      * Saves a given entity in the database.
      */
-    save<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    save<Entity extends BaseEntity, T extends DeepPartial<Entity>>(
         targetOrEntity: (T | T[]) | EntityTarget<Entity>,
         maybeEntityOrOptions?: T | T[],
         maybeOptions?: SaveOptions,
@@ -546,7 +546,7 @@ export class EntityManager {
     /**
      * Records the delete date of one or many given entities.
      */
-    softRemove<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    softRemove<Entity extends BaseEntity, T extends DeepPartial<Entity>>(
         targetOrEntity: (T | T[]) | EntityTarget<Entity>,
         maybeEntityOrOptions?: T | T[],
         maybeOptions?: SaveOptions,
@@ -620,7 +620,7 @@ export class EntityManager {
     /**
      * Recovers one or many given entities.
      */
-    recover<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    recover<Entity extends BaseEntity, T extends DeepPartial<Entity>>(
         targetOrEntity: (T | T[]) | EntityTarget<Entity>,
         maybeEntityOrOptions?: T | T[],
         maybeOptions?: SaveOptions,

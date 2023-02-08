@@ -7,7 +7,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 export class Post extends BaseEntity {
     @ObjectIdColumn()

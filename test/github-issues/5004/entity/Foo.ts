@@ -6,7 +6,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { Index } from "../../../../src/decorator/Index";
 
 @Entity()

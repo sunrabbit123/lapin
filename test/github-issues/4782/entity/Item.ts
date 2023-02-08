@@ -6,7 +6,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 export class Item extends BaseEntity {
     @PrimaryGeneratedColumn()

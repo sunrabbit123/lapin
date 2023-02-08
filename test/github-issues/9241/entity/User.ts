@@ -4,13 +4,14 @@ import {
     OneToMany,
     Column,
     TableInheritance,
+    BaseEntity,
 } from "../../../../src";
 
 import { UserPhoto } from "./UserPhoto";
 
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "type" } })
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

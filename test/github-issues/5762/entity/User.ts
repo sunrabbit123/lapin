@@ -4,7 +4,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { PrimaryColumn, Column, BaseEntity } from "../../../../src";
 import { URL } from "url";
 

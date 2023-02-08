@@ -19,7 +19,7 @@ import { InstanceChecker } from "../util/InstanceChecker";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class SoftDeleteQueryBuilder<Entity extends ObjectLiteral>
+export class SoftDeleteQueryBuilder<Entity extends BaseEntity>
     extends QueryBuilder<Entity>
     implements WhereExpressionBuilder
 {

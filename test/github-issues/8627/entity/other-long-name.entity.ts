@@ -5,7 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity({
     name: "real_long_name_t2",
 })

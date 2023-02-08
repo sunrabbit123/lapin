@@ -8,11 +8,12 @@ import { Brackets } from "./Brackets";
 import { DeleteResult } from "./result/DeleteResult";
 import { ReturningStatementNotSupportedError } from "../error/ReturningStatementNotSupportedError";
 import { InstanceChecker } from "../util/InstanceChecker";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class DeleteQueryBuilder<Entity extends ObjectLiteral>
+export class DeleteQueryBuilder<Entity extends BaseEntity>
     extends QueryBuilder<Entity>
     implements WhereExpressionBuilder
 {

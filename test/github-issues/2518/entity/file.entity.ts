@@ -13,7 +13,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 @Tree("closure-table")
 export class File {

@@ -1,5 +1,11 @@
 import { expect } from "chai";
-import { DataSource, DeepPartial, Repository } from "../../../src";
+import {
+    BaseEntity,
+    DataSource,
+    DeepPartial,
+    EntityTarget,
+    Repository,
+} from "../../../src";
 import "../../utils/test-setup";
 import {
     closeTestingConnections,
@@ -45,9 +51,9 @@ describe("github issues > #8681 DeepPartial simplification breaks the .create() 
     it("should .save() and .create() complex deep partial entities using a generic repository", () =>
         Promise.all(
             connections.map(async (connection) => {
-                class AbstractService<T extends object> {
+                class AbstractService<T extends BaseEntity> {
                     private repository: Repository<T>;
-                    constructor(target: any) {
+                    constructor(target: EntityTarget<T>) {
                         this.repository = new Repository(
                             target,
                             connection.manager,
@@ -59,7 +65,7 @@ describe("github issues > #8681 DeepPartial simplification breaks the .create() 
                     }
                 }
 
-                const thingService = new AbstractService<Thing>(Thing);
+                const thingService = new AbstractService(Thing);
 
                 const myThing: DeepPartial<Thing> = { id: 1 };
                 const thing = await thingService.create(myThing);

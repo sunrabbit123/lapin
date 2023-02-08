@@ -5,7 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 @Entity()
 export class Message extends BaseEntity {
     @PrimaryGeneratedColumn("increment", { type: "bigint" })

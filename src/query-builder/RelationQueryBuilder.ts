@@ -3,7 +3,6 @@ import { RelationUpdater } from "./RelationUpdater";
 import { RelationRemover } from "./RelationRemover";
 import { LapinError } from "../error";
 import { ObjectUtils } from "../util/ObjectUtils";
-import { ObjectLiteral } from "../common/ObjectLiteral";
 
 /**
  * Allows to work with entity relations and perform specific operations with those relations.
@@ -11,7 +10,7 @@ import { ObjectLiteral } from "../common/ObjectLiteral";
  * todo: add transactions everywhere
  */
 export class RelationQueryBuilder<
-    Entity extends ObjectLiteral,
+    Entity extends BaseEntity,
 > extends QueryBuilder<Entity> {
     readonly "@instanceof" = Symbol.for("RelationQueryBuilder");
 

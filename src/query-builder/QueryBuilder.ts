@@ -217,7 +217,7 @@ export abstract class QueryBuilder<Entity extends BaseEntity> {
     /**
      * Creates UPDATE query for the given entity and applies given update values.
      */
-    update<Entity extends ObjectLiteral>(
+    update<Entity extends BaseEntity>(
         entity: EntityTarget<Entity>,
         updateSet?: QueryDeepPartialEntity<Entity>,
     ): UpdateQueryBuilder<Entity>;

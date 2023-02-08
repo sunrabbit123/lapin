@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     Index,
@@ -10,7 +11,7 @@ import { Customer } from "./Customer";
 
 @Entity("CustomerContact")
 @Index(["firstName", "lastName"])
-export class CustomerContact {
+export class CustomerContact extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

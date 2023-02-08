@@ -5,7 +5,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
 } from "../../../../src";
-import { BaseEntity } from "../../../../src";
 import { LoadEvent } from "../../../../src/subscriber/event/LoadEvent";
 
 @Entity()

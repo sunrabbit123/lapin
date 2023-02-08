@@ -22,7 +22,7 @@ import { DriverUtils } from "../driver/DriverUtils";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class UpdateQueryBuilder<Entity extends ObjectLiteral>
+export class UpdateQueryBuilder<Entity extends BaseEntity>
     extends QueryBuilder<Entity>
     implements WhereExpressionBuilder
 {
