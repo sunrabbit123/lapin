@@ -1,5 +1,6 @@
 import {
     AfterRemove,
+    BaseEntity,
     BeforeInsert,
     Column,
     Entity,

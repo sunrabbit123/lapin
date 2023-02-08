@@ -1,5 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src";
-
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 export enum Role {
     GuildMaster = "Guild Master",
     Officer = "Officer",

@@ -1,5 +1,11 @@
 import { City } from "./city";
-import { Entity, ManyToMany, ManyToOne, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    ManyToMany,
+    ManyToOne,
+    PrimaryColumn,
+} from "../../../../src";
 import { Country } from "./country";
 
 @Entity()

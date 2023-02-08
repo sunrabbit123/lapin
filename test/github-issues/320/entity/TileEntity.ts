@@ -1,11 +1,17 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { ActivityEntity } from "./ActivityEntity";
 
 @Entity("tile")
-export class TileEntity {
+export class TileEntity extends BaseEntity {
     @PrimaryGeneratedColumn({ type: "bigint" })
     id: string;
 

@@ -6,7 +6,6 @@ import {
     BaseEntity,
 } from "../../../../src";
 import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import { Category } from "./Category";
 
 @Entity("questions")

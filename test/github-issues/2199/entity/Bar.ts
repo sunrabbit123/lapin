@@ -1,8 +1,13 @@
 import { Column, PrimaryGeneratedColumn } from "../../../../src";
-import { Entity } from "../../../../src/decorator/entity/Entity";
-
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 @Entity("bar")
-export class Bar {
+export class Bar extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

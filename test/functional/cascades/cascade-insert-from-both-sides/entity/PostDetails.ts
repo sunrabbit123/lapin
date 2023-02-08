@@ -1,7 +1,7 @@
 import { Entity } from "../../../../../src/decorator/entity/Entity";
-import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
 import { Post } from "./Post";
 import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";
+import { BaseEntity, PrimaryColumn } from "../../../../../src";
 
 @Entity()
 export class PostDetails extends BaseEntity {

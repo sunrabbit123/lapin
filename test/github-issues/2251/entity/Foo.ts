@@ -1,9 +1,15 @@
 import { Column, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { Bar } from "./Bar";
 
 @Entity("foo")
-export class Foo {
+export class Foo extends BaseEntity {
     @PrimaryGeneratedColumn() id: number;
 
     @Column({ default: "foo description" }) description: string;

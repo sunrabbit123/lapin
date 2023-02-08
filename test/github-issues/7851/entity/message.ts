@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from "../../../../src";
 import { User } from "./user";
 
 @Entity("Message")
-export class Message {
+export class Message extends BaseEntity {
     @PrimaryColumn({ type: "varbinary", length: 16 })
     id!: Buffer;
 

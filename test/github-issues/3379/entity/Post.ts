@@ -1,5 +1,5 @@
 import { Index, PrimaryGeneratedColumn } from "../../../../src";
-import { Column } from "../../../../src";
+import { BaseEntity, Column } from "../../../../src";
 import { Entity } from "../../../../src";
 
 @Index("name_index", ["name"])

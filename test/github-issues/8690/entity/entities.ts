@@ -5,6 +5,7 @@ import {
     OneToMany,
     JoinColumn,
     PrimaryColumn,
+    BaseEntity,
 } from "../../../../src";
 
 // This is a contrived and silly example of a primary

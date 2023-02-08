@@ -3,7 +3,8 @@ import {
     PrimaryGeneratedColumn,
     Column,
     OneToOne,
-} from "../../../../src/index";
+    BaseEntity,
+} from "../../../../src";
 import { Photo } from "./Photo";
 
 @Entity()

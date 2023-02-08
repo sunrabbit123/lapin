@@ -4,6 +4,7 @@ import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryColumn";
 import { Category } from "./Category";
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 
 @Entity()
 export class Tag extends BaseEntity {

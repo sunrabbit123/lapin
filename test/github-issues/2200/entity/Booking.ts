@@ -3,7 +3,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 import { Contact } from "./Contact";
 
 @Entity()

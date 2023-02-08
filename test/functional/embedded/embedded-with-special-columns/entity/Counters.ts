@@ -1,4 +1,6 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { CreateDateColumn } from "../../../../../src/decorator/columns/CreateDateColumn";
 import { UpdateDateColumn } from "../../../../../src/decorator/columns/UpdateDateColumn";
 import { DeleteDateColumn } from "../../../../../src/decorator/columns/DeleteDateColumn";

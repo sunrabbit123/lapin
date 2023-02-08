@@ -1,4 +1,5 @@
 import { Entity } from "../../../../../../../src/decorator/entity/Entity";
+import { BaseEntity } from "../../../../../../../src";
 import { ManyToOne } from "../../../../../../../src/decorator/relations/ManyToOne";
 import { Post } from "./Post";
 import { Category } from "./Category";

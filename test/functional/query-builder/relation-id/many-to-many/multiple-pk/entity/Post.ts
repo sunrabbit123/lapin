@@ -1,5 +1,6 @@
 import { ManyToMany } from "../../../../../../../src/decorator/relations/ManyToMany";
 import { Entity } from "../../../../../../../src/decorator/entity/Entity";
+import { BaseEntity } from "../../../../../../../src";
 import { Column } from "../../../../../../../src/decorator/columns/Column";
 import { JoinTable } from "../../../../../../../src/decorator/relations/JoinTable";
 import { PrimaryColumn } from "../../../../../../../src/decorator/columns/PrimaryColumn";

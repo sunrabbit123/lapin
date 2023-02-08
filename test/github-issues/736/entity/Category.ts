@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn } from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { Tree } from "../../../../src/decorator/tree/Tree";
 import { TreeParent } from "../../../../src/decorator/tree/TreeParent";
 import { TreeChildren } from "../../../../src/decorator/tree/TreeChildren";

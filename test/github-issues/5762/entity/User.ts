@@ -1,5 +1,11 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
-import { PrimaryColumn, Column } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
+import { PrimaryColumn, Column, BaseEntity } from "../../../../src";
 import { URL } from "url";
 
 @Entity()

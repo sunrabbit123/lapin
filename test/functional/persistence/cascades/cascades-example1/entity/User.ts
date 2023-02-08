@@ -1,4 +1,5 @@
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 import { Entity } from "../../../../../../src/decorator/entity/Entity";
 import { Profile } from "./Profile";
 import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne";

@@ -1,4 +1,10 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { ValueTransformer } from "../../../../src/decorator/options/ValueTransformer";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { Column } from "../../../../src/decorator/columns/Column";

@@ -1,6 +1,11 @@
 import { PrimaryGeneratedColumn } from "../../../../src";
-import { Entity } from "../../../../src/decorator/entity/Entity";
-
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 @Entity({
     name: "real_long_name_t2",
 })

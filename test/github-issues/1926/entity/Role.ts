@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { EventRole } from "./EventRole";
 import { OneToMany } from "../../../../src";
 

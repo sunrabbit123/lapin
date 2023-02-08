@@ -1,11 +1,12 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     PrimaryGeneratedColumn,
     OneToOne,
     ManyToOne,
     JoinColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 import { PhotoMetadata } from "./PhotoMetadata";
 import { Author } from "./Author";
 

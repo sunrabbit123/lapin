@@ -3,6 +3,7 @@ import {
     Entity,
     ManyToOne,
     PrimaryColumn,
+    BaseEntity,
 } from "../../../../src";
 import { Category } from "./Category";
 import { Post } from "./Post";

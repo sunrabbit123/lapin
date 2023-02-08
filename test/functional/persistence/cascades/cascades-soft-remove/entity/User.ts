@@ -5,6 +5,7 @@ import { Photo } from "./Photo";
 import { OneToMany } from "../../../../../../src/decorator/relations/OneToMany";
 import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 
 @Entity()

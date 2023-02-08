@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn } from "../../../../src";
-import { Column } from "../../../../src";
+import { BaseEntity, Column } from "../../../../src";
 import { TreeParent } from "../../../../src";
 import { TreeChildren } from "../../../../src";
 import { Entity } from "../../../../src";

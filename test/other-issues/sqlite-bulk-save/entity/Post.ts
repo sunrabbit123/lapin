@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
 export class Post extends BaseEntity {
@@ -9,6 +9,7 @@ export class Post extends BaseEntity {
     title: string;
 
     constructor(id?: number, title?: string) {
+        super();
         if (id) this.id = id;
         if (title) this.title = title;
     }

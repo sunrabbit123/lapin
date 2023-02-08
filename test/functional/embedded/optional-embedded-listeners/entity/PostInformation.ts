@@ -1,4 +1,6 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { BeforeInsert, BeforeUpdate } from "../../../../../src";
 import { PostCounter } from "./PostCounter";
 

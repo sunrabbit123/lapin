@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+} from "../../../../src";
 
 @Entity()
 export class Category extends BaseEntity {

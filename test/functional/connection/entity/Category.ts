@@ -4,7 +4,13 @@ import { BaseEntity } from "../../../../src";
 import { TreeParent } from "../../../../src/decorator/tree/TreeParent";
 import { TreeChildren } from "../../../../src/decorator/tree/TreeChildren";
 import { TreeLevelColumn } from "../../../../src/decorator/tree/TreeLevelColumn";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { Tree } from "../../../../src/decorator/tree/Tree";
 
 @Entity("CaTeGoRy")

@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 
 export enum UserRole {
     PLAYER = "PLAYER",

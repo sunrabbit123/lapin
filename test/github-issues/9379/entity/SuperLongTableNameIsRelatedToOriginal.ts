@@ -4,6 +4,7 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
+    BaseEntity,
 } from "../../../../src";
 import { SuperLongTableName } from "./SuperLongTableName";
 

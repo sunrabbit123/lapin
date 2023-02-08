@@ -4,7 +4,7 @@ import {
     JoinColumn,
     ManyToMany,
     JoinTable,
-} from "../../../../src/index";
+} from "../../../../src";
 
 import { TournamentParticipant } from "./TournamentParticipant";
 import { User } from "./User";

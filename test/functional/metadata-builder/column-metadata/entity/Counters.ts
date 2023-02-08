@@ -1,4 +1,6 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { Subcounters } from "./Subcounters";
 
 export class Counters {

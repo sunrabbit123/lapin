@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+} from "../../../../src";
 
 export enum AccountPermission {
     Thing1 = 1,
@@ -8,7 +13,7 @@ export enum AccountPermission {
 }
 
 @Entity("Roles")
-export class Roles {
+export class Roles extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

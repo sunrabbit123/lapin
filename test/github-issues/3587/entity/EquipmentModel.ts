@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+} from "../../../../src";
 
 export enum EquipmentModelType {
     Thing1 = 1,
@@ -8,7 +13,7 @@ export enum EquipmentModelType {
 }
 
 @Entity("equipmentmodels")
-export class EquipmentModel {
+export class EquipmentModel extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

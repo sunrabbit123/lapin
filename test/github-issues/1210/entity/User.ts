@@ -1,4 +1,10 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { ObjectIdColumn } from "../../../../src/decorator/columns/ObjectIdColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";

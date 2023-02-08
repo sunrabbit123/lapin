@@ -10,7 +10,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 
 export enum MessageType {
     TEXT,

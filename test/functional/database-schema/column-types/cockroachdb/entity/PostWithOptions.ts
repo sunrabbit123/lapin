@@ -1,4 +1,4 @@
-import { Entity } from "../../../../../../src";
+import { BaseEntity, Entity } from "../../../../../../src";
 import { PrimaryColumn } from "../../../../../../src";
 import { Column } from "../../../../../../src";
 

@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    OneToMany,
+    PrimaryColumn,
+} from "../../../../src";
 import { Post } from "./Post";
 
 @Entity()

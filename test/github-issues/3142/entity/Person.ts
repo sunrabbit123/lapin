@@ -1,5 +1,5 @@
 import { BaseEntity } from "../../../../src";
-import { Column } from "../../../../src";
+import { BaseEntity, Column } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src";
 import { Entity } from "../../../../src";
 import { Contact } from "./Contact";

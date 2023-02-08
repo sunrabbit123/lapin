@@ -2,6 +2,7 @@ import { PrimaryColumn } from "../../../../../../src/decorator/columns/PrimaryCo
 import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany";
 import { Entity } from "../../../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 import { RelationId } from "../../../../../../src/decorator/relations/RelationId";
 import { Category } from "./Category";

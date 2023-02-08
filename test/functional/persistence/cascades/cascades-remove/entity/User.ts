@@ -5,6 +5,7 @@ import { Photo } from "./Photo";
 import { OneToMany } from "../../../../../../src/decorator/relations/OneToMany";
 import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 
 @Entity()
 export class User extends BaseEntity {

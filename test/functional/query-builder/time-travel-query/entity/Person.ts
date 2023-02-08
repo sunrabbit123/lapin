@@ -3,7 +3,7 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index";
+} from "../../../../../src";
 import { Account } from "./Account";
 
 @Entity()

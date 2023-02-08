@@ -5,7 +5,7 @@ import {
     Column,
     OneToOne,
     JoinColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 
 import { TournamentGraph } from "./TournamentGraph";
 

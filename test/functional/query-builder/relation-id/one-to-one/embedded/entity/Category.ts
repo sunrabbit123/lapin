@@ -1,4 +1,5 @@
 import { Entity } from "../../../../../../../src/decorator/entity/Entity";
+import { BaseEntity } from "../../../../../../../src";
 import { Column } from "../../../../../../../src/decorator/columns/Column";
 import { PrimaryGeneratedColumn } from "../../../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Post } from "./Post";

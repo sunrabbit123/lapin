@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn } from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
 export class Party extends BaseEntity {

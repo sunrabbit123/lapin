@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn } from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { FruitEnum } from "../enum/FruitEnum";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";

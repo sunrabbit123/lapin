@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn, ManyToMany, Entity } from "../../../../src";
 import { Author } from "./Author";
 
 @Entity("book")
-export class Book {
+export class Book extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

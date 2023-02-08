@@ -3,7 +3,13 @@ import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";
 import { TreeParent } from "../../../../src/decorator/tree/TreeParent";
 import { TreeChildren } from "../../../../src/decorator/tree/TreeChildren";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { Tree } from "../../../../src/decorator/tree/Tree";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 

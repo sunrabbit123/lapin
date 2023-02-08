@@ -1,4 +1,6 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { PostCounter } from "./PostCounter";
 import { BeforeInsert } from "../../../../../src/decorator/listeners/BeforeInsert";
 import { Index } from "../../../../../src/decorator/Index";

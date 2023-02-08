@@ -1,4 +1,4 @@
-import { Column } from "../../../../../../src";
+import { BaseEntity, Column } from "../../../../../../src";
 import { Entity } from "../../../../../../src/decorator/entity/Entity";
 import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Answer } from "./Answer";

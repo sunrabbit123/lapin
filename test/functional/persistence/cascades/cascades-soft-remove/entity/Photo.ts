@@ -3,6 +3,7 @@ import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/
 import { ManyToOne } from "../../../../../../src/decorator/relations/ManyToOne";
 import { User } from "./User";
 import { Column } from "../../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../../src";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 
 @Entity()

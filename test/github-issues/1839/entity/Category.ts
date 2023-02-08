@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn } from "../../../../src";
+import { BaseEntity, Entity, PrimaryColumn } from "../../../../src";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Post } from "./Post";
 

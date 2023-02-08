@@ -1,5 +1,11 @@
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { LoadEvent } from "../../../../src/subscriber/event/LoadEvent";
 
 @Entity()

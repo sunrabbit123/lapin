@@ -1,6 +1,11 @@
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
-import { Entity } from "../../../../src/decorator/entity/Entity";
-
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 @Entity()
 export class AccessToken extends BaseEntity {
     @PrimaryColumn()

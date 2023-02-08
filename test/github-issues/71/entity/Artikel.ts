@@ -1,4 +1,10 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";
@@ -8,7 +14,7 @@ import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { Generated } from "../../../../src/decorator/Generated";
 
 @Entity("artikel")
-export class Artikel {
+export class Artikel extends BaseEntity {
     @PrimaryColumn({ name: "artikel_id" })
     @Generated()
     id: number;

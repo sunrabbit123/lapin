@@ -1,5 +1,11 @@
 import { Column, ManyToOne, PrimaryGeneratedColumn } from "../../../../src";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { Foo } from "./Foo";
 
 @Entity()

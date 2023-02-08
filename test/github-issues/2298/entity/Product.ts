@@ -1,4 +1,9 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { TicketProduct } from "./TicketProduct";
 
 @Entity()

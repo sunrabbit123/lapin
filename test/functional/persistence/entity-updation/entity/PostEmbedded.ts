@@ -1,4 +1,5 @@
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
+import { BaseEntity } from "../../../../../src";
 import { UpdateDateColumn } from "../../../../../src/decorator/columns/UpdateDateColumn";
 import { CreateDateColumn } from "../../../../../src/decorator/columns/CreateDateColumn";
 import { VersionColumn } from "../../../../../src/decorator/columns/VersionColumn";

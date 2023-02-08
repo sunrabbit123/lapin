@@ -1,5 +1,11 @@
 import { Index } from "../../../../src/decorator/Index";
-import { Entity } from "../../../../src/decorator/entity/Entity";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { Column } from "../../../../src/decorator/columns/Column";

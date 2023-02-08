@@ -1,5 +1,5 @@
-import { Entity } from "../../../../src";
-import { Column } from "../../../../src";
+import { BaseEntity, Entity } from "../../../../src";
+import { BaseEntity, Column } from "../../../../src";
 import { PrimaryColumn } from "../../../../src";
 
 @Entity()

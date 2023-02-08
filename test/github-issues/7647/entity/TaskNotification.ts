@@ -1,11 +1,10 @@
-import { Column, Entity, PrimaryColumn } from "../../../../src";
-
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 export enum TaskNotificationType {
     ASSIGNED,
 }
 
 @Entity("taskNotifications")
-export class TaskNotification {
+export class TaskNotification extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

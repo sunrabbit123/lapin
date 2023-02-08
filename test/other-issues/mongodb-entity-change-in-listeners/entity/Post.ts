@@ -1,6 +1,11 @@
-import { Entity } from "../../../../src/decorator/entity/Entity";
-import { Column } from "../../../../src/decorator/columns/Column";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { BaseEntity } from "../../../../src";
+import { Column } from "../../../../src/decorator/columns/Column";
 import { BeforeUpdate } from "../../../../src/decorator/listeners/BeforeUpdate";
 import { UpdateDateColumn } from "../../../../src/decorator/columns/UpdateDateColumn";
 import { AfterLoad, ObjectIdColumn } from "../../../../src";

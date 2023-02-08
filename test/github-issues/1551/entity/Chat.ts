@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     JoinTable,
@@ -6,7 +7,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 import { Message } from "./Message";
 import { User } from "./User";
 
@@ -33,6 +34,7 @@ export class Chat extends BaseEntity {
         owner,
         messages,
     }: ChatConstructor = {}) {
+        super();
         if (name) {
             this.name = name;
         }

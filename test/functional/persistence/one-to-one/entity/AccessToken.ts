@@ -1,4 +1,5 @@
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
+import { BaseEntity } from "../../../../../src";
 import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";

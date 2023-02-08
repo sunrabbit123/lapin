@@ -2,6 +2,8 @@ import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { Index } from "../../../../../src/decorator/Index";
 import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { Profile } from "./Profile";
 
 @Entity()

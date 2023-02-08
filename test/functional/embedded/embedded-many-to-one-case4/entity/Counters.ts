@@ -1,4 +1,6 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
 import { User } from "./User";

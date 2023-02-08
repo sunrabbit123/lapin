@@ -3,6 +3,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
+    BaseEntity,
 } from "../../../../src";
 
 import { UserPhoto } from "./UserPhoto";

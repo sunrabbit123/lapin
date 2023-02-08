@@ -2,6 +2,8 @@ import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
 import { Post } from "./Post";
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { PrimaryColumn } from "../../../../../src";
 
 @Entity()

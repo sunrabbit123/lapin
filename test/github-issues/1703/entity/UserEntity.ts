@@ -1,8 +1,13 @@
-import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { UserToOrganizationEntity } from "./UserToOrganizationEntity";
 
 @Entity("user")
-export class UserEntity {
+export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id?: number;
 

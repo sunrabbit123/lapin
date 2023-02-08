@@ -1,7 +1,12 @@
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
-import { Entity } from "../../../../src/decorator/entity/Entity";
-import { Column } from "../../../../src/decorator/columns/Column";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
 import { BaseEntity } from "../../../../src";
+import { Column } from "../../../../src/decorator/columns/Column";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";

@@ -7,8 +7,13 @@ import {
     UpdateDateColumn,
     CreateDateColumn,
 } from "../../../../src";
-import { Entity } from "../../../../src/decorator/entity/Entity";
-
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../../src";
+import { BaseEntity } from "../../../../src";
 @Entity()
 @Tree("closure-table")
 export class File {

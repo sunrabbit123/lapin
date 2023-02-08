@@ -2,7 +2,8 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     OneToOne,
-} from "../../../../src/index";
+    BaseEntity,
+} from "../../../../src";
 
 import { Tournament } from "./Tournament";
 

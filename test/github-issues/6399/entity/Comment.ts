@@ -4,6 +4,7 @@ import {
     Column,
     PrimaryGeneratedColumn,
     JoinColumn,
+    BaseEntity,
 } from "../../../../src";
 import { Post } from "./Post";
 

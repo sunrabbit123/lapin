@@ -3,8 +3,10 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
-} from "../../../../../src/index";
+} from "../../../../../src";
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { Category } from "./Category";
 
 @Entity()

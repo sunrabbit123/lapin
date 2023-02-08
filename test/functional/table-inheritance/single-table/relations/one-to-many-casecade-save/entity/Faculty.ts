@@ -1,8 +1,8 @@
 import { Column } from "../../../../../../../src/decorator/columns/Column";
+import { BaseEntity, OneToMany } from "../../../../../../../src";
 import { Entity } from "../../../../../../../src/decorator/entity/Entity";
 import { PrimaryGeneratedColumn } from "../../../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Staff } from "./Staff";
-import { OneToMany } from "../../../../../../../src";
 
 @Entity()
 export class Faculty extends BaseEntity {

@@ -1,7 +1,7 @@
-import { Column, Entity, ObjectIdColumn } from "../../../../src";
+import { BaseEntity, Column, Entity, ObjectIdColumn } from "../../../../src";
 
 @Entity("test")
-export class TestEntity {
+export class TestEntity extends BaseEntity {
     @ObjectIdColumn()
     _id: string;
 

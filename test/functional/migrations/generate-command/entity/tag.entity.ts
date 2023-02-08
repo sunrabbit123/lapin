@@ -1,9 +1,12 @@
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
+import { BaseEntity } from "../../../../../src";
 import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { BaseEntity } from "../../../../../src/repository/BaseEntity";
 import { Column } from "../../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../../src";
+
 import { Post } from "./post.entity";
 
 @Entity("tag_test")

@@ -4,7 +4,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from "../../../../src/index";
+} from "../../../../src";
 
 @Entity({
     orderBy: {
