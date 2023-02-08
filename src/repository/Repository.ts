@@ -1,5 +1,4 @@
 import { FindManyOptions } from "../find-options/FindManyOptions";
-import { ObjectLiteral } from "../common/ObjectLiteral";
 import { FindOneOptions } from "../find-options/FindOneOptions";
 import { DeepPartial } from "../common/DeepPartial";
 import { SaveOptions } from "./SaveOptions";
@@ -15,11 +14,12 @@ import { ObjectID } from "../driver/mongodb/typings";
 import { FindOptionsWhere } from "../find-options/FindOptionsWhere";
 import { UpsertOptions } from "./UpsertOptions";
 import { EntityTarget } from "../common/EntityTarget";
+import { BaseEntity } from "./BaseEntity";
 
 /**
  * Repository is supposed to work with your entity objects. Find entities, insert, update, delete, etc.
  */
-export class Repository<Entity extends ObjectLiteral> {
+export class Repository<Entity extends BaseEntity> {
     // -------------------------------------------------------------------------
     // Public Properties
     // -------------------------------------------------------------------------
@@ -162,10 +162,10 @@ export class Repository<Entity extends ObjectLiteral> {
      * Saves all given entities in the database.
      * If entities do not exist in the database then inserts, otherwise updates.
      */
-    save<T extends DeepPartial<Entity>>(
+    save<E, T extends DeepPartial<E>>(
         entities: T[],
         options: SaveOptions & { reload: false },
-    ): Promise<T[]>;
+    ): Promise<E[]>;
 
     /**
      * Saves all given entities in the database.

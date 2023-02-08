@@ -39,7 +39,6 @@ import { LapinError } from "../error";
 import { RelationIdLoader } from "../query-builder/RelationIdLoader";
 import { DriverUtils } from "../driver/DriverUtils";
 import { InstanceChecker } from "../util/InstanceChecker";
-import { ObjectLiteral } from "../common/ObjectLiteral";
 import { BaseEntity } from "../repository/BaseEntity";
 
 /**
@@ -444,7 +443,7 @@ export class DataSource {
     /**
      * Gets repository for the given entity.
      */
-    getRepository<Entity extends ObjectLiteral>(
+    getRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): Repository<Entity> {
         return this.manager.getRepository(target);
@@ -454,7 +453,7 @@ export class DataSource {
      * Gets tree repository for the given entity class or name.
      * Only tree-type entities can have a TreeRepository, like ones decorated with @Tree decorator.
      */
-    getTreeRepository<Entity extends ObjectLiteral>(
+    getTreeRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): TreeRepository<Entity> {
         return this.manager.getTreeRepository(target);
@@ -464,7 +463,7 @@ export class DataSource {
      * Gets mongodb-specific repository for the given entity class or name.
      * Works only if connection is mongodb-specific.
      */
-    getMongoRepository<Entity extends ObjectLiteral>(
+    getMongoRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): MongoRepository<Entity> {
         if (!(this.driver.options.type === "mongodb"))

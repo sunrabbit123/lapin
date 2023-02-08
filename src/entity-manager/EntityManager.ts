@@ -37,6 +37,7 @@ import { getMetadataArgsStorage } from "../globals";
 import { UpsertOptions } from "../repository/UpsertOptions";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { ObjectLiteral } from "../common/ObjectLiteral";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Entity manager supposed to work with any entity, automatically find its repository and call its methods,
@@ -175,7 +176,7 @@ export class EntityManager {
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder<Entity extends ObjectLiteral>(
+    createQueryBuilder<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         alias: string,
         queryRunner?: QueryRunner,
@@ -189,7 +190,7 @@ export class EntityManager {
     /**
      * Creates a new query builder that can be used to build a SQL query.
      */
-    createQueryBuilder<Entity extends ObjectLiteral>(
+    createQueryBuilder<Entity extends BaseEntity>(
         entityClass?: EntityTarget<Entity> | QueryRunner,
         alias?: string,
         queryRunner?: QueryRunner,
@@ -303,7 +304,7 @@ export class EntityManager {
     /**
      * Merges two entities into one new entity.
      */
-    merge<Entity extends ObjectLiteral>(
+    merge<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         mergeIntoEntity: Entity,
         ...entityLikes: DeepPartial<Entity>[]
@@ -326,7 +327,7 @@ export class EntityManager {
      * and returns this new entity. This new entity is actually a loaded from the db entity with all properties
      * replaced from the new object.
      */
-    async preload<Entity extends ObjectLiteral>(
+    async preload<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         entityLike: DeepPartial<Entity>,
     ): Promise<Entity | undefined> {
@@ -474,7 +475,7 @@ export class EntityManager {
     /**
      * Removes a given entity from the database.
      */
-    remove<Entity extends ObjectLiteral>(
+    remove<Entity extends BaseEntity>(
         targetOrEntity: (Entity | Entity[]) | EntityTarget<Entity>,
         maybeEntityOrOptions?: Entity | Entity[],
         maybeOptions?: RemoveOptions,
@@ -666,7 +667,7 @@ export class EntityManager {
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      * You can execute bulk inserts using this method.
      */
-    async insert<Entity extends ObjectLiteral>(
+    async insert<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
         entity:
             | QueryDeepPartialEntity<Entity>
@@ -679,7 +680,7 @@ export class EntityManager {
             .execute();
     }
 
-    async upsert<Entity extends ObjectLiteral>(
+    async upsert<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
         entityOrEntities:
             | QueryDeepPartialEntity<Entity>
@@ -749,7 +750,7 @@ export class EntityManager {
      * Does not check if entity exist in the database.
      * Condition(s) cannot be empty.
      */
-    update<Entity extends ObjectLiteral>(
+    update<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
         criteria:
             | string
@@ -804,7 +805,7 @@ export class EntityManager {
      * Does not check if entity exist in the database.
      * Condition(s) cannot be empty.
      */
-    delete<Entity extends ObjectLiteral>(
+    delete<Entity extends BaseEntity>(
         targetOrEntity: EntityTarget<Entity>,
         criteria:
             | string
@@ -858,7 +859,7 @@ export class EntityManager {
      * Does not check if entity exist in the database.
      * Condition(s) cannot be empty.
      */
-    softDelete<Entity extends ObjectLiteral>(
+    softDelete<Entity extends BaseEntity>(
         targetOrEntity: EntityTarget<Entity>,
         criteria:
             | string
@@ -912,7 +913,7 @@ export class EntityManager {
      * Does not check if entity exist in the database.
      * Condition(s) cannot be empty.
      */
-    restore<Entity extends ObjectLiteral>(
+    restore<Entity extends BaseEntity>(
         targetOrEntity: EntityTarget<Entity>,
         criteria:
             | string
@@ -962,7 +963,7 @@ export class EntityManager {
     /**
      * Checks whether any entity exists with the given condition
      */
-    exists<Entity extends ObjectLiteral>(
+    exists<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<boolean> {
@@ -980,7 +981,7 @@ export class EntityManager {
      * Counts entities that match given options.
      * Useful for pagination.
      */
-    count<Entity extends ObjectLiteral>(
+    count<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<number> {
@@ -998,7 +999,7 @@ export class EntityManager {
      * Counts entities that match given conditions.
      * Useful for pagination.
      */
-    countBy<Entity extends ObjectLiteral>(
+    countBy<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<number> {
@@ -1011,7 +1012,7 @@ export class EntityManager {
     /**
      * Finds entities that match given find options.
      */
-    async find<Entity extends ObjectLiteral>(
+    async find<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<Entity[]> {
@@ -1028,7 +1029,7 @@ export class EntityManager {
     /**
      * Finds entities that match given find options.
      */
-    async findBy<Entity extends ObjectLiteral>(
+    async findBy<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<Entity[]> {
@@ -1046,7 +1047,7 @@ export class EntityManager {
      * Also counts all entities that match given conditions,
      * but ignores pagination settings (from and take options).
      */
-    findAndCount<Entity extends ObjectLiteral>(
+    findAndCount<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options?: FindManyOptions<Entity>,
     ): Promise<[Entity[], number]> {
@@ -1065,7 +1066,7 @@ export class EntityManager {
      * Also counts all entities that match given conditions,
      * but ignores pagination settings (from and take options).
      */
-    findAndCountBy<Entity extends ObjectLiteral>(
+    findAndCountBy<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<[Entity[], number]> {
@@ -1088,7 +1089,7 @@ export class EntityManager {
      *     id: In([1, 2, 3])
      * })
      */
-    async findByIds<Entity extends ObjectLiteral>(
+    async findByIds<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         ids: any[],
     ): Promise<Entity[]> {
@@ -1108,7 +1109,7 @@ export class EntityManager {
      * Finds first entity by a given find options.
      * If entity was not found in the database - returns null.
      */
-    async findOne<Entity extends ObjectLiteral>(
+    async findOne<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options: FindOneOptions<Entity>,
     ): Promise<Entity | null> {
@@ -1139,7 +1140,7 @@ export class EntityManager {
      * Finds first entity that matches given where condition.
      * If entity was not found in the database - returns null.
      */
-    async findOneBy<Entity extends ObjectLiteral>(
+    async findOneBy<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<Entity | null> {
@@ -1164,7 +1165,7 @@ export class EntityManager {
      *     id: 1 // where "id" is your primary column name
      * })
      */
-    async findOneById<Entity extends ObjectLiteral>(
+    async findOneById<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         id: number | string | Date | ObjectID,
     ): Promise<Entity | null> {
@@ -1183,7 +1184,7 @@ export class EntityManager {
      * Finds first entity by a given find options.
      * If entity was not found in the database - rejects with error.
      */
-    async findOneOrFail<Entity extends ObjectLiteral>(
+    async findOneOrFail<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         options: FindOneOptions<Entity>,
     ): Promise<Entity> {
@@ -1203,7 +1204,7 @@ export class EntityManager {
      * Finds first entity that matches given where condition.
      * If entity was not found in the database - rejects with error.
      */
-    async findOneByOrFail<Entity extends ObjectLiteral>(
+    async findOneByOrFail<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     ): Promise<Entity> {
@@ -1239,7 +1240,7 @@ export class EntityManager {
     /**
      * Increments some column by provided value of the entities matched given conditions.
      */
-    async increment<Entity extends ObjectLiteral>(
+    async increment<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         conditions: any,
         propertyPath: string,
@@ -1276,7 +1277,7 @@ export class EntityManager {
     /**
      * Decrements some column by provided value of the entities matched given conditions.
      */
-    async decrement<Entity extends ObjectLiteral>(
+    async decrement<Entity extends BaseEntity>(
         entityClass: EntityTarget<Entity>,
         conditions: any,
         propertyPath: string,
@@ -1316,7 +1317,7 @@ export class EntityManager {
      * repository aggregator, where each repository is individually created for this entity manager.
      * When single database connection is not used, repository is being obtained from the connection.
      */
-    getRepository<Entity extends ObjectLiteral>(
+    getRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): Repository<Entity> {
         // find already created repository instance and return it if found
@@ -1351,7 +1352,7 @@ export class EntityManager {
      * repository aggregator, where each repository is individually created for this entity manager.
      * When single database connection is not used, repository is being obtained from the connection.
      */
-    getTreeRepository<Entity extends ObjectLiteral>(
+    getTreeRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): TreeRepository<Entity> {
         // tree tables aren't supported by some drivers (mongodb)
@@ -1377,7 +1378,7 @@ export class EntityManager {
     /**
      * Gets mongodb repository for the given entity class.
      */
-    getMongoRepository<Entity extends ObjectLiteral>(
+    getMongoRepository<Entity extends BaseEntity>(
         target: EntityTarget<Entity>,
     ): MongoRepository<Entity> {
         return this.connection.getMongoRepository<Entity>(target);
@@ -1388,15 +1389,18 @@ export class EntityManager {
      * sets current EntityManager instance to it. Used to work with custom repositories
      * in transactions.
      */
-    withRepository<Entity extends ObjectLiteral, R extends Repository<any>>(
-        repository: R & Repository<Entity>,
-    ): R {
+    withRepository<Entity extends BaseEntity, R extends BaseEntity>(
+        repository: Repository<R> & Repository<Entity>,
+    ): Repository<R> {
         const repositoryConstructor =
             repository.constructor as typeof Repository;
         const { target, manager, queryRunner, ...otherRepositoryProperties } =
             repository;
         return Object.assign(
-            new repositoryConstructor(repository.target, this) as R,
+            new repositoryConstructor(
+                repository.target,
+                this,
+            ) as unknown as Repository<R>,
             {
                 ...otherRepositoryProperties,
             },

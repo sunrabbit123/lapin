@@ -1,3 +1,4 @@
+import { BaseEntity } from "../../../../src";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { Entity } from "../../../../src/decorator/entity/Entity";
@@ -6,7 +7,7 @@ import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Role } from "./Role";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn() id: number;
 
     @PrimaryColumn() name: string;

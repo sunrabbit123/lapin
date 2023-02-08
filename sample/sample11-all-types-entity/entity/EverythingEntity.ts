@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "../../../src/index";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+} from "../../../src/index";
 import { CreateDateColumn } from "../../../src/decorator/columns/CreateDateColumn";
 import { UpdateDateColumn } from "../../../src/decorator/columns/UpdateDateColumn";
 
@@ -8,7 +13,7 @@ export enum SampleEnum {
 }
 
 @Entity("sample11_everything_entity")
-export class EverythingEntity {
+export class EverythingEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

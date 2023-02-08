@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
@@ -12,7 +13,7 @@ import { PostImage } from "./PostImage";
 import { PostMetadata } from "./PostMetadata";
 
 @Entity("sample3_post")
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -5,9 +5,10 @@ import { UpdateDateColumn } from "../../../../src/decorator/columns/UpdateDateCo
 import { OneToOne } from "../../../../src/decorator/relations/OneToOne";
 import { PostCategory } from "./PostCategory";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
+import { BaseEntity } from "../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

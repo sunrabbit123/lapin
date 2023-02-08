@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToMany,
@@ -15,7 +16,7 @@ import { JoinColumn } from "../../../src/decorator/relations/JoinColumn";
 import { JoinTable } from "../../../src/decorator/relations/JoinTable";
 
 @Entity("sample10_post")
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

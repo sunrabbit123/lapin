@@ -3,12 +3,13 @@ import {
     PrimaryGeneratedColumn,
     ManyToMany,
     JoinTable,
+    BaseEntity,
 } from "../../../../src";
 import { Column } from "../../../../src/decorator/columns/Column";
 import { Category } from "./Category";
 
 @Entity("questions")
-export class Question {
+export class Question extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
