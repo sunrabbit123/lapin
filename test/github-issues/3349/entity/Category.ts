@@ -3,7 +3,7 @@ import { Column } from "../../../../src";
 import { Entity } from "../../../../src";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     public id!: number;
 

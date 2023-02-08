@@ -3,7 +3,7 @@ import { PrimaryColumn, Column } from "../../../../src";
 import { URL } from "url";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

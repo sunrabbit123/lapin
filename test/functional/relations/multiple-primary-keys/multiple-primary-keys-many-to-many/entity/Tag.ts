@@ -6,7 +6,7 @@ import { Category } from "./Category";
 import { Column } from "../../../../../../src/decorator/columns/Column";
 
 @Entity()
-export class Tag {
+export class Tag extends BaseEntity {
     @Column()
     code: number;
 

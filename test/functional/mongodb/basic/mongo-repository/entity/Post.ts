@@ -5,7 +5,7 @@ import { ObjectID } from "../../../../../../src/driver/mongodb/typings";
 import { DeleteDateColumn } from "../../../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 
@@ -20,7 +20,7 @@ export class Post {
 }
 
 @Entity()
-export class PostWithDeleted {
+export class PostWithDeleted extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

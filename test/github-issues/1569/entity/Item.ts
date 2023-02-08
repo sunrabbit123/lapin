@@ -6,7 +6,7 @@ export class EmbeddedItem {
 }
 
 @Entity()
-export class Item {
+export class Item extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

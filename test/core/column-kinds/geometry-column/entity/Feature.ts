@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src";
 
 @Entity()
-export class FeatureWithoutSRID {
+export class FeatureWithoutSRID extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -13,7 +13,7 @@ export class FeatureWithoutSRID {
 }
 
 @Entity()
-export class FeatureWithSRID {
+export class FeatureWithSRID extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

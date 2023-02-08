@@ -7,7 +7,7 @@ import {
 import { Author } from "./Author";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

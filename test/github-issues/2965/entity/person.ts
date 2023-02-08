@@ -7,7 +7,7 @@ import {
 import { Note } from "./note";
 
 @Entity()
-export class Person {
+export class Person extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 

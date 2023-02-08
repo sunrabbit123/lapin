@@ -16,7 +16,7 @@ const trim: ValueTransformer = {
 };
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

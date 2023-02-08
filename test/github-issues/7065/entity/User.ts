@@ -8,7 +8,7 @@ import { Email } from "./Email";
 import { Phone } from "./Phone";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

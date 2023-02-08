@@ -16,7 +16,7 @@ const WrappedIntTransformer = {
 };
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn({
         type: Number,
         transformer: WrappedIntTransformer,
@@ -29,7 +29,7 @@ export class User {
 }
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryColumn({
         type: Number,
         transformer: WrappedIntTransformer,

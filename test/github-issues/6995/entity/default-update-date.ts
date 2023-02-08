@@ -6,7 +6,7 @@ import {
 } from "../../../../src";
 
 @Entity()
-export class DefaultUpdateDate {
+export class DefaultUpdateDate extends BaseEntity {
     @PrimaryGeneratedColumn({
         type: "int",
     })

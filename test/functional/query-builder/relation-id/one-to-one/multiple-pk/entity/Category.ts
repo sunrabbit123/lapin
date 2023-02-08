@@ -7,7 +7,7 @@ import { OneToOne } from "../../../../../../../src/decorator/relations/OneToOne"
 import { JoinColumn } from "../../../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -5,7 +5,7 @@ import { OneToMany } from "../../../../../../../src/decorator/relations/OneToMan
 import { PostCategory } from "./PostCategory";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

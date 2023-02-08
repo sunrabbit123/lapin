@@ -4,7 +4,7 @@ import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { Group } from "./Group";
 
 @Entity()
-export class Player {
+export class Player extends BaseEntity {
     @PrimaryColumn()
     email: string;
 

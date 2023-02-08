@@ -3,7 +3,7 @@ import { Column } from "../../../../src";
 import { PrimaryColumn } from "../../../../src";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn({
         type: "int4",
         unique: true,

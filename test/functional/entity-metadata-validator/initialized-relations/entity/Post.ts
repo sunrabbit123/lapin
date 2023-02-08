@@ -8,7 +8,7 @@ import { JoinTable } from "../../../../../src/decorator/relations/JoinTable";
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

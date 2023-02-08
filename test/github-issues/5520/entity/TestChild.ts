@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
-export class TestChild {
+export class TestChild extends BaseEntity {
     @Column()
     public value: string;
     @PrimaryGeneratedColumn("uuid")

@@ -5,7 +5,7 @@ import { ManyToOne } from "../../../../src";
 import { Author } from "./Author";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

@@ -4,7 +4,7 @@ import { Column } from "../../../../../src/decorator/columns/Column";
 import { Counters } from "./Counters";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

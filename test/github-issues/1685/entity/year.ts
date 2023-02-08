@@ -2,7 +2,7 @@ import { PrimaryColumn, Entity, OneToMany } from "../../../../src";
 import { Month } from "./month";
 
 @Entity()
-export class Year {
+export class Year extends BaseEntity {
     @PrimaryColumn()
     public yearNo: number;
 

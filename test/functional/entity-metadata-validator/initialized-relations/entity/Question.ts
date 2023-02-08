@@ -6,7 +6,7 @@ import { Category } from "./Category";
 import { JoinTable } from "../../../../../src/decorator/relations/JoinTable";
 
 @Entity()
-export class Question {
+export class Question extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

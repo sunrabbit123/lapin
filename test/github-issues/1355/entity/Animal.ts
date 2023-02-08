@@ -11,7 +11,7 @@ import { Category } from "./Category";
 import { Breed } from "./Breed";
 
 @Entity()
-export class Animal {
+export class Animal extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

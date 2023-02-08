@@ -3,7 +3,7 @@ import { PrimaryColumn } from "../../../../../../src";
 import { Column } from "../../../../../../src";
 
 @Entity()
-export class PostWithoutTypes {
+export class PostWithoutTypes extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

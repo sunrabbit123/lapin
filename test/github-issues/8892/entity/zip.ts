@@ -3,7 +3,7 @@ import { Entity, ManyToMany, ManyToOne, PrimaryColumn } from "../../../../src";
 import { Country } from "./country";
 
 @Entity()
-export class Zip {
+export class Zip extends BaseEntity {
     @PrimaryColumn({ length: 2 })
     countryCode: string;
 

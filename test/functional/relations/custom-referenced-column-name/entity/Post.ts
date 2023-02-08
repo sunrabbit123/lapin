@@ -8,7 +8,7 @@ import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";
 import { Tag } from "./Tag";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

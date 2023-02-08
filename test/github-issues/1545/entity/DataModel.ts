@@ -9,7 +9,7 @@ import { MainModel } from "./MainModel";
 import { ValidationModel } from "./ValidationModel";
 
 @Entity()
-export class DataModel {
+export class DataModel extends BaseEntity {
     @PrimaryColumn()
     validation: number;
 

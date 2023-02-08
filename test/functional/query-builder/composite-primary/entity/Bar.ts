@@ -3,7 +3,7 @@ import { ManyToOne, PrimaryColumn } from "../../../../../src";
 import { Foo } from "./Foo";
 
 @Entity()
-export class Bar {
+export class Bar extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

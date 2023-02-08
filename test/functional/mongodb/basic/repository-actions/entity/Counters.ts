@@ -3,7 +3,7 @@ import { Entity } from "../../../../../../src/decorator/entity/Entity";
 import { User } from "./User";
 
 @Entity()
-export class Counters {
+export class Counters extends BaseEntity {
     @Column({ name: "_likes" })
     likes: number;
 

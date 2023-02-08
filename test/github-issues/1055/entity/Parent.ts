@@ -1,11 +1,12 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Child } from "./Child";
 import { OneToMany } from "../../../../src/decorator/relations/OneToMany";
 
 @Entity()
-export class Parent {
+export class Parent extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 

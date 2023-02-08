@@ -7,7 +7,7 @@ import {
 import { Category } from "./Category";
 
 @Entity()
-export class RelationAsPrimaryKey {
+export class RelationAsPrimaryKey extends BaseEntity {
     @OneToOne(() => Category)
     @JoinColumn()
     category: Category;

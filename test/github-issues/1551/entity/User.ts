@@ -18,7 +18,7 @@ export interface UserConstructor {
 }
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     constructor({
         username,
         password,

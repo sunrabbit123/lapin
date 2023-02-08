@@ -1,12 +1,13 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { Post } from "./Post";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { Category } from "./Category";
 import { PrimaryColumn } from "../../../../src";
 
 @Entity()
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @PrimaryColumn()
     postId: number;
 

@@ -10,7 +10,7 @@ import { ViewB } from "./ViewB";
 import { ViewA } from "./ViewA";
 
 @Entity()
-export class TestEntity {
+export class TestEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

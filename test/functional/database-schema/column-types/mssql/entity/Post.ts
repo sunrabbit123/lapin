@@ -4,7 +4,7 @@ import { Column } from "../../../../../../src/decorator/columns/Column";
 import { FruitEnum } from "../enum/FruitEnum";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

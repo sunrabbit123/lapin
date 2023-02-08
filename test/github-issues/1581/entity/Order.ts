@@ -10,7 +10,7 @@ import {
 } from "../../../../src";
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
     @PrimaryColumn()
     deliverySlotId: number;
 

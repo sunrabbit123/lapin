@@ -6,7 +6,7 @@ import { ManyToMany } from "../../../../src";
 import { Category } from "./Category";
 
 @Entity()
-export class Note {
+export class Note extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

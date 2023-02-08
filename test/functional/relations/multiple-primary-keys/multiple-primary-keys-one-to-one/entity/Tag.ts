@@ -6,7 +6,7 @@ import { JoinColumn } from "../../../../../../src/decorator/relations/JoinColumn
 import { Category } from "./Category";
 
 @Entity()
-export class Tag {
+export class Tag extends BaseEntity {
     @Column()
     code: number;
 

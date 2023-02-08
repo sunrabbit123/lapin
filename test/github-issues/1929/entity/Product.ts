@@ -1,7 +1,7 @@
 import { Column, Entity, ObjectID, ObjectIdColumn } from "../../../../src";
 
 @Entity()
-export class Product {
+export class Product extends BaseEntity {
     constructor(name: string, label: string, price: number) {
         this.name = name;
         this.label = label;

@@ -9,7 +9,7 @@ export class EmbeddedEntityWithUniqueColumn {
 }
 
 @Entity()
-export class EmbeddedUQEntity {
+export class EmbeddedUQEntity extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

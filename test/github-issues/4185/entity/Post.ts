@@ -3,7 +3,7 @@ import { Entity } from "../../../../src/decorator/entity/Entity";
 import { LoadEvent } from "../../../../src/subscriber/event/LoadEvent";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

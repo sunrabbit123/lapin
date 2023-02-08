@@ -5,7 +5,7 @@ import { Counters } from "./Counters";
 import { ObjectID } from "../../../../../../src/driver/mongodb/typings";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

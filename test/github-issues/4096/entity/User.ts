@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column } from "../../../../src";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     email: string;
 

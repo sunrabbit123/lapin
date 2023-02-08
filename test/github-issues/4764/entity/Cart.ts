@@ -10,7 +10,7 @@ import { CartItems } from "./CartItems";
 import { User } from "./User";
 
 @Entity()
-export class Cart {
+export class Cart extends BaseEntity {
     @PrimaryGeneratedColumn()
     ID!: number;
 

@@ -8,7 +8,7 @@ import { ManyToMany } from "../../../../../../src/decorator/relations/ManyToMany
 import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

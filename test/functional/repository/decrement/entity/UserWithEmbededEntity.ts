@@ -12,7 +12,7 @@ class FriendStats {
 }
 
 @Entity()
-export class UserWithEmbededEntity {
+export class UserWithEmbededEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

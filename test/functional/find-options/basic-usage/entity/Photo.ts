@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryColumn } from "../../../../../src";
 import { Author } from "./Author";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from "../../../../../src";
 export type WithType<T> = T & { type: "Post" };
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn({ type: Number })
     id: number & { type: "Post" };
 

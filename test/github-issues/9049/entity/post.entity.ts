@@ -3,7 +3,7 @@ import { Comment } from "./comment";
 import { Column, Entity, ObjectIdColumn } from "../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     _id?: ObjectID;
 

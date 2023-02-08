@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/Primar
 import { Column, Entity } from "../../../../src";
 
 @Entity()
-export class ShortTableName {
+export class ShortTableName extends BaseEntity {
     @PrimaryGeneratedColumn() // typeORM requires a pkey
     PrimaryGeneratedColumnIDBlahBlahBlahThisIsReallyLong: number;
 

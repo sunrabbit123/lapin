@@ -7,7 +7,7 @@ import {
 import { Tournament } from "./Tournament";
 
 @Entity()
-export class TournamentGraph {
+export class TournamentGraph extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 

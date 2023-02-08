@@ -8,7 +8,7 @@ import { Column } from "../../../../../../src/decorator/columns/Column";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     // todo: check one-to-one relation as well, but in another model or test
 
     @PrimaryColumn()

@@ -3,7 +3,7 @@ import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { Category } from "./Category";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn({ collation: "utf8_unicode_ci", charset: "utf8" })
     id: string;
 

@@ -4,7 +4,7 @@ import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 
 @Entity()
-export class Animal {
+export class Animal extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

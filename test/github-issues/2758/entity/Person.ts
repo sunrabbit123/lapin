@@ -2,7 +2,7 @@ import { Entity, JoinColumn, OneToOne, PrimaryColumn } from "../../../../src";
 import { Party } from "./Party";
 
 @Entity()
-export class Person {
+export class Person extends BaseEntity {
     // Party ID also acts as PK for Person (ie. inheritance)
     @PrimaryColumn("uuid")
     id: string;

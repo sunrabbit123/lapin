@@ -4,7 +4,7 @@ import { GroupWithVeryLongName } from "./GroupWithVeryLongName";
 import { PostWithVeryLongName } from "./PostWithVeryLongName";
 
 @Entity()
-export class AuthorWithVeryLongName {
+export class AuthorWithVeryLongName extends BaseEntity {
     @PrimaryGeneratedColumn()
     authorId: number;
 

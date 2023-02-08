@@ -31,7 +31,7 @@ export type ArrayDefinedStringEnumType = "admin" | "editor" | "ghost";
 export type ArrayDefinedNumericEnumType = 11 | 12 | 13;
 
 @Entity()
-export class EnumEntity {
+export class EnumEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

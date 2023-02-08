@@ -2,7 +2,7 @@ import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "../../../../src";
 import { Album } from "./Album";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryColumn()
     id: string;
 

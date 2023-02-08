@@ -3,6 +3,7 @@ import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { Device } from "./Device";
 
 @Entity("device_instances")

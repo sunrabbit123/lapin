@@ -6,7 +6,7 @@ import {
 import { DataModel } from "./DataModel";
 
 @Entity()
-export class MainModel {
+export class MainModel extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

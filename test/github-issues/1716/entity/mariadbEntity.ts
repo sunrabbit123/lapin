@@ -1,7 +1,7 @@
 import { PrimaryColumn, Entity, Column } from "../../../../src";
 
 @Entity()
-export class MariadbEntity {
+export class MariadbEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

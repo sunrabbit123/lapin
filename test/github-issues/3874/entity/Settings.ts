@@ -5,7 +5,7 @@ enum Singleton {
 }
 
 @Entity()
-export class Settings {
+export class Settings extends BaseEntity {
     @PrimaryColumn()
     readonly singleton: Singleton = Singleton.EMPTY;
 

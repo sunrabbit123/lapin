@@ -2,7 +2,7 @@ import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
 import { TicketProduct } from "./TicketProduct";
 
 @Entity()
-export class Product {
+export class Product extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

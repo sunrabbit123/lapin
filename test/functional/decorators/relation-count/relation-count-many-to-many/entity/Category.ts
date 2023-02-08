@@ -8,7 +8,7 @@ import { Post } from "./Post";
 import { Image } from "./Image";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

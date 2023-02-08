@@ -6,7 +6,7 @@ import { Post } from "./Post";
 import { JoinTable } from "../../../../../src/decorator/relations/JoinTable";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

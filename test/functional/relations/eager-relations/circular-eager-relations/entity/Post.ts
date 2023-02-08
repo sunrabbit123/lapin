@@ -5,7 +5,7 @@ import { User } from "./User";
 import { ManyToOne } from "../../../../../../src/decorator/relations/ManyToOne";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -3,7 +3,7 @@ import { Order } from "./Order";
 import { Product } from "./Product";
 
 @Entity()
-export class OrderItem {
+export class OrderItem extends BaseEntity {
     @PrimaryColumn()
     orderId: number;
 

@@ -7,7 +7,7 @@ export enum Limit {
 }
 
 @Entity()
-export class MyTable {
+export class MyTable extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

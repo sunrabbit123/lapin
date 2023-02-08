@@ -5,7 +5,7 @@ import { PostInformation } from "./PostInformation";
 import { Index } from "../../../../../src/decorator/Index";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

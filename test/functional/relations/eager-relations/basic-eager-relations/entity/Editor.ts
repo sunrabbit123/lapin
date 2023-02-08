@@ -7,7 +7,7 @@ import { Post } from "./Post";
 import { PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class Editor {
+export class Editor extends BaseEntity {
     @PrimaryColumn()
     userId: number;
 

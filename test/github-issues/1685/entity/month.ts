@@ -9,7 +9,7 @@ import { Year } from "./year";
 import { UserMonth } from "./user-month";
 
 @Entity()
-export class Month {
+export class Month extends BaseEntity {
     @PrimaryColumn()
     public yearNo: number;
 

@@ -8,7 +8,7 @@ import {
 import { Category } from "./Category";
 
 @Entity()
-export class OneToOneRelationEntity {
+export class OneToOneRelationEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

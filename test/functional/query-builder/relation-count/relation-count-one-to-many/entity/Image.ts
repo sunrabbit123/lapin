@@ -5,7 +5,7 @@ import { Category } from "./Category";
 import { ManyToOne } from "../../../../../../src/decorator/relations/ManyToOne";
 
 @Entity()
-export class Image {
+export class Image extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

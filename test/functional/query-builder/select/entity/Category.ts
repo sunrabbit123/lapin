@@ -6,7 +6,7 @@ import { Post } from "./Post";
 import { OneToMany } from "../../../../../src";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

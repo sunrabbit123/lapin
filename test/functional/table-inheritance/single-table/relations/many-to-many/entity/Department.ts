@@ -5,7 +5,7 @@ import { ManyToMany } from "../../../../../../../src/decorator/relations/ManyToM
 import { Accountant } from "./Accountant";
 
 @Entity()
-export class Department {
+export class Department extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

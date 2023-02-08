@@ -8,7 +8,7 @@ import { Category } from "./Category";
 import { PostCategory } from "./PostCategory";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

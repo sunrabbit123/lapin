@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn } from "../../../../src";
 
 @Entity()
-export class Book {
+export class Book extends BaseEntity {
     @PrimaryColumn()
     ean: string;
 }

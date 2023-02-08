@@ -9,7 +9,7 @@ import {
 import { User } from "./User";
 
 @Entity()
-export class Company {
+export class Company extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -3,7 +3,7 @@ import { Column } from "../../../../../src/decorator/columns/Column";
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
 
 @Entity()
-export class PostBigInt {
+export class PostBigInt extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

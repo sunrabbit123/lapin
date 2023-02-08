@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "../../../../../src";
 
 @Entity()
-export class ExternalPost {
+export class ExternalPost extends BaseEntity {
     @PrimaryColumn()
     outlet: string;
 

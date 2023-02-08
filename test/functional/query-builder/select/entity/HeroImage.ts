@@ -7,7 +7,7 @@ import {
 import { Post } from "./Post";
 
 @Entity()
-export class HeroImage {
+export class HeroImage extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

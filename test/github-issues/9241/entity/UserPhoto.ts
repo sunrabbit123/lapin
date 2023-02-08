@@ -4,7 +4,7 @@ import { User } from "./User";
 import { Photo } from "./Photo";
 
 @Entity()
-export class UserPhoto {
+export class UserPhoto extends BaseEntity {
     @Column()
     isProfilePhoto: boolean;
 

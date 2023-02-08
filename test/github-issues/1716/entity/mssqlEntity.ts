@@ -1,7 +1,7 @@
 import { PrimaryColumn, Entity, Column } from "../../../../src";
 
 @Entity()
-export class MssqlEntity {
+export class MssqlEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

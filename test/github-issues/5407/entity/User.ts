@@ -2,7 +2,7 @@ import { PrimaryColumn, Column } from "../../../../src";
 import { Entity } from "../../../../src/decorator/entity/Entity";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

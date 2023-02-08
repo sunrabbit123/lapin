@@ -7,7 +7,7 @@ import { JoinTable } from "../../../../../../src/decorator/relations/JoinTable";
 import { Column } from "../../../../../../src/decorator/columns/Column";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     // todo: check one-to-one relation as well, but in another model or test
 
     @PrimaryColumn()

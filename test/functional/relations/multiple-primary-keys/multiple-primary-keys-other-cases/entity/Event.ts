@@ -7,7 +7,7 @@ import { EventMember } from "./EventMember";
 import { Person } from "./Person";
 
 @Entity()
-export class Event {
+export class Event extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

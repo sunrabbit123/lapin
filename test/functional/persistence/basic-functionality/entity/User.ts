@@ -3,7 +3,7 @@ import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../../src/decorator/columns/Column";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -3,7 +3,7 @@ import { Column } from "../../../../../src/decorator/columns/Column";
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
 
 @Entity()
-export class PostMultiplePrimaryKeys {
+export class PostMultiplePrimaryKeys extends BaseEntity {
     @PrimaryColumn()
     firstId: number;
 

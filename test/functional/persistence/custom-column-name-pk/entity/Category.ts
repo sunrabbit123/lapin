@@ -6,7 +6,7 @@ import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 import { Generated } from "../../../../../src/decorator/Generated";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn({ name: "theId" })
     @Generated()
     id: number;

@@ -5,7 +5,7 @@ import { User } from "./User";
 import { Column } from "../../../../../../src/decorator/columns/Column";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

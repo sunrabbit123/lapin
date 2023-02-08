@@ -3,7 +3,7 @@ import { EventRole } from "./EventRole";
 import { OneToMany } from "../../../../src";
 
 @Entity()
-export class Role {
+export class Role extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

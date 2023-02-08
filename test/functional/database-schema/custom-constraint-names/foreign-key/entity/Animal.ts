@@ -12,7 +12,7 @@ import { Breed } from "./Breed";
 import { Name } from "./Name";
 
 @Entity()
-export class Animal {
+export class Animal extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

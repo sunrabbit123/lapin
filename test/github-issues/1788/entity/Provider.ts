@@ -8,7 +8,7 @@ import {
 import { Personalization } from "./Personalization";
 
 @Entity()
-export class Provider {
+export class Provider extends BaseEntity {
     @PrimaryGeneratedColumn("uuid") public id: string;
 
     @Column() public name: string;

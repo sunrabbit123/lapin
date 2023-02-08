@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany } from "../../../../src";
 import { AuthorWithVeryLongName } from "./AuthorWithVeryLongName";
 
 @Entity()
-export class GroupWithVeryLongName {
+export class GroupWithVeryLongName extends BaseEntity {
     @PrimaryGeneratedColumn()
     groupId: number;
 

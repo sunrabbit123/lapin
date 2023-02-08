@@ -15,7 +15,7 @@ export interface RecipientConstructor {
 }
 
 @Entity()
-export class Recipient {
+export class Recipient extends BaseEntity {
     constructor({
         user,
         message,

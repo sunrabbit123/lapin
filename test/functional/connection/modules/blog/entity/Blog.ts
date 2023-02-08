@@ -3,7 +3,7 @@ import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/
 import { Column } from "../../../../../../src/decorator/columns/Column";
 
 @Entity()
-export class Blog {
+export class Blog extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

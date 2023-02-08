@@ -6,7 +6,7 @@ import { ManyToOne } from "../../../../../../src/decorator/relations/ManyToOne";
 import { JoinColumn } from "../../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Setting {
+export class Setting extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

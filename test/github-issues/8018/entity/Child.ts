@@ -9,7 +9,7 @@ import { Grandchild } from "./Grandchild";
 import { Parent } from "./Parent";
 
 @Entity()
-export class Child {
+export class Child extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

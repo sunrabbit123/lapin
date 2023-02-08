@@ -7,7 +7,7 @@ import {
 import { Student } from "./Student";
 
 @Entity()
-export class Teacher {
+export class Teacher extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -8,7 +8,7 @@ import {
 import { SuperLongTableName } from "./SuperLongTableName";
 
 @Entity()
-export class SuperLongTableNameWhichIsRelatedToOriginalTable {
+export class SuperLongTableNameWhichIsRelatedToOriginalTable extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

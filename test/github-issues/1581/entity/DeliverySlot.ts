@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
-export class DeliverySlot {
+export class DeliverySlot extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

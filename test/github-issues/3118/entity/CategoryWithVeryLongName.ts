@@ -1,10 +1,11 @@
 import { JoinTable, Entity, ManyToMany } from "../../../../src";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { PostWithVeryLongName } from "./PostWithVeryLongName";
 
 @Entity()
-export class CategoryWithVeryLongName {
+export class CategoryWithVeryLongName extends BaseEntity {
     @PrimaryGeneratedColumn()
     categoryId: number;
 

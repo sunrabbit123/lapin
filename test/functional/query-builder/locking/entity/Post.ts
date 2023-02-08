@@ -12,7 +12,7 @@ import { Tag } from "./Tag";
 import { Image } from "./Image";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

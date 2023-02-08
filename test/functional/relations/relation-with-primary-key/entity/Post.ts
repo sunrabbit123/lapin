@@ -5,7 +5,7 @@ import { Category } from "./Category";
 import { PrimaryColumn } from "../../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     categoryId: number;
 

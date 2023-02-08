@@ -4,7 +4,7 @@ import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Circle } from "./Circle";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     /**
      * User's identifier
      */

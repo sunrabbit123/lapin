@@ -4,7 +4,7 @@ import { Dog } from "./Dog";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 
 @Entity()
-export class Cat {
+export class Cat extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

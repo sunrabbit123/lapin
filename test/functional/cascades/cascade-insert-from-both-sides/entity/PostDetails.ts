@@ -4,7 +4,7 @@ import { Post } from "./Post";
 import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";
 
 @Entity()
-export class PostDetails {
+export class PostDetails extends BaseEntity {
     @PrimaryColumn()
     keyword: string;
 

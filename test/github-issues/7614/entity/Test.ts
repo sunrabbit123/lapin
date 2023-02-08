@@ -7,7 +7,7 @@ enum ExternalUserProvider {
 }
 
 @Entity()
-export class TestEntity {
+export class TestEntity extends BaseEntity {
     @PrimaryColumn({
         name: "provider",
         type: "enum",

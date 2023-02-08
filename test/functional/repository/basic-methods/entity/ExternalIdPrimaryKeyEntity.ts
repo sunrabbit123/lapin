@@ -9,7 +9,7 @@ export class EmbeddedEntity {
 }
 
 @Entity()
-export class ExternalIdPrimaryKeyEntity {
+export class ExternalIdPrimaryKeyEntity extends BaseEntity {
     @PrimaryColumn()
     externalId: string;
 

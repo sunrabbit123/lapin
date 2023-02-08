@@ -3,7 +3,7 @@ import { User } from "./User";
 import { StringDecoder } from "string_decoder";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryColumn("binary", {
         length: 2,
     })

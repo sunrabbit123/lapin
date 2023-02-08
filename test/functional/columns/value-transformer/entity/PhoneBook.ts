@@ -14,7 +14,7 @@ class PhonesTransformer implements ValueTransformer {
 }
 
 @Entity()
-export class PhoneBook {
+export class PhoneBook extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

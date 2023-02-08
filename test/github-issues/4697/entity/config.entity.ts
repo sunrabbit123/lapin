@@ -4,7 +4,7 @@ import { Entity, ObjectIdColumn, ObjectID, Column } from "../../../../src";
  * @deprecated use item config instead
  */
 @Entity()
-export class Config {
+export class Config extends BaseEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 

@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column } from "../../../../src";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn({
         comment: "The ID of this user.",
         length: 16,

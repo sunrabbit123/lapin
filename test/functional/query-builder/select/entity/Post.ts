@@ -14,7 +14,7 @@ import { Category } from "./Category";
 import { HeroImage } from "./HeroImage";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: string;
 

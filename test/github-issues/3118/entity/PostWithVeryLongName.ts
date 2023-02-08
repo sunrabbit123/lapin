@@ -4,7 +4,7 @@ import { ManyToMany, Entity, ManyToOne, Column } from "../../../../src";
 import { CategoryWithVeryLongName } from "./CategoryWithVeryLongName";
 
 @Entity()
-export class PostWithVeryLongName {
+export class PostWithVeryLongName extends BaseEntity {
     @PrimaryGeneratedColumn()
     postId: number;
 

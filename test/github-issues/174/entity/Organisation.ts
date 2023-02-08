@@ -1,10 +1,11 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { Contact } from "./Contact";
 
 @Entity()
-export class Organisation {
+export class Organisation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

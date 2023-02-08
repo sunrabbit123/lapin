@@ -7,7 +7,7 @@ import {
 import { Foo } from "./Foo";
 
 @Entity()
-export class Bar {
+export class Bar extends BaseEntity {
     @PrimaryGeneratedColumn("increment")
     id: number;
 

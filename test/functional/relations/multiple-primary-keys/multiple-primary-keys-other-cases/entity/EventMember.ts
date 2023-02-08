@@ -5,7 +5,7 @@ import { User } from "./User";
 import { PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class EventMember {
+export class EventMember extends BaseEntity {
     @PrimaryColumn()
     userId: number;
 

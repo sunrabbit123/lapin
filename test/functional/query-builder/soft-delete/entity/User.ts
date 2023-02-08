@@ -6,7 +6,7 @@ import { Photo } from "./Photo";
 import { JoinColumn, OneToOne } from "../../../../../src";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

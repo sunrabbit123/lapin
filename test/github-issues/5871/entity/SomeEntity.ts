@@ -7,7 +7,7 @@ enum Test {
 }
 
 @Entity()
-export class SomeEntity {
+export class SomeEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

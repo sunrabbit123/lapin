@@ -6,7 +6,7 @@ import {
 } from "../../../../src";
 
 @Entity()
-export class Configuration {
+export class Configuration extends BaseEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 

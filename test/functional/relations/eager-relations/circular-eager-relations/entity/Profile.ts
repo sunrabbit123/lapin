@@ -5,7 +5,7 @@ import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne";
 import { User } from "./User";
 
 @Entity()
-export class Profile {
+export class Profile extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -7,7 +7,7 @@ import { CategoryWithRelation } from "./CategoryWithRelation";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 
 @Entity()
-export class PostWithRelation {
+export class PostWithRelation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

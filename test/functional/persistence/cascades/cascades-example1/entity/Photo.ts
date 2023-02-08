@@ -3,7 +3,7 @@ import { Entity } from "../../../../../../src/decorator/entity/Entity";
 import { PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class Photo {
+export class Photo extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

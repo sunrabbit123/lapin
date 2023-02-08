@@ -3,7 +3,7 @@ import { PrimaryColumn, OneToMany } from "../../../../src";
 import { User } from "./User";
 
 @Entity()
-export class Role {
+export class Role extends BaseEntity {
     @PrimaryColumn()
     id: string;
 

@@ -1,7 +1,7 @@
 import { PrimaryColumn, Entity, Column } from "../../../../src";
 
 @Entity()
-export class MysqlEntity {
+export class MysqlEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -6,7 +6,7 @@ import { JoinColumn } from "../../../../../../src/decorator/relations/JoinColumn
 import { PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class Profile {
+export class Profile extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

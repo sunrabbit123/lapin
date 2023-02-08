@@ -3,7 +3,7 @@ import { RecordData } from "./RecordData";
 import { RecordConfig } from "./RecordConfig";
 
 @Entity()
-export class Record {
+export class Record extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

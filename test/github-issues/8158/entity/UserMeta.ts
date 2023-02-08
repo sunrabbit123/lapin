@@ -8,7 +8,7 @@ import {
 import { User } from "./User";
 
 @Entity()
-export class UserMeta {
+export class UserMeta extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

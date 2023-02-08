@@ -8,7 +8,7 @@ import { Image } from "./Image";
 import { RelationId } from "../../../../../../src/decorator/relations/RelationId";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

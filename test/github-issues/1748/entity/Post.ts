@@ -2,6 +2,7 @@ import { Entity } from "../../../../src/decorator/entity/Entity";
 import { ValueTransformer } from "../../../../src/decorator/options/ValueTransformer";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 
 export class Uuid {
     private value: string;
@@ -34,7 +35,7 @@ class UuidTransformer implements ValueTransformer {
 }
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn({ type: "uuid", transformer: new UuidTransformer() })
     id: Uuid;
 

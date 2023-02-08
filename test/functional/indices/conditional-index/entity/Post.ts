@@ -3,7 +3,7 @@ import { Index } from "../../../../../src/decorator/Index";
 
 @Index(["name", "text"], { where: `"name" IS NOT NULL AND "text" IS NOT NULL` })
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -2,7 +2,7 @@ import { Entity, OneToMany, PrimaryGeneratedColumn } from "../../../../src";
 import { Photo } from "./Photo";
 
 @Entity()
-export class Album {
+export class Album extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

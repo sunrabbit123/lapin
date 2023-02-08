@@ -5,7 +5,7 @@ import { Column } from "../../../../../../src/decorator/columns/Column";
 import { EventMember } from "./EventMember";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

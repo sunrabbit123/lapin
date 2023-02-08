@@ -5,7 +5,7 @@ import { Column } from "../../../../../src/decorator/columns/Column";
 import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

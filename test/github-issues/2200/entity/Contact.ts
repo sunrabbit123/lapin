@@ -6,7 +6,7 @@ import {
 import { Booking } from "./Booking";
 
 @Entity()
-export class Contact {
+export class Contact extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

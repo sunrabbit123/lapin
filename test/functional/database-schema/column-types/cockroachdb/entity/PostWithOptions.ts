@@ -3,7 +3,7 @@ import { PrimaryColumn } from "../../../../../../src";
 import { Column } from "../../../../../../src";
 
 @Entity()
-export class PostWithOptions {
+export class PostWithOptions extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -9,13 +9,13 @@ import {
 } from "../../../../src";
 
 @Entity()
-export class Relation {
+export class Relation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 }
 
 @Entity()
-export class OtherRelation {
+export class OtherRelation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 }

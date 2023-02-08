@@ -5,7 +5,7 @@ import { Staff } from "./Staff";
 import { OneToMany } from "../../../../../../../src";
 
 @Entity()
-export class Faculty {
+export class Faculty extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

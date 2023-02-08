@@ -7,7 +7,7 @@ import {
 } from "../../../../../src";
 
 @Entity()
-export class Tag {
+export class Tag extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -6,7 +6,7 @@ import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     key: number;
 

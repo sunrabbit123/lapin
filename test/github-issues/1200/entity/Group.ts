@@ -1,4 +1,5 @@
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { Post } from "./Post";
 
 export class Group {

@@ -7,7 +7,7 @@ import { Photo } from "./Photo";
 import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Details {
+export class Details extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

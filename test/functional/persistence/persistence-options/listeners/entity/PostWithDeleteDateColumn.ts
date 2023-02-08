@@ -5,7 +5,7 @@ import { DeleteDateColumn } from "../../../../../../src/decorator/columns/Delete
 import { AfterSoftRemove, BeforeSoftRemove } from "../../../../../../src";
 
 @Entity()
-export class PostWithDeleteDateColumn {
+export class PostWithDeleteDateColumn extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -33,7 +33,7 @@ export const lowercase: ValueTransformer = {
 };
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

@@ -8,7 +8,7 @@ import {
 
 @TableInheritance({ column: "type" })
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

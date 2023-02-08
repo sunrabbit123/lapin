@@ -8,7 +8,7 @@ import {
 import { Post } from "./Post";
 
 @Entity()
-export class Comment {
+export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

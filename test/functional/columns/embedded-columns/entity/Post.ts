@@ -4,7 +4,7 @@ import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/Pri
 import { Counters } from "./Counters";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

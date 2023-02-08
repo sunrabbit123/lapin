@@ -6,7 +6,7 @@ import { PrimaryColumn } from "../../../../../../../src/decorator/columns/Primar
 import { Category } from "./Category";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

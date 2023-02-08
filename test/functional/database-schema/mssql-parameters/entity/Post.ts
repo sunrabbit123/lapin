@@ -5,7 +5,7 @@ import { CreateDateColumn } from "../../../../../src/decorator/columns/CreateDat
 import { UpdateDateColumn } from "../../../../../src/decorator/columns/UpdateDateColumn";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

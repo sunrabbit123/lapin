@@ -5,7 +5,7 @@ import { Entity } from "../../../../../src";
 import { Column } from "../../../../../src";
 
 @Entity()
-export class Person {
+export class Person extends BaseEntity {
     @PrimaryGeneratedColumn("rowid")
     id: string;
 

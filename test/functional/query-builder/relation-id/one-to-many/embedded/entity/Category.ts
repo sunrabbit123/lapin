@@ -6,7 +6,7 @@ import { ManyToOne } from "../../../../../../../src/decorator/relations/ManyToOn
 import { JoinColumn } from "../../../../../../../src/decorator/relations/JoinColumn";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

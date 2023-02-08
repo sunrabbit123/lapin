@@ -6,7 +6,7 @@ import { User } from "./User";
 import { Generated } from "../../../../../src/decorator/Generated";
 
 @Entity()
-export class AccessToken {
+export class AccessToken extends BaseEntity {
     @PrimaryColumn()
     @Generated()
     primaryKey: number;

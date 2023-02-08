@@ -6,7 +6,7 @@ import { Image } from "./Image";
 import { PrimaryColumn } from "../../../../../../../src";
 
 @Entity()
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @PrimaryColumn()
     postId: number;
 

@@ -4,7 +4,7 @@ import { Entity } from "../../../../src";
 
 @Index("name_index", ["name"])
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

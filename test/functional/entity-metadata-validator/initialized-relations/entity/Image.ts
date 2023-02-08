@@ -5,7 +5,7 @@ import { ImageInfo } from "./ImageInfo";
 import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 
 @Entity()
-export class Image {
+export class Image extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

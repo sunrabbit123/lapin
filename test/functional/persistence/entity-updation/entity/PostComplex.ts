@@ -4,7 +4,7 @@ import { PostEmbedded } from "./PostEmbedded";
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
 
 @Entity()
-export class PostComplex {
+export class PostComplex extends BaseEntity {
     @PrimaryColumn()
     firstId: number;
 

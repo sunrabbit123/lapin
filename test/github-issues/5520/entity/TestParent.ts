@@ -7,7 +7,7 @@ import {
 import { TestChild } from "./TestChild";
 
 @Entity()
-export class TestParent {
+export class TestParent extends BaseEntity {
     @OneToOne("TestChild", {
         nullable: true,
         eager: true,

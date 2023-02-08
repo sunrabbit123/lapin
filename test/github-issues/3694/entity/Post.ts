@@ -1,9 +1,10 @@
 import { Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { FruitEnum } from "../enum/FruitEnum";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

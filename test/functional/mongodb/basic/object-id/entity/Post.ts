@@ -4,7 +4,7 @@ import { ObjectIdColumn } from "../../../../../../src/decorator/columns/ObjectId
 import { ObjectID } from "../../../../../../src/driver/mongodb/typings";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     nonIdNameOfObjectId: ObjectID;
 

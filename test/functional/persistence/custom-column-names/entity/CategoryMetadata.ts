@@ -5,7 +5,7 @@ import { OneToOne } from "../../../../../src/decorator/relations/OneToOne";
 import { Category } from "./Category";
 
 @Entity()
-export class CategoryMetadata {
+export class CategoryMetadata extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

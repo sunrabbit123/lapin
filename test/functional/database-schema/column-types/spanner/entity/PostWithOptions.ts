@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class PostWithOptions {
+export class PostWithOptions extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

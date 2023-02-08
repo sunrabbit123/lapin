@@ -1,5 +1,6 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 
 export class PersonalInfo {
@@ -19,7 +20,7 @@ export class UserInfo extends PersonalInfo {
 }
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -2,7 +2,7 @@ import { Column, Entity, ManyToMany, PrimaryColumn } from "../../../../../src";
 import { Post } from "./Post";
 
 @Entity()
-export class Tag {
+export class Tag extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -28,7 +28,7 @@ export interface MessageConstructor {
 }
 
 @Entity()
-export class Message {
+export class Message extends BaseEntity {
     constructor({
         sender,
         content,

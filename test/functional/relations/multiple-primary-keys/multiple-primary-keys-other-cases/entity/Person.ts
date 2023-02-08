@@ -6,7 +6,7 @@ import { User } from "./User";
 import { PrimaryColumn } from "../../../../../../src";
 
 @Entity()
-export class Person {
+export class Person extends BaseEntity {
     @PrimaryColumn()
     userId: number;
 

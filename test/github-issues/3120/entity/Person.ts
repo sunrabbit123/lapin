@@ -1,6 +1,7 @@
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
@@ -11,7 +12,7 @@ import { Company } from "./Company";
 import { Passport } from "./Passport";
 
 @Entity()
-export class Person {
+export class Person extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

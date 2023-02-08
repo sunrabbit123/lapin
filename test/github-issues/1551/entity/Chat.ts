@@ -22,7 +22,7 @@ export interface ChatConstructor {
 }
 
 @Entity()
-export class Chat {
+export class Chat extends BaseEntity {
     constructor({
         name,
         picture,

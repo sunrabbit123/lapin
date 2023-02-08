@@ -9,7 +9,7 @@ import {
 import { Zip } from "./zip";
 
 @Entity()
-export class City {
+export class City extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

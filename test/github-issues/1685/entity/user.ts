@@ -2,7 +2,7 @@ import { PrimaryColumn, Entity, OneToMany } from "../../../../src";
 import { UserMonth } from "./user-month";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     public username: string;
 

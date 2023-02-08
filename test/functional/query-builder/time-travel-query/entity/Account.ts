@@ -5,7 +5,7 @@ import {
 } from "../../../../../src/index";
 
 @Entity()
-export class Account {
+export class Account extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

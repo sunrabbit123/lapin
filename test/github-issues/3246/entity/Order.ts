@@ -12,7 +12,7 @@ import { OrderCustomer } from "./OrderCustomer";
 import { Broker } from "./Broker";
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

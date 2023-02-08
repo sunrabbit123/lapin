@@ -7,7 +7,7 @@ import {
 import { EventRole } from "./EventRole";
 
 @Entity()
-export class Event {
+export class Event extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

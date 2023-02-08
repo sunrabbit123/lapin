@@ -3,7 +3,7 @@ import { Product } from "./Product";
 import { Ticket } from "./Ticket";
 
 @Entity()
-export class TicketProduct {
+export class TicketProduct extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

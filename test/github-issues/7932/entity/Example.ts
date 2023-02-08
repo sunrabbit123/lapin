@@ -6,7 +6,7 @@ import {
 } from "../../../../src";
 
 @Entity()
-export class Example {
+export class Example extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id?: string;
 

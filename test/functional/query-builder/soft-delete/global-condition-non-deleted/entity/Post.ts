@@ -4,7 +4,7 @@ import { Column } from "../../../../../../src/decorator/columns/Column";
 import { DeleteDateColumn } from "../../../../../../src/decorator/columns/DeleteDateColumn";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

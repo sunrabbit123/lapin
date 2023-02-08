@@ -7,7 +7,7 @@ import {
 import { Cliente } from "./cliente";
 
 @Entity()
-export class TipoCliente {
+export class TipoCliente extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

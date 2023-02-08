@@ -4,9 +4,10 @@ import { OneToOne } from "../../../../src/decorator/relations/OneToOne";
 import { Request } from "./Request";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 
 @Entity()
-export class Ticket {
+export class Ticket extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

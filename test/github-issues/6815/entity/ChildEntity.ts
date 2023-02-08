@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn } from "../../../../src";
 
 @Entity()
-export class ChildEntity {
+export class ChildEntity extends BaseEntity {
     @PrimaryGeneratedColumn({ type: "bigint" })
     id: string;
 }

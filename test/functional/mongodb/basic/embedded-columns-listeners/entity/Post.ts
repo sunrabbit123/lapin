@@ -6,7 +6,7 @@ import { ObjectID } from "../../../../../../src/driver/mongodb/typings";
 import { Tags } from "./Tags";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

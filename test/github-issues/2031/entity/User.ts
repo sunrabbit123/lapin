@@ -7,7 +7,7 @@ import {
 import { Photo } from "./Photo";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

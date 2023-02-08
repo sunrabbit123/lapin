@@ -4,7 +4,7 @@ import { OneToMany } from "../../../../src/decorator/relations/OneToMany";
 import { Cat } from "./Cat";
 
 @Entity()
-export class Dog {
+export class Dog extends BaseEntity {
     @PrimaryColumn()
     DogID: string;
 

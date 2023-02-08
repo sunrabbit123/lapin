@@ -1,6 +1,7 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { OneToOne } from "../../../../src";
 import { Two } from "./Two";
 import { Three } from "./Three";
@@ -13,7 +14,7 @@ import { Nine } from "./Nine";
 import { Ten } from "./Ten";
 
 @Entity()
-export class One {
+export class One extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

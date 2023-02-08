@@ -14,7 +14,7 @@ export class Chapter {
 }
 
 @Entity()
-export class Book {
+export class Book extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

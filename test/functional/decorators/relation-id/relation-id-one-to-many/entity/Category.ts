@@ -6,7 +6,7 @@ import { RelationId } from "../../../../../../src/decorator/relations/RelationId
 import { Post } from "./Post";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

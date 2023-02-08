@@ -4,7 +4,7 @@ import { PrimaryGeneratedColumn } from "../../../../src";
 import { CreateDateColumn } from "../../../../src";
 
 @Entity()
-export class TestEntity {
+export class TestEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

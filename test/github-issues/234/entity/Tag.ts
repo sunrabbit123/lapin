@@ -3,9 +3,10 @@ import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/Primar
 import { Post } from "./Post";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 
 @Entity()
-export class Tag {
+export class Tag extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

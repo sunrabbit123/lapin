@@ -9,7 +9,7 @@ export class EmbeddedInThing {
 }
 
 @Entity()
-export class Thing {
+export class Thing extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
 

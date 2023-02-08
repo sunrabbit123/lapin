@@ -6,7 +6,7 @@ import { User } from "./User";
 import { Question } from "./Question";
 
 @Entity()
-export class Answer {
+export class Answer extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

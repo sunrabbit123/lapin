@@ -3,7 +3,7 @@ import { Event } from "./Event";
 import { Role } from "./Role";
 
 @Entity()
-export class EventRole {
+export class EventRole extends BaseEntity {
     @PrimaryColumn()
     eventId: string;
 

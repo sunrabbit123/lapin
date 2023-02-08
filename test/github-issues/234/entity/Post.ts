@@ -1,6 +1,7 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { Category } from "./Category";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
@@ -8,7 +9,7 @@ import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { Tag } from "./Tag";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

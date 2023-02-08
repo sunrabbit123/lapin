@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "../../../../../src";
 
 @Entity()
-export class View {
+export class View extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

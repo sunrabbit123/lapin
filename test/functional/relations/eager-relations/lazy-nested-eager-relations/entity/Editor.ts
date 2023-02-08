@@ -9,7 +9,7 @@ import {
 } from "../../../../../../src";
 
 @Entity()
-export class Editor {
+export class Editor extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

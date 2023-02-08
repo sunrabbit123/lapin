@@ -5,7 +5,7 @@ import { OneToOne } from "../../../../../../src/decorator/relations/OneToOne";
 import { PostWithRelation } from "./PostWithRelation";
 
 @Entity()
-export class CategoryWithRelation {
+export class CategoryWithRelation extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

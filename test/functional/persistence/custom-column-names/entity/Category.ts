@@ -8,7 +8,7 @@ import { JoinColumn } from "../../../../../src/decorator/relations/JoinColumn";
 import { CategoryMetadata } from "./CategoryMetadata";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

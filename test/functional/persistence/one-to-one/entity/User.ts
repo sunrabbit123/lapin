@@ -6,7 +6,7 @@ import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { Generated } from "../../../../../src/decorator/Generated";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryColumn()
     @Generated()
     primaryKey: number;

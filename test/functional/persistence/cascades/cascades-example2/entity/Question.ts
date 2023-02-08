@@ -5,7 +5,7 @@ import { Answer } from "./Answer";
 import { OneToMany } from "../../../../../../src/decorator/relations/OneToMany";
 
 @Entity()
-export class Question {
+export class Question extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

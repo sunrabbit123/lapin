@@ -1,10 +1,11 @@
 import { Entity } from "../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 import { UpdateDateColumn } from "../../../../src/decorator/columns/UpdateDateColumn";
 import { ObjectID, ObjectIdColumn } from "../../../../src";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @ObjectIdColumn()
     id: ObjectID;
 

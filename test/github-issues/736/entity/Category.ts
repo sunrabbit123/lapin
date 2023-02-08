@@ -3,6 +3,7 @@ import { Tree } from "../../../../src/decorator/tree/Tree";
 import { TreeParent } from "../../../../src/decorator/tree/TreeParent";
 import { TreeChildren } from "../../../../src/decorator/tree/TreeChildren";
 import { Column } from "../../../../src/decorator/columns/Column";
+import { BaseEntity } from "../../../../src";
 
 @Entity()
 @Tree("closure-table")

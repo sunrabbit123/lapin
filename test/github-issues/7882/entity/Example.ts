@@ -7,7 +7,7 @@ import {
 import { ExampleText } from "./ExampleText";
 
 @Entity()
-export class Example {
+export class Example extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

@@ -3,7 +3,7 @@ import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { Post } from "./Post";
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn({ collation: "ascii_general_ci", charset: "ascii" })
     id: string;
 

@@ -8,7 +8,7 @@ import {
 import { ChildEntity } from "./ChildEntity";
 
 @Entity()
-export class ParentEntity {
+export class ParentEntity extends BaseEntity {
     @PrimaryGeneratedColumn({ type: "bigint" })
     id: string;
 

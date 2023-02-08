@@ -8,7 +8,7 @@ import {
 import { Foo } from "./Foo";
 
 @Entity()
-export class Bar {
+export class Bar extends BaseEntity {
     @PrimaryColumn({ type: "varbinary", length: 16 })
     id: Buffer;
 

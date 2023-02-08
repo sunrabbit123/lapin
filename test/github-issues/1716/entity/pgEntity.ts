@@ -1,7 +1,7 @@
 import { PrimaryColumn, Entity, Column } from "../../../../src";
 
 @Entity()
-export class PgEntity {
+export class PgEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

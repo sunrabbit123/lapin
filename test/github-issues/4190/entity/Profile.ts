@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
 
 @Entity()
-export class Profile {
+export class Profile extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
