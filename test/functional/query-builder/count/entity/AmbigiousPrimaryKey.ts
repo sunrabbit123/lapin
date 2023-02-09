@@ -1,7 +1,7 @@
-import { Entity, PrimaryColumn } from "../../../../../src";
+import { BaseEntity, Entity, PrimaryColumn } from "../../../../../src";
 
 @Entity("ambig_primary_key")
-export class AmbigiousPrimaryKey {
+export class AmbigiousPrimaryKey extends BaseEntity {
     @PrimaryColumn()
     a: string;
 

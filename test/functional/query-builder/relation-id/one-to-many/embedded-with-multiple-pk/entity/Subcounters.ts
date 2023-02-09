@@ -4,7 +4,7 @@ import { PrimaryColumn } from "../../../../../../../src/decorator/columns/Primar
 import { OneToMany } from "../../../../../../../src/decorator/relations/OneToMany";
 import { User } from "./User";
 
-export class Subcounters {
+export class Subcounters extends BaseEntity {
     @PrimaryColumn()
     version: number;
 

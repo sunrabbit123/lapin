@@ -6,7 +6,7 @@ import { BeforeUpdate } from "../../../../../src/decorator/listeners/BeforeUpdat
 import { Index } from "../../../../../src/decorator/Index";
 
 @Index(["likes", "favorites"])
-export class PostCounter {
+export class PostCounter extends BaseEntity {
     @Column()
     likes: number;
 

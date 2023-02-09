@@ -5,7 +5,7 @@ import { OneToOne } from "../../../../../../../src/decorator/relations/OneToOne"
 import { JoinColumn } from "../../../../../../../src/decorator/relations/JoinColumn";
 import { User } from "./User";
 
-export class Subcounters {
+export class Subcounters extends BaseEntity {
     @PrimaryColumn()
     version: number;
 

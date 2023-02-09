@@ -5,7 +5,7 @@ import { BaseEntity } from "../../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 
 @Entity({ database: "testDB", schema: "questions" })
-export class Question {
+export class Question extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

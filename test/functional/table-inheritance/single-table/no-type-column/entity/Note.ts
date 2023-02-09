@@ -3,7 +3,7 @@ import { Person } from "./Person";
 
 @Lapin.Entity()
 @Lapin.TableInheritance({ column: { type: String, name: "type" } })
-export class Note {
+export class Note extends Lapin.BaseEntity {
     @Lapin.PrimaryGeneratedColumn()
     public id: number;
 

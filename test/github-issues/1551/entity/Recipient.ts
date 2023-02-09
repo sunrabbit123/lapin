@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     CreateDateColumn,
     Entity,
     ManyToOne,
@@ -22,6 +23,7 @@ export class Recipient extends BaseEntity {
         receivedAt,
         readAt,
     }: RecipientConstructor = {}) {
+        super();
         if (user) {
             this.user = user;
         }

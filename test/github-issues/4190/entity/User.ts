@@ -5,6 +5,7 @@ import {
     OneToMany,
     OneToOne,
     JoinColumn,
+    BaseEntity,
 } from "../../../../src";
 import { Photo } from "./Photo";
 import { Profile } from "./Profile";

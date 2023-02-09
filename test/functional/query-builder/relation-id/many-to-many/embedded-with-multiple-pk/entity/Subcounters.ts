@@ -5,7 +5,7 @@ import { JoinTable } from "../../../../../../../src/decorator/relations/JoinTabl
 import { PrimaryColumn } from "../../../../../../../src/decorator/columns/PrimaryColumn";
 import { User } from "./User";
 
-export class Subcounters {
+export class Subcounters extends BaseEntity {
     @PrimaryColumn()
     version: number;
 

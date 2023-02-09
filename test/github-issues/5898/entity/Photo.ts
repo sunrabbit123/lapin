@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryColumn,
+} from "../../../../src";
 import { Album } from "./Album";
 
 @Entity()

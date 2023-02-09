@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 import { Index } from "../../../../src/decorator/Index";
 
 @Index("Groups name", ["name"], { unique: true })

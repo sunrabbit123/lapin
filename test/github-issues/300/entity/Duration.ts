@@ -1,7 +1,7 @@
 import { Column } from "../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../src";
 
-export class Duration {
+export class Duration extends BaseEntity {
     @Column({ type: Number, nullable: true })
     minutes: number | null;
 

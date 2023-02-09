@@ -12,6 +12,7 @@ export class User extends BaseEntity {
     name: string;
 
     constructor(id: number, name: string) {
+        super();
         this.id = id;
         this.name = name;
     }
