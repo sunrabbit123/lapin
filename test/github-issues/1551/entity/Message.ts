@@ -38,7 +38,7 @@ export class Message extends BaseEntity {
         holders,
         chat,
     }: MessageConstructor = {}) {
-        super()
+        super();
         if (sender) {
             this.sender = sender;
         }

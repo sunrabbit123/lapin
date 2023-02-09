@@ -1,7 +1,7 @@
-import { Entity, PrimaryColumn } from "../../../../../src";
+import { BaseEntity, Entity, PrimaryColumn } from "../../../../../src";
 
 @Entity("tests")
-export class Test extends BaseEntity{
+export class Test extends BaseEntity {
     @PrimaryColumn()
     varcharField: string;
 

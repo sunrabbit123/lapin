@@ -15,7 +15,7 @@ import { Category } from "./Category";
         id: "DESC",
     },
 })
-export class Post extends BaseEntity{
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn({
         name: "s_post_id",
     })
