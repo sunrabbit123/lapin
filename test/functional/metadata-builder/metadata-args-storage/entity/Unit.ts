@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/Pri
 import { Column } from "../../../../../src/decorator/columns/Column";
 import { BaseEntity } from "../../../../../src";
 
-export class Unit {
+export class Unit extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 

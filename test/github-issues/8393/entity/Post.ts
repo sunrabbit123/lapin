@@ -3,6 +3,7 @@ import {
     Entity,
     UpdateDateColumn,
     PrimaryGeneratedColumn,
+    BaseEntity,
 } from "../../../../src";
 
 @Entity()

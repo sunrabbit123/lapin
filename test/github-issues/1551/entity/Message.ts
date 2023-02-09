@@ -2,6 +2,7 @@ import { Chat } from "./Chat";
 import { User } from "./User";
 import { Recipient } from "./Recipient";
 import {
+    BaseEntity,
     Column,
     CreateDateColumn,
     Entity,
@@ -37,6 +38,7 @@ export class Message extends BaseEntity {
         holders,
         chat,
     }: MessageConstructor = {}) {
+        super()
         if (sender) {
             this.sender = sender;
         }

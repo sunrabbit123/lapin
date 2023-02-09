@@ -6,7 +6,7 @@ import { BaseEntity } from "../../../../../src";
 
 @Entity()
 @Index("index_name_english", ["nameEnglish"], { unique: true })
-export class Customer {
+export class Customer extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

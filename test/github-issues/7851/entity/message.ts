@@ -1,4 +1,10 @@
-import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from "../../../../src";
+import {
+    Entity,
+    PrimaryColumn,
+    ManyToOne,
+    JoinColumn,
+    BaseEntity,
+} from "../../../../src";
 import { User } from "./user";
 
 @Entity("Message")

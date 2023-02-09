@@ -46,7 +46,7 @@ export class InsertQueryBuilder<
      */
     async execute(): Promise<InsertResult> {
         // console.time(".value sets");
-        const valueSets: ObjectLiteral[] = this.getValueSets();
+        const valueSets = this.getValueSets() as BaseEntity[];
         // console.timeEnd(".value sets");
 
         // If user passed empty array of entities then we don't need to do
@@ -230,7 +230,7 @@ export class InsertQueryBuilder<
     /**
      * Specifies INTO which entity's table insertion will be executed.
      */
-    into<T extends ObjectLiteral>(
+    into<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         columns?: string[],
     ): InsertQueryBuilder<T> {

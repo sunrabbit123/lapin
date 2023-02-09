@@ -3,6 +3,7 @@ import { ManyToOne } from "../../../../../../src/decorator/relations/ManyToOne";
 import { User } from "./User";
 import { Post } from "./Post";
 import {
+    BaseEntity,
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,

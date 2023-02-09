@@ -12,7 +12,7 @@ import { Product } from "./Product";
 
 @Entity({ name: "categories" })
 @Tree("materialized-path")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

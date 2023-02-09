@@ -5,10 +5,11 @@ import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
 import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 import { Index } from "../../../../../src/decorator/Index";
 import { Guest } from "./Guest";
+import { BaseEntity } from "../../../../../src";
 
 @Entity()
 @Index("author_and_title_unique", ["author", "title"], { unique: true })
-export class Comment {
+export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

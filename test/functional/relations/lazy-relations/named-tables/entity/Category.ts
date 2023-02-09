@@ -12,7 +12,7 @@ import { Post } from "./Post";
         id: "ASC",
     },
 })
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

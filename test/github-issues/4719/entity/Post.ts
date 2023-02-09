@@ -3,6 +3,7 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     ObjectLiteral,
+    BaseEntity,
 } from "../../../../src";
 
 @Entity()

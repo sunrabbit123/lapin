@@ -1,4 +1,4 @@
-import { DataSource } from "../../../../../src";
+import { BaseEntity, DataSource } from "../../../../../src";
 import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
 import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
 import { Category } from "./Category";
@@ -14,7 +14,7 @@ import { Post } from "./Post";
             .from(Post, "post")
             .leftJoin(Category, "category", "category.id = post.categoryId"),
 })
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @ViewColumn()
     id: number;
 

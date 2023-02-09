@@ -1,4 +1,4 @@
-import { DataSource, ValueTransformer } from "../../../../../src";
+import { BaseEntity, DataSource, ValueTransformer } from "../../../../../src";
 import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
 import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
 import { Album } from "./Album";
@@ -30,7 +30,7 @@ export const removeWhitespace: ValueTransformer = {
             .leftJoin(Album, "album", "album.id = photo.albumId")
             .where("album.name = 'Boeing photos'"),
 })
-export class PhotoAlbum {
+export class PhotoAlbum extends BaseEntity {
     @ViewColumn()
     id: number;
 

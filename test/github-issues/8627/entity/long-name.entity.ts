@@ -1,10 +1,5 @@
 import { PrimaryGeneratedColumn, ManyToMany, JoinTable } from "../../../../src";
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity } from "../../../../src";
 import {
     AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB,
     AnotherRealLongNameForAnEntityBecauseThisIsNecessaryC,
@@ -13,7 +8,7 @@ import {
 @Entity({
     name: "real_long_name_t1",
 })
-export class ThisIsARealLongNameForAnEntityBecauseThisIsNecessary {
+export class ThisIsARealLongNameForAnEntityBecauseThisIsNecessary extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

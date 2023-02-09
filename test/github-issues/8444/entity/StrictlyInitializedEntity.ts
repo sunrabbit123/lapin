@@ -14,6 +14,7 @@ export class StrictlyInitializedEntity extends BaseEntity {
     readonly someColumn: string;
 
     constructor(someColumn: string) {
+        super();
         if (someColumn === undefined) {
             throw new Error("someColumn cannot be undefined.");
         }

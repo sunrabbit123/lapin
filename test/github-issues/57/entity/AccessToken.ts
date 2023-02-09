@@ -1,13 +1,5 @@
 import { Generated } from "../../../../src";
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
-import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 import { OneToOne } from "../../../../src/decorator/relations/OneToOne";
 import { User } from "./User";
 

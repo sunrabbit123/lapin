@@ -88,7 +88,7 @@ export class Repository<Entity extends BaseEntity> {
      * Checks if entity has an id.
      * If entity composite compose ids, it will check them all.
      */
-    hasId(entity: Entity): boolean {
+    hasId(entity: Partial<Entity>): boolean {
         return this.manager.hasId(this.metadata.target, entity);
     }
 
@@ -398,7 +398,8 @@ export class Repository<Entity extends BaseEntity> {
             | Date[]
             | ObjectID
             | ObjectID[]
-            | FindOptionsWhere<Entity>,
+            | FindOptionsWhere<Entity>
+            | Entity,
     ): Promise<DeleteResult> {
         return this.manager.delete(
             this.metadata.target as any,

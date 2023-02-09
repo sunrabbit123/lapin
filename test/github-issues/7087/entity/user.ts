@@ -1,4 +1,3 @@
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import {
     BaseEntity,
     Column,

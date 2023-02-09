@@ -15,6 +15,7 @@ import { UpdateValuesMissingError } from "../error/UpdateValuesMissingError";
 import { LapinError } from "../error";
 import { DriverUtils } from "../driver/DriverUtils";
 import { InstanceChecker } from "../util/InstanceChecker";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
@@ -164,7 +165,7 @@ export class SoftDeleteQueryBuilder<Entity extends BaseEntity>
      * Specifies FROM which entity's table select/update/delete/soft-delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    from<T extends ObjectLiteral>(
+    from<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName?: string,
     ): SoftDeleteQueryBuilder<T> {

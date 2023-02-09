@@ -2,9 +2,10 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    BaseEntity as Base,
 } from "../../../../src";
 
-export class BaseEntity {
+export class BaseEntity extends Base {
     @PrimaryGeneratedColumn()
     id: number;
 

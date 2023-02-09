@@ -6,7 +6,7 @@ export class MyId {
 }
 
 @Entity({ name: "jsonb_key_tests" })
-export class JSONBKeyTest {
+export class JSONBKeyTest extends BaseEntity {
     @PrimaryColumn("jsonb")
     id: MyId;
 }

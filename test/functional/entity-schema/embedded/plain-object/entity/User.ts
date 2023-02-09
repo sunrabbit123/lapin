@@ -1,7 +1,7 @@
 import { Name, NameEntitySchema } from "./Name";
-import { EntitySchema } from "../../../../../../src";
+import { BaseEntity, EntitySchema } from "../../../../../../src";
 
-export interface User {
+export interface User extends BaseEntity {
     id: string;
     name: Name;
     isActive: boolean;

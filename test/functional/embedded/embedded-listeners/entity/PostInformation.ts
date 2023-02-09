@@ -5,7 +5,7 @@ import { PostCounter } from "./PostCounter";
 import { BeforeInsert } from "../../../../../src/decorator/listeners/BeforeInsert";
 import { Index } from "../../../../../src/decorator/Index";
 
-export class PostInformation {
+export class PostInformation extends BaseEntity{
     @Column()
     @Index()
     description: string;

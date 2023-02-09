@@ -2,7 +2,6 @@ import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColum
 import { BaseEntity } from "../../../../../src";
 import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../../src";
 
 @Entity()
 export class User extends BaseEntity {

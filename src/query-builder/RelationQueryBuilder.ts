@@ -3,6 +3,7 @@ import { RelationUpdater } from "./RelationUpdater";
 import { RelationRemover } from "./RelationRemover";
 import { LapinError } from "../error";
 import { ObjectUtils } from "../util/ObjectUtils";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Allows to work with entity relations and perform specific operations with those relations.

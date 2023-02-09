@@ -1,5 +1,5 @@
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
-import { Column, Entity, OneToMany } from "../../../../src";
+import { BaseEntity, Column, Entity, OneToMany } from "../../../../src";
 import { AuthorWithVeryLongName } from "./AuthorWithVeryLongName";
 
 @Entity()

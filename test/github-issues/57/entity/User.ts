@@ -1,15 +1,7 @@
 import { AccessToken } from "./AccessToken";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
 import { OneToOne } from "../../../../src/decorator/relations/OneToOne";
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
-import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 import { Generated } from "../../../../src/decorator/Generated";
 
 @Entity()

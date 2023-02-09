@@ -24,6 +24,7 @@ export class Setting extends BaseEntity {
     user: User;
 
     constructor(data: string) {
+        super();
         this.data = data;
     }
 }

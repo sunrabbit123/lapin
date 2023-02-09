@@ -10,7 +10,7 @@ import { Index } from "../../../../src/decorator/Index";
 
 @Entity()
 @Index("ignored_index", { synchronize: false })
-export class Teacher {
+export class Teacher extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

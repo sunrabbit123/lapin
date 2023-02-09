@@ -4,7 +4,7 @@ import { Category } from "./Category";
 import { Subcounters } from "./Subcounters";
 import { OneToMany } from "../../../../../../../src/decorator/relations/OneToMany";
 
-export class Counters {
+export class Counters extends BaseEntity {
     @Column()
     likes: number;
 

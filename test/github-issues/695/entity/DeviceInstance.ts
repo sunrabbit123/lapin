@@ -1,18 +1,11 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { JoinColumn } from "../../../../src/decorator/relations/JoinColumn";
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import { Device } from "./Device";
 
 @Entity("device_instances")
-export class DeviceInstance {
+export class DeviceInstance extends BaseEntity {
     @PrimaryColumn({ name: "id", type: "char", length: "36" })
     id: string;
 

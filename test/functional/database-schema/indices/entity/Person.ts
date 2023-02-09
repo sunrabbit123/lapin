@@ -7,7 +7,7 @@ import { Index } from "../../../../../src/decorator/Index";
 
 @Entity()
 @Index("IDX_TEST", ["firstname", "lastname"])
-export class Person {
+export class Person extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

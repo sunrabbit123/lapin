@@ -15,7 +15,6 @@ import { ObjectType } from "./common/ObjectType";
 import { MongoRepository } from "./repository/MongoRepository";
 import { SelectQueryBuilder } from "./query-builder/SelectQueryBuilder";
 import { ObjectUtils } from "./util/ObjectUtils";
-import { ObjectLiteral } from "./common/ObjectLiteral";
 import { BaseEntity } from "./repository/BaseEntity";
 
 /**

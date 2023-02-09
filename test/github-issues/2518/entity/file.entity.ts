@@ -2,20 +2,17 @@ import {
     Column,
     PrimaryGeneratedColumn,
     Tree,
+    BaseEntity,
     TreeParent,
     TreeChildren,
     UpdateDateColumn,
     CreateDateColumn,
-} from "../../../../src";
-import {
-    BaseEntity,
-    Column,
     Entity,
-    PrimaryGeneratedColumn,
 } from "../../../../src";
+
 @Entity()
 @Tree("closure-table")
-export class File {
+export class File extends BaseEntity {
     @PrimaryGeneratedColumn() id: number;
 
     @Column("text", {

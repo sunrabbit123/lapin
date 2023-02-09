@@ -4,16 +4,12 @@ import {
     Tree,
     TreeParent,
     TreeChildren,
-} from "../../../../src";
-import {
     BaseEntity,
-    Column,
     Entity,
-    PrimaryGeneratedColumn,
 } from "../../../../src";
 @Entity()
 @Tree("materialized-path")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -1,4 +1,10 @@
-import { Column, Entity, ObjectIdColumn, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    ObjectIdColumn,
+    PrimaryColumn,
+} from "../../../../src";
 
 @Entity("test")
 export class TestEntity extends BaseEntity {

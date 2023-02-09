@@ -117,7 +117,7 @@ export class DeleteQueryBuilder<Entity extends BaseEntity>
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    from<T extends ObjectLiteral>(
+    from<T extends BaseEntity>(
         entityTarget: EntityTarget<T>,
         aliasName?: string,
     ): DeleteQueryBuilder<T> {

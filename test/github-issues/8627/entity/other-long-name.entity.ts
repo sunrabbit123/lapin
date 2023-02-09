@@ -1,14 +1,8 @@
-import { PrimaryGeneratedColumn } from "../../../../src";
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 @Entity({
     name: "real_long_name_t2",
 })
-export class AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB {
+export class AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 }
@@ -16,7 +10,7 @@ export class AnotherReallyLongNameForAnEntityBecauseThisIsNecessaryB {
 @Entity({
     name: "real_long_name_t3",
 })
-export class AnotherRealLongNameForAnEntityBecauseThisIsNecessaryC {
+export class AnotherRealLongNameForAnEntityBecauseThisIsNecessaryC extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 }

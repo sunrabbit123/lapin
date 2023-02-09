@@ -2,7 +2,6 @@ import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColum
 import { BaseEntity } from "../../../../../src";
 import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { Column } from "../../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../../src";
 
 import { ManyToOne } from "../../../../../src/decorator/relations/ManyToOne";
 import { Post } from "./Post";
@@ -22,6 +21,7 @@ export class Category extends BaseEntity {
     post?: Post | null | number;
 
     constructor(id: number, name: string, post?: Post) {
+        super();
         this.id = id;
         this.name = name;
         if (post) this.post = post;

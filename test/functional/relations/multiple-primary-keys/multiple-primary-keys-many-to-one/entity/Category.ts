@@ -8,7 +8,7 @@ import { Unique } from "../../../../../../src";
 
 @Entity()
 @Unique(["code", "version", "description"])
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryColumn()
     name: string;
 

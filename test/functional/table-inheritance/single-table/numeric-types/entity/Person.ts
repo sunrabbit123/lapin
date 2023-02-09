@@ -6,7 +6,7 @@ import { PrimaryGeneratedColumn } from "../../../../../../src/decorator/columns/
 
 @Entity()
 @TableInheritance({ column: { name: "type", type: Number } })
-export class Person {
+export class Person extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -10,7 +10,7 @@ import { JoinColumn } from "../../../../../src";
 
 @Entity()
 @Tree("nested-set")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

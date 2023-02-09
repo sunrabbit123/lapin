@@ -78,14 +78,14 @@ describe("repository > basic methods", () => {
                 postWithZeroId.title = "Hello post";
                 postRepository.hasId(postWithZeroId).should.be.equal(true);
 
-                const userWithId: User = {
+                const userWithId: Partial<User> = {
                     id: 1,
                     firstName: "Jonh",
                     secondName: "Doe",
                 };
                 userRepository.hasId(userWithId).should.be.equal(true);
 
-                const userWithZeroId: User = {
+                const userWithZeroId: Partial<User> = {
                     id: 1,
                     firstName: "Jonh",
                     secondName: "Doe",
@@ -122,20 +122,20 @@ describe("repository > basic methods", () => {
                 postWithEmptyId.title = "Hello post";
                 postRepository.hasId(postWithEmptyId).should.be.equal(false);
 
-                const userWithoutId: User = {
+                const userWithoutId: Partial<User> = {
                     firstName: "Jonh",
                     secondName: "Doe",
                 };
                 userRepository.hasId(userWithoutId).should.be.equal(false);
 
-                const userWithNullId: User = {
+                const userWithNullId: Partial<User> = {
                     id: null,
                     firstName: "Jonh",
                     secondName: "Doe",
                 };
                 userRepository.hasId(userWithNullId).should.be.equal(false);
 
-                const userWithUndefinedId: User = {
+                const userWithUndefinedId: Partial<User> = {
                     id: undefined,
                     firstName: "Jonh",
                     secondName: "Doe",

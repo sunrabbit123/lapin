@@ -2,7 +2,6 @@ import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { BaseEntity } from "../../../../../src/repository/BaseEntity";
 import { PrimaryGeneratedColumn } from "../../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../../src";
 
 import { JoinTable, ManyToMany } from "../../../../../src";
 import { Category } from "./category.entity";

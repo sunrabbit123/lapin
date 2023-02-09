@@ -2,7 +2,7 @@ import * as Lapin from "../../../../../../src";
 import { Note } from "./Note";
 
 @Lapin.Entity({ name: "person" })
-export class Person {
+export class Person extends Lapin.BaseEntity {
     @Lapin.PrimaryGeneratedColumn()
     public id: number;
 

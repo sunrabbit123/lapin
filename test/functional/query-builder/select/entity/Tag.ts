@@ -1,5 +1,6 @@
 import { Post } from "./Post";
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToMany,

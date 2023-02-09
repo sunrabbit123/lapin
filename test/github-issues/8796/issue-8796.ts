@@ -11,7 +11,7 @@ import { User } from "../8796/entity/User";
 describe("github issues > #8796 New find select object api should support false values as expected", () => {
     let connections: Connection[];
 
-    const user: User = {
+    const user = {
         id: 1,
         firstName: "Christian",
         lastName: "Fleury",

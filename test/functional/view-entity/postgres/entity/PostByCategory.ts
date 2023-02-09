@@ -1,4 +1,4 @@
-import { DataSource } from "../../../../../src";
+import { BaseEntity, DataSource } from "../../../../../src";
 import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
 import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
 import { Category } from "./Category";
@@ -15,7 +15,7 @@ import { Post } from "./Post";
             .innerJoin(Category, "category", "category.id = post.categoryId")
             .groupBy("category.name"),
 })
-export class PostByCategory {
+export class PostByCategory extends BaseEntity {
     @ViewColumn()
     categoryName: string;
 

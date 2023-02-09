@@ -1,4 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "../../../../src";
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    BaseEntity,
+} from "../../../../src";
 
 export enum Realm {
     Blackrock = "Blackrock",

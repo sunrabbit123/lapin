@@ -1,11 +1,17 @@
-import { Entity, ObjectIdColumn, Column, ObjectID } from "../../../../src";
+import {
+    Entity,
+    ObjectIdColumn,
+    Column,
+    ObjectID,
+    BaseEntity,
+} from "../../../../src";
 
-export class Page {
+export class Page extends BaseEntity {
     @Column()
     number: number;
 }
 
-export class Chapter {
+export class Chapter extends BaseEntity {
     @Column()
     title: string;
 

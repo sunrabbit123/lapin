@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Entity,
     JoinTable,
     ManyToMany,
@@ -11,7 +12,7 @@ import { Child2 } from "./Child2";
 import { Shared } from "./Shared";
 
 @Entity()
-export class Root {
+export class Root extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     public id?: string;
 

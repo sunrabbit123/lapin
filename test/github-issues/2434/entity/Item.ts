@@ -1,5 +1,4 @@
 import { CreateDateColumn, Column } from "../../../../src";
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
 import {
     BaseEntity,
     Column,

@@ -1,6 +1,4 @@
 import { Column } from "../../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../../src";
-
 import { Entity } from "../../../../../src/decorator/entity/Entity";
 import { ManyToMany } from "../../../../../src/decorator/relations/ManyToMany";
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";

@@ -4,12 +4,13 @@ import {
     RelationId,
     OneToMany,
     Entity,
+    BaseEntity,
 } from "../../../../src";
 import { Root } from "./Root";
 import { Shared } from "./Shared";
 
 @Entity()
-export class Child2 {
+export class Child2 extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     public id?: string;
 

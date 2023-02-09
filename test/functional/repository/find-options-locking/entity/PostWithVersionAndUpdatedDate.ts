@@ -7,7 +7,7 @@ import { VersionColumn } from "../../../../../src/decorator/columns/VersionColum
 import { UpdateDateColumn } from "../../../../../src/decorator/columns/UpdateDateColumn";
 
 @Entity("post_with_v_ud")
-export class PostWithVersionAndUpdatedDate {
+export class PostWithVersionAndUpdatedDate extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

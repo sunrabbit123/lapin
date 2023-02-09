@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity } from "../../../../src";
 import { Unique } from "../../../../src/decorator/Unique";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { Check } from "../../../../src/decorator/Check";
@@ -14,7 +9,7 @@ import { Exclusion } from "../../../../src/decorator/Exclusion";
 @Exclusion(`USING gist ("text" WITH =)`)
 @Check(`"likesCount" < 1000`)
 // @Check(`\`likesCount\` < 1000`) // should be properly escaped for each driver.
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

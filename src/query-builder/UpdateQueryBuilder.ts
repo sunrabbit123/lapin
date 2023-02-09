@@ -18,6 +18,7 @@ import { LapinError } from "../error";
 import { EntityPropertyNotFoundError } from "../error/EntityPropertyNotFoundError";
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
 import { DriverUtils } from "../driver/DriverUtils";
+import { BaseEntity } from "../repository/BaseEntity";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.

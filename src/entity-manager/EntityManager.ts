@@ -36,7 +36,6 @@ import { ObjectUtils } from "../util/ObjectUtils";
 import { getMetadataArgsStorage } from "../globals";
 import { UpsertOptions } from "../repository/UpsertOptions";
 import { InstanceChecker } from "../util/InstanceChecker";
-import { ObjectLiteral } from "../common/ObjectLiteral";
 import { BaseEntity } from "../repository/BaseEntity";
 
 /**

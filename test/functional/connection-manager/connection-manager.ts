@@ -6,6 +6,7 @@ import { MysqlDriver } from "../../../src/driver/mysql/MysqlDriver";
 import { PrimaryGeneratedColumn } from "../../../src/decorator/columns/PrimaryGeneratedColumn";
 import { Column } from "../../../src/decorator/columns/Column";
 import { Entity } from "../../../src/decorator/entity/Entity";
+import { BaseEntity } from "../../../src";
 
 // Uncomment when testing the aurora data API driver
 // import {AuroraMysqlDriver} from "../../../src/driver/aurora-mysql/AuroraMysqlDriver";
@@ -15,7 +16,7 @@ import { Entity } from "../../../src/decorator/entity/Entity";
 
 describe("ConnectionManager", () => {
     @Entity()
-    class Post {
+    class Post extends BaseEntity {
         @PrimaryGeneratedColumn()
         id: number;
 
@@ -23,6 +24,7 @@ describe("ConnectionManager", () => {
         title: string;
 
         constructor(id: number, title: string) {
+            super();
             this.id = id;
             this.title = title;
         }

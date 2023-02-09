@@ -3,7 +3,6 @@ import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 import { PrimaryColumn } from "../../../../../src/decorator/columns/PrimaryColumn";
 import { BaseEntity } from "../../../../../src";
 import { Column } from "../../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../../src";
 
 import { Post } from "./Post";
 

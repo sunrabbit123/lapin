@@ -9,7 +9,7 @@ import { UserEntity } from "./UserEntity";
 import { OrganizationEntity } from "./OrganizationEntity";
 
 @Entity("user_organization")
-export class UserToOrganizationEntity {
+export class UserToOrganizationEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -1,5 +1,11 @@
 import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
-import { Column, Entity, ManyToOne, OneToMany } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+} from "../../../../src";
 import { GroupWithVeryLongName } from "./GroupWithVeryLongName";
 import { PostWithVeryLongName } from "./PostWithVeryLongName";
 
