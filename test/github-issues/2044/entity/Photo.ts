@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    ManyToOne,
+    PrimaryColumn,
+} from "../../../../src";
 import { User } from "./User";
 import { StringDecoder } from "string_decoder";
 

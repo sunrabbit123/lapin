@@ -1,12 +1,5 @@
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import { TableInheritance } from "../../../../src/decorator/entity/TableInheritance";
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 
 export enum PersonType {
@@ -17,7 +10,7 @@ export enum PersonType {
 
 @Entity("issue184_person")
 @TableInheritance({ column: { name: "type", type: "int" } })
-export abstract class Person {
+export abstract class Person extends BaseEntity {
     @PrimaryColumn()
     id: string;
 

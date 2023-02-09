@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, PrimaryColumn } from "../../../../src";
 import { Order } from "./order";
 
 @Entity({ name: "order_test" })
-export class OrderTestEntity {
+export class OrderTestEntity extends BaseEntity {
     @PrimaryColumn()
     id: number;
 

@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Entity,
     JoinColumn,
     OneToOne,
@@ -22,7 +23,7 @@ export class OtherRelation extends BaseEntity {
 
 @Entity()
 @Tree("closure-table")
-export class RelationClosure {
+export class RelationClosure extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -43,7 +44,7 @@ export class RelationClosure {
 
 @Entity()
 @Tree("nested-set")
-export class RelationNested {
+export class RelationNested extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -64,7 +65,7 @@ export class RelationNested {
 
 @Entity()
 @Tree("materialized-path")
-export class RelationMaterialized {
+export class RelationMaterialized extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 

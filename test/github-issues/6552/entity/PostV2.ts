@@ -1,6 +1,4 @@
 import { ObjectID, ObjectIdColumn } from "../../../../src";
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import {
     BaseEntity,
     Column,
@@ -8,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from "../../../../src";
 @Entity()
-export class PostV2 {
+export class PostV2 extends BaseEntity {
     @ObjectIdColumn()
     postId: ObjectID;
 

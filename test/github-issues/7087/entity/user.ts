@@ -1,11 +1,6 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 @Entity({ name: "users", synchronize: false })
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: number;
 }

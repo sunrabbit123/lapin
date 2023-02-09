@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, OneToMany } from "../../../../src";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    OneToMany,
+    BaseEntity,
+} from "../../../../src";
 import { DataModel } from "./DataModel";
 
 @Entity()

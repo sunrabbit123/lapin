@@ -1,4 +1,4 @@
-import { Entity } from "../../../../src";
+import { BaseEntity, Entity } from "../../../../src";
 import { PrimaryGeneratedColumn } from "../../../../src";
 import { Column, VersionColumn } from "../../../../src";
 

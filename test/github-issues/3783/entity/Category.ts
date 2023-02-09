@@ -7,7 +7,7 @@ import { Tree } from "../../../../src";
 
 @Entity()
 @Tree("closure-table")
-export class Category {
+export class Category extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: number;
 

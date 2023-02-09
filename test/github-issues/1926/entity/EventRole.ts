@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    ManyToOne,
+    PrimaryColumn,
+} from "../../../../src";
 import { Event } from "./Event";
 import { Role } from "./Role";
 

@@ -5,9 +5,6 @@ import {
     PrimaryGeneratedColumn,
 } from "../../../../src";
 import { Index } from "../../../../src/decorator/Index";
-import { PrimaryGeneratedColumn } from "../../../../src/decorator/columns/PrimaryGeneratedColumn";
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { Platform } from "./Platform";

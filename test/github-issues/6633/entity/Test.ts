@@ -1,4 +1,10 @@
-import { Entity, PrimaryColumn, Index, Column } from "../../../../src";
+import {
+    Entity,
+    PrimaryColumn,
+    Index,
+    Column,
+    BaseEntity,
+} from "../../../../src";
 
 @Entity()
 export class Test extends BaseEntity {

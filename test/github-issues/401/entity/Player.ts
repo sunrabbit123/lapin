@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 import { ManyToOne } from "../../../../src/decorator/relations/ManyToOne";
 import { Group } from "./Group";

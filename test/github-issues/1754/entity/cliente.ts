@@ -4,6 +4,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
+    BaseEntity,
 } from "../../../../src";
 import { TipoCliente } from "./tipo-cliente";
 

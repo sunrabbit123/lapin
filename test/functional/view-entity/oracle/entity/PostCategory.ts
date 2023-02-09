@@ -1,4 +1,4 @@
-import { ValueTransformer } from "../../../../../src";
+import { BaseEntity, ValueTransformer } from "../../../../../src";
 import { ViewColumn } from "../../../../../src/decorator/columns/ViewColumn";
 import { ViewEntity } from "../../../../../src/decorator/entity-view/ViewEntity";
 
@@ -13,7 +13,7 @@ export const uppercase: ValueTransformer = {
     LEFT JOIN "category" "category" ON "post"."categoryId" = "category"."id"
 `,
 })
-export class PostCategory {
+export class PostCategory extends BaseEntity {
     @ViewColumn()
     id: number;
 

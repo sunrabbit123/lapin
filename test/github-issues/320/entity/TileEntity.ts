@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { ManyToMany } from "../../../../src/decorator/relations/ManyToMany";
 import { JoinTable } from "../../../../src/decorator/relations/JoinTable";
 import { ActivityEntity } from "./ActivityEntity";

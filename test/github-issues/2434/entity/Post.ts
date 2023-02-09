@@ -2,11 +2,11 @@ import {
     BaseEntity,
     Column,
     Entity,
-    PrimaryGeneratedColumn,
+    PrimaryColumn,
 } from "../../../../src";
 
 @Entity({ name: "POST" })
-export class Post {
+export class Post extends BaseEntity{
     @PrimaryColumn()
     id: number;
 

@@ -5,12 +5,13 @@ import {
     PrimaryGeneratedColumn,
     TableInheritance,
     ChildEntity,
+    BaseEntity,
 } from "../../../../src";
 import { Comment } from "./Comment";
 
 @Entity()
 @TableInheritance({ column: { type: "string", name: "postType" } })
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

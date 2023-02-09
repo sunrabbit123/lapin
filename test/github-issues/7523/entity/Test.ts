@@ -10,7 +10,7 @@ enum FooEnum {
     BAR,
 }
 
-class ParentEntity {
+class ParentEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     ud: number;
 

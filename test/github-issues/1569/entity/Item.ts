@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "../../../../src";
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "../../../../src";
 
 export class EmbeddedItem {
     @Column({ type: "integer", array: true })

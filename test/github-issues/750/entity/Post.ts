@@ -1,12 +1,11 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import { Index } from "../../../../src/decorator/Index";
 
 @Entity()
 @Index(["name"], { fulltext: true })
 @Index(["point"], { spatial: true })
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

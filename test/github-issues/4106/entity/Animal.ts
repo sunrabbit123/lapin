@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Column, Entity } from "../../../../src";
 import { PrimaryColumn } from "../../../../src/decorator/columns/PrimaryColumn";
 
 import { Gender } from "./GenderEnum";

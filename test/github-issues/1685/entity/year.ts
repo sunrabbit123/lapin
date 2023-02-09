@@ -1,4 +1,4 @@
-import { PrimaryColumn, Entity, OneToMany } from "../../../../src";
+import { PrimaryColumn, Entity, OneToMany, BaseEntity } from "../../../../src";
 import { Month } from "./month";
 
 @Entity()

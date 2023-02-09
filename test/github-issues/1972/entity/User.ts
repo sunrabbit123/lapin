@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "../../../../src";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    BaseEntity,
+} from "../../../../src";
 
 @Entity()
 export class User extends BaseEntity {
@@ -9,6 +14,7 @@ export class User extends BaseEntity {
     public name: string;
 
     constructor(user?: { name: string }) {
+        super();
         if (user) {
             this.name = user.name;
         }

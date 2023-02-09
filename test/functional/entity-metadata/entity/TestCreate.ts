@@ -1,5 +1,3 @@
-import { Column } from "../../../../src/decorator/columns/Column";
-import { BaseEntity } from "../../../../src";
 import {
     BaseEntity,
     Column,

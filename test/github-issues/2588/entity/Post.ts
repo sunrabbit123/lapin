@@ -3,6 +3,7 @@ import {
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
+    BaseEntity,
 } from "../../../../src";
 import { PostReview } from "./PostReview";
 

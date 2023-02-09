@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
@@ -7,7 +8,7 @@ import {
 } from "../../../src";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -18,13 +19,13 @@ export class User {
     posts: Post[];
 }
 
-export class PublishInfo {
+export class PublishInfo extends BaseEntity {
     @Column({ nullable: true })
     date: Date;
 }
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

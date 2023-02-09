@@ -2,6 +2,7 @@ import {
     AfterRecover,
     AfterSoftRemove,
     AfterUpdate,
+    BaseEntity,
     BeforeRecover,
     BeforeSoftRemove,
     BeforeUpdate,

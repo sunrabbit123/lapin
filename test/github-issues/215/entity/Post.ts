@@ -1,9 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from "../../../../src";
+import { BaseEntity, Entity, PrimaryGeneratedColumn } from "../../../../src";
 import { Author } from "./Author";
 import { Abbreviation } from "./Abbreviation";
 import { OneToOne } from "../../../../src/decorator/relations/OneToOne";

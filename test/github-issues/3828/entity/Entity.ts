@@ -11,7 +11,7 @@ enum MyEntityEnum {
 }
 
 @Entity({ name: "MyEntity" })
-export class MyEntity {
+export class MyEntity extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: number;
 

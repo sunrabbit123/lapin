@@ -8,6 +8,7 @@ import {
 @Entity()
 export class Flight extends BaseEntity {
     constructor(id: number, date: Date) {
+        super();
         this.id = id;
         this.date = date;
     }

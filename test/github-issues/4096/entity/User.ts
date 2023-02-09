@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from "../../../../src";
+import { Entity, PrimaryColumn, Column, BaseEntity } from "../../../../src";
 
 @Entity()
 export class User extends BaseEntity {

@@ -1,4 +1,10 @@
-import { Column, Entity, Index, PrimaryColumn } from "../../../../src";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    Index,
+    PrimaryColumn,
+} from "../../../../src";
 
 enum ExternalUserProvider {
     A = "A",

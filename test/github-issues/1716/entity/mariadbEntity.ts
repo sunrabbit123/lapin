@@ -1,4 +1,4 @@
-import { PrimaryColumn, Entity, Column } from "../../../../src";
+import { PrimaryColumn, Entity, Column, BaseEntity } from "../../../../src";
 
 @Entity()
 export class MariadbEntity extends BaseEntity {

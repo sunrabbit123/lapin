@@ -6,7 +6,7 @@ import {
 } from "../../../../src";
 
 @Entity({ name: "Session" })
-export class Session {
+export class Session extends BaseEntity {
     @PrimaryGeneratedColumn()
     id?: number;
 

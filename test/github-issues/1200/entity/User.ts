@@ -10,6 +10,7 @@ import { Post } from "./Post";
 @Entity()
 export class User extends BaseEntity {
     constructor() {
+        super();
         this.group = new Group();
         this.post = new Post();
     }

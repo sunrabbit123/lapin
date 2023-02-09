@@ -5,7 +5,7 @@ import { OneToMany } from "../../../../../src/decorator/relations/OneToMany";
 import { User } from "./User";
 import { Subcounters } from "./Subcounters";
 
-export class Counters {
+export class Counters extends BaseEntity {
     @Column()
     code: number;
 

@@ -9,7 +9,7 @@ import { Slug } from "./Slug";
 
 @Entity()
 @Tree("materialized-path")
-export class Category {
+export class Category extends BaseEntity {
     @Column((type) => Slug, { prefix: false })
     id: Slug;
 
@@ -20,6 +20,7 @@ export class Category {
     parent: Category;
 
     constructor(slug: string, parent?: Category) {
+        super();
         this.id = new Slug(slug);
         if (parent) this.parent = parent;
     }

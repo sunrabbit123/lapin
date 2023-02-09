@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     ManyToOne,
@@ -9,7 +10,7 @@ import { Faculty } from "./Faculty";
 
 @Entity()
 @TableInheritance({ column: { name: "type", type: String } })
-export class Staff {
+export class Staff extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

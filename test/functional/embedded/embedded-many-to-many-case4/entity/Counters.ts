@@ -6,7 +6,7 @@ import { JoinTable } from "../../../../../src/decorator/relations/JoinTable";
 import { Subcounters } from "./Subcounters";
 import { User } from "./User";
 
-export class Counters {
+export class Counters extends BaseEntity{
     @Column()
     code: number;
 
