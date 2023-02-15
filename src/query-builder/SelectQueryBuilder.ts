@@ -364,14 +364,14 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoin(
+    innerJoin<T extends BaseTable, Alias extends string>(
         subQueryFactory: (
-            qb: SelectQueryBuilder<any>,
-        ) => SelectQueryBuilder<any>,
-        alias: string,
+            qb: SelectQueryBuilder<T, Selected<T>>,
+        ) => BaseTable<T, Alias>,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * INNER JOINs (without selection) entity's property.
@@ -379,53 +379,58 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoin(
+    innerJoin<T extends BaseTable, Alias extends string>(
         property: string,
-        alias: string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * INNER JOINs (without selection) given entity's table.
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoin(
-        entity: Function | string,
-        alias: string,
+    innerJoin<T extends BaseTable, Alias extends string>(
+        entity: T | string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * INNER JOINs (without selection) given table.
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoin(
+    innerJoin<T extends BaseTable, Alias extends string>(
         tableName: string,
-        alias: string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * INNER JOINs (without selection).
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoin(
+    innerJoin<T extends BaseTable, Alias extends string>(
         entityOrProperty:
-            | Function
+            | T
             | string
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
-        alias: string,
+            | ((
+                  qb: SelectQueryBuilder<T, Selected<T>>,
+              ) => SelectQueryBuilder<T, Selected<T>>),
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this {
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>> {
         this.join("INNER", entityOrProperty, alias, condition, parameters);
-        return this;
+        return this as unknown as SelectQueryBuilder<
+            T & BaseTable,
+            Selected<T & BaseTable>
+        >;
     }
 
     /**
@@ -433,14 +438,14 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    leftJoin(
+    leftJoin<T extends BaseTable, Alias extends string>(
         subQueryFactory: (
-            qb: SelectQueryBuilder<any>,
-        ) => SelectQueryBuilder<any>,
-        alias: string,
+            qb: SelectQueryBuilder<T, Selected<T>>,
+        ) => SelectQueryBuilder<T, Selected<T>>,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * LEFT JOINs (without selection) entity's property.
@@ -448,53 +453,58 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    leftJoin(
+    leftJoin<T extends BaseTable, Alias extends string>(
         property: string,
-        alias: string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * LEFT JOINs (without selection) entity's table.
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    leftJoin(
-        entity: Function | string,
-        alias: string,
+    leftJoin<T extends BaseTable, Alias extends string>(
+        entity: T | string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * LEFT JOINs (without selection) given table.
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    leftJoin(
+    leftJoin<T extends BaseTable, Alias extends string>(
         tableName: string,
-        alias: string,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this;
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>>;
 
     /**
      * LEFT JOINs (without selection).
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    leftJoin(
+    leftJoin<T extends BaseTable, Alias extends string>(
         entityOrProperty:
-            | Function
+            | T
             | string
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
-        alias: string,
+            | ((
+                  qb: SelectQueryBuilder<T, Selected<T>>,
+              ) => SelectQueryBuilder<T, Selected<T>>),
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
-    ): this {
+    ): SelectQueryBuilder<T & BaseTable, Selected<T & BaseTable>> {
         this.join("LEFT", entityOrProperty, alias, condition, parameters);
-        return this;
+        return this as unknown as SelectQueryBuilder<
+            T & BaseTable,
+            Selected<T & BaseTable>
+        >;
     }
 
     /**
@@ -2032,13 +2042,15 @@ export class SelectQueryBuilder<
     // Protected Methods
     // -------------------------------------------------------------------------
 
-    protected join(
+    protected join<T extends BaseTable, Alias extends string>(
         direction: "INNER" | "LEFT",
         entityOrProperty:
-            | Function
+            | T
             | string
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
-        aliasName: string,
+            | ((
+                  qb: SelectQueryBuilder<T, Selected<T>>,
+              ) => SelectQueryBuilder<T, Selected<T>>),
+        aliasName: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
         mapToProperty?: string,
@@ -2063,7 +2075,7 @@ export class SelectQueryBuilder<
                 joinAttribute.metadata.deleteDateColumn &&
                 !this.expressionMap.withDeleted
             ) {
-                const conditionDeleteColumn = `${aliasName}.${joinAttribute.metadata.deleteDateColumn.propertyName} IS NULL`;
+                const conditionDeleteColumn: `${Alias}.${string} IS NULL` = `${aliasName}.${joinAttribute.metadata.deleteDateColumn.propertyName} IS NULL`;
                 joinAttribute.condition = joinAttribute.condition
                     ? ` ${joinAttribute.condition} AND ${conditionDeleteColumn}`
                     : `${conditionDeleteColumn}`;
