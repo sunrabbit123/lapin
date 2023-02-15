@@ -4,10 +4,10 @@ import { LapinError } from "../error";
 
 /**
  */
-export class Alias {
+export class Alias<T extends string> {
     type: "from" | "select" | "join" | "other"; // todo: make something with "other"
 
-    name: string;
+    name: T;
 
     /**
      * Table on which this alias is applied.
@@ -20,7 +20,7 @@ export class Alias {
      */
     subQuery?: string;
 
-    constructor(alias?: Alias) {
+    constructor(alias?: Alias<T>) {
         ObjectUtils.assign(this, alias || {});
     }
 

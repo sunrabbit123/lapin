@@ -1,9 +1,10 @@
 import { BaseTable } from "./BaseTable";
 import { getFieldKeyByTable } from "./util";
 
-type Selected<Table extends BaseTable<object, string>> = Table extends infer T
-    ? DotAccessSelect<Table>
-    : never;
+export type Selected<Table extends BaseTable<object, string>> =
+    Table extends infer T
+        ? DotAccessSelect<Table> | `${DotAccessSelect<Table>} as ${string}`
+        : never;
 
 type DotAccessSelect<Table extends BaseTable<object, string>> =
     `${Table extends BaseTable<object, infer K>
@@ -28,3 +29,4 @@ type Some2 =
     | BaseTable<Entity1, C>;
 
 type Some = Selected<Some2>;
+//   ^?

@@ -25,6 +25,7 @@ import { ReturningType } from "../driver/Driver";
 import { OracleDriver } from "../driver/oracle/OracleDriver";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { escapeRegExp } from "../util/escapeRegExp";
+import { BaseTable } from "../types/BaseTable";
 
 // todo: completely cover query builder with tests
 // todo: entityOrProperty can be target name. implement proper behaviour if it is.
@@ -44,7 +45,7 @@ import { escapeRegExp } from "../util/escapeRegExp";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export abstract class QueryBuilder<Entity extends ObjectLiteral> {
+export abstract class QueryBuilder<Entity extends BaseTable> {
     readonly "@instanceof" = Symbol.for("QueryBuilder");
 
     // -------------------------------------------------------------------------
@@ -73,7 +74,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
     /**
      * If QueryBuilder was created in a subquery mode then its parent QueryBuilder (who created subquery) will be stored here.
      */
-    protected parentQueryBuilder: QueryBuilder<any>;
+    parentQueryBuilder: QueryBuilder<BaseTable>;
 
     /**
      * Memo to help keep place of current parameter index for `createParameter`
@@ -533,7 +534,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
      * Creates a completely new query builder.
      * Uses same query runner as current QueryBuilder.
      */
-    createQueryBuilder(): this {
+    createQueryBuilder(): QueryBuilder<Entity> {
         return new (this.constructor as any)(this.connection, this.queryRunner);
     }
 
@@ -652,11 +653,11 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    protected createFromAlias(
+    protected createFromAlias<T extends BaseTable, Alias extends string>(
         entityTarget:
-            | EntityTarget<any>
+            | EntityTarget<T>
             | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
-        aliasName?: string,
+        aliasName?: Alias,
     ): Alias {
         // if table has a metadata then find it to properly escape its properties
         // const metadata = this.connection.entityMetadatas.find(metadata => metadata.tableName === tableName);
@@ -782,7 +783,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
         return statement;
     }
 
-    protected createComment(): string {
+    protected createComment(): "" | `/* ${string} */` {
         if (!this.expressionMap.comment) {
             return "";
         }
@@ -792,7 +793,7 @@ export abstract class QueryBuilder<Entity extends ObjectLiteral> {
         // to scrub "ending" characters from the SQL but otherwise we can leave everything else
         // as-is and it should be valid.
 
-        return `/* ${this.expressionMap.comment.replace("*/", "")} */ `;
+        return `/* ${this.expressionMap.comment.replace("*/", "")} */`;
     }
 
     /**
