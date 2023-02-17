@@ -38,12 +38,12 @@ export class QueryExpressionMap {
     /**
      * Main alias is a main selection object selected by QueryBuilder.
      */
-    mainAlias?: Alias;
+    mainAlias?: Alias<string>;
 
     /**
      * All aliases (including main alias) used in the query.
      */
-    aliases: Alias[] = [];
+    aliases: Alias<string>[] = [];
 
     /**
      * Represents query type. QueryBuilder is able to build SELECT, UPDATE and DELETE queries.
@@ -395,7 +395,7 @@ export class QueryExpressionMap {
     /**
      * Creates a main alias and adds it to the current expression map.
      */
-    setMainAlias(alias: Alias): Alias {
+    setMainAlias<T extends string>(alias: Alias<T>): Alias<T> {
         // if main alias is already set then remove it from the array
         // if (this.mainAlias)
         //     this.aliases.splice(this.aliases.indexOf(this.mainAlias));
@@ -409,24 +409,27 @@ export class QueryExpressionMap {
     /**
      * Creates a new alias and adds it to the current expression map.
      */
-    createAlias(options: {
+    createAlias<T extends string>(options: {
         type: "from" | "select" | "join" | "other";
-        name?: string;
+        name?: T;
         target?: Function | string;
         tablePath?: string;
         subQuery?: string;
         metadata?: EntityMetadata;
-    }): Alias {
-        let aliasName = options.name;
-        if (!aliasName && options.tablePath) aliasName = options.tablePath;
-        if (!aliasName && typeof options.target === "function")
-            aliasName = options.target.name;
-        if (!aliasName && typeof options.target === "string")
-            aliasName = options.target;
+    }): Alias<T> {
+        let aliasName = options.name
+            ? options.name
+            : options.tablePath
+            ? options.tablePath
+            : typeof options.target === "function"
+            ? options.target.name
+            : typeof options.target === "string"
+            ? options.target
+            : undefined;
 
-        const alias = new Alias();
+        const alias = new Alias<T>();
         alias.type = options.type;
-        if (aliasName) alias.name = aliasName;
+        if (aliasName) alias.name = aliasName as T;
         if (options.metadata) alias.metadata = options.metadata;
         if (options.target && !alias.hasMetadata)
             alias.metadata = this.connection.getMetadata(options.target);
@@ -441,14 +444,14 @@ export class QueryExpressionMap {
      * Finds alias with the given name.
      * If alias was not found it throw an exception.
      */
-    findAliasByName(aliasName: string): Alias {
+    findAliasByName<T extends string>(aliasName: T): Alias<T> {
         const alias = this.aliases.find((alias) => alias.name === aliasName);
         if (!alias)
             throw new LapinError(
                 `"${aliasName}" alias was not found. Maybe you forgot to join it?`,
             );
 
-        return alias;
+        return alias as Alias<T>;
     }
 
     findColumnByAliasExpression(
@@ -472,10 +475,11 @@ export class QueryExpressionMap {
             this.mainAlias.metadata.findRelationWithPropertyPath(
                 this.relationPropertyPath,
             );
-        if (!relationMetadata)
+        if (!relationMetadata) {
             throw new LapinError(
                 `Relation ${this.relationPropertyPath} was not found in entity ${this.mainAlias.name}`,
             ); // todo: better message
+        }
 
         return relationMetadata;
     }

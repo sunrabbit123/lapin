@@ -9,7 +9,6 @@ import { DeleteQueryBuilder } from "./DeleteQueryBuilder";
 import { SoftDeleteQueryBuilder } from "./SoftDeleteQueryBuilder";
 import { InsertQueryBuilder } from "./InsertQueryBuilder";
 import { RelationQueryBuilder } from "./RelationQueryBuilder";
-import { EntityTarget } from "../common/EntityTarget";
 import { Alias } from "./Alias";
 import { Brackets } from "./Brackets";
 import { QueryDeepPartialEntity } from "./QueryPartialEntity";
@@ -26,6 +25,7 @@ import { OracleDriver } from "../driver/oracle/OracleDriver";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { escapeRegExp } from "../util/escapeRegExp";
 import { BaseTable } from "../types/BaseTable";
+import { Selected } from "../types/SelectQuery";
 
 // todo: completely cover query builder with tests
 // todo: entityOrProperty can be target name. implement proper behaviour if it is.
@@ -74,7 +74,7 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
     /**
      * If QueryBuilder was created in a subquery mode then its parent QueryBuilder (who created subquery) will be stored here.
      */
-    parentQueryBuilder: QueryBuilder<BaseTable>;
+    parentQueryBuilder: QueryBuilder<any>;
 
     /**
      * Memo to help keep place of current parameter index for `createParameter`
@@ -88,7 +88,7 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
     /**
      * QueryBuilder can be initialized from given Connection and QueryRunner objects or from given other QueryBuilder.
      */
-    constructor(queryBuilder: QueryBuilder<any>);
+    constructor(queryBuilder: QueryBuilder<Entity>);
 
     /**
      * QueryBuilder can be initialized from given Connection and QueryRunner objects or from given other QueryBuilder.
@@ -99,7 +99,7 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
      * QueryBuilder can be initialized from given Connection and QueryRunner objects or from given other QueryBuilder.
      */
     constructor(
-        connectionOrQueryBuilder: DataSource | QueryBuilder<any>,
+        connectionOrQueryBuilder: DataSource | QueryBuilder<Entity>,
         queryRunner?: QueryRunner,
     ) {
         if (InstanceChecker.isQueryBuilder(connectionOrQueryBuilder)) {
@@ -130,8 +130,9 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
      * Gets the main alias string used in this query builder.
      */
     get alias(): string {
-        if (!this.expressionMap.mainAlias)
-            throw new LapinError(`Main alias is not set`); // todo: better exception
+        if (!this.expressionMap.mainAlias) {
+            throw new LapinError(`Main alias is not set`);
+        }
 
         return this.expressionMap.mainAlias.name;
     }
@@ -151,7 +152,7 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
      * Replaces all previous selections if they exist.
      */
     select(
-        selection: string,
+        selection: Selected<Entity>,
         selectionAliasName?: string,
     ): SelectQueryBuilder<Entity>;
 
@@ -159,14 +160,14 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
      * Creates SELECT query and selects given data.
      * Replaces all previous selections if they exist.
      */
-    select(selection: string[]): SelectQueryBuilder<Entity>;
+    select(selection: Selected<Entity>[]): SelectQueryBuilder<Entity>;
 
     /**
      * Creates SELECT query and selects given data.
      * Replaces all previous selections if they exist.
      */
     select(
-        selection?: string | string[],
+        selection?: Selected<Entity> | Selected<Entity>[],
         selectionAliasName?: string,
     ): SelectQueryBuilder<Entity> {
         this.expressionMap.queryType = "select";
@@ -181,9 +182,10 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
         }
 
         // loading it dynamically because of circular issue
-        const SelectQueryBuilderCls =
-            require("./SelectQueryBuilder").SelectQueryBuilder;
-        if (InstanceChecker.isSelectQueryBuilder(this)) return this as any;
+        const SelectQueryBuilderCls = SelectQueryBuilder;
+        if (InstanceChecker.isSelectQueryBuilder(this)) {
+            return this;
+        }
 
         return new SelectQueryBuilderCls(this);
     }
@@ -653,12 +655,12 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
      * Specifies FROM which entity's table select/update/delete will be executed.
      * Also sets a main string alias of the selection data.
      */
-    protected createFromAlias<T extends BaseTable, Alias extends string>(
+    protected createFromAlias<T extends BaseTable, A extends string>(
         entityTarget:
             | EntityTarget<T>
-            | ((qb: SelectQueryBuilder<any>) => SelectQueryBuilder<any>),
-        aliasName?: Alias,
-    ): Alias {
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
+        aliasName?: A,
+    ): Alias<A> {
         // if table has a metadata then find it to properly escape its properties
         // const metadata = this.connection.entityMetadatas.find(metadata => metadata.tableName === tableName);
         if (this.connection.hasMetadata(entityTarget)) {
@@ -686,9 +688,9 @@ export abstract class QueryBuilder<Entity extends BaseTable> {
                 });
             }
 
-            const subQueryBuilder: SelectQueryBuilder<any> = (
-                entityTarget as any
-            )((this as any as SelectQueryBuilder<any>).subQuery());
+            const subQueryBuilder = entityTarget(
+                (this as any as SelectQueryBuilder<any>).subQuery(),
+            );
             this.setParameters(subQueryBuilder.getParameters());
             const subquery = subQueryBuilder.getQuery();
 

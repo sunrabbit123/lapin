@@ -20,7 +20,6 @@ import { EntityMetadata } from "../metadata/EntityMetadata";
 import { ColumnMetadata } from "../metadata/ColumnMetadata";
 import { OrderByCondition } from "../find-options/OrderByCondition";
 import { QueryExpressionMap } from "./QueryExpressionMap";
-import { EntityTarget } from "../common/EntityTarget";
 import { QueryRunner } from "../query-runner/QueryRunner";
 import { WhereExpressionBuilder } from "./WhereExpressionBuilder";
 import { Brackets } from "./Brackets";
@@ -49,17 +48,14 @@ import { Selected } from "../types/SelectQuery";
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class SelectQueryBuilder<
-        Entity extends BaseTable,
-        Selects extends Selected<Entity>,
-    >
+export class SelectQueryBuilder<Entity extends BaseTable>
     extends QueryBuilder<Entity>
     implements WhereExpressionBuilder
 {
     readonly "@instanceof" = Symbol.for("SelectQueryBuilder");
 
     protected findOptions: FindManyOptions = {};
-    protected selects: Selects[] = [];
+    protected selects: Selected<Entity>[] = [];
     protected joins: {
         type: "inner" | "left";
         alias: string;
@@ -111,16 +107,10 @@ export class SelectQueryBuilder<
     /**
      * Creates a subquery - query that can be used inside other queries.
      */
-    subQuery<
-        T extends BaseTable,
-        Sub extends SelectQueryBuilder<T, Selected<T>>,
-    >(
-        subQuery: (queryBuilder: SelectQueryBuilder<T, Selected<T>>) => Sub,
+    subQuery<T extends BaseTable, Sub extends SelectQueryBuilder<T>>(
+        subQuery: (queryBuilder: SelectQueryBuilder<T>) => Sub,
     ): Sub {
-        const qb = new SelectQueryBuilder<T, Selected<T>>(
-            this.connection,
-            this.queryRunner,
-        );
+        const qb = new SelectQueryBuilder<T>(this.connection, this.queryRunner);
         qb.expressionMap.subQuery = true;
         qb.parentQueryBuilder = this;
         return subQuery(qb);
@@ -137,9 +127,7 @@ export class SelectQueryBuilder<
      * Replaces all previous selections if they exist.
      */
     select<T extends BaseTable>(
-        selection: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => SelectQueryBuilder<T, Selected<T>>,
+        selection: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
         selectionAliasName?: string,
     ): this;
 
@@ -147,13 +135,13 @@ export class SelectQueryBuilder<
      * Creates SELECT query and selects given data.
      * Replaces all previous selections if they exist.
      */
-    select(selection: Selects, selectionAliasName?: string): this;
+    select(selection: Selected<Entity>, selectionAliasName?: string): this;
 
     /**
      * Creates SELECT query and selects given data.
      * Replaces all previous selections if they exist.
      */
-    select(selection: Selects[]): this;
+    select(selection: Selected<Entity>[]): this;
 
     /**
      * Creates SELECT query and selects given data.
@@ -161,13 +149,11 @@ export class SelectQueryBuilder<
      */
     select<T extends BaseTable>(
         selection?:
-            | Selects
-            | Selects[]
-            | ((
-                  qb: SelectQueryBuilder<T, Selected<T>>,
-              ) => SelectQueryBuilder<T, Selected<T>>),
+            | Selected<Entity>
+            | Selected<Entity>[]
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         selectionAliasName?: string,
-    ): SelectQueryBuilder<Entity, Selected<Entity>> {
+    ): SelectQueryBuilder<Entity> {
         this.expressionMap.queryType = "select";
         if (Array.isArray(selection)) {
             this.expressionMap.selects = selection.map((selection) => ({
@@ -193,32 +179,28 @@ export class SelectQueryBuilder<
      * Adds new selection to the SELECT query.
      */
     addSelect<T extends BaseTable>(
-        selection: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => SelectQueryBuilder<T, Selected<T>>,
+        selection: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
         selectionAliasName?: string,
     ): this;
 
     /**
      * Adds new selection to the SELECT query.
      */
-    addSelect(selection: Selects, selectionAliasName?: string): this;
+    addSelect(selection: Selected<Entity>, selectionAliasName?: string): this;
 
     /**
      * Adds new selection to the SELECT query.
      */
-    addSelect(selection: Selects[]): this;
+    addSelect(selection: Selected<Entity>[]): this;
 
     /**
      * Adds new selection to the SELECT query.
      */
     addSelect<T extends BaseTable>(
         selection:
-            | Selects
-            | Selects[]
-            | ((
-                  qb: SelectQueryBuilder<T, Selected<T>>,
-              ) => SelectQueryBuilder<T, Selected<T>>),
+            | Selected<Entity>
+            | Selected<Entity>[]
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         selectionAliasName?: string,
     ): this {
         if (!selection) return this;
@@ -283,11 +265,9 @@ export class SelectQueryBuilder<
      * Removes all previously set from-s.
      */
     from<T extends BaseTable, Alias extends string>(
-        entityTarget: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => BaseTable<T, Alias>,
+        entityTarget: (qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>,
         aliasName: Alias,
-    ): SelectQueryBuilder<T & Entity, Selected<T & Entity>>;
+    ): SelectQueryBuilder<T | Entity>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -295,9 +275,9 @@ export class SelectQueryBuilder<
      * Removes all previously set from-s.
      */
     from<T extends BaseTable, Alias extends string>(
-        entityTarget: EntityTarget<T>,
+        entityTarget: string,
         aliasName: Alias,
-    ): SelectQueryBuilder<T & Entity, Selected<T & Entity>>;
+    ): SelectQueryBuilder<T | Entity>;
 
     /**
      * Specifies FROM which entity's table select/update/delete will be executed.
@@ -306,16 +286,14 @@ export class SelectQueryBuilder<
      */
     from<T extends BaseTable, Alias extends string>(
         entityTarget:
-            | EntityTarget<T>
-            | ((qb: SelectQueryBuilder<T, Selected<T>>) => BaseTable<T, Alias>),
+            | string
+            | T
+            | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
         aliasName: Alias,
-    ): SelectQueryBuilder<T & Entity, Selected<T & Entity>> {
+    ): SelectQueryBuilder<T | Entity> {
         const mainAlias = this.createFromAlias(entityTarget, aliasName);
         this.expressionMap.setMainAlias(mainAlias);
-        return this as unknown as SelectQueryBuilder<
-            T & Entity,
-            Selected<T & Entity>
-        >;
+        return this as unknown as SelectQueryBuilder<T | Entity>;
     }
 
     /**
@@ -323,9 +301,7 @@ export class SelectQueryBuilder<
      * Also sets a main string alias of the selection data.
      */
     addFrom<T extends BaseTable, Alias extends string>(
-        entityTarget: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => BaseTable<T, Alias>,
+        entityTarget: (qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>,
         aliasName: Alias,
     ): SelectQueryBuilder<T & Entity, Selected<T & Entity>>;
 
@@ -345,7 +321,7 @@ export class SelectQueryBuilder<
     addFrom<T extends BaseTable, Alias extends string>(
         entityTarget:
             | EntityTarget<T>
-            | ((qb: SelectQueryBuilder<T, Selected<T>>) => BaseTable<T, Alias>),
+            | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
         aliasName: Alias,
     ): SelectQueryBuilder<T & Entity, Selected<T & Entity>> {
         const alias = this.createFromAlias(entityTarget, aliasName);
@@ -365,9 +341,7 @@ export class SelectQueryBuilder<
      * Optionally, you can add condition and parameters used in condition.
      */
     innerJoin<T extends BaseTable, Alias extends string>(
-        subQueryFactory: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => BaseTable<T, Alias>,
+        subQueryFactory: (qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>,
         alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
@@ -419,9 +393,7 @@ export class SelectQueryBuilder<
         entityOrProperty:
             | T
             | string
-            | ((
-                  qb: SelectQueryBuilder<T, Selected<T>>,
-              ) => SelectQueryBuilder<T, Selected<T>>),
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
@@ -439,9 +411,7 @@ export class SelectQueryBuilder<
      * Optionally, you can add condition and parameters used in condition.
      */
     leftJoin<T extends BaseTable, Alias extends string>(
-        subQueryFactory: (
-            qb: SelectQueryBuilder<T, Selected<T>>,
-        ) => SelectQueryBuilder<T, Selected<T>>,
+        subQueryFactory: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
         alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
@@ -493,9 +463,7 @@ export class SelectQueryBuilder<
         entityOrProperty:
             | T
             | string
-            | ((
-                  qb: SelectQueryBuilder<T, Selected<T>>,
-              ) => SelectQueryBuilder<T, Selected<T>>),
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
@@ -512,11 +480,9 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoinAndSelect(
-        subQueryFactory: (
-            qb: SelectQueryBuilder<any>,
-        ) => SelectQueryBuilder<any>,
-        alias: string,
+    innerJoinAndSelect<T extends BaseTable, Alias extends string>(
+        subQueryFactory: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
+        alias: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
     ): this;
@@ -527,7 +493,7 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoinAndSelect(
+    innerJoinAndSelect<T extends BaseTable, Alias extends string>(
         property: string,
         alias: string,
         condition?: string,
@@ -539,7 +505,7 @@ export class SelectQueryBuilder<
      * You also need to specify an alias of the joined data.
      * Optionally, you can add condition and parameters used in condition.
      */
-    innerJoinAndSelect(
+    innerJoinAndSelect<T extends BaseTable, Alias extends string>(
         entity: Function | string,
         alias: string,
         condition?: string,
@@ -2047,9 +2013,7 @@ export class SelectQueryBuilder<
         entityOrProperty:
             | T
             | string
-            | ((
-                  qb: SelectQueryBuilder<T, Selected<T>>,
-              ) => SelectQueryBuilder<T, Selected<T>>),
+            | ((qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>),
         aliasName: Alias,
         condition?: string,
         parameters?: ObjectLiteral,
