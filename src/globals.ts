@@ -8,7 +8,6 @@ import { DataSource } from "./data-source/DataSource";
 import { EntityManager } from "./entity-manager/EntityManager";
 import { MongoEntityManager } from "./entity-manager/MongoEntityManager";
 import { SqljsEntityManager } from "./entity-manager/SqljsEntityManager";
-import { EntityTarget } from "./common/EntityTarget";
 import { Repository } from "./repository/Repository";
 import { TreeRepository } from "./repository/TreeRepository";
 import { ObjectType } from "./common/ObjectType";
@@ -16,24 +15,26 @@ import { MongoRepository } from "./repository/MongoRepository";
 import { SelectQueryBuilder } from "./query-builder/SelectQueryBuilder";
 import { ObjectUtils } from "./util/ObjectUtils";
 import { ObjectLiteral } from "./common/ObjectLiteral";
+import { EntityTarget } from "./types/Entity";
+import { BaseTable } from "./types/BaseTable";
 
 /**
  * Gets metadata args storage.
  */
 export function getMetadataArgsStorage(): MetadataArgsStorage {
-    // we should store metadata storage in a global variable otherwise it brings too much problems
-    // one of the problem is that if any entity (or any other) will be imported before consumer will call
-    // useContainer method with his own container implementation, that entity will be registered in the
-    // old old container (default one post probably) and consumer will his entity.
-    // calling useContainer before he imports any entity (or any other) is not always convenient.
-    // another reason is that when we run migrations lapin is being called from a global package
-    // and it may load entities which register decorators in lapin of local package
-    // this leads to impossibility of usage of entities in migrations and cli related operations
-    const globalScope = PlatformTools.getGlobalVariable();
-    if (!globalScope.lapinMetadataArgsStorage)
-        globalScope.lapinMetadataArgsStorage = new MetadataArgsStorage();
+  // we should store metadata storage in a global variable otherwise it brings too much problems
+  // one of the problem is that if any entity (or any other) will be imported before consumer will call
+  // useContainer method with his own container implementation, that entity will be registered in the
+  // old old container (default one post probably) and consumer will his entity.
+  // calling useContainer before he imports any entity (or any other) is not always convenient.
+  // another reason is that when we run migrations lapin is being called from a global package
+  // and it may load entities which register decorators in lapin of local package
+  // this leads to impossibility of usage of entities in migrations and cli related operations
+  const globalScope = PlatformTools.getGlobalVariable();
+  if (!globalScope.lapinMetadataArgsStorage)
+    globalScope.lapinMetadataArgsStorage = new MetadataArgsStorage();
 
-    return globalScope.lapinMetadataArgsStorage;
+  return globalScope.lapinMetadataArgsStorage;
 }
 
 /**
@@ -42,9 +43,9 @@ export function getMetadataArgsStorage(): MetadataArgsStorage {
  * @deprecated
  */
 export async function getConnectionOptions(
-    connectionName: string = "default",
+  connectionName: string = "default",
 ): Promise<DataSourceOptions> {
-    return new ConnectionOptionsReader().get(connectionName);
+  return new ConnectionOptionsReader().get(connectionName);
 }
 
 /**
@@ -53,7 +54,7 @@ export async function getConnectionOptions(
  * @deprecated
  */
 export function getConnectionManager(): ConnectionManager {
-    return getFromContainer(ConnectionManager);
+  return getFromContainer(ConnectionManager);
 }
 
 /**
@@ -77,7 +78,7 @@ export async function createConnection(name: string): Promise<DataSource>;
  * @deprecated
  */
 export async function createConnection(
-    options: DataSourceOptions,
+  options: DataSourceOptions,
 ): Promise<DataSource>;
 
 /**
@@ -90,14 +91,14 @@ export async function createConnection(
  * @deprecated
  */
 export async function createConnection(
-    optionsOrName?: any,
+  optionsOrName?: any,
 ): Promise<DataSource> {
-    const connectionName =
-        typeof optionsOrName === "string" ? optionsOrName : "default";
-    const options = ObjectUtils.isObject(optionsOrName)
-        ? (optionsOrName as DataSourceOptions)
-        : await getConnectionOptions(connectionName);
-    return getConnectionManager().create(options).connect();
+  const connectionName =
+    typeof optionsOrName === "string" ? optionsOrName : "default";
+  const options = ObjectUtils.isObject(optionsOrName)
+    ? (optionsOrName as DataSourceOptions)
+    : await getConnectionOptions(connectionName);
+  return getConnectionManager().create(options).connect();
 }
 
 /**
@@ -110,17 +111,17 @@ export async function createConnection(
  * @deprecated
  */
 export async function createConnections(
-    options?: DataSourceOptions[],
+  options?: DataSourceOptions[],
 ): Promise<DataSource[]> {
-    if (!options) options = await new ConnectionOptionsReader().all();
-    const connections = options.map((options) =>
-        getConnectionManager().create(options),
-    );
-    // Do not use Promise.all or test 8522 will produce a dangling sqlite connection
-    for (const connection of connections) {
-        await connection.connect();
-    }
-    return connections;
+  if (!options) options = await new ConnectionOptionsReader().all();
+  const connections = options.map((options) =>
+    getConnectionManager().create(options),
+  );
+  // Do not use Promise.all or test 8522 will produce a dangling sqlite connection
+  for (const connection of connections) {
+    await connection.connect();
+  }
+  return connections;
 }
 
 /**
@@ -130,7 +131,7 @@ export async function createConnections(
  * @deprecated
  */
 export function getConnection(connectionName: string = "default"): DataSource {
-    return getConnectionManager().get(connectionName);
+  return getConnectionManager().get(connectionName);
 }
 
 /**
@@ -140,7 +141,7 @@ export function getConnection(connectionName: string = "default"): DataSource {
  * @deprecated
  */
 export function getManager(connectionName: string = "default"): EntityManager {
-    return getConnectionManager().get(connectionName).manager;
+  return getConnectionManager().get(connectionName).manager;
 }
 
 /**
@@ -150,10 +151,10 @@ export function getManager(connectionName: string = "default"): EntityManager {
  * @deprecated
  */
 export function getMongoManager(
-    connectionName: string = "default",
+  connectionName: string = "default",
 ): MongoEntityManager {
-    return getConnectionManager().get(connectionName)
-        .manager as MongoEntityManager;
+  return getConnectionManager().get(connectionName)
+    .manager as MongoEntityManager;
 }
 
 /**
@@ -164,10 +165,10 @@ export function getMongoManager(
  * @deprecated
  */
 export function getSqljsManager(
-    connectionName: string = "default",
+  connectionName: string = "default",
 ): SqljsEntityManager {
-    return getConnectionManager().get(connectionName)
-        .manager as SqljsEntityManager;
+  return getConnectionManager().get(connectionName)
+    .manager as SqljsEntityManager;
 }
 
 /**
@@ -176,12 +177,12 @@ export function getSqljsManager(
  * @deprecated
  */
 export function getRepository<Entity extends ObjectLiteral>(
-    entityClass: EntityTarget<Entity>,
-    connectionName: string = "default",
+  entityClass: EntityTarget<Entity>,
+  connectionName: string = "default",
 ): Repository<Entity> {
-    return getConnectionManager()
-        .get(connectionName)
-        .getRepository<Entity>(entityClass);
+  return getConnectionManager()
+    .get(connectionName)
+    .getRepository<Entity>(entityClass);
 }
 
 /**
@@ -190,12 +191,12 @@ export function getRepository<Entity extends ObjectLiteral>(
  * @deprecated
  */
 export function getTreeRepository<Entity extends ObjectLiteral>(
-    entityClass: EntityTarget<Entity>,
-    connectionName: string = "default",
+  entityClass: EntityTarget<Entity>,
+  connectionName: string = "default",
 ): TreeRepository<Entity> {
-    return getConnectionManager()
-        .get(connectionName)
-        .getTreeRepository<Entity>(entityClass);
+  return getConnectionManager()
+    .get(connectionName)
+    .getTreeRepository<Entity>(entityClass);
 }
 
 /**
@@ -204,12 +205,12 @@ export function getTreeRepository<Entity extends ObjectLiteral>(
  * @deprecated
  */
 export function getCustomRepository<T>(
-    customRepository: ObjectType<T>,
-    connectionName: string = "default",
+  customRepository: ObjectType<T>,
+  connectionName: string = "default",
 ): T {
-    return getConnectionManager()
-        .get(connectionName)
-        .getCustomRepository(customRepository);
+  return getConnectionManager()
+    .get(connectionName)
+    .getCustomRepository(customRepository);
 }
 
 /**
@@ -218,12 +219,12 @@ export function getCustomRepository<T>(
  * @deprecated
  */
 export function getMongoRepository<Entity extends ObjectLiteral>(
-    entityClass: EntityTarget<Entity>,
-    connectionName: string = "default",
+  entityClass: EntityTarget<Entity>,
+  connectionName: string = "default",
 ): MongoRepository<Entity> {
-    return getConnectionManager()
-        .get(connectionName)
-        .getMongoRepository<Entity>(entityClass);
+  return getConnectionManager()
+    .get(connectionName)
+    .getMongoRepository<Entity>(entityClass);
 }
 
 /**
@@ -231,16 +232,14 @@ export function getMongoRepository<Entity extends ObjectLiteral>(
  *
  * @deprecated
  */
-export function createQueryBuilder<Entity extends ObjectLiteral>(
-    entityClass?: EntityTarget<Entity>,
-    alias?: string,
-    connectionName: string = "default",
+export function createQueryBuilder<Entity extends BaseTable>(
+  entityClass?: EntityTarget<Entity>,
+  alias?: string,
+  connectionName: string = "default",
 ): SelectQueryBuilder<Entity> {
-    if (entityClass) {
-        return getRepository(entityClass, connectionName).createQueryBuilder(
-            alias,
-        );
-    }
+  if (entityClass) {
+    return getRepository(entityClass, connectionName).createQueryBuilder(alias);
+  }
 
-    return getConnection(connectionName).createQueryBuilder();
+  return getConnection(connectionName).createQueryBuilder();
 }
