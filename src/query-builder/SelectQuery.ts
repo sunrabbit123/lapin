@@ -1,5 +1,5 @@
 export interface SelectQuery {
-    selection: string;
-    aliasName?: string;
-    virtual?: boolean;
+  selection: any;
+  aliasName?: string;
+  virtual?: boolean;
 }
