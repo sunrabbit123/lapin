@@ -43,13 +43,15 @@ import { EntityPropertyNotFoundError } from "../error/EntityPropertyNotFoundErro
 import { AuroraMysqlDriver } from "../driver/aurora-mysql/AuroraMysqlDriver";
 import { InstanceChecker } from "../util/InstanceChecker";
 import { BaseTable } from "../types/BaseTable";
-import { Selected } from "../types/SelectQuery";
+import { DotAccessSelect, Selected } from "../types/SelectQuery";
 import { EntityTarget } from "../types/Entity";
 
 /**
  * Allows to build complex sql queries in a fashion way and execute those queries.
  */
-export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
+export class SelectQueryBuilder<
+    Entity extends BaseTable<{}, undefined | string>,
+  >
   extends QueryBuilder<Entity>
   implements WhereExpressionBuilder
 {
@@ -108,16 +110,20 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
   /**
    * Creates a subquery - query that can be used inside other queries.
    */
-  subQuery<
-    T extends BaseTable<{}, undefined>,
-    Sub extends SelectQueryBuilder<T>,
-  >(subQuery: (queryBuilder: SelectQueryBuilder<T>) => Sub): Sub {
+  subQuery<T extends BaseTable<{}, undefined>>(
+    subQuery: (queryBuilder: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
+  ): SelectQueryBuilder<T> {
     const qb = new SelectQueryBuilder<T>(this.connection, this.queryRunner);
     qb.expressionMap.subQuery = true;
     qb.parentQueryBuilder = this;
     return subQuery(qb);
   }
 
+  private isSubQuery<T extends BaseTable<{}, undefined>>(
+    arg: any,
+  ): arg is (queryBuilder: SelectQueryBuilder<T>) => SelectQueryBuilder<T> {
+    return typeof arg === "function";
+  }
   /**
    * Creates SELECT query.
    * Replaces all previous selections if they exist.
@@ -161,7 +167,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
       this.expressionMap.selects = selection.map((selection) => ({
         selection: selection,
       }));
-    } else if (typeof selection === "function") {
+    } else if (this.isSubQuery(selection)) {
       const subQueryBuilder = this.subQuery(selection);
       this.setParameters(subQueryBuilder.getParameters());
       this.expressionMap.selects.push({
@@ -211,7 +217,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
       this.expressionMap.selects = this.expressionMap.selects.concat(
         selection.map((selection) => ({ selection: selection })),
       );
-    } else if (typeof selection === "function") {
+    } else if (this.isSubQuery(selection)) {
       const subQueryBuilder = this.subQuery(selection);
       this.setParameters(subQueryBuilder.getParameters());
       this.expressionMap.selects.push({
@@ -338,8 +344,8 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
-    subQueryFactory: (qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>,
+  innerJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
+    subQueryFactory: (qb: SelectQueryBuilder<T>) => T,
     alias: Alias,
     condition?: string,
     parameters?: ObjectLiteral,
@@ -351,7 +357,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
     property: string,
     alias: Alias,
     condition?: string,
@@ -363,7 +369,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
     entity: T | string,
     alias: Alias,
     condition?: string,
@@ -375,7 +381,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
     tableName: string,
     alias: Alias,
     condition?: string,
@@ -387,11 +393,8 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
-    entityOrProperty:
-      | T
-      | string
-      | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
+  innerJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
+    entityOrProperty: T | string | ((qb: SelectQueryBuilder<T>) => T),
     alias: Alias,
     condition?: string,
     parameters?: ObjectLiteral,
@@ -405,7 +408,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  leftJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
+  leftJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
     subQueryFactory: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>,
     alias: Alias,
     condition?: string,
@@ -454,11 +457,8 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  leftJoin<T extends BaseTable<{}, undefined>, Alias extends string>(
-    entityOrProperty:
-      | T
-      | string
-      | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
+  leftJoin<T extends BaseTable<{}, Alias>, Alias extends string>(
+    entityOrProperty: T | string | ((qb: SelectQueryBuilder<T>) => T),
     alias: Alias,
     condition?: string,
     parameters?: ObjectLiteral,
@@ -472,8 +472,8 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoinAndSelect<T extends BaseTable<{}, undefined>, Alias extends string>(
-    subQueryFactory: (qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>,
+  innerJoinAndSelect<T extends BaseTable<{}, Alias>, Alias extends string>(
+    subQueryFactory: (qb: SelectQueryBuilder<T>) => T,
     alias: Alias,
     condition?: string,
     parameters?: ObjectLiteral,
@@ -485,7 +485,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoinAndSelect<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoinAndSelect<T extends BaseTable<{}, Alias>, Alias extends string>(
     property: string,
     alias: Alias,
     condition?: string,
@@ -497,7 +497,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoinAndSelect<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoinAndSelect<T extends BaseTable<{}, Alias>, Alias extends string>(
     entity: string | T,
     alias: Alias,
     condition?: string,
@@ -509,7 +509,7 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoinAndSelect<T extends BaseTable<{}, undefined>, Alias extends string>(
+  innerJoinAndSelect<T extends BaseTable<{}, Alias>, Alias extends string>(
     tableName: string,
     alias: Alias,
     condition?: string,
@@ -521,17 +521,20 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
    * You also need to specify an alias of the joined data.
    * Optionally, you can add condition and parameters used in condition.
    */
-  innerJoinAndSelect<T extends BaseTable<{}, undefined>, Alias extends string>(
-    entityOrProperty:
-      | T
-      | string
-      | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
+  innerJoinAndSelect<T extends BaseTable<{}, Alias>, Alias extends string>(
+    entityOrProperty: T | string | ((qb: SelectQueryBuilder<T>) => T),
     alias: Alias,
     condition?: string,
     parameters?: ObjectLiteral,
   ): SelectQueryBuilder<T | Entity> {
-    const qb = this.innerJoin(entityOrProperty, alias, condition, parameters);
+    const qb = this.innerJoin(
+      entityOrProperty as any,
+      alias,
+      condition,
+      parameters,
+    ) as SelectQueryBuilder<T | Entity>;
     qb.addSelect(alias);
+    //   ^?
     return qb;
   }
 
@@ -598,8 +601,8 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
     condition?: string,
     parameters?: ObjectLiteral,
   ): this {
-    this.addSelect(alias);
     this.leftJoin(entityOrProperty, alias, condition, parameters);
+    this.addSelect(alias);
     return this;
   }
 
@@ -1961,12 +1964,9 @@ export class SelectQueryBuilder<Entity extends BaseTable<{}, undefined>>
   // Protected Methods
   // -------------------------------------------------------------------------
 
-  protected join<T extends BaseTable<{}, undefined>, Alias extends string>(
+  protected join<T extends BaseTable<{}, Alias>, Alias extends string>(
     direction: "INNER" | "LEFT",
-    entityOrProperty:
-      | T
-      | string
-      | ((qb: SelectQueryBuilder<T>) => BaseTable<T, Alias>),
+    entityOrProperty: T | string | ((qb: SelectQueryBuilder<T>) => T),
     aliasName: Alias,
     condition?: string,
     parameters?: ObjectLiteral,

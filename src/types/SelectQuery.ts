@@ -1,21 +1,24 @@
+import { SelectQueryBuilder } from "../query-builder/SelectQueryBuilder";
 import { BaseTable } from "./BaseTable";
 import { getFieldKeyByTable } from "./util";
 
 export type Selected<Table extends BaseTable<object, undefined | string>> =
+  | (Table extends BaseTable<object, infer K>
+      ? K extends string
+        ? K
+        : never
+      : never)
   | DotAccessSelect<Table>
-  | `${DotAccessSelect<Table>} as ${string}`
-  | (Table extends BaseTable<object, infer K> ? K : never) extends infer F
-  ? F extends undefined
-    ? never
-    : F
-  : never;
+  | `${DotAccessSelect<Table>} as ${string}`;
 
 export type DotAccessSelect<
-  Table extends BaseTable<object, string | undefined>
+  Table extends BaseTable<object, string | undefined>,
 > = `${Table extends BaseTable<object, infer K>
-  ? K extends undefined
-    ? Exclude<getFieldKeyByTable<Table, string>, "_alias">
-    : `${K}.${Exclude<getFieldKeyByTable<Table, string>, "_alias">}`
+  ?
+      | (K extends undefined
+          ? getFieldKeyByTable<Table, string>
+          : `${K}.${Exclude<getFieldKeyByTable<Table, string>, "_alias">}` | K)
+      | Exclude<getFieldKeyByTable<Table, string>, "_alias">
   : never}`;
 
 class Entity1 {
@@ -27,16 +30,26 @@ class Entity2 {
   c: "asdf";
   d: "asdfsa";
 }
+
+// ^?
 type C = "C";
 type Some2 =
   | BaseTable<Entity1, undefined>
   | BaseTable<Entity2, "f">
   | BaseTable<Entity1, C>;
 
-type res<T extends BaseTable<object, string | undefined>> = DotAccessSelect<T>;
+type res<T extends BaseTable<object, string | undefined>> = Selected<T>;
 type Result1 =
   //   ^?
-  res<BaseTable<Entity2, "f"> | BaseTable<Entity1, C>>;
+  res<Some2>;
 type Result2 =
   //   ^?
-  res<BaseTable<Entity2, "f">> | res<BaseTable<Entity1, C>>;
+  (res<BaseTable<Entity2, "f">> | res<BaseTable<Entity1, undefined>>) & string;
+type Result3 =
+  //   ^?
+  Exclude<
+    getFieldKeyByTable<BaseTable<Entity1, undefined | string>, string>,
+    "_alias"
+  >;
+type Result4 = res<BaseTable<Entity1, undefined> | BaseTable<Entity2, "f">>;
+//   ^?
